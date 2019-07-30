@@ -12,7 +12,7 @@ MCD State
 ```k
     configuration
       <mkr-mcd>
-        <k> $PGM:.Pgm </k>
+        <k> $PGM:Pgm </k>
       </mkr-mcd>
 
     syntax Pgm ::= ".Pgm"
