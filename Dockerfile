@@ -27,3 +27,5 @@ ADD --chown=user:user deps/k/haskell-backend/src/main/native/haskell-backend/sta
 ADD --chown=user:user deps/k/haskell-backend/src/main/native/haskell-backend/kore/package.yaml /home/user/.tmp-haskell/kore/
 RUN    cd /home/user/.tmp-haskell  \
     && stack build --only-snapshot
+
+ENV PATH=/home/user/.cargo/bin:$PATH
