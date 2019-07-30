@@ -60,7 +60,7 @@ deps-tangle: $(PANDOC_TANGLE_SUBMODULE)/submodule.timestamp
 
 $(K_SUBMODULE)/mvn.timestamp: $(K_SUBMODULE)/submodule.timestamp
 	@echo "== building: $*"
-	cd $(K_SUBMODULE) && mvn package -DskipTests -Dhaskell.backend.skip
+	cd $(K_SUBMODULE) && mvn package -DskipTests
 	touch $(K_SUBMODULE)/mvn.timestamp
 
 # Building
