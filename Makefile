@@ -33,9 +33,9 @@ export TANGLER
 export LUA_PATH
 
 .PHONY: all clean \
-	    deps deps-k deps-tangle \
-	    defn defn-llvm defn-haskell \
-	    build build-llvm build-haskell
+        deps deps-k deps-tangle \
+        defn defn-llvm defn-haskell \
+        build build-llvm build-haskell
 .SECONDARY:
 
 all: build
