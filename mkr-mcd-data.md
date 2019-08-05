@@ -29,6 +29,45 @@ Base Data
  // ------------------
 ```
 
+Product Data
+------------
+
+-   `#VatIlk`: **TODO**
+
+```k
+    syntax VatIlk ::= Ilk ( Wad , Ray , Ray , Rad , Rad ) [klabel(#VatIlk), symbol]
+ // -------------------------------------------------------------------------------
+
+    syntax Wad ::= VatIlk "." "Art" [function]
+ // ------------------------------------------
+    rule Ilk(ART, _, _, _, _) . Art => ART
+
+    syntax Ray ::= VatIlk "." "rate" [function]
+                 | VatIlk "." "spot" [function]
+ // -------------------------------------------
+    rule Ilk(_, RATE, _, _, _) . rate => RATE
+    rule Ilk(_, _, SPOT, _, _) . spot => SPOT
+
+    syntax Rad ::= VatIlk "." "line" [function]
+                 | VatIlk "." "dust" [function]
+ // -------------------------------------------
+    rule Ilk(_, _, _, LINE, _) . line => LINE
+    rule Ilk(_, _, _, _, DUST) . dust => DUST
+```
+
+-   `#VatUrn`: **TODO**
+
+```k
+    syntax VatUrn ::= Urn ( Wad , Wad ) [klabel(#VatUrn), symbol]
+ // -------------------------------------------------------------
+
+    syntax Wad ::= VatUrn "." "ink" [function]
+                 | VatUrn "." "art" [function]
+ // ------------------------------------------
+    rule Urn(INK, _) . ink => INK
+    rule Urn(_, ART) . art => ART
+```
+
 ```k
 endmodule
 ```
