@@ -5,6 +5,7 @@ This file defines the primitive data-types used in the MKR MCD system.
 
 ```k
 module MKR-MCD-DATA
+    imports BOOL
     imports INT
     imports MAP
 ```
@@ -12,11 +13,12 @@ module MKR-MCD-DATA
 Base Data
 ---------
 
--   `Wad`: fixed point decimal with 18 decimals (for basic quantities, e.g. balances).
--   `Ray`: fixed point decimal with 27 decimals (for precise quantites, e.g. ratios).
--   `Rad`: fixed point decimal with 45 decimals (result of integer multiplication with a `Wad` and a `Ray`).
+-   `Wad`: basic quantities (e.g. balances).
+-   `Ray`: precise quantities (e.g. ratios).
+-   `Rad`: result of multiplying `Wad` and `Ray` (highest precision).
+-   `Address`: unique identifier of an account on the network.
 
-**TODO**: Should we add operators like `+Wad` which emulate the precision limits described here, or assume the abstract model to be inifinite precision?
+**TODO**: Should we add operators like `+Wad` which emulate the precision limits described in `makerdao/dss/DEVELOPING.md`, or assume the abstract model to be inifinite precision?
 
 ```k
     syntax Wad ::= Int
@@ -27,6 +29,9 @@ Base Data
 
     syntax Rad ::= Int
  // ------------------
+
+    syntax Address ::= Int
+ // ----------------------
 ```
 
 Product Data
