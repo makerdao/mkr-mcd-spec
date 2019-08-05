@@ -2,8 +2,10 @@ KMCD - K Specification of MKR Multi-collateral Dai
 ==================================================
 
 ```k
+requires "mkr-mcd-data.k"
+
 module MKR-MCD
-    imports DOMAINS
+    imports MKR-MCD-DATA
 ```
 
 MCD State
