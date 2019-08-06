@@ -69,8 +69,12 @@ $(K_SUBMODULE)/mvn.timestamp: $(K_SUBMODULE)/submodule.timestamp
 MAIN_MODULE       := MKR-MCD
 SYNTAX_MODULE     := $(MAIN_MODULE)
 MAIN_DEFN_FILE    := mkr-mcd
-KOMPILE_OPTS      ?= 
+KOMPILE_OPTS      ?=
 LLVM_KOMPILE_OPTS := $(KOMPILE_OPTS) -ccopt -O2
+
+k_files       = $(MAIN_DEFN_FILE).k mkr-mcd.k mkr-mcd-data.k
+llvm_files    = $(patsubst %,$(DEFN_DIR)/llvm/%,$(k_files))
+haskell_files = $(patsubst %,$(DEFN_DIR)/haskell/%,$(k_files))
 
 llvm_kompiled    := $(DEFN_DIR)/llvm/$(MAIN_DEFN_FILE)-kompiled/interpreter
 haskell_kompiled := $(DEFN_DIR)/haskell/$(MAIN_DEFN_FILE)-kompiled/definition.kore
@@ -80,10 +84,6 @@ build-llvm:    $(llvm_kompiled)
 build-haskell: $(haskell_kompiled)
 
 # Generate definitions from source files
-
-k_files=$(MAIN_DEFN_FILE).k
-llvm_files    = $(patsubst %,$(DEFN_DIR)/llvm/%,$(k_files))
-haskell_files = $(patsubst %,$(DEFN_DIR)/haskell/%,$(k_files))
 
 defn: llvm-defn
 defn-llvm: $(llvm_files)
