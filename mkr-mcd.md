@@ -55,6 +55,7 @@ Vat Semantics
 ```
 
 `Vat.rely ACCOUNT` and `Vat.deny ACCOUNT` toggle `ward [ ACCOUNT ]`.
+**TODO**: `Vat.auth` accessing the `<ward>`?
 
 ```k
     syntax VatStep ::= "rely" Address | "deny" Address
