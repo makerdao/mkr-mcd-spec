@@ -34,6 +34,21 @@ Base Data
  // ----------------------
 ```
 
+-   `CDPID`: Identifies a given users `ilk` or `urn`.
+
+```k
+    syntax CDPID ::= "{" Int "," Address "}"
+ // ----------------------------------------
+```
+
+Some useful constants come up:
+
+```k
+    syntax Int ::= "ilk_init"
+ // -------------------------
+    rule ilk_init => 1000000000000000000000000000 [macro]
+```
+
 Product Data
 ------------
 
