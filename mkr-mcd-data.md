@@ -39,6 +39,13 @@ Product Data
 
 -   `#VatIlk`: **TODO**
 
+`Ilk` is a collateral with certain risk parameters.
+Vat doesn't care about parameters for auctions, so only has stuff like debt ceiling, penalty, etc.
+Cat has stuff like penalty.
+Ok to say "this is the VatIlk, this is the CatIlk".
+"Could have one big `Ilk` type with all the parameters, but there are different types to project out relevant parts to those contracts."
+Getters and setters for `Ilk` should be permissioned, and different combinations of Contract + User might have `file` access to different fields (might be non-`file` access methods).
+
 ```k
     syntax VatIlk ::= Ilk ( Wad , Ray , Ray , Rad , Rad ) [klabel(#VatIlk), symbol]
  // -------------------------------------------------------------------------------
@@ -61,6 +68,9 @@ Product Data
 ```
 
 -   `#VatUrn`: **TODO**
+
+`Urn` is individual CDP of a certain `Ilk` for a certain address (actual data that comprises a CDP).
+`Urn` has the exact same definition everywhere, so we can get away with a single definition.
 
 ```k
     syntax VatUrn ::= Urn ( Wad , Wad ) [klabel(#VatUrn), symbol]
