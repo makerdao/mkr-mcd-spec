@@ -19,13 +19,13 @@ MCD State
         <msgSender> 0:Address </msgSender>
         <vatStack> .List </vatStack>
         <vat>
-          <ward> .Map  </ward> // mapping (address => uint)                (actually a Bool) Int       |-> Bool
-          <can>  .Map  </can>  // mapping (address (address => uint))      (actually a Bool) Int, Int  |-> Bool
-          <ilks> .Map  </ilks> // mapping (bytes32 => VatIlk)                                Int       |-> VatIlk
-          <urns> .Map  </urns> // mapping (bytes32 => (address => VatUrn))                   CDPID     |-> VatUrn
-          <gem>  .Map  </gem>  // mapping (bytes32 => (address => uint256))                  CDPID     |-> Wad
-          <dai>  .Map  </dai>  // mapping (address => uint256)                               Address   |-> Rad
-          <sin>  .Map  </sin>  // mapping (address => uint256)                               Address   |-> Rad
+          <ward> .Map  </ward> // mapping (address => uint)                 Address |-> Bool
+          <can>  .Map  </can>  // mapping (address (address => uint))       Address |-> Set
+          <ilks> .Map  </ilks> // mapping (bytes32 => VatIlk)               Int     |-> VatIlk
+          <urns> .Map  </urns> // mapping (bytes32 => (address => VatUrn))  CDPID   |-> VatUrn
+          <gem>  .Map  </gem>  // mapping (bytes32 => (address => uint256)) CDPID   |-> Wad
+          <dai>  .Map  </dai>  // mapping (address => uint256)              Address |-> Rad
+          <sin>  .Map  </sin>  // mapping (address => uint256)              Address |-> Rad
           <debt> 0:Rad </debt> // Total Dai Issued
           <vice> 0:Rad </vice> // Total Unbacked Dai
           <Line> 0:Rad </Line> // Total Debt Ceiling
@@ -134,31 +134,35 @@ This allows us to enforce properties after each step, and restore the old state 
 `Vat.wish ADDRFROM ADDRTO` checks that `ADDRFROM` has granted control to `ADDRTO`.
 `Vat.hope ADDRTO` and `Vat.nope ADDRTO` set and unset `<can>` for `ADDRTO` from `ADDRFROM`.
 **TODO**: Should we assume that each `ADDRTO` already has `<can>` initialized, or inizialize it here if not?
+**TODO**: We always call `wish` with `msg.sender` as second argument, so I've elided it here.
 
 ```k
-    syntax VatStep ::= "wish" Address Address
- // -----------------------------------------
-    rule <k> Vat . wish ADDRFROM ADDRTO => . ... </k>
-      requires ADDRFROM ==K ADDRTO
+    syntax VatStep ::= "wish" Address
+ // ---------------------------------
+    rule <k> Vat . wish ADDRFROM => . ... </k>
+         <msgSender> MSGSENDER </msgSender>
+      requires ADDRFROM ==K MSGSENDER
 
-    rule <k> Vat . wish ADDRFROM ADDRTO => . ... </k>
+    rule <k> Vat . wish ADDRFROM => . ... </k>
+         <msgSender> MSGSENDER </msgSender>
          <can> ... ADDRFROM |-> CANADDRS:Set ... </can>
-      requires ADDRTO in CANADDRS
+      requires MSGSENDER in CANADDRS
 
-    rule <k> Vat . wish ADDRFROM ADDRTO => Vat . exception ... </k>
+    rule <k> Vat . wish ADDRFROM => Vat . exception ... </k>
+         <msgSender> MSGSENDER </msgSender>
          <can> ... ADDRFROM |-> CANADDRS:Set ... </can>
-      requires ADDRFROM =/=K ADDRTO
-       andBool notBool ADDRTO in CANADDRS
+      requires ADDRFROM =/=K MSGSENDER
+       andBool notBool MSGSENDER in CANADDRS
 
     syntax VatStep ::= "hope" Address | "nope" Address
  // --------------------------------------------------
     rule <k> Vat . hope ADDRTO => . ... </k>
-         <msgSender> ADDRFROM </msgSender>
-         <can> ... ADDRFROM |-> (CANADDRS => CANADDRS SetItem(ADDRTO)) ... </can>
+         <msgSender> MSGSENDER </msgSender>
+         <can> ... MSGSENDER |-> (CANADDRS => CANADDRS SetItem(ADDRTO)) ... </can>
 
     rule <k> Vat . nope ADDRTO => . ... </k>
-         <msgSender> ADDRFROM </msgSender>
-         <can> ... ADDRFROM |-> (CANADDRS => CANADDRS -Set SetItem(ADDRTO)) ... </can>
+         <msgSender> MSGSENDER </msgSender>
+         <can> ... MSGSENDER |-> (CANADDRS => CANADDRS -Set SetItem(ADDRTO)) ... </can>
 ```
 
 ### Ilk Initialization
@@ -201,7 +205,7 @@ This allows us to enforce properties after each step, and restore the old state 
 ```k
     syntax VatStep ::= "flux" Int Address Address Wad
  // -------------------------------------------------
-    rule <k> Vat . flux ILKID ADDRFROM ADDRTO COLLATERAL => . ... </k>
+    rule <k> Vat . flux ILKID ADDRFROM ADDRTO COLLATERAL => Vat . wish ADDRFROM ... </k>
          <gem>
            ...
            { ILKID , ADDRFROM } |-> (COLLATERALFROM => COLLATERALFROM -Int COLLATERAL)
@@ -216,7 +220,7 @@ This allows us to enforce properties after each step, and restore the old state 
 ```k
     syntax VatStep ::= "move" Address Address Wad
  // ---------------------------------------------
-    rule <k> Vat . move ADDRFROM ADDRTO DAI => . ... </k>
+    rule <k> Vat . move ADDRFROM ADDRTO DAI => Vat . wish ADDRFROM ... </k>
          <dai>
            ...
            ADDRFROM |-> (DAIFROM => DAIFROM -Int DAI)
@@ -234,7 +238,11 @@ This allows us to enforce properties after each step, and restore the old state 
 ```k
     syntax VatStep ::= "fork" Int Address Address Int Int
  // -----------------------------------------------------
-    rule <k> Vat . fork ILKID ADDRFROM ADDRTO DINK DART => . ... </k>
+    rule <k> Vat . fork ILKID ADDRFROM ADDRTO DINK DART
+          => Vat . wish ADDRFROM
+          ~> Vat . wish ADDRTO
+         ...
+         </k>
          <urns>
            ...
            { ILKID , ADDRFROM } |-> Urn ( INKFROM => INKFROM -Int DINK , ARTFROM => ARTFROM -Int DART )
@@ -327,7 +335,10 @@ This allows us to enforce properties after each step, and restore the old state 
 ```k
     syntax VatStep ::= "frob" Int Address Address Address Int Int
  // -------------------------------------------------------------
-    rule <k> frob ILKID ADDRU ADDRV ADDRW DINK DART => . ... </k>
+    rule <k> frob ILKID ADDRU ADDRV ADDRW DINK DART
+          => Vat . wish ADDRU ~> Vat . wish ADDRV ~> Vat . wish ADDRW
+         ...
+         </k>
          <live> true </live>
          <debt> DEBT => DEBT +Int (RATE *Int DART) </debt>
          <urns>
