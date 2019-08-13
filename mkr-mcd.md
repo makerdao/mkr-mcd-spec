@@ -200,7 +200,7 @@ This allows us to enforce properties after each step, and restore the old state 
 `Vat.flux` transfers collateral between users.
 **TODO**: Is it safe to assume that both users already have that `GEMID` initialized?
           For now, I'm making a call to `Vat.slip { ILKID , ADDRFROM } 0` to initialize to zero if it's not there.
-**TODO**: Should be `note`, `wish`.
+**TODO**: Should be `note`.
 
 ```k
     syntax VatStep ::= "flux" Int Address Address Wad
@@ -215,7 +215,7 @@ This allows us to enforce properties after each step, and restore the old state 
 ```
 
 `Vat.move` transfers Dai between users.
-**TODO**: Should be `note`, `wish`.
+**TODO**: Should be `note`.
 
 ```k
     syntax VatStep ::= "move" Address Address Wad
@@ -233,7 +233,7 @@ This allows us to enforce properties after each step, and restore the old state 
 
 `Vat.fork` splits a given CDP up.
 **TODO**: Factor out `TABFROM == RATE *Int (ARTFROM -Int DART)` and `TABTO == RAT *Int (ARTTO +Int DART)` for requires.
-**TODO**: Should have `note`, `wish`, `safe`, non-`dusty`.
+**TODO**: Should have `note`, `safe`, non-`dusty`.
 
 ```k
     syntax VatStep ::= "fork" Int Address Address Int Int
@@ -330,7 +330,7 @@ This allows us to enforce properties after each step, and restore the old state 
 
 `Vat.frob` "manipulates" the CDP of a given user.
 **TODO**: Factor out `dtab == RATE *Int DART` and `tab == RATE *Int URNART`.
-**TODO**: Should have `note`, `wish{u,v,w}`, `cool`, `firm`, `safe`, `live`.
+**TODO**: Should have `note`, `cool`, `firm`, `safe`, `live`.
 
 ```k
     syntax VatStep ::= "frob" Int Address Address Address Int Int
