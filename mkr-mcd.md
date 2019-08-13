@@ -17,6 +17,7 @@ MCD State
         <k> $PGM:MCDSteps </k>
         <events> .List </events>
         <msgSender> 0:Address </msgSender>
+        <vatStack> .List </vatStack>
         <vat>
           <ward> .Map  </ward> // mapping (address => uint)                (actually a Bool) Int       |-> Bool
           <can>  .Map  </can>  // mapping (address (address => uint))      (actually a Bool) Int, Int  |-> Bool
@@ -40,10 +41,16 @@ Simulations
 Simulations will be sequences of `MCDStep`.
 
 ```k
-    syntax MCDStep
     syntax MCDSteps ::= MCDStep | MCDStep MCDSteps
  // ----------------------------------------------
-    rule <k> MCD:MCDStep MCDS:MCDSteps => MCD ~> MCDS ... </k>
+    rule <k> MCD:MCDStep MCDS:MCDSteps => step [ MCD ] ~> MCDS ... </k>
+```
+
+The `step [_]` operator allows enforcing certain invariants during execution.
+
+```k
+    syntax MCDStep ::= "step" "[" MCDStep "]"
+ // -----------------------------------------
 ```
 
 Vat Semantics
@@ -54,6 +61,42 @@ Vat Semantics
 ```k
     syntax MCDStep ::= "Vat" "." VatStep
  // ------------------------------------
+    rule <k> step [ Vat . VS ] => Vat . push ~> Vat . VS ~> Vat . invariant ~> Vat . catch ... </k>
+```
+
+We can save and restore the current `<vat>` state using `push`, `pop`, and `drop`.
+This allows us to enforce properties after each step, and restore the old state when violated.
+
+```k
+    syntax VatStep ::= "push" | "pop" | "drop"
+ // ------------------------------------------
+    rule <k> Vat . push => . ... </k>
+         <vatStack> (.List => ListItem(VAT)) ... </vatStack>
+         <vat> VAT </vat>
+
+    rule <k> Vat . pop => . ... </k>
+         <vatStack> (ListItem(VAT) => .List) ... </vatStack>
+         <vat> _ => VAT </vat>
+
+    rule <k> Vat . drop => . ... </k>
+         <vatStack> (ListItem(_) => .List) ... </vatStack>
+
+    syntax VatStep ::= "catch" | "exception"
+ // ----------------------------------------
+    rule <k>                     Vat . catch => Vat . drop ... </k>
+    rule <k> Vat . exception ~>  Vat . catch => Vat . pop  ... </k>
+    rule <k> Vat . exception ~> (Vat . VS    => .)         ... </k>
+      requires VS =/=K catch
+```
+
+### Vat Invariant
+
+**TODO**: Extract invariants from implementation.
+
+```k
+    syntax VatStep ::= "invariant"
+ // ------------------------------
+    rule <k> Vat . invariant => . ... </k>
 ```
 
 `Vat.rely ACCOUNT` and `Vat.deny ACCOUNT` toggle `ward [ ACCOUNT ]`.
