@@ -99,6 +99,8 @@ This allows us to enforce properties after each step, and restore the old state 
     rule <k> Vat . invariant => . ... </k>
 ```
 
+### Warding Control
+
 `Vat.rely ACCOUNT` and `Vat.deny ACCOUNT` toggle `ward [ ACCOUNT ]`.
 **TODO**: `Vat.auth` accessing the `<ward>`?
 **TODO**: Should be `auth` and `note`.
@@ -113,6 +115,8 @@ This allows us to enforce properties after each step, and restore the old state 
          <ward> ... ADDR |-> (_ => false) ... </ward>
 ```
 
+### Ilk Initialization
+
 `Vat.init` creates a new `ilk` collateral type.
 **TODO**: Should be `auth` and `note`.
 **TODO**: If the `ILKID` already exists, should it fail?
@@ -125,15 +129,7 @@ This allows us to enforce properties after each step, and restore the old state 
       requires notBool ILKID in_keys(ILKS)
 ```
 
-`Vat.cage` disables access to this instance of MCD.
-**TODO**: Should be `note` and `auth`.
-
-```k
-    syntax VatStep ::= "cage"
- // -------------------------
-    rule <k> Vat . cage => . ... </k>
-         <live> _ => false </live>
-```
+### Transfers
 
 `Vat.slip` updates a users collateral balance.
 **TODO**: Is it ever the case that `GEMS` will not already contain `GEMID`?
@@ -141,12 +137,12 @@ This allows us to enforce properties after each step, and restore the old state 
 **TODO**: Should be `note` and `auth`.
 
 ```k
-    syntax VatStep ::= "slip" CDPID Wad
- // ------------------------------------
-    rule <k> Vat . slip GEMID NEWCOLLATERAL => . ... </k>
+    syntax VatStep ::= "slip" Int Address Wad
+ // -----------------------------------------
+    rule <k> Vat . slip ILKID ADDRTO NEWCOLLATERAL => . ... </k>
          <gem>
            ...
-           GEMID |-> ( COLLATERAL => COLLATERAL +Int NEWCOLLATERAL )
+           { ILKID , ADDRTO } |-> ( COLLATERAL => COLLATERAL +Int NEWCOLLATERAL )
            ...
          </gem>
 ```
@@ -183,37 +179,7 @@ This allows us to enforce properties after each step, and restore the old state 
          </dai>
 ```
 
-`Vat.frob` "manipulates" the CDP of a given user.
-**TODO**: Factor out `dtab == RATE *Int DART` and `tab == RATE *Int URNART`.
-**TODO**: Should have `note`, `wish{u,v,w}`, `cool`, `firm`, `safe`, `live`.
-
-```k
-    syntax VatStep ::= "frob" Int Address Address Address Int Int
- // -------------------------------------------------------------
-    rule <k> frob ILKID ADDRU ADDRV ADDRW DINK DART => . ... </k>
-         <live> true </live>
-         <debt> DEBT => DEBT +Int (RATE *Int DART) </debt>
-         <urns>
-           ...
-           { ILKID , ADDRU } |-> Urn ( INK => INK +Int DINK , URNART => URNART +Int DART )
-           ...
-         </urns>
-         <ilks>
-           ...
-           ILKID |-> Ilk ( ILKART => ILKART +Int DART , RATE , SPOT , LINE , DUST )
-           ...
-         </ilks>
-         <gem>
-           ...
-           { ILKID , ADDRV } |-> ( ILKV => ILKV -Int DINK )
-           ...
-         </gem>
-         <dai>
-           ...
-           USERW |-> ( DAIW => DAIW +Int (RATE *Int DART) )
-           ...
-         </dai>
-```
+### CDP Maintenance
 
 `Vat.fork` splits a given CDP up.
 **TODO**: Factor out `TABFROM == RATE *Int (ARTFROM -Int DART)` and `TABTO == RAT *Int (ARTTO +Int DART)` for requires.
@@ -294,6 +260,50 @@ This allows us to enforce properties after each step, and restore the old state 
          <vice> VICE => VICE +Int AMOUNT </vice>
          <sin> ... ADDRFROM |-> (SIN => SIN +Int AMOUNT) ... </sin>
          <dai> ... ADDRFROM |-> (DAI => DAI +Int AMOUNT) ... </dai>
+```
+
+### CDP Manipulation
+
+`Vat.cage` disables access to this instance of MCD.
+**TODO**: Should be `note` and `auth`.
+
+```k
+    syntax VatStep ::= "cage"
+ // -------------------------
+    rule <k> Vat . cage => . ... </k>
+         <live> _ => false </live>
+```
+
+`Vat.frob` "manipulates" the CDP of a given user.
+**TODO**: Factor out `dtab == RATE *Int DART` and `tab == RATE *Int URNART`.
+**TODO**: Should have `note`, `wish{u,v,w}`, `cool`, `firm`, `safe`, `live`.
+
+```k
+    syntax VatStep ::= "frob" Int Address Address Address Int Int
+ // -------------------------------------------------------------
+    rule <k> frob ILKID ADDRU ADDRV ADDRW DINK DART => . ... </k>
+         <live> true </live>
+         <debt> DEBT => DEBT +Int (RATE *Int DART) </debt>
+         <urns>
+           ...
+           { ILKID , ADDRU } |-> Urn ( INK => INK +Int DINK , URNART => URNART +Int DART )
+           ...
+         </urns>
+         <ilks>
+           ...
+           ILKID |-> Ilk ( ILKART => ILKART +Int DART , RATE , SPOT , LINE , DUST )
+           ...
+         </ilks>
+         <gem>
+           ...
+           { ILKID , ADDRV } |-> ( ILKV => ILKV -Int DINK )
+           ...
+         </gem>
+         <dai>
+           ...
+           USERW |-> ( DAIW => DAIW +Int (RATE *Int DART) )
+           ...
+         </dai>
 ```
 
 `Vat.fold` modifies the debt multiplier and injects Dai for the user.
