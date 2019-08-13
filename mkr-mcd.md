@@ -191,6 +191,7 @@ This allows us to enforce properties after each step, and restore the old state 
     syntax VatStep ::= "frob" Int Address Address Address Int Int
  // -------------------------------------------------------------
     rule <k> frob ILKID ADDRU ADDRV ADDRW DINK DART => . ... </k>
+         <live> true </live>
          <debt> DEBT => DEBT +Int (RATE *Int DART) </debt>
          <urns>
            ...
