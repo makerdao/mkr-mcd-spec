@@ -105,16 +105,8 @@ This allows us to enforce properties after each step, and restore the old state 
          <sin>  SIN      </sin>
       requires DEBT >=Int 0
        andBool VICE >=Int 0
-       andBool sum(values(DAI)) >=Int 0 andBool allPositive(values(DAI))
-       andBool sum(values(SIN)) >=Int 0 andBool allPositive(values(SIN))
-
-    syntax Int ::= sum    ( List       ) [function]
-                 | sumAux ( List , Int ) [function]
- // -----------------------------------------------
-    rule sum(VS) => sumAux(VS, 0)
-
-    rule sumAux((.List         ) , S) => S
-    rule sumAux((ListItem(V) VS) , S) => sumAux(VS, S +Int V)
+       andBool allPositive(values(DAI))
+       andBool allPositive(values(SIN))
 
     syntax Bool ::= allPositive ( List ) [function]
  // -----------------------------------------------
