@@ -96,7 +96,31 @@ This allows us to enforce properties after each step, and restore the old state 
 ```k
     syntax VatStep ::= "invariant"
  // ------------------------------
+    rule <k> Vat . invariant => Vat . exception ... </k> [owise]
+
     rule <k> Vat . invariant => . ... </k>
+         <debt> DEBT:Int </debt>
+         <vice> VICE:Int </vice>
+         <dai>  DAI      </dai>
+         <sin>  SIN      </sin>
+      requires DEBT >=Int 0
+       andBool VICE >=Int 0
+       andBool sum(values(DAI)) >=Int 0 andBool allPositive(values(DAI))
+       andBool sum(values(SIN)) >=Int 0 andBool allPositive(values(SIN))
+
+    syntax Int ::= sum    ( List       ) [function]
+                 | sumAux ( List , Int ) [function]
+ // -----------------------------------------------
+    rule sum(VS) => sumAux(VS, 0)
+
+    rule sumAux((.List         ) , S) => S
+    rule sumAux((ListItem(V) VS) , S) => sumAux(VS, S +Int V)
+
+    syntax Bool ::= allPositive ( List ) [function]
+ // -----------------------------------------------
+    rule allPositive(.List         ) => true
+    rule allPositive(ListItem(V) VS) => false           requires notBool V >=Int 0
+    rule allPositive(ListItem(V) VS) => allPositive(VS) requires         V >=Int 0
 ```
 
 ### Warding Control
