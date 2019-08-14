@@ -61,7 +61,12 @@ Vat Semantics
 ```k
     syntax MCDStep ::= "Vat" "." VatStep
  // ------------------------------------
-    rule <k> step [ Vat . VS ] => Vat . push ~> Vat . VS ~> Vat . invariant ~> Vat . catch ... </k>
+    rule <k> step [ Vat . VAS:VatAuthStep ] => Vat . push ~> Vat . auth ~> Vat . VAS ~> Vat . invariant ~> Vat . catch ... </k>
+    rule <k> step [ Vat . VS              ] => Vat . push ~>               Vat . VS  ~> Vat . invariant ~> Vat . catch ... </k>
+      requires notBool isVatAuthStep(VS)
+
+    syntax VatStep ::= VatAuthStep
+ // ------------------------------
 ```
 
 We can save and restore the current `<vat>` state using `push`, `pop`, and `drop`.
@@ -118,12 +123,22 @@ This allows us to enforce properties after each step, and restore the old state 
 ### Warding Control
 
 `Vat.rely ACCOUNT` and `Vat.deny ACCOUNT` toggle `ward [ ACCOUNT ]`.
-**TODO**: `Vat.auth` accessing the `<ward>`?
-**TODO**: Should be `auth` and `note`.
+`Vat.auth` checks that the given account has been `ward`ed.
+**TODO**: Should be `note`.
 
 ```k
-    syntax VatStep ::= "rely" Address | "deny" Address
- // --------------------------------------------------
+    syntax VatStep ::= "auth"
+ // -------------------------
+    rule <k> Vat . auth => . ... </k>
+         <msgSender> MSGSENDER </msgSender>
+         <ward> ... MSGSENDER |-> true ... </ward>
+
+    rule <k> Vat . auth => Vat . exception ... </k>
+         <msgSender> MSGSENDER </msgSender>
+         <ward> ... MSGSENDER |-> false ... </ward>
+
+    syntax VatAuthStep ::= "rely" Address | "deny" Address
+ // ------------------------------------------------------
     rule <k> Vat . rely ADDR => . ... </k>
          <ward> ... ADDR |-> (_ => true) ... </ward>
 
@@ -168,12 +183,12 @@ This allows us to enforce properties after each step, and restore the old state 
 ### Ilk Initialization
 
 `Vat.init` creates a new `ilk` collateral type.
-**TODO**: Should be `auth` and `note`.
+**TODO**: Should be `note`.
 **TODO**: If the `ILKID` already exists, should it fail?
 
 ```k
-    syntax VatStep ::= "init" Int
- // -----------------------------
+    syntax VatAuthStep ::= "init" Int
+ // ---------------------------------
     rule <k> Vat . init ILKID => . ... </k>
          <ilks> ILKS => ILKS [ ILKID <- ilk_init ] </ilks>
       requires notBool ILKID in_keys(ILKS)
@@ -184,11 +199,11 @@ This allows us to enforce properties after each step, and restore the old state 
 `Vat.slip` updates a users collateral balance.
 **TODO**: Is it ever the case that `GEMS` will not already contain `GEMID`?
           If not, let's add a `_[_] orZero` syntax for doing default map lookup.
-**TODO**: Should be `note` and `auth`.
+**TODO**: Should be `note`.
 
 ```k
-    syntax VatStep ::= "slip" Int Address Wad
- // -----------------------------------------
+    syntax VatAuthStep ::= "slip" Int Address Wad
+ // ---------------------------------------------
     rule <k> Vat . slip ILKID ADDRTO NEWCOLLATERAL => . ... </k>
          <gem>
            ...
@@ -258,12 +273,12 @@ This allows us to enforce properties after each step, and restore the old state 
 
 `Vat.grab` confiscates a given CDP for liquidation.
 **TODO**: Factor out `dtab == RATE *Int DART`.
-**TODO**: Should be `note`, `auth`.
+**TODO**: Should be `note`.
 **TODO**: Looks remarkably similar to `frob`, can we factor out a common smaller change for both?
 
 ```k
-    syntax VatStep ::= "grab" Int Address Address Address Int Int
- // -------------------------------------------------------------
+    syntax VatAuthStep ::= "grab" Int Address Address Address Int Int
+ // -----------------------------------------------------------------
     rule <k> Vat . grab ILKID ADDRU ADDRV ADDRW DINK DART => . ... </k>
          <vice> VICE => VICE -Int (RATE *Int DART) </vice>
          <urns>
@@ -304,11 +319,11 @@ This allows us to enforce properties after each step, and restore the old state 
 ```
 
 `Vat.suck` mints unbacked Dai.
-**TODO**: Should be `auth`.
+**TODO**: Should be `note`.
 
 ```k
-    syntax VatStep ::= "suck" Address Address Rad
- // ---------------------------------------------
+    syntax VatAuthStep ::= "suck" Address Address Rad
+ // -------------------------------------------------
     rule <k> Vat . suck ADDRFROM ADDRTO AMOUNT => . ... </k>
          <debt> DEBT => DEBT +Int AMOUNT </debt>
          <vice> VICE => VICE +Int AMOUNT </vice>
@@ -319,11 +334,11 @@ This allows us to enforce properties after each step, and restore the old state 
 ### CDP Manipulation
 
 `Vat.cage` disables access to this instance of MCD.
-**TODO**: Should be `note` and `auth`.
+**TODO**: Should be `note`.
 
 ```k
-    syntax VatStep ::= "cage"
- // -------------------------
+    syntax VatAuthStep ::= "cage"
+ // -----------------------------
     rule <k> Vat . cage => . ... </k>
          <live> _ => false </live>
 ```
@@ -364,14 +379,14 @@ This allows us to enforce properties after each step, and restore the old state 
 ```
 
 `Vat.fold` modifies the debt multiplier and injects Dai for the user.
-**TODO**: Should be `auth`.
+**TODO**: Should be `note`.
 **TODO**: Only step requiring `<live>` exlpcitely.
 **TODO**: Factor out `RAD == ILKART *Int RATE`.
 **TODO**: Should we be using `RATE` or `ILKRATE +Int RATE`.
 
 ```k
-    syntax VatStep ::= "fold" Int Address Int
- // -----------------------------------------
+    syntax VatAuthStep ::= "fold" Int Address Int
+ // ---------------------------------------------
     rule <k> Vat . fold ILKID ADDRTO RATE => . ... </k>
          <live> true </live>
          <debt> DEBT => DEBT +Int (ILKART *Int RATE) </debt>
