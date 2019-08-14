@@ -42,6 +42,10 @@ Simulations will be sequences of `MCDStep`.
     syntax MCDSteps ::= MCDStep | MCDStep MCDSteps
  // ----------------------------------------------
     rule <k> MCD:MCDStep MCDS:MCDSteps => step [ MCD ] ~> MCDS ... </k>
+
+    syntax MCDStep ::= ".MCDStep"
+ // -----------------------------
+    rule <k> .MCDStep => . ... </k>
 ```
 
 The `step [_]` operator allows enforcing certain invariants during execution.
