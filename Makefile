@@ -35,7 +35,8 @@ export LUA_PATH
 .PHONY: all clean \
         deps deps-k deps-tangle \
         defn defn-llvm defn-haskell \
-        build build-llvm build-haskell
+        build build-llvm build-haskell \
+        test test-python-config
 .SECONDARY:
 
 all: build
@@ -114,3 +115,11 @@ $(haskell_kompiled): $(haskell_files)
 	$(K_BIN)/kompile --debug --main-module $(MAIN_MODULE) --backend haskell                   \
 	                 --syntax-module $(SYNTAX_MODULE) $(DEFN_DIR)/haskell/$(MAIN_DEFN_FILE).k \
 	                 --directory $(DEFN_DIR)/haskell -I $(DEFN_DIR)/haskell
+
+# Test
+# ----
+
+test: test-python-config
+
+test-python-config:
+	./mcd-pyk.py
