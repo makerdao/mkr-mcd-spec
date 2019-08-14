@@ -122,9 +122,9 @@ This allows us to enforce properties after each step, and restore the old state 
 
 ### Warding Control
 
-`Vat.rely ACCOUNT` and `Vat.deny ACCOUNT` toggle `ward [ ACCOUNT ]`.
 `Vat.auth` checks that the given account has been `ward`ed.
-**TODO**: Should be `note`.
+`Vat.rely ACCOUNT` and `Vat.deny ACCOUNT` toggle `ward [ ACCOUNT ]`.
+**TODO**: `rely` and `deny` should be `note`.
 
 ```k
     syntax VatStep ::= "auth"
@@ -149,7 +149,6 @@ This allows us to enforce properties after each step, and restore the old state 
 `Vat.wish ADDRFROM ADDRTO` checks that `ADDRFROM` has granted control to `ADDRTO`.
 `Vat.hope ADDRTO` and `Vat.nope ADDRTO` set and unset `<can>` for `ADDRTO` from `ADDRFROM`.
 **TODO**: Should we assume that each `ADDRTO` already has `<can>` initialized, or inizialize it here if not?
-**TODO**: We always call `wish` with `msg.sender` as second argument, so I've elided it here.
 
 ```k
     syntax VatStep ::= "wish" Address
