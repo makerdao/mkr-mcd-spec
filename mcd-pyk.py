@@ -23,9 +23,6 @@ def krun(inputFile, *krunArgs):
 MKR_MCD_symbols = { }
 ALL_symbols = combineDicts(K_symbols, MKR_MCD_symbols)
 
-# Read in the symbolic configuration
-# configuration = readKastTerm(sys.argv[1])
-
 symbolic_configuration = KApply ( '<generatedTop>' , [ KApply ( '<mkr-mcd>' , [ KApply ( '<k>', [ KVariable('K_CELL') ] )
                                                                               , KApply ( '<msgSender>', [ KVariable('MSGSENDER_CELL') ] )
                                                                               , KApply ( '<vatStack>' , [ KVariable('VATSTACK_CELL')  ] )
