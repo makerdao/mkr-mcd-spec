@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import difflib
 import json
 import sys
 import tempfile
@@ -8,7 +9,7 @@ from functools import reduce
 
 import pyk
 
-from pyk.kast      import combineDicts, appliedLabelStr, constLabel, underbarUnparsing, K_symbols, KApply, KConstant, KSequence, KVariable, KToken
+from pyk.kast      import combineDicts, appliedLabelStr, constLabel, underbarUnparsing, K_symbols, KApply, KConstant, KSequence, KVariable, KToken, _notif, _warning, _fatal
 from pyk.kastManip import substitute, prettyPrintKast
 
 def printerr(msg):
@@ -20,7 +21,9 @@ def kast(inputFile, *kastArgs):
 def krun(inputFile, *krunArgs):
     return pyk.krun('.build/defn/llvm', inputFile, krunArgs = list(krunArgs), kRelease = 'deps/k/k-distribution/target/release/k')
 
-MKR_MCD_symbols = { }
+MKR_MCD_symbols = { '.List'             : constLabel('.List')
+                  , '.MCDStep_MKR-MCD_' : constLabel('.MCDStep')
+                  }
 ALL_symbols = combineDicts(K_symbols, MKR_MCD_symbols)
 
 symbolic_configuration = KApply ( '<generatedTop>' , [ KApply ( '<mkr-mcd>' , [ KApply ( '<k>', [ KVariable('K_CELL') ] )
@@ -66,11 +69,22 @@ init_cells = { 'K_CELL'                 : KSequence([KConstant('.MCDStep_MKR-MCD
 initial_configuration = substitute(symbolic_configuration, init_cells)
 
 if __name__ == '__main__':
-    kast_json = { 'format': 'KAST', 'version': 1, 'term': initial_configuration }
     with tempfile.NamedTemporaryFile(mode = 'w') as tempf:
+        kast_json = { 'format': 'KAST', 'version': 1, 'term': initial_configuration }
         json.dump(kast_json, tempf)
         tempf.flush()
-        (returnCode, _, _) = kast(tempf.name, '--input', 'json', '--output', 'pretty')
+        (returnCode, kastPrinted, _) = kast(tempf.name, '--input', 'json', '--output', 'pretty')
         if returnCode != 0:
-            printerr('[FATAL] kast returned non-zero exit code reading/printing the initial configuration')
+            _fatal('kast returned non-zero exit code reading/printing the initial configuration')
             sys.exit(returnCode)
+
+    fastPrinted = prettyPrintKast(initial_configuration['args'][0], ALL_symbols)
+    _notif('fastPrinted output')
+    print(fastPrinted)
+
+    kastPrinted = kastPrinted.strip()
+    if fastPrinted != kastPrinted:
+        _warning('kastPrinted and fastPrinted differ!')
+        for line in difflib.unified_diff(kastPrinted.split('\n'), fastPrinted.split('\n'), fromfile='kast', tofile='fast', lineterm='\n'):
+            sys.stderr.write(line + '\n')
+        sys.stderr.flush()
