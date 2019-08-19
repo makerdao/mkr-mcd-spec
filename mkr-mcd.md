@@ -20,8 +20,8 @@ MCD State
         <vat>
           <ward> .Map  </ward> // mapping (address => uint)                 Address |-> Bool
           <can>  .Map  </can>  // mapping (address (address => uint))       Address |-> Set
-          <ilks> .Map  </ilks> // mapping (bytes32 => VatIlk)               Int     |-> VatIlk
-          <urns> .Map  </urns> // mapping (bytes32 => (address => VatUrn))  CDPID   |-> VatUrn
+          <ilks> .Map  </ilks> // mapping (bytes32 => Ilk)                  Int     |-> VatIlk
+          <urns> .Map  </urns> // mapping (bytes32 => (address => Urn))     CDPID   |-> VatUrn
           <gem>  .Map  </gem>  // mapping (bytes32 => (address => uint256)) CDPID   |-> Wad
           <dai>  .Map  </dai>  // mapping (address => uint256)              Address |-> Rad
           <sin>  .Map  </sin>  // mapping (address => uint256)              Address |-> Rad
