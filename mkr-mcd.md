@@ -16,6 +16,7 @@ MCD State
       <mkr-mcd>
         <k> $PGM:MCDSteps </k>
         <msgSender> 0:Address </msgSender>
+        <currentTime> 0 </currentTime>
         <vatStack> .List </vatStack>
         <vat>
           <vat-ward> .Map  </vat-ward> // mapping (address => uint)                 Address |-> Bool
@@ -30,6 +31,13 @@ MCD State
           <vat-Line> 0:Rad </vat-Line> // Total Debt Ceiling
           <vat-live> true  </vat-live> // Access Flag
         </vat>
+        <jugStack> .List </jugStack>
+        <jug>
+          <jug-ward> .Map      </jug-ward> // mapping (address => uint)   Address |-> Bool
+          <jug-ilks> .Map      </jug-ilks> // mapping (bytes32 => JugIlk) Int     |-> JugIlk
+          <jug-vow>  0:Address </jug-vow>  //                             Address
+          <jug-base> 0         </jug-base> //                             Int
+        </jug>
       </mkr-mcd>
 ```
 
@@ -53,6 +61,25 @@ The `step [_]` operator allows enforcing certain invariants during execution.
 ```k
     syntax MCDStep ::= "step" "[" MCDStep "]"
  // -----------------------------------------
+```
+
+Different contracts use the same names for external functions, so we declare them here.
+
+```k
+    syntax InitStep ::= "init" Int
+ // ------------------------------
+
+    syntax WardStep ::= "rely" Address | "deny" Address
+ // ---------------------------------------------------
+
+    syntax AuthStep ::= "auth"
+ // --------------------------
+
+    syntax StashStep ::= "push" | "pop" | "drop"
+ // --------------------------------------------
+
+    syntax ExceptionStep ::= "catch" | "exception"
+ // ----------------------------------------------
 ```
 
 Vat Semantics
@@ -96,8 +123,8 @@ We can save and restore the current `<vat>` state using `push`, `pop`, and `drop
 This allows us to enforce properties after each step, and restore the old state when violated.
 
 ```k
-    syntax VatStep ::= "push" | "pop" | "drop"
- // ------------------------------------------
+    syntax VatStep ::= StashStep
+ // ----------------------------
     rule <k> Vat . push => . ... </k>
          <vatStack> (.List => ListItem(<vat> VAT </vat>)) ... </vatStack>
          <vat> VAT </vat>
@@ -109,8 +136,8 @@ This allows us to enforce properties after each step, and restore the old state 
     rule <k> Vat . drop => . ... </k>
          <vatStack> (ListItem(_) => .List) ... </vatStack>
 
-    syntax VatStep ::= "catch" | "exception"
- // ----------------------------------------
+    syntax VatStep ::= ExceptionStep
+ // --------------------------------
     rule <k>                     Vat . catch => Vat . drop ... </k>
     rule <k> Vat . exception ~>  Vat . catch => Vat . pop  ... </k>
     rule <k> Vat . exception ~> (Vat . VS    => .)         ... </k>
@@ -129,8 +156,8 @@ By adjusting the `<vat-ward>`, you can upgrade contracts in place by deploying a
 **TODO**: `rely` and `deny` should be `note`.
 
 ```k
-    syntax VatStep ::= "auth"
- // -------------------------
+    syntax VatStep ::= AuthStep
+ // ---------------------------
     rule <k> Vat . auth => . ... </k>
          <msgSender> MSGSENDER </msgSender>
          <vat-ward> ... MSGSENDER |-> true ... </vat-ward>
@@ -139,8 +166,8 @@ By adjusting the `<vat-ward>`, you can upgrade contracts in place by deploying a
          <msgSender> MSGSENDER </msgSender>
          <vat-ward> ... MSGSENDER |-> false ... </vat-ward>
 
-    syntax VatAuthStep ::= "rely" Address | "deny" Address
- // ------------------------------------------------------
+    syntax VatAuthStep ::= WardStep
+ // -------------------------------
     rule <k> Vat . rely ADDR => . ... </k>
          <vat-ward> ... ADDR |-> (_ => true) ... </vat-ward>
 
@@ -328,8 +355,8 @@ This is quite permissive, and would allow the account to drain all your locked c
 **TODO**: Should be `note`.
 
 ```k
-    syntax VatAuthStep ::= "init" Int
- // ---------------------------------
+    syntax VatAuthStep ::= InitStep
+ // -------------------------------
     rule <k> Vat . init ILKID => . ... </k>
          <vat-ilks> ILKS => ILKS [ ILKID <- ilk_init ] </vat-ilks>
       requires notBool ILKID in_keys(ILKS)
@@ -531,6 +558,83 @@ This is quite permissive, and would allow the account to drain all your locked c
            ADDRU |-> ( DAI => DAI +Int (ILKART *Int RATE) )
            ...
          </vat-dai>
+```
+
+Jug Semantics
+-------------
+
+```k
+    syntax MCDStep ::= "Jug" "." JugStep
+ // ------------------------------------
+    rule <k> step [ Jug . JAS:JugAuthStep ] => Jug . push ~> Jug . auth ~> Jug . JAS ~> Jug . catch ... </k>
+    rule <k> step [ Jug . JS              ] => Jug . push ~>               Jug . JS  ~> Jug . catch ... </k>
+      requires notBool isJugAuthStep(JS)
+
+    syntax JugStep ::= JugAuthStep
+ // ------------------------------
+
+    syntax JugStep ::= StashStep
+ // ----------------------------
+    rule <k> Jug . push => . ... </k>
+         <jugStack> (.List => ListItem(JUG)) ... </jugStack>
+         <jug> JUG </jug>
+
+    rule <k> Jug . pop => . ... </k>
+         <jugStack> (ListItem(JUG) => .List) ... </jugStack>
+         <jug> _ => JUG </jug>
+
+    rule <k> Jug . drop => . ... </k>
+         <jugStack> (ListItem(_) => .List) ... </jugStack>
+```
+
+**TODO**: Should we make cells for call stacks and exceptions?
+```k
+    syntax JugStep ::= ExceptionStep
+ // --------------------------------
+    rule <k>                     Jug . catch => Jug . drop ... </k>
+    rule <k> Jug . exception ~>  Jug . catch => Jug . pop  ... </k>
+    rule <k> Jug . exception ~> (Jug . JS    => .)         ... </k>
+      requires JS =/=K catch
+
+    syntax JugStep ::= AuthStep
+ // ---------------------------
+    rule <k> Jug . auth => . ... </k>
+         <msgSender> MSGSENDER </msgSender>
+         <jug-ward> ... MSGSENDER |-> true ... </jug-ward>
+
+    rule <k> Jug . auth => Jug . exception ... </k>
+         <msgSender> MSGSENDER </msgSender>
+         <jug-ward> ... MSGSENDER |-> false ... </jug-ward>
+
+    syntax JugAuthStep ::= WardStep
+ // -------------------------------
+    rule <k> Jug . rely ADDR => . ... </k>
+         <jug-ward> ... ADDR |-> (_ => true) ... </jug-ward>
+
+    rule <k> Jug . deny ADDR => . ... </k>
+         <jug-ward> ... ADDR |-> (_ => false) ... </jug-ward>
+
+    syntax JugStep ::= InitStep
+ // ---------------------------
+    rule <k> Jug . init ILK => . ... </k>
+         <currentTime> TIME </currentTime>
+         <jug-ilks> ... ILK |-> Ilk ( ILKDUTY => ilk_init, _ => TIME ) ... </jug-ilks>
+      requires ILKDUTY ==Int 0
+
+    rule <k> Jug . init _ => Jug . exception ... </k> [owise]
+```
+
+**TODO**: Add Vat.fold to Jug.drip
+```k
+    syntax JugStep ::= "drip" Int
+ // -----------------------------
+    rule <k> Jug . drip ILK ... </k>
+         <currentTime> TIME </currentTime>
+         <vat-ilks> ... ILK |-> Ilk ( _, ILKRATE, _, _, _ ) ... </vat-ilks>
+         <jug-ilks> ... ILK |-> Ilk ( ILKDUTY, ILKRHO => TIME ) ... </jug-ilks>
+         <jug-vow> ADDRESS </jug-vow>
+         <jug-base> BASE </jug-base>
+      requires TIME >=Int ILKRHO
 ```
 
 ```k
