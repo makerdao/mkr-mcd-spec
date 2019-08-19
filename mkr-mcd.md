@@ -15,7 +15,6 @@ MCD State
     configuration
       <mkr-mcd>
         <k> $PGM:MCDSteps </k>
-        <events> .List </events>
         <msgSender> 0:Address </msgSender>
         <vatStack> .List </vatStack>
         <vat>
@@ -31,7 +30,6 @@ MCD State
           <Line> 0:Rad </Line> // Total Debt Ceiling
           <live> true  </live> // Access Flag
         </vat>
-        <log-events> .List </log-events>
       </mkr-mcd>
 ```
 
@@ -44,6 +42,10 @@ Simulations will be sequences of `MCDStep`.
     syntax MCDSteps ::= MCDStep | MCDStep MCDSteps
  // ----------------------------------------------
     rule <k> MCD:MCDStep MCDS:MCDSteps => step [ MCD ] ~> MCDS ... </k>
+
+    syntax MCDStep ::= ".MCDStep"
+ // -----------------------------
+    rule <k> .MCDStep => . ... </k>
 ```
 
 The `step [_]` operator allows enforcing certain invariants during execution.
