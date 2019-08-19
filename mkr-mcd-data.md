@@ -53,6 +53,7 @@ Product Data
 ------------
 
 -   `VatIlk`: `ART`, `RATE`, `SPOT`, `LINE`, `DUST`.
+-   `JugIlk`: `DUTY`, `RHO`.
 
 `Ilk` is a collateral with certain risk parameters.
 Vat doesn't care about parameters for auctions, so only has stuff like debt ceiling, penalty, etc.
@@ -63,6 +64,9 @@ Getters and setters for `Ilk` should be permissioned, and different combinations
 
 ```k
     syntax VatIlk ::= Ilk ( Wad , Ray , Ray , Rad , Rad ) [klabel(#VatIlk), symbol]
+ // -------------------------------------------------------------------------------
+
+    syntax JugIlk ::= Ilk ( Int, Int )                    [klabel(#JugIlk), symbol]
  // -------------------------------------------------------------------------------
 ```
 
