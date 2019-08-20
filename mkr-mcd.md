@@ -637,13 +637,19 @@ Jug Semantics
 ```k
     syntax JugStep ::= "drip" Int
  // -----------------------------
-    rule <k> Jug . drip ILK ... </k>
+    rule <k> Jug . drip ILK => Vat . fold ILK ADDRESS ( #pow( BASE +Int ILKDUTY, TIME -Int ILKRHO ) *Int ILKRATE ) -Int ILKRATE ... </k>
          <currentTime> TIME </currentTime>
          <vat-ilks> ... ILK |-> Ilk ( _, ILKRATE, _, _, _ ) ... </vat-ilks>
          <jug-ilks> ... ILK |-> Ilk ( ILKDUTY, ILKRHO => TIME ) ... </jug-ilks>
          <jug-vow> ADDRESS </jug-vow>
          <jug-base> BASE </jug-base>
       requires TIME >=Int ILKRHO
+
+    syntax Int ::= #pow ( Int, Int ) [function]
+ // -------------------------------------------
+    rule #pow( X, 0 ) => ilk_init
+    rule #pow( X, 1 ) => X
+    rule #pow( X, N ) => X *Int #pow( X, N -Int 1 ) /Int ilk_init
 ```
 
 ```k
