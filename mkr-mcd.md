@@ -229,20 +229,20 @@ This is quite permissive, and would allow the account to drain all your locked c
 ```k
     syntax VatAuthStep ::= "slip" Int Address Wad
  // ---------------------------------------------
-    rule <k> Vat . slip ILKID ADDRTO NEWCOLLATERAL => . ... </k>
+    rule <k> Vat . slip ILKID ADDRTO NEWCOL => . ... </k>
          <gem>
            ...
-           { ILKID , ADDRTO } |-> ( COLLATERAL => COLLATERAL +Int NEWCOLLATERAL )
+           { ILKID , ADDRTO } |-> ( COL => COL +Int NEWCOL )
            ...
          </gem>
 
     syntax VatStep ::= "flux" Int Address Address Wad
  // -------------------------------------------------
-    rule <k> Vat . flux ILKID ADDRFROM ADDRTO COLLATERAL => Vat . wish ADDRFROM ... </k>
+    rule <k> Vat . flux ILKID ADDRFROM ADDRTO COL => Vat . wish ADDRFROM ... </k>
          <gem>
            ...
-           { ILKID , ADDRFROM } |-> ( COLLATERALFROM => COLLATERALFROM -Int COLLATERAL )
-           { ILKID , ADDRTO   } |-> ( COLLATERALTO   => COLLATERALTO   +Int COLLATERAL )
+           { ILKID , ADDRFROM } |-> ( COLFROM => COLFROM -Int COL )
+           { ILKID , ADDRTO   } |-> ( COLTO   => COLTO   +Int COL )
            ...
          </gem>
 ```
