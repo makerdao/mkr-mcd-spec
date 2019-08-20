@@ -82,6 +82,15 @@ Different contracts use the same names for external functions, so we declare the
  // ----------------------------------------------
 ```
 
+Some methods rely on a timestamp. We simulate that here.
+
+```k
+    syntax MCDStep ::= "TimeStep"
+ // -----------------------------
+    rule <k> TimeStep => . ... </k>
+         <currentTime> TIME => TIME +Int 1 </currentTime>
+```
+
 Vat Semantics
 -------------
 
@@ -616,7 +625,7 @@ Jug Semantics
 
     syntax JugStep ::= InitStep
  // ---------------------------
-    rule <k> Jug . init ILK => . ... </k>
+    rule <k> Jug . init ILK => TimeStep ... </k>
          <currentTime> TIME </currentTime>
          <jug-ilks> ... ILK |-> Ilk ( ILKDUTY => ilk_init, _ => TIME ) ... </jug-ilks>
       requires ILKDUTY ==Int 0
