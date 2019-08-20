@@ -148,10 +148,11 @@ By adjusting the `<ward>`, you can upgrade contracts in place by deploying a new
 
     rule <k> Vat . invariant => . ... </k>
          <debt> DEBT:Int </debt>
+         <Line> LINE:Int </Line>
          <vice> VICE:Int </vice>
          <dai>  DAI      </dai>
          <sin>  SIN      </sin>
-      requires DEBT >=Int 0
+      requires DEBT >=Int 0 andBool DEBT <=Int LINE
        andBool VICE >=Int 0
        andBool allPositive(values(DAI))
        andBool allPositive(values(SIN))
