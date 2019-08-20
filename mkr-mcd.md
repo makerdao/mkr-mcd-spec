@@ -58,7 +58,18 @@ The `step [_]` operator allows enforcing certain invariants during execution.
 Vat Semantics
 -------------
 
-**TODO**: Should the `vat` map state from `address => ...` be stored as a configuration cell `<vats> <vat multiplicity="*" type="Map"> </vat> </vats>`?
+The `Vat` implements the core accounting for MCD, allowing manipulation of `<gem>`, `<urns>`, `<dai>`, and `<sin>` in pre-specified ways.
+
+-   `<gem>`: Locked collateral which can be used for collateralizing debt.
+-   `<urns>`: Collateralized debt positions (CDPs), marking how much collateral is backing a given piece of debt.
+-   `<dai>`: Stable-coin balances.
+-   `<sin>`: Debt balances (anticoin).
+
+Each type of `<gem>` is a `VatIlk`, which is tracked in `<ilks>`.
+A given `ilk` tracks market factors for that collateral, including total debt/collateral, current spot price, maximum debt allowed, and what is considered a dust amount.
+
+When taking a `VatStep` (a step which directly manipulates the `<vat>`), we make sure at the end of execution that any invariants that should hold for the `<vat>` do.
+If any violations are found (eg. someone's balance goes down without a `wish`), then the state is rolled back.
 
 ```k
     syntax MCDStep ::= "Vat" "." VatStep
@@ -96,6 +107,36 @@ This allows us to enforce properties after each step, and restore the old state 
       requires VS =/=K catch
 ```
 
+### Warding Control
+
+`Vat.auth` checks that the given account has been `ward`ed.
+`Vat.rely ACCOUNT` and `Vat.deny ACCOUNT` toggle `ward [ ACCOUNT ]`.
+**TODO**: `rely` and `deny` should be `note`.
+**TODO**: Should we actually model `ward`ing? Sounds like an implementation detail of Ethereum.
+
+Warding allows controlling which versions of a smart contract are allowed to call into this one.
+By adjusting the `<ward>`, you can upgrade contracts in place by deploying a new contract for some part of the MCD system.
+
+```k
+    syntax VatStep ::= "auth"
+ // -------------------------
+    rule <k> Vat . auth => . ... </k>
+         <msgSender> MSGSENDER </msgSender>
+         <ward> ... MSGSENDER |-> true ... </ward>
+
+    rule <k> Vat . auth => Vat . exception ... </k>
+         <msgSender> MSGSENDER </msgSender>
+         <ward> ... MSGSENDER |-> false ... </ward>
+
+    syntax VatAuthStep ::= "rely" Address | "deny" Address
+ // ------------------------------------------------------
+    rule <k> Vat . rely ADDR => . ... </k>
+         <ward> ... ADDR |-> (_ => true) ... </ward>
+
+    rule <k> Vat . deny ADDR => . ... </k>
+         <ward> ... ADDR |-> (_ => false) ... </ward>
+```
+
 ### Vat Invariant
 
 **TODO**: Extract invariants from implementation.
@@ -122,35 +163,13 @@ This allows us to enforce properties after each step, and restore the old state 
     rule allPositive(ListItem(V) VS) => allPositive(VS) requires         V >=Int 0
 ```
 
-### Warding Control
+By setting `<can>` for an account, you are authorizing it to manipulate your `<gem>`, `<dai>`, and `<urns>` directly.
+This is quite permissive, and would allow the account to drain all your locked collateral and assets, for example.
 
-`Vat.auth` checks that the given account has been `ward`ed.
-`Vat.rely ACCOUNT` and `Vat.deny ACCOUNT` toggle `ward [ ACCOUNT ]`.
-**TODO**: `rely` and `deny` should be `note`.
+-   `Vat.wish` checks that the current account has been authorized by the given account to manipulate their positions.
+-   `Vat.nope` and `Vat.hope` toggle the permissions of the current account, adding/removing another account to the authorized account set.
 
-```k
-    syntax VatStep ::= "auth"
- // -------------------------
-    rule <k> Vat . auth => . ... </k>
-         <msgSender> MSGSENDER </msgSender>
-         <ward> ... MSGSENDER |-> true ... </ward>
-
-    rule <k> Vat . auth => Vat . exception ... </k>
-         <msgSender> MSGSENDER </msgSender>
-         <ward> ... MSGSENDER |-> false ... </ward>
-
-    syntax VatAuthStep ::= "rely" Address | "deny" Address
- // ------------------------------------------------------
-    rule <k> Vat . rely ADDR => . ... </k>
-         <ward> ... ADDR |-> (_ => true) ... </ward>
-
-    rule <k> Vat . deny ADDR => . ... </k>
-         <ward> ... ADDR |-> (_ => false) ... </ward>
-```
-
-`Vat.wish ADDRFROM ADDRTO` checks that `ADDRFROM` has granted control to `ADDRTO`.
-`Vat.hope ADDRTO` and `Vat.nope ADDRTO` set and unset `<can>` for `ADDRTO` from `ADDRFROM`.
-**TODO**: Should we assume that each `ADDRTO` already has `<can>` initialized, or inizialize it here if not?
+**NOTE**: It is assumed that `<can>` has already been initialized with the relevant accounts.
 
 ```k
     syntax VatStep ::= "wish" Address
@@ -183,9 +202,9 @@ This allows us to enforce properties after each step, and restore the old state 
 
 ### Ilk Initialization
 
-`Vat.init` creates a new `ilk` collateral type.
+-   `Vat.init` creates a new `ilk` collateral type, failing if the given `ilk` already exists.
+
 **TODO**: Should be `note`.
-**TODO**: If the `ILKID` already exists, should it fail?
 
 ```k
     syntax VatAuthStep ::= "init" Int
@@ -193,13 +212,18 @@ This allows us to enforce properties after each step, and restore the old state 
     rule <k> Vat . init ILKID => . ... </k>
          <ilks> ILKS => ILKS [ ILKID <- ilk_init ] </ilks>
       requires notBool ILKID in_keys(ILKS)
+
+    rule <k> Vat . init ILKID => Vat . exception ... </k>
+         <ilks> ... ILKID |-> _ ... </ilks>
 ```
 
-### Transfers
+### `<gem>` manipulation and transfers
 
-`Vat.slip` updates a users collateral balance.
-**TODO**: Is it ever the case that `GEMS` will not already contain `GEMID`?
-          If not, let's add a `_[_] orZero` syntax for doing default map lookup.
+-   `Vat.slip` updates a users `<gem>` collateral balance for a given `ilk` manually.
+-   `Vat.flux` transfers `<gem>` collateral between users.
+
+**NOTE**: We assume that the given `ilk` for that user has already been initialized.
+
 **TODO**: Should be `note`.
 
 ```k
@@ -211,24 +235,21 @@ This allows us to enforce properties after each step, and restore the old state 
            { ILKID , ADDRTO } |-> ( COLLATERAL => COLLATERAL +Int NEWCOLLATERAL )
            ...
          </gem>
-```
 
-`Vat.flux` transfers collateral between users.
-**TODO**: Is it safe to assume that both users already have that `GEMID` initialized?
-          For now, I'm making a call to `Vat.slip { ILKID , ADDRFROM } 0` to initialize to zero if it's not there.
-**TODO**: Should be `note`.
-
-```k
     syntax VatStep ::= "flux" Int Address Address Wad
  // -------------------------------------------------
     rule <k> Vat . flux ILKID ADDRFROM ADDRTO COLLATERAL => Vat . wish ADDRFROM ... </k>
          <gem>
            ...
-           { ILKID , ADDRFROM } |-> (COLLATERALFROM => COLLATERALFROM -Int COLLATERAL)
-           { ILKID , ADDRTO   } |-> (COLLATERALTO   => COLLATERALTO   +Int COLLATERAL)
+           { ILKID , ADDRFROM } |-> ( COLLATERALFROM => COLLATERALFROM -Int COLLATERAL )
+           { ILKID , ADDRTO   } |-> ( COLLATERALTO   => COLLATERALTO   +Int COLLATERAL )
            ...
          </gem>
 ```
+
+-   `Vat.move`
+
+### `<dai>` manipulation and transfer
 
 `Vat.move` transfers Dai between users.
 **TODO**: Should be `note`.
@@ -250,13 +271,13 @@ This allows us to enforce properties after each step, and restore the old state 
 `Vat.fork` splits a given CDP up.
 **TODO**: Factor out `TABFROM == RATE *Int (ARTFROM -Int DART)` and `TABTO == RAT *Int (ARTTO +Int DART)` for requires.
 **TODO**: Should have `note`, `safe`, non-`dusty`.
+**TODO**: Should we swap `Vat.wish` for `Vat.consent` here?
 
 ```k
     syntax VatStep ::= "fork" Int Address Address Int Int
  // -----------------------------------------------------
     rule <k> Vat . fork ILKID ADDRFROM ADDRTO DINK DART
-          => Vat . wish ADDRFROM
-          ~> Vat . wish ADDRTO
+          => Vat . wish ADDRFROM ~> Vat . wish ADDRTO
          ...
          </k>
          <urns>
