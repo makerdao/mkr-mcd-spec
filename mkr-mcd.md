@@ -63,13 +63,23 @@ The `Vat` implements the core accounting for MCD, allowing manipulation of `<gem
 -   `<gem>`: Locked collateral which can be used for collateralizing debt.
 -   `<urns>`: Collateralized debt positions (CDPs), marking how much collateral is backing a given piece of debt.
 -   `<dai>`: Stable-coin balances.
--   `<sin>`: Debt balances (anticoin).
+-   `<sin>`: Debt balances (anticoin, "negative Dai").
 
-Each type of `<gem>` is a `VatIlk`, which is tracked in `<ilks>`.
-A given `ilk` tracks market factors for that collateral, including total debt/collateral, current spot price, maximum debt allowed, and what is considered a dust amount.
+For convenience, total Dai/Sin are tracked:
 
-When taking a `VatStep` (a step which directly manipulates the `<vat>`), we make sure at the end of execution that any invariants that should hold for the `<vat>` do.
-If any violations are found (eg. someone's balance goes down without a `wish`), then the state is rolled back.
+-   `<debt>`: Total issued `<dai>`.
+-   `<vice>`: Total issued `<sin>`.
+
+### Vat Steps
+
+Updating the `<vat>` happens in phases:
+
+-   Save off the current `<vat>`,
+-   Check if either (i) this step does not need admin authorization or (ii) we are authorized to take this step,
+-   Check that the `Vat.invariant` holds, and
+-   Roll back state on failure.
+
+**TODO**: Should every `notBool isAuthStep` be subject to `Vat . live`?
 
 ```k
     syntax MCDStep ::= "Vat" "." VatStep
@@ -109,13 +119,14 @@ This allows us to enforce properties after each step, and restore the old state 
 
 ### Warding Control
 
-`Vat.auth` checks that the given account has been `ward`ed.
-`Vat.rely ACCOUNT` and `Vat.deny ACCOUNT` toggle `ward [ ACCOUNT ]`.
-**TODO**: `rely` and `deny` should be `note`.
-**TODO**: Should we actually model `ward`ing? Sounds like an implementation detail of Ethereum.
-
 Warding allows controlling which versions of a smart contract are allowed to call into this one.
 By adjusting the `<ward>`, you can upgrade contracts in place by deploying a new contract for some part of the MCD system.
+
+-   `Vat.auth` checks that the given account has been `ward`ed.
+-   `Vat.rely` sets authorization for a user.
+-   `Vat.deny` removes authorization for a user.
+
+**TODO**: `rely` and `deny` should be `note`.
 
 ```k
     syntax VatStep ::= "auth"
@@ -137,16 +148,30 @@ By adjusting the `<ward>`, you can upgrade contracts in place by deploying a new
          <ward> ... ADDR |-> (_ => false) ... </ward>
 ```
 
-### Vat Invariant
+### Deactivation
 
-**TODO**: Extract invariants from implementation.
+-   `Vat.cage` disables access to this instance of MCD.
+
+**TODO**: Should be `note`.
+
+```k
+    syntax VatAuthStep ::= "cage"
+ // -----------------------------
+    rule <k> Vat . cage => . ... </k>
+         <live> _ => false </live>
+```
+
+### Vat Safety Checks
+
+Vat safety is enforced by adding specific checks on the `<vat>` state updates.
+
+-   `Vat.invariant` states basic invariants of the `Vat` quanities and is checked after every `VatStep`.
 
 ```k
     syntax VatStep ::= "invariant"
  // ------------------------------
     rule <k> Vat . invariant => Vat . exception ... </k> [owise]
-
-    rule <k> Vat . invariant => . ... </k>
+    rule <k> Vat . invariant => .               ... </k>
          <debt> DEBT:Int </debt>
          <Line> LINE:Int </Line>
          <vice> VICE:Int </vice>
@@ -201,7 +226,89 @@ This is quite permissive, and would allow the account to drain all your locked c
          <can> ... MSGSENDER |-> (CANADDRS => CANADDRS -Set SetItem(ADDRTO)) ... </can>
 ```
 
-### Ilk Initialization
+-   `Vat.consent` checks whether a transaction was beneficial for a given account, otherwise makes sure that `Vat.wish` is set.
+    This encodes that "rational actors consent to actions which benefit them".
+
+-   `Vat.safe` checks that a given `Urn` of a certain `ilk` is not over-leveraged.
+
+-   `Vat.nondusty` checks that a given `Urn` has either exactly 0 on a non-dusty amount of debt.
+    **TODO**: Currently we use `urnDebt ==Int 0`, whereas Solidity implementation uses `urnArt ==Int 0`.
+              Does it matter? They are equivalent as long as `urnRate =/=Int 0`.
+
+```k
+    syntax VatStep ::= "consent" Int Address
+ // ----------------------------------------
+    rule <k> Vat . consent _     ADDR => Vat . wish ADDR ... </k> [owise]
+    rule <k> Vat . consent ILKID ADDR => .               ... </k>
+         <vatStack>
+           ListItem ( <vat>-fragment
+                        _ _
+                        <ilks> ...   ILKID          |-> ILK' ... </ilks>
+                        <urns> ... { ILKID , ADDR } |-> URN' ... </urns>
+                        <gem>  ... { ILKID , ADDR } |-> COL' ... </gem>
+                        <dai>  ...           ADDR   |-> DAI' ... </dai>
+                        _ _ _ _ _
+                      </vat>-fragment
+                    )
+           ...
+         </vatStack>
+         <vat>
+           <ilks> ...   ILKID          |-> ILK ... </ilks>
+           <urns> ... { ILKID , ADDR } |-> URN ... </urns>
+           <gem>  ... { ILKID , ADDR } |-> COL ... </gem>
+           <dai>  ...           ADDR   |-> DAI ... </dai>
+           ...
+         </vat>
+      requires COL                  <=Int COL'
+       andBool DAI                  <=Int DAI'
+       andBool urnBalance(ILK, URN) <=Int urnBalance(ILK', URN')
+
+    syntax VatStep ::= "less-risky" Int Address
+ // -------------------------------------------
+    rule <k> Vat . less-risky ILKID ADDR => Vat . safe ILKID ADDR ... </k> [owise]
+    rule <k> Vat . less-risky ILKID ADDR => .                     ... </k>
+         <vatStack>
+           ListItem ( <vat>-fragment
+                        _ _
+                        <ilks> ...   ILKID          |-> ILK' ... </ilks>
+                        <urns> ... { ILKID , ADDR } |-> URN' ... </urns>
+                        _ _ _ _ _ _ _
+                      </vat>-fragment
+                    )
+           ...
+         </vatStack>
+         <vat>
+           <ilks> ...   ILKID          |-> ILK ... </ilks>
+           <urns> ... { ILKID , ADDR } |-> URN ... </urns>
+           ...
+         </vat>
+      requires urnBalance(ILK, URN) <=Int urnBalance(ILK', URN')
+
+    syntax VatStep ::= "safe" Int Address
+ // -------------------------------------
+    rule <k> Vat . safe ILKID ADDR => Vat . exception ... </k> [owise]
+    rule <k> Vat . safe ILKID ADDR => .               ... </k>
+         <vat>
+           <ilks> ...   ILKID          |-> ILK ... </ilks>
+           <urns> ... { ILKID , ADDR } |-> URN ... </urns>
+           ...
+         </vat>
+      requires 0 <=Int urnBalance(ILK, URN)
+       andBool urnDebt(ILK, URN) <=Int ilkLine(ILK)
+
+    syntax VatStep ::= "nondusty" Int Address
+ // -----------------------------------------
+    rule <k> Vat . nondusty ILKID ADDR => Vat . exception ... </k> [owise]
+    rule <k> Vat . nondusty ILKID ADDR => .               ... </k>
+         <vat>
+           <ilks> ...   ILKID          |-> ILK ... </ilks>
+           <urns> ... { ILKID , ADDR } |-> URN ... </urns>
+           ...
+         </vat>
+      requires ilkDust(ILK) <=Int urnDebt(ILK, URN) orBool 0 ==Int urnDebt(ILK, URN)
+```
+
+### Ilk Initialization (`<ilks>`)
 
 -   `Vat.init` creates a new `ilk` collateral type, failing if the given `ilk` already exists.
 
@@ -218,14 +325,16 @@ This is quite permissive, and would allow the account to drain all your locked c
          <ilks> ... ILKID |-> _ ... </ilks>
 ```
 
-### `<gem>` manipulation and transfers
+### Collateral manipulation (`<gem>`)
 
--   `Vat.slip` updates a users `<gem>` collateral balance for a given `ilk` manually.
+-   `Vat.slip` adds to a users `<gem>` collateral balance.
 -   `Vat.flux` transfers `<gem>` collateral between users.
 
-**NOTE**: We assume that the given `ilk` for that user has already been initialized.
+    **NOTE**: We assume that the given `ilk` for that user has already been initialized.
 
-**TODO**: Should be `note`.
+    **TODO**: Should be `note`.
+    **TODO**: Should `Vat.slip` use `Vat.consent` or `Vat.wish`?
+    **TODO**: Should `Vat.flux` use `Vat.consent` or `Vat.wish`?
 
 ```k
     syntax VatAuthStep ::= "slip" Int Address Wad
@@ -239,7 +348,10 @@ This is quite permissive, and would allow the account to drain all your locked c
 
     syntax VatStep ::= "flux" Int Address Address Wad
  // -------------------------------------------------
-    rule <k> Vat . flux ILKID ADDRFROM ADDRTO COL => Vat . wish ADDRFROM ... </k>
+    rule <k> Vat . flux ILKID ADDRFROM ADDRTO COL
+          => Vat . wish ADDRFROM
+         ...
+         </k>
          <gem>
            ...
            { ILKID , ADDRFROM } |-> ( COLFROM => COLFROM -Int COL )
@@ -248,17 +360,18 @@ This is quite permissive, and would allow the account to drain all your locked c
          </gem>
 ```
 
--   `Vat.move`
+-   `Vat.move` transfers Dai between users.
 
-### `<dai>` manipulation and transfer
-
-`Vat.move` transfers Dai between users.
-**TODO**: Should be `note`.
+    **TODO**: Should be `note`.
+    **TODO**: Should `Vat.move` use `Vat.consent` or `Vat.wish`?
 
 ```k
     syntax VatStep ::= "move" Address Address Wad
  // ---------------------------------------------
-    rule <k> Vat . move ADDRFROM ADDRTO DAI => Vat . wish ADDRFROM ... </k>
+    rule <k> Vat . move ADDRFROM ADDRTO DAI
+          => Vat . wish ADDRFROM
+         ...
+         </k>
          <dai>
            ...
            ADDRFROM |-> (DAIFROM => DAIFROM -Int DAI)
@@ -267,18 +380,21 @@ This is quite permissive, and would allow the account to drain all your locked c
          </dai>
 ```
 
-### CDP Maintenance
+### CDP Manipulation
 
-`Vat.fork` splits a given CDP up.
-**TODO**: Factor out `TABFROM == RATE *Int (ARTFROM -Int DART)` and `TABTO == RAT *Int (ARTTO +Int DART)` for requires.
-**TODO**: Should have `note`, `safe`, non-`dusty`.
-**TODO**: Should we swap `Vat.wish` for `Vat.consent` here?
+-   `Vat.fork` splits a given CDP up.
+
+    **TODO**: Factor out `TABFROM == RATE *Int (ARTFROM -Int DART)` and `TABTO == RAT *Int (ARTTO +Int DART)` for requires.
+    **TODO**: Should have `note`, `safe`, non-`dusty`.
+    **TODO**: Should `Vat.fork` use `Vat.consent` or `Vat.wish`?
 
 ```k
     syntax VatStep ::= "fork" Int Address Address Int Int
  // -----------------------------------------------------
     rule <k> Vat . fork ILKID ADDRFROM ADDRTO DINK DART
-          => Vat . wish ADDRFROM ~> Vat . wish ADDRTO
+          => Vat . wish           ADDRFROM ~> Vat . wish           ADDRTO
+          ~> Vat . safe     ILKID ADDRFROM ~> Vat . safe     ILKID ADDRTO
+          ~> Vat . nondusty ILKID ADDRFROM ~> Vat . nondusty ILKID ADDRTO
          ...
          </k>
          <urns>
@@ -287,17 +403,14 @@ This is quite permissive, and would allow the account to drain all your locked c
            { ILKID , ADDRTO   } |-> Urn ( INKTO   => INKTO   +Int DINK , ARTTO   => ARTFROM +Int DART )
            ...
          </urns>
-         <ilks>
-           ...
-           ILKID |-> Ilk ( ILKART , RATE , SPOT , LINE , DUST )
-           ...
-         </ilks>
 ```
 
-`Vat.grab` confiscates a given CDP for liquidation.
-**TODO**: Factor out `dtab == RATE *Int DART`.
+-   `Vat.grab` uses collateral from user `V` to burn `<sin>` for user `W` via one of `U`s CDPs.
+-   `Vat.frob` uses collateral from user `V` to mint `<dai>` for user `W` via one of `U`s CDPs.
+
 **TODO**: Should be `note`.
-**TODO**: Looks remarkably similar to `frob`, can we factor out a common smaller change for both?
+**TODO**: Factor out common step of "uses collateral from user `V` via one of `U`s CDPs"?
+**TODO**: Double-check implemented checks for `Vat.frob`.
 
 ```k
     syntax VatAuthStep ::= "grab" Int Address Address Address Int Int
@@ -324,57 +437,13 @@ This is quite permissive, and would allow the account to drain all your locked c
            USERW |-> ( SINW => SINW -Int (RATE *Int DART) )
            ...
          </sin>
-```
 
-`Vat.heal` cancels a users Debt using their Dai.
-**TODO**: Only `VatStep` using `<msgSender>` directly (not via `auth`).
-**TODO**: Should have `note`.
-
-```k
-    syntax VatStep ::= "heal" Rad
- // -----------------------------
-    rule <k> Vat . heal AMOUNT => . ... </k>
-         <msgSender> ADDRFROM </msgSender>
-         <debt> DEBT => DEBT -Int AMOUNT </debt>
-         <vice> VICE => VICE -Int AMOUNT </vice>
-         <sin> ... ADDRFROM |-> (SIN => SIN -Int AMOUNT) ... </sin>
-         <dai> ... ADDRFROM |-> (DAI => DAI -Int AMOUNT) ... </dai>
-```
-
-`Vat.suck` mints unbacked Dai.
-**TODO**: Should be `note`.
-
-```k
-    syntax VatAuthStep ::= "suck" Address Address Rad
- // -------------------------------------------------
-    rule <k> Vat . suck ADDRFROM ADDRTO AMOUNT => . ... </k>
-         <debt> DEBT => DEBT +Int AMOUNT </debt>
-         <vice> VICE => VICE +Int AMOUNT </vice>
-         <sin> ... ADDRFROM |-> (SIN => SIN +Int AMOUNT) ... </sin>
-         <dai> ... ADDRFROM |-> (DAI => DAI +Int AMOUNT) ... </dai>
-```
-
-### CDP Manipulation
-
-`Vat.cage` disables access to this instance of MCD.
-**TODO**: Should be `note`.
-
-```k
-    syntax VatAuthStep ::= "cage"
- // -----------------------------
-    rule <k> Vat . cage => . ... </k>
-         <live> _ => false </live>
-```
-
-`Vat.frob` "manipulates" the CDP of a given user.
-**TODO**: Factor out `dtab == RATE *Int DART` and `tab == RATE *Int URNART`.
-**TODO**: Should have `note`, `cool`, `firm`, `safe`, `live`.
-
-```k
     syntax VatStep ::= "frob" Int Address Address Address Int Int
  // -------------------------------------------------------------
     rule <k> frob ILKID ADDRU ADDRV ADDRW DINK DART
-          => Vat . wish ADDRU ~> Vat . wish ADDRV ~> Vat . wish ADDRW
+          => Vat . consent    ILKID ADDRU ~> Vat . consent ILKID ADDRV ~> Vat . consent ILKID ADDRW
+          ~> Vat . less-risky ILKID ADDRU
+          ~> Vat . nondusty   ILKID ADDRU
          ...
          </k>
          <live> true </live>
@@ -386,7 +455,7 @@ This is quite permissive, and would allow the account to drain all your locked c
          </urns>
          <ilks>
            ...
-           ILKID |-> Ilk ( ILKART => ILKART +Int DART , RATE , SPOT , LINE , DUST )
+           ILKID |-> Ilk ( ILKART => ILKART +Int DART , RATE , ILKSPOT , ILKLINE , DUST )
            ...
          </ilks>
          <gem>
@@ -401,16 +470,42 @@ This is quite permissive, and would allow the account to drain all your locked c
          </dai>
 ```
 
-`Vat.fold` modifies the debt multiplier and injects Dai for the user.
+### Debt/Dai manipulation (`<debt>`, `<dai>`, `<vice>`, `<sin>`)
+
+-   `Vat.heal` cancels a users anticoins `<sin>` using their `<dai>`.
+-   `Vat.suck` mints `<dai>` for user `V` via anticoins `<sin>` for user `U`.
+
+**TODO**: Should have `note`.
+
+```k
+    syntax VatStep ::= "heal" Rad
+ // -----------------------------
+    rule <k> Vat . heal AMOUNT => . ... </k>
+         <msgSender> ADDRFROM </msgSender>
+         <debt> DEBT => DEBT -Int AMOUNT </debt>
+         <vice> VICE => VICE -Int AMOUNT </vice>
+         <sin> ... ADDRFROM |-> (SIN => SIN -Int AMOUNT) ... </sin>
+         <dai> ... ADDRFROM |-> (DAI => DAI -Int AMOUNT) ... </dai>
+
+    syntax VatAuthStep ::= "suck" Address Address Rad
+ // -------------------------------------------------
+    rule <k> Vat . suck ADDRU ADDRV AMOUNT => . ... </k>
+         <debt> DEBT => DEBT +Int AMOUNT </debt>
+         <vice> VICE => VICE +Int AMOUNT </vice>
+         <sin> ... ADDRU |-> (SIN => SIN +Int AMOUNT) ... </sin>
+         <dai> ... ADDRV |-> (DAI => DAI +Int AMOUNT) ... </dai>
+```
+
+### CDP Manipulation
+
+-   `Vat.fold` modifies the debt multiplier for a given ilk having user `U` absort the difference in `<dai>`.
+
 **TODO**: Should be `note`.
-**TODO**: Only step requiring `<live>` exlpcitely.
-**TODO**: Factor out `RAD == ILKART *Int RATE`.
-**TODO**: Should we be using `RATE` or `ILKRATE +Int RATE`.
 
 ```k
     syntax VatAuthStep ::= "fold" Int Address Int
  // ---------------------------------------------
-    rule <k> Vat . fold ILKID ADDRTO RATE => . ... </k>
+    rule <k> Vat . fold ILKID ADDRU RATE => . ... </k>
          <live> true </live>
          <debt> DEBT => DEBT +Int (ILKART *Int RATE) </debt>
          <ilks>
@@ -420,7 +515,7 @@ This is quite permissive, and would allow the account to drain all your locked c
          </ilks>
          <dai>
            ...
-           ADDRTO |-> ( DAI => DAI +Int (ILKART *Int RATE) )
+           ADDRU |-> ( DAI => DAI +Int (ILKART *Int RATE) )
            ...
          </dai>
 ```
