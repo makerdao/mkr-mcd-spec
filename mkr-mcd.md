@@ -424,7 +424,7 @@ This is quite permissive, and would allow the account to drain all your locked c
          </urns>
          <ilks>
            ...
-           ILKID |-> Ilk ( ILKART => ILKART +Int DART , RATE , SPOT , LINE , DUST )
+           ILKID |-> Ilk ( ILKART => ILKART +Int DART , RATE , _ , _ , _ )
            ...
          </ilks>
          <gem>
@@ -455,7 +455,7 @@ This is quite permissive, and would allow the account to drain all your locked c
          </urns>
          <ilks>
            ...
-           ILKID |-> Ilk ( ILKART => ILKART +Int DART , RATE , ILKSPOT , ILKLINE , DUST )
+           ILKID |-> Ilk ( ILKART => ILKART +Int DART , RATE , _ , _ , _ )
            ...
          </ilks>
          <gem>
@@ -510,7 +510,7 @@ This is quite permissive, and would allow the account to drain all your locked c
          <debt> DEBT => DEBT +Int (ILKART *Int RATE) </debt>
          <ilks>
            ...
-           ILKID |-> Ilk ( ILKART , ILKRATE => ILKRATE +Int RATE , SPOT , LINE , DUST )
+           ILKID |-> Ilk ( ILKART , ILKRATE => ILKRATE +Int RATE , _ , _ , _ )
            ...
          </ilks>
          <dai>
