@@ -99,11 +99,11 @@ This allows us to enforce properties after each step, and restore the old state 
     syntax VatStep ::= "push" | "pop" | "drop"
  // ------------------------------------------
     rule <k> Vat . push => . ... </k>
-         <vatStack> (.List => ListItem(VAT)) ... </vatStack>
+         <vatStack> (.List => ListItem(<vat> VAT </vat>)) ... </vatStack>
          <vat> VAT </vat>
 
     rule <k> Vat . pop => . ... </k>
-         <vatStack> (ListItem(VAT) => .List) ... </vatStack>
+         <vatStack> (ListItem(<vat> VAT </vat>) => .List) ... </vatStack>
          <vat> _ => VAT </vat>
 
     rule <k> Vat . drop => . ... </k>
@@ -241,14 +241,13 @@ This is quite permissive, and would allow the account to drain all your locked c
     rule <k> Vat . consent _     ADDR => Vat . wish ADDR ... </k> [owise]
     rule <k> Vat . consent ILKID ADDR => .               ... </k>
          <vatStack>
-           ListItem ( <vat>-fragment
-                        _ _
+           ListItem ( <vat>
                         <ilks> ...   ILKID          |-> ILK' ... </ilks>
                         <urns> ... { ILKID , ADDR } |-> URN' ... </urns>
                         <gem>  ... { ILKID , ADDR } |-> COL' ... </gem>
                         <dai>  ...           ADDR   |-> DAI' ... </dai>
-                        _ _ _ _ _
-                      </vat>-fragment
+                        ...
+                      </vat>
                     )
            ...
          </vatStack>
@@ -268,12 +267,11 @@ This is quite permissive, and would allow the account to drain all your locked c
     rule <k> Vat . less-risky ILKID ADDR => Vat . safe ILKID ADDR ... </k> [owise]
     rule <k> Vat . less-risky ILKID ADDR => .                     ... </k>
          <vatStack>
-           ListItem ( <vat>-fragment
-                        _ _
+           ListItem ( <vat>
                         <ilks> ...   ILKID          |-> ILK' ... </ilks>
                         <urns> ... { ILKID , ADDR } |-> URN' ... </urns>
-                        _ _ _ _ _ _ _
-                      </vat>-fragment
+                        ...
+                      </vat>
                     )
            ...
          </vatStack>
