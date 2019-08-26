@@ -633,12 +633,11 @@ Jug Semantics
     rule <k> Jug . init _ => Jug . exception ... </k> [owise]
 ```
 
-**TODO**: Add Vat.fold to Jug.drip
 ```k
     syntax JugStep ::= "drip" Int
  // -----------------------------
     rule <k> Jug . drip ILK => Vat . fold ILK ADDRESS ( #pow( BASE +Int ILKDUTY, TIME -Int ILKRHO ) *Int ILKRATE ) -Int ILKRATE ... </k>
-         <currentTime> TIME </currentTime>
+         <currentTime> TIME => TIME +Int 1 </currentTime>
          <vat-ilks> ... ILK |-> Ilk ( _, ILKRATE, _, _, _ ) ... </vat-ilks>
          <jug-ilks> ... ILK |-> Ilk ( ILKDUTY, ILKRHO => TIME ) ... </jug-ilks>
          <jug-vow> ADDRESS </jug-vow>
