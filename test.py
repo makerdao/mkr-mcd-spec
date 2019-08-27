@@ -8,7 +8,7 @@ scrape = None
 with open(input_scrape, 'r') as scrape_file:
     scrape = json.load(scrape_file)
 
-vat_functions = [ 'cage' , 'wish' , 'hope' , 'nope' , 'slip' , 'flux' , 'move' , 'fork' , 'grab' , 'frob' , 'heal' , 'suck' , 'fold' ]
+vat_functions = [ 'auth' , 'cage' , 'deny' , 'drip' , 'flux' , 'fold' , 'fork' , 'frob' , 'grab' , 'heal' , 'hope' , 'init' , 'move' , 'nope' , 'rely' , 'slip' , 'suck' , 'wish' ]
 
 calls = []
 for txKey in scrape.keys():
