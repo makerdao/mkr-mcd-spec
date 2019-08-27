@@ -625,7 +625,7 @@ Jug Semantics
 
     syntax JugStep ::= InitStep
  // ---------------------------
-    rule <k> Jug . init ILK => TimeStep ... </k>
+    rule <k> Jug . init ILK ... </k>
          <currentTime> TIME </currentTime>
          <jug-ilks> ... ILK |-> Ilk ( ILKDUTY => ilk_init, _ => TIME ) ... </jug-ilks>
       requires ILKDUTY ==Int 0
@@ -637,12 +637,17 @@ Jug Semantics
     syntax JugStep ::= "drip" Int
  // -----------------------------
     rule <k> Jug . drip ILK => Vat . fold ILK ADDRESS ( #pow( BASE +Int ILKDUTY, TIME -Int ILKRHO ) *Int ILKRATE ) -Int ILKRATE ... </k>
-         <currentTime> TIME => TIME +Int 1 </currentTime>
+         <currentTime> TIME </currentTime>
          <vat-ilks> ... ILK |-> Ilk ( _, ILKRATE, _, _, _ ) ... </vat-ilks>
          <jug-ilks> ... ILK |-> Ilk ( ILKDUTY, ILKRHO => TIME ) ... </jug-ilks>
          <jug-vow> ADDRESS </jug-vow>
          <jug-base> BASE </jug-base>
       requires TIME >=Int ILKRHO
+
+    rule <k> Jug . drip ILK => Jug . exception ... </k>
+         <currentTime> TIME </currentTime>
+         <jug-ilks> ... ILK |-> Ilk ( _, ILKRHO ) ... </jug-ilks>
+      requires TIME <=Int ILKRHO
 
     syntax Int ::= #pow ( Int, Int ) [function]
  // -------------------------------------------
