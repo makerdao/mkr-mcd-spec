@@ -625,7 +625,7 @@ Jug Semantics
 
     syntax JugStep ::= InitStep
  // ---------------------------
-    rule <k> Jug . init ILK ... </k>
+    rule <k> Jug . init ILK => . ... </k>
          <currentTime> TIME </currentTime>
          <jug-ilks> ... ILK |-> Ilk ( ILKDUTY => ilk_init, _ => TIME ) ... </jug-ilks>
       requires ILKDUTY ==Int 0
@@ -647,7 +647,7 @@ Jug Semantics
     rule <k> Jug . drip ILK => Jug . exception ... </k>
          <currentTime> TIME </currentTime>
          <jug-ilks> ... ILK |-> Ilk ( _, ILKRHO ) ... </jug-ilks>
-      requires TIME <=Int ILKRHO
+      requires TIME <Int ILKRHO
 
     syntax Int ::= #pow ( Int, Int ) [function]
  // -------------------------------------------
