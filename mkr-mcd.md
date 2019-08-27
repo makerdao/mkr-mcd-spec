@@ -172,15 +172,30 @@ Vat safety is enforced by adding specific checks on the `<vat>` state updates.
  // ------------------------------
     rule <k> Vat . invariant => Vat . exception ... </k> [owise]
     rule <k> Vat . invariant => .               ... </k>
-         <debt> DEBT:Int </debt>
-         <Line> LINE:Int </Line>
-         <vice> VICE:Int </vice>
-         <dai>  DAI      </dai>
-         <sin>  SIN      </sin>
-      requires DEBT >=Int 0 andBool DEBT <=Int LINE
-       andBool VICE >=Int 0
-       andBool allPositive(values(DAI))
-       andBool allPositive(values(SIN))
+         <vatStack>
+           ListItem ( <vat>
+                        <debt> DEBT:Int </debt>
+                        <Line> LINE:Int </Line>
+                        <vice> VICE:Int </vice>
+                        <dai>  DAI      </dai>
+                        <sin>  SIN      </sin>
+                        ...
+                      </vat>
+                    )
+           ...
+         </vatStack>
+         <vat>
+           <debt> DEBT':Int </debt>
+           <Line> LINE':Int </Line>
+           <vice> VICE':Int </vice>
+           <dai>  DAI'      </dai>
+           <sin>  SIN'      </sin>
+           ...
+         </vat>
+      requires DEBT' >=Int 0 andBool (DEBT' >Int DEBT impliesBool DEBT' <=Int LINE')
+       andBool VICE' >=Int 0
+       andBool allPositive(values(DAI'))
+       andBool allPositive(values(SIN'))
 
     syntax Bool ::= allPositive ( List ) [function]
  // -----------------------------------------------
