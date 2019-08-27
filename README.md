@@ -12,6 +12,7 @@ Useful Links
 -   Useful invariants: <https://hackmd.io/lWCjLs9NSiORaEzaWRJdsQ> (maybe work `take` is out of date)
 -   MCD Documentation: <https://www.notion.so/MCD-Documentation-WIP-2ec33e10c4704243b1c473ec44f42576>
 -   MCD Wiki: <https://github.com/makerdao/dss/wiki/Actions>
+-   MCD 101: <https://github.com/makerdao/developerguides/blob/master/mcd/mcd-101/mcd-101.md>
 
 Potential Properties
 --------------------
