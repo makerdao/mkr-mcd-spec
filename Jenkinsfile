@@ -27,7 +27,7 @@ pipeline {
     stage('Build') {
       steps {
         sh '''
-          make build
+          make build -j4
         '''
       }
     }
