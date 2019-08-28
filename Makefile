@@ -35,11 +35,11 @@ LUA_PATH := $(PANDOC_TANGLE_SUBMODULE)/?.lua;;
 export TANGLER
 export LUA_PATH
 
-.PHONY: all clean                          \
-        deps deps-k deps-tangle deps-media \
-        defn defn-llvm defn-haskell        \
-        build build-llvm build-haskell     \
-        test test-python-config            \
+.PHONY: all clean                                 \
+        deps deps-k deps-tangle deps-media        \
+        defn defn-llvm defn-haskell               \
+        build build-llvm build-haskell build-java \
+        test test-python-config                   \
         media media-sphinx
 .SECONDARY:
 
@@ -80,18 +80,23 @@ LLVM_KOMPILE_OPTS := $(KOMPILE_OPTS) -ccopt -O2
 k_files       = $(MAIN_DEFN_FILE).k mkr-mcd.k mkr-mcd-data.k
 llvm_files    = $(patsubst %,$(DEFN_DIR)/llvm/%,$(k_files))
 haskell_files = $(patsubst %,$(DEFN_DIR)/haskell/%,$(k_files))
+java_files    = $(patsubst %,$(DEFN_DIR)/java/%,$(k_files))
 
 llvm_kompiled    := $(DEFN_DIR)/llvm/$(MAIN_DEFN_FILE)-kompiled/interpreter
 haskell_kompiled := $(DEFN_DIR)/haskell/$(MAIN_DEFN_FILE)-kompiled/definition.kore
+java_kompiled    := $(DEFN_DIR)/java/$(MAIN_DEFN_FILE)-kompiled/timestamp
 
-build: build-llvm build-haskell
+build: build-llvm build-haskell build-java
 build-llvm:    $(llvm_kompiled)
 build-haskell: $(haskell_kompiled)
+build-java:    $(java_kompiled)
 
 # Generate definitions from source files
 
-defn: llvm-defn
-defn-llvm: $(llvm_files)
+defn: defn-llvm defn-haskell defn-java
+defn-llvm:    $(llvm_files)
+defn-haskell: $(haskell_files)
+defn-java:    $(java_files)
 
 $(DEFN_DIR)/llvm/%.k: %.md
 	@echo "==  tangle: $@"
@@ -99,6 +104,11 @@ $(DEFN_DIR)/llvm/%.k: %.md
 	pandoc --from markdown --to "$(TANGLER)" --metadata=code:".k" $< > $@
 
 $(DEFN_DIR)/haskell/%.k: %.md
+	@echo "==  tangle: $@"
+	mkdir -p $(dir $@)
+	pandoc --from markdown --to "$(TANGLER)" --metadata=code:".k" $< > $@
+
+$(DEFN_DIR)/java/%.k: %.md
 	@echo "==  tangle: $@"
 	mkdir -p $(dir $@)
 	pandoc --from markdown --to "$(TANGLER)" --metadata=code:".k" $< > $@
@@ -119,6 +129,14 @@ $(haskell_kompiled): $(haskell_files)
 	$(K_BIN)/kompile --debug --main-module $(MAIN_MODULE) --backend haskell                   \
 	                 --syntax-module $(SYNTAX_MODULE) $(DEFN_DIR)/haskell/$(MAIN_DEFN_FILE).k \
 	                 --directory $(DEFN_DIR)/haskell -I $(DEFN_DIR)/haskell
+
+# Java Backend
+
+$(java_kompiled): $(java_files)
+	@echo "== kompile: $@"
+	$(K_BIN)/kompile --debug --main-module $(MAIN_MODULE) --backend java                   \
+	                 --syntax-module $(SYNTAX_MODULE) $(DEFN_DIR)/java/$(MAIN_DEFN_FILE).k \
+	                 --directory $(DEFN_DIR)/java -I $(DEFN_DIR)/java
 
 # Test
 # ----
