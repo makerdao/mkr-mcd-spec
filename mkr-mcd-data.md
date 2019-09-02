@@ -8,6 +8,7 @@ module MKR-MCD-DATA
     imports BOOL
     imports INT
     imports MAP
+    imports STRING
 ```
 
 Base Data
@@ -30,8 +31,8 @@ Base Data
     syntax Rad ::= Int
  // ------------------
 
-    syntax Address ::= Int
- // ----------------------
+    syntax Address ::= Int | String
+ // -------------------------------
 ```
 
 -   `CDPID`: Identifies a given users `ilk` or `urn`.
