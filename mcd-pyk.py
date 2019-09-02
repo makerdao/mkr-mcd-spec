@@ -21,9 +21,43 @@ def kast(inputFile, *kastArgs):
 def krun(inputFile, *krunArgs):
     return pyk.krun('.build/defn/llvm', inputFile, krunArgs = list(krunArgs), kRelease = 'deps/k/k-distribution/target/release/k')
 
+intToken     = lambda x: KToken(str(x), 'Int')
+boolToken    = lambda x: KToken(str(x).lower(), 'Bool')
+stringToken  = lambda x: KToken('"' + str(x) + '"', 'String')
+hexIntToken  = lambda x: intToken(int(x, 16))
+addressToken = lambda x: hexIntToken(x) if x[0:2] == '0x' else stringToken(x)
+
+unimplimentedToken = lambda x: KToken('UNIMPLEMENTED << ' + str(x) + ' >>', 'K')
+
+def buildArgument(arg):
+    if arg['type'] == 'address':
+        return addressToken(arg['value'])
+    if arg['type'] == 'bytes32':
+        return hexIntToken(arg['value'])
+    if arg['type'] == 'string':
+        return stringToken(arg['value'])
+    else:
+        return unimplimentedToken('type: ' + arg['type'] + ' value: ' + str(arg['value']))
+
+def buildStep(inputCall):
+    contract_name = inputCall['contract_name']
+    function_name = inputCall['function_name']
+    arguments = [buildArgument(arg) for arg in inputCall['inputs']]
+    function_klabel = function_name + '_'.join(['' for i in arguments]) + '_MKR-MCD_'
+    return KApply(contract_name + 'Step', [KApply(function_klabel, arguments)])
+
+vat_functions = [ 'auth' , 'cage_' , 'deny_' , 'drip_' , 'flux____' , 'fold___' , 'fork_____' , 'frob______' , 'grab______' , 'heal_' , 'hope_' , 'init_' , 'move___' , 'nope_' , 'rely_' , 'slip___' , 'suck___' , 'wish_' ]
+vat_functions_without_underbars = [ vFunc.rstrip('_') for vFunc in vat_functions ]
+
 MKR_MCD_symbols = { '.List'             : constLabel('.List')
                   , '.MCDStep_MKR-MCD_' : constLabel('.MCDStep')
+                  , 'MCDSteps'          : underbarUnparsing('__')
+                  , 'VatStep'           : underbarUnparsing('Vat ._')
                   }
+
+for vat_function in vat_functions:
+    MKR_MCD_symbols[vat_function + '_MKR-MCD_'] = underbarUnparsing(vat_function)
+
 ALL_symbols = combineDicts(K_symbols, MKR_MCD_symbols)
 
 symbolic_configuration = KApply ( '<generatedTop>' , [ KApply ( '<mkr-mcd>' , [ KApply ( '<k>', [ KVariable('K_CELL') ] )
@@ -102,3 +136,26 @@ if __name__ == '__main__':
         for line in difflib.unified_diff(kastPrinted.split('\n'), fastPrinted.split('\n'), fromfile='kast', tofile='fast', lineterm='\n'):
             sys.stderr.write(line + '\n')
         sys.stderr.flush()
+
+    if len(sys.argv) > 1:
+        input_scrape = sys.argv[1]
+        scrape = None
+        with open(input_scrape, 'r') as scrape_file:
+            scrape = json.load(scrape_file)
+
+        calls = []
+        for txKey in scrape.keys():
+            if scrape[txKey]['status'] != 'ok':
+                continue
+            tx_result = scrape[txKey]['response']
+            for call in tx_result['calls']:
+                if call['contract_name'] == 'Vat' and call['function_name'] in vat_functions_without_underbars:
+                    call_entry = { 'call' : call , 'state_diffs' : tx_result['state_diffs'] }
+                    calls.append(call_entry)
+
+        for call in calls:
+            if call['call']['contract_name'] == 'Vat':
+                # print(json.dumps(call, indent = 4))
+                step = buildStep(call['call'])
+                # print(step)
+                print(prettyPrintKast(step, ALL_symbols))
