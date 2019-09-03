@@ -166,5 +166,8 @@ $(SPHINX_INDEX): $(SPHINX_FILES)
 	    && $(SPHINX_BUILD) -b dirhtml $(ALLSPHINXOPTS) html   \
 	    && $(SPHINX_BUILD) -b text $(ALLSPHINXOPTS) html/text
 
-$(SPHINX_BUILD_DIR)/%.rst: %.md
+$(SPHINX_BUILD_DIR)/%.rst: %.md $(SPHINX_BUILD_DIR)
 	pandoc --from markdown --to rst $< > $@
+
+$(SPHINX_BUILD_DIR):
+	mkdir -p $@
