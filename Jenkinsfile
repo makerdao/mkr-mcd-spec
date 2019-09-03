@@ -32,10 +32,21 @@ pipeline {
       }
     }
     stage('Test') {
-      steps {
-        sh '''
-          make test
-        '''
+      parallel {
+        stage('Build Configuration') {
+          steps {
+            sh '''
+              make test-python-config
+            '''
+          }
+        }
+        // stage('Run Simple Tests') {
+        //   steps {
+        //     sh '''
+        //       make test-python-run
+        //     '''
+        //   }
+        // }
       }
     }
     stage('Documentation') {
