@@ -43,7 +43,7 @@ pipeline {
         sh '''
           make media
         '''
-        archiveArtifacts artifacts: .build/sphinx-docs.tar
+        archiveArtifacts artifacts: '.build/sphinx-docs.tar'
       }
     }
   }
