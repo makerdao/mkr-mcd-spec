@@ -44,7 +44,7 @@ pipeline {
           make deps-media
           make media
         '''
-        archiveArtifacts artifacts: '.build/sphinx-docs.tar'
+        archiveArtifacts artifacts: '.build/mkr-mcd-rtd.tar'
       }
     }
   }

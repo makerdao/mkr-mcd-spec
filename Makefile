@@ -140,8 +140,7 @@ deps-media: $(K_EDITOR_SUPPORT_SUBMODULE)/submodule.timestamp
 
 SPHINX_OPTS      :=
 SPHINX_BUILD     := sphinx-build
-PAPER            :=
-SPHINX_DIR       := sphinx-docs
+SPHINX_DIR       := mkr-mcd-rtd
 SPHINX_BUILD_DIR := $(BUILD_DIR)/$(SPHINX_DIR)
 SPHINX_INDEX     := $(SPHINX_BUILD_DIR)/html/index.html
 SPHINX_TAR       := $(SPHINX_BUILD_DIR).tar
@@ -149,10 +148,7 @@ SPHINX_TAR       := $(SPHINX_BUILD_DIR).tar
 SPHINX_INCLUDE := README.rst $(k_files:.k=.rst)
 SPHINX_FILES   := $(patsubst %, $(SPHINX_BUILD_DIR)/%, $(SPHINX_INCLUDE))
 
-PAPEROPT_a4     := -D latex_paper_size=a4
-PAPEROPT_letter := -D latex_paper_size=letter
-ALLSPHINXOPTS   := -d ../$(SPHINX_BUILD_DIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINX_OPTS) .
-I18NSPHINXOPTS  := $(PAPEROPT_$(PAPER)) $(SPHINX_OPTS) .
+ALLSPHINXOPTS := -d ../$(SPHINX_BUILD_DIR)/doctrees $(SPHINX_OPTS) .
 
 media-sphinx: $(SPHINX_TAR)
 
