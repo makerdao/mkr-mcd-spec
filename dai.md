@@ -1,13 +1,12 @@
+Dai Token
+=========
+
+The Dai token represents an ERC20 fungible asset reflecting the current state of the vat.
+
 ```k
 requires "kmcd.k"
 
-module DAI-SYNTAX
-
-endmodule
-
 module DAI
-    imports DAI-SYNTAX
-    imports CDP-CORE-SYNTAX
-
+    imports CDP-CORE
 endmodule
 ```

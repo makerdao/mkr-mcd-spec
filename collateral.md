@@ -1,14 +1,15 @@
+Collateral Manipulation
+=======================
+
+This module provides the link between collateral types and the [cdp-core].
+
 ```k
-requires "kmcd-driver.k"
-
-module COLLATERAL-SYNTAX
-
-endmodule
+requires "cdp-core.k"
+requires "dai.k"
 
 module COLLATERAL
-    imports COLLATERAL-SYNTAX
-    imports CDP-CORE-SYNTAX
-    imports KMCD-DRIVER
+    imports CDP-CORE
+    imports DAI
 
 endmodule
 ```

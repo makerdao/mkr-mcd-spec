@@ -1,15 +1,13 @@
+System Stabalizer
+=================
+
+The system stabalizer takes forceful actions to mitigate risk in the MCD system.
+
 ```k
-requires "kmcd-driver.k"
-
-module SYSTEM-STABILIZER-SYNTAX
-
-endmodule
+requires "cdp-core.k"
 
 module SYSTEM-STABILIZER
-    imports KMCD-DRIVER
-    imports SYSTEM-STABILIZER-SYNTAX
-    imports CDP-CORE-SYNTAX
-    imports CONFIG-CELLS
+    imports CDP-CORE
 
 endmodule
 ```

@@ -1,17 +1,19 @@
+KMCD - K Semantics of Multi Collateral Dai
+==========================================
+
+This module combines all sub-modules to model the entire MCD system.
+
 ```k
+requires "kmcd-driver.k"
 requires "cdp-core.k"
 requires "collateral.k"
 requires "dai.k"
-requires "kmcd-driver.k"
-requires "mkr-mcd-data.k"
+requires "kmcd.k"
 requires "rates.k"
-requires "system-stabilizer.k"
+requires "stabalize.k"
 
 module KMCD
-    imports CDP-CORE
     imports COLLATERAL
-    imports DAI
-    imports KMCD-DRIVER
     imports RATES
     imports SYSTEM-STABILIZER
 
@@ -19,10 +21,5 @@ module KMCD
       <kmcd>
         <kmcd-driver/>
       </kmcd>
-
-    syntax MCDSteps ::= MCDStep | MCDStep MCDSteps
-
-    syntax MCDStep ::= ".MCDStep"
-
 endmodule
 ```

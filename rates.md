@@ -1,14 +1,13 @@
+Rate Setting
+============
+
+Rates are set by external oracles, which are modelled here.
+
 ```k
-requires "kmcd-driver.k"
-
-module RATES-SYNTAX
-
-endmodule
+requires "cdp-core.k"
 
 module RATES
-    imports CDP-CORE-SYNTAX
-    imports KMCD-DRIVER
-    imports RATES-SYNTAX
+    imports CDP-CORE
 
 endmodule
 ```
