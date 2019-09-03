@@ -38,5 +38,13 @@ pipeline {
         '''
       }
     }
+    stage('Documentation') {
+      steps {
+        sh '''
+          make media
+        '''
+        archiveArtifacts artifacts: .build/sphinx-docs.tar
+      }
+    }
   }
 }
