@@ -32,11 +32,13 @@ LUA_PATH:=$(PANDOC_TANGLE_SUBMODULE)/?.lua;;
 export TANGLER
 export LUA_PATH
 
-.PHONY: all clean                      \
-        deps deps-k deps-tangle        \
-        defn defn-llvm defn-haskell    \
-        build build-llvm build-haskell \
-        test test-python-config        \
+K_EDITOR_SUPPORT_SUBMODULE:=$(DEPS_DIR)/k-editor-support
+
+.PHONY: all clean                          \
+        deps deps-k deps-tangle deps-media \
+        defn defn-llvm defn-haskell        \
+        build build-llvm build-haskell     \
+        test test-python-config            \
         media media-sphinx
 .SECONDARY:
 
@@ -52,8 +54,9 @@ clean-submodules:
 # ------------
 
 deps: deps-k deps-tangle
-deps-k: $(K_SUBMODULE)/mvn.timestamp
+deps-k:      $(K_SUBMODULE)/mvn.timestamp
 deps-tangle: $(PANDOC_TANGLE_SUBMODULE)/submodule.timestamp
+deps-media:  $(K_EDITOR_SUPPORT_SUBMODULE)/submodule.timestamp
 
 %/submodule.timestamp:
 	@echo "== submodule: $*"
