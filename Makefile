@@ -32,11 +32,12 @@ LUA_PATH:=$(PANDOC_TANGLE_SUBMODULE)/?.lua;;
 export TANGLER
 export LUA_PATH
 
-.PHONY: all clean \
-        deps deps-k deps-tangle \
-        defn defn-llvm defn-haskell \
+.PHONY: all clean                      \
+        deps deps-k deps-tangle        \
+        defn defn-llvm defn-haskell    \
         build build-llvm build-haskell \
-        test test-python-config
+        test test-python-config        \
+        media media-sphinx
 .SECONDARY:
 
 all: build
@@ -123,3 +124,41 @@ test: test-python-config
 
 test-python-config:
 	./mcd-pyk.py
+
+# Media
+# -----
+
+media: media-sphinx
+
+# Sphinx Documentation
+
+SPHINX_OPTS      :=
+SPHINX_BUILD     := sphinx-build
+PAPER            :=
+SPHINX_DIR       := sphinx-docs
+SPHINX_BUILD_DIR := $(BUILD_DIR)/$(SPHINX_DIR)
+SPHINX_INDEX     := $(SPHINX_BUILD_DIR)/html/index.html
+SPHINX_TAR       := $(SPHINX_BUILD_DIR).tar
+
+SPHINX_INCLUDE := README.rst $(k_files:.k=.rst)
+SPHINX_FILES   := $(patsubst %, $(SPHINX_BUILD_DIR)/%, $(SPHINX_INCLUDE))
+
+PAPEROPT_a4     := -D latex_paper_size=a4
+PAPEROPT_letter := -D latex_paper_size=letter
+ALLSPHINXOPTS   := -d ../$(SPHINX_BUILD_DIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINX_OPTS) .
+I18NSPHINXOPTS  := $(PAPEROPT_$(PAPER)) $(SPHINX_OPTS) .
+
+media-sphinx: $(SPHINX_TAR)
+
+$(SPHINX_TAR): $(SPHINX_INDEX)
+	tar --directory $(BUILD_DIR) --create --verbose --file $@ $(SPHINX_DIR)
+
+$(SPHINX_INDEX): $(SPHINX_FILES)
+	mkdir -p $(SPHINX_BUILD_DIR)
+	cp -r media/sphinx-docs/* $(SPHINX_BUILD_DIR)/
+	cd $(SPHINX_BUILD_DIR)                                    \
+	    && $(SPHINX_BUILD) -b dirhtml $(ALLSPHINXOPTS) html   \
+	    && $(SPHINX_BUILD) -b text $(ALLSPHINXOPTS) html/text
+
+$(SPHINX_BUILD_DIR)/%.rst: %.md
+	pandoc --from markdown --to rst $< > $@
