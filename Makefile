@@ -59,12 +59,10 @@ deps-k:      $(K_SUBMODULE)/mvn.timestamp
 deps-tangle: $(PANDOC_TANGLE_SUBMODULE)/submodule.timestamp
 
 %/submodule.timestamp:
-	@echo "== submodule: $*"
 	git submodule update --init --recursive -- $*
 	touch $@
 
 $(K_SUBMODULE)/mvn.timestamp: $(K_SUBMODULE)/submodule.timestamp
-	@echo "== building: $*"
 	cd $(K_SUBMODULE) && mvn package -DskipTests
 	touch $(K_SUBMODULE)/mvn.timestamp
 
@@ -99,24 +97,20 @@ defn-haskell: $(haskell_files)
 defn-java:    $(java_files)
 
 $(DEFN_DIR)/llvm/%.k: %.md
-	@echo "==  tangle: $@"
 	mkdir -p $(dir $@)
 	pandoc --from markdown --to "$(TANGLER)" --metadata=code:".k" $< > $@
 
 $(DEFN_DIR)/haskell/%.k: %.md
-	@echo "==  tangle: $@"
 	mkdir -p $(dir $@)
 	pandoc --from markdown --to "$(TANGLER)" --metadata=code:".k" $< > $@
 
 $(DEFN_DIR)/java/%.k: %.md
-	@echo "==  tangle: $@"
 	mkdir -p $(dir $@)
 	pandoc --from markdown --to "$(TANGLER)" --metadata=code:".k" $< > $@
 
 # LLVM Backend
 
 $(llvm_kompiled): $(llvm_files)
-	@echo "== kompile: $@"
 	$(K_BIN)/kompile --debug --main-module $(MAIN_MODULE) --backend llvm                   \
 	                 --syntax-module $(SYNTAX_MODULE) $(DEFN_DIR)/llvm/$(MAIN_DEFN_FILE).k \
 	                 --directory $(DEFN_DIR)/llvm -I $(DEFN_DIR)/llvm                      \
@@ -125,7 +119,6 @@ $(llvm_kompiled): $(llvm_files)
 # Haskell Backend
 
 $(haskell_kompiled): $(haskell_files)
-	@echo "== kompile: $@"
 	$(K_BIN)/kompile --debug --main-module $(MAIN_MODULE) --backend haskell                   \
 	                 --syntax-module $(SYNTAX_MODULE) $(DEFN_DIR)/haskell/$(MAIN_DEFN_FILE).k \
 	                 --directory $(DEFN_DIR)/haskell -I $(DEFN_DIR)/haskell
@@ -133,7 +126,6 @@ $(haskell_kompiled): $(haskell_files)
 # Java Backend
 
 $(java_kompiled): $(java_files)
-	@echo "== kompile: $@"
 	$(K_BIN)/kompile --debug --main-module $(MAIN_MODULE) --backend java                   \
 	                 --syntax-module $(SYNTAX_MODULE) $(DEFN_DIR)/java/$(MAIN_DEFN_FILE).k \
 	                 --directory $(DEFN_DIR)/java -I $(DEFN_DIR)/java
