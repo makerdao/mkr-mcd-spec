@@ -23,6 +23,7 @@ K_EDITOR_SUPPORT_SUBMODULE := $(DEPS_DIR)/k-editor-support
 K_RELEASE := $(K_SUBMODULE)/k-distribution/target/release/k
 K_BIN     := $(K_RELEASE)/bin
 K_LIB     := $(K_RELEASE)/lib
+export K_RELEASE
 
 PATH := $(K_BIN):$(PATH)
 export PATH
@@ -35,11 +36,11 @@ LUA_PATH := $(PANDOC_TANGLE_SUBMODULE)/?.lua;;
 export TANGLER
 export LUA_PATH
 
-.PHONY: all clean                          \
-        deps deps-k deps-tangle deps-media \
-        defn defn-llvm defn-haskell        \
-        build build-llvm build-haskell     \
-        test test-python-config            \
+.PHONY: all clean                                 \
+        deps deps-k deps-tangle deps-media        \
+        defn defn-llvm defn-haskell               \
+        build build-llvm build-haskell build-java \
+        test test-python-config test-python-run   \
         media media-sphinx
 .SECONDARY:
 
@@ -59,12 +60,10 @@ deps-k:      $(K_SUBMODULE)/mvn.timestamp
 deps-tangle: $(PANDOC_TANGLE_SUBMODULE)/submodule.timestamp
 
 %/submodule.timestamp:
-	@echo "== submodule: $*"
 	git submodule update --init --recursive -- $*
 	touch $@
 
 $(K_SUBMODULE)/mvn.timestamp: $(K_SUBMODULE)/submodule.timestamp
-	@echo "== building: $*"
 	cd $(K_SUBMODULE) && mvn package -DskipTests
 	touch $(K_SUBMODULE)/mvn.timestamp
 
@@ -77,56 +76,86 @@ MAIN_DEFN_FILE    := mkr-mcd
 KOMPILE_OPTS      ?=
 LLVM_KOMPILE_OPTS := $(KOMPILE_OPTS) -ccopt -O2
 
-k_files       = $(MAIN_DEFN_FILE).k mkr-mcd.k mkr-mcd-data.k
-llvm_files    = $(patsubst %,$(DEFN_DIR)/llvm/%,$(k_files))
-haskell_files = $(patsubst %,$(DEFN_DIR)/haskell/%,$(k_files))
+k_files := $(MAIN_DEFN_FILE).k mkr-mcd.k mkr-mcd-data.k
 
-llvm_kompiled    := $(DEFN_DIR)/llvm/$(MAIN_DEFN_FILE)-kompiled/interpreter
-haskell_kompiled := $(DEFN_DIR)/haskell/$(MAIN_DEFN_FILE)-kompiled/definition.kore
+llvm_dir    := $(DEFN_DIR)/llvm
+haskell_dir := $(DEFN_DIR)/haskell
+java_dir    := $(DEFN_DIR)/java
 
-build: build-llvm build-haskell
+llvm_files    := $(patsubst %,$(llvm_dir)/%,$(k_files))
+haskell_files := $(patsubst %,$(haskell_dir)/%,$(k_files))
+java_files    := $(patsubst %,$(java_dir)/%,$(k_files))
+
+llvm_kompiled    := $(llvm_dir)/$(MAIN_DEFN_FILE)-kompiled/interpreter
+haskell_kompiled := $(haskell_dir)/$(MAIN_DEFN_FILE)-kompiled/definition.kore
+java_kompiled    := $(java_dir)/$(MAIN_DEFN_FILE)-kompiled/timestamp
+
+build: build-llvm build-haskell build-java
 build-llvm:    $(llvm_kompiled)
 build-haskell: $(haskell_kompiled)
+build-java:    $(java_kompiled)
 
 # Generate definitions from source files
 
-defn: llvm-defn
-defn-llvm: $(llvm_files)
+defn: defn-llvm defn-haskell defn-java
+defn-llvm:    $(llvm_files)
+defn-haskell: $(haskell_files)
+defn-java:    $(java_files)
 
-$(DEFN_DIR)/llvm/%.k: %.md
-	@echo "==  tangle: $@"
-	mkdir -p $(dir $@)
+$(llvm_dir)/%.k: %.md $(llvm_dir)
 	pandoc --from markdown --to "$(TANGLER)" --metadata=code:".k" $< > $@
 
-$(DEFN_DIR)/haskell/%.k: %.md
-	@echo "==  tangle: $@"
-	mkdir -p $(dir $@)
+$(haskell_dir)/%.k: %.md $(haskell_dir)
 	pandoc --from markdown --to "$(TANGLER)" --metadata=code:".k" $< > $@
+
+$(java_dir)/%.k: %.md $(java_dir)
+	pandoc --from markdown --to "$(TANGLER)" --metadata=code:".k" $< > $@
+
+$(llvm_dir):
+	mkdir -p $@
+
+$(haskell_dir):
+	mkdir -p $@
+
+$(java_dir):
+	mkdir -p $@
 
 # LLVM Backend
 
 $(llvm_kompiled): $(llvm_files)
-	@echo "== kompile: $@"
-	$(K_BIN)/kompile --debug --main-module $(MAIN_MODULE) --backend llvm                   \
-	                 --syntax-module $(SYNTAX_MODULE) $(DEFN_DIR)/llvm/$(MAIN_DEFN_FILE).k \
-	                 --directory $(DEFN_DIR)/llvm -I $(DEFN_DIR)/llvm                      \
+	$(K_BIN)/kompile --debug --main-module $(MAIN_MODULE) --backend llvm              \
+	                 --syntax-module $(SYNTAX_MODULE) $(llvm_dir)/$(MAIN_DEFN_FILE).k \
+	                 --directory $(llvm_dir) -I $(llvm_dir)                           \
 	                 $(LLVM_KOMPILE_OPTS)
 
 # Haskell Backend
 
 $(haskell_kompiled): $(haskell_files)
-	@echo "== kompile: $@"
-	$(K_BIN)/kompile --debug --main-module $(MAIN_MODULE) --backend haskell                   \
-	                 --syntax-module $(SYNTAX_MODULE) $(DEFN_DIR)/haskell/$(MAIN_DEFN_FILE).k \
-	                 --directory $(DEFN_DIR)/haskell -I $(DEFN_DIR)/haskell
+	$(K_BIN)/kompile --debug --main-module $(MAIN_MODULE) --backend haskell              \
+	                 --syntax-module $(SYNTAX_MODULE) $(haskell_dir)/$(MAIN_DEFN_FILE).k \
+	                 --directory $(haskell_dir) -I $(haskell_dir)
+
+# Java Backend
+
+$(java_kompiled): $(java_files)
+	$(K_BIN)/kompile --debug --main-module $(MAIN_MODULE) --backend java              \
+	                 --syntax-module $(SYNTAX_MODULE) $(java_dir)/$(MAIN_DEFN_FILE).k \
+	                 --directory $(java_dir) -I $(java_dir)
 
 # Test
 # ----
 
-test: test-python-config
+test: test-python-config test-python-run
 
 test-python-config:
 	./mcd-pyk.py
+
+test-python-run: deps/sneak-tx-tracking/results.json
+	./mcd-pyk.py $<
+
+deps/sneak-tx-tracking/results.json:
+	rm -rf deps/sneak-tx-tracking
+	git clone 'ssh://github.com/makerdao/sneak-tx-tracking' deps/sneak-tx-tracking
 
 # Media
 # -----
