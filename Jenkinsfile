@@ -42,9 +42,10 @@ pipeline {
       steps {
         sh '''
           make deps-media
-          make media
+          make .build/mkr-mcd-rtd.tar
+          cp .build/mkr-mcd-rtd.tar ./
         '''
-        archiveArtifacts artifacts: '.build/mkr-mcd-rtd.tar'
+        archiveArtifacts artifacts: 'mkr-mcd-rtd.tar'
       }
     }
   }
