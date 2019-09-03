@@ -37,7 +37,7 @@ def buildArgument(arg):
     if arg['type'] == 'string':
         return stringToken(arg['value'])
     else:
-        return unimplimentedToken('type: ' + arg['type'] + ' value: ' + str(arg['value']))
+        return unimplimentedToken('buildArgument: ' + str(arg))
 
 def buildStep(inputCall):
     contract_name = inputCall['contract_name']
