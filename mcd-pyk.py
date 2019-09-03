@@ -16,10 +16,10 @@ def printerr(msg):
     sys.stderr.write(msg + '\n')
 
 def kast(inputFile, *kastArgs):
-    return pyk.kast('.build/defn/llvm', inputFile, kastArgs = list(kastArgs), kRelease = 'deps/k/k-distribution/target/release/k')
+    return pyk.kast('.build/defn/llvm', inputFile, kastArgs = list(kastArgs))
 
 def krun(inputFile, *krunArgs):
-    return pyk.krun('.build/defn/llvm', inputFile, krunArgs = list(krunArgs), kRelease = 'deps/k/k-distribution/target/release/k')
+    return pyk.krun('.build/defn/llvm', inputFile, krunArgs = list(krunArgs))
 
 intToken     = lambda x: KToken(str(x), 'Int')
 boolToken    = lambda x: KToken(str(x).lower(), 'Bool')
