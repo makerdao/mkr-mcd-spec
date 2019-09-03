@@ -4,7 +4,7 @@ Dai Token
 The Dai token represents an ERC20 fungible asset reflecting the current state of the vat.
 
 ```k
-requires "kmcd.k"
+requires "kmcd-driver.k"
 
 module DAI
     imports KMCD-DRIVER
@@ -13,14 +13,18 @@ module DAI
     configuration
       <dai>
         <dai-stack> .List </dai-stack>
-        <dai-coin>
+        <dai-state>
           <dai-ward>        .Map </dai-ward>        // mapping (address => uint)                      Address |-> Bool
           <dai-totalSupply> 0    </dai-totalSupply>
-          <dai-balanceOf>   .Map </dai-balanceOf>   // mapping (address => uint)                      Address |-> Int
+          <dai-account-id>  0    </dai-account-id>
+          <dai-balance>     .Map </dai-balance>     // mapping (address => uint)                      Address |-> Int
           <dai-allowance>   .Map </dai-allowance>   // mapping (address => mapping (address => uint))
           <dai-nonce>       .Map </dai-nonce>       // mapping (address => uint)                      Address |-> Int
-        </dai-coin>
+        </dai-state>
       </dai>
+
+    syntax AllowanceAddress ::= "{" Address "->" Address "}"
+ // --------------------------------------------------------
 
     syntax MCDStep ::= "Dai" "." DaiStep
  // ------------------------------------
@@ -45,12 +49,65 @@ module DAI
 
     syntax DaiStep ::= "transfer" Address Wad
  // -----------------------------------------
+    rule <k> Dai . transfer ACCOUNT_SRC AMOUNT => . ... </k>
+         <msg-sender> ACCOUNT_SRC </msg-sender>
+         <dai-balance>
+           ...
+           ACCOUNT_SRC |-> BALANCE_SRC
+           ...
+         </dai-balance>
+      requires BALANCE_SRC >=Int AMOUNT
+
+    rule <k> Dai . transfer ACCOUNT_DST AMOUNT => . ... </k>
+         <msg-sender> ACCOUNT_SRC </msg-sender>
+         <dai-balance>
+           ...
+           ACCOUNT_SRC |-> BALANCE_SRC => BALANACE_SRC -Int AMOUNT
+           ACCOUNT_DST |-> BALANCE_SRC => BALANACE_SRC +Int AMOUNT
+           ...
+         </dai-balance>
+      requires ACCOUNT_SRC =/=K ACCOUNT_DST
+       andBool BALANCE_SRC >=Int AMOUNT
+
+    rule <k> Dai . transfer _ _ => Dai . exception ... </k> [owise]
 
     syntax DaiStep ::= "transferFrom" Address Address Wad
  // -----------------------------------------------------
+    rule <k> Dai . transferFrom ACCOUNT_SRC ACCOUNT_SRC AMOUNT => . ... </k>
+         <dai-balance>
+           ...
+           ACCOUNT_SRC |-> BALANCE_SRC
+           ...
+         </dai-balance>
+      requires BALANCE_SRC >=Int AMOUNT
+
+    rule <k> Dai . transferFrom ACCOUNT_SRC ACCOUNT_DST AMOUNT => . ... </k>
+         <dai-balance>
+          ...
+          ACCOUNT_SRC |-> BALANCE_SRC -Int AMOUNT
+          ACCOUNT_DST |-> BALANCE_DST +Int AMOUNT
+          ...
+        </dai-balance>
+        <dai-allowance>
+          ...
+          { ACCOUNT_SRC -> ACCOUNT_DST } |-> ALLOWANCE_SRC_DST
+          ...
+        </dai-allowance>
+      requires ACCOUNT_SRC =/=K ACCOUNT_DST
+       andBool BALANCE_SRC       >=Int AMOUNT
+       andBool (ALLOWANCE_SRC_DST >=Int AMOUNT orBool ALLOWANCE_SRC_DST ==Int -1)
+
+    rule <k> Dai . transferFrom _ _ => Dai . exception ... </k> [owise]
 
     syntax DaiStep ::= "mint" Address Wad
  // -------------------------------------
+    rule <k> Dai . mint ACCOUNT_DST AMOUNT => . ... </k>
+         <dai-supply> DAI_SUPPLY => DAI_SUPPLY +Int AMOUNT </dai-supply>
+         <dai-balance>
+          ...
+          ACCOUNT_DST |-> BALANCE_DST +Int AMOUNT
+          ...
+        </dai-balance>
 
     syntax DaiStep ::= "burn" Address Wad
  // -------------------------------------
