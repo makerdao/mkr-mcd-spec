@@ -41,6 +41,7 @@ pipeline {
     stage('Documentation') {
       steps {
         sh '''
+          make deps-media
           make media
         '''
         archiveArtifacts artifacts: '.build/sphinx-docs.tar'

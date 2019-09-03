@@ -57,7 +57,6 @@ clean-submodules:
 deps: deps-k deps-tangle
 deps-k:      $(K_SUBMODULE)/mvn.timestamp
 deps-tangle: $(PANDOC_TANGLE_SUBMODULE)/submodule.timestamp
-deps-media:  $(K_EDITOR_SUPPORT_SUBMODULE)/submodule.timestamp
 
 %/submodule.timestamp:
 	@echo "== submodule: $*"
@@ -133,6 +132,9 @@ test-python-config:
 # -----
 
 media: media-sphinx
+
+deps-media: $(K_EDITOR_SUPPORT_SUBMODULE)/submodule.timestamp
+	cd $(K_EDITOR_SUPPORT_SUBMODULE)/pygments && python3 setup.py install --user
 
 # Sphinx Documentation
 
