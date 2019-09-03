@@ -143,19 +143,20 @@ if __name__ == '__main__':
         with open(input_scrape, 'r') as scrape_file:
             scrape = json.load(scrape_file)
 
-        calls = []
+        txs = []
         for txKey in scrape.keys():
+            # TODO: handle all txs
             if scrape[txKey]['status'] != 'ok':
                 continue
             tx_result = scrape[txKey]['response']
-            for call in tx_result['calls']:
-                if call['contract_name'] == 'Vat' and call['function_name'] in vat_functions_without_underbars:
-                    call_entry = { 'call' : call , 'state_diffs' : tx_result['state_diffs'] }
-                    calls.append(call_entry)
+            tx_calls = [ call for call in tx_result['calls'] if call['contract_name'] == 'Vat' and call['function_name'] in vat_functions_without_underbars ]
+            if len(tx_calls) > 0:
+                txs.append({ 'calls': tx_calls, 'state_diffs': tx_result['state_diffs'] })
 
-        for call in calls:
-            if call['call']['contract_name'] == 'Vat':
-                # print(json.dumps(call, indent = 4))
-                step = buildStep(call['call'])
-                # print(step)
-                print(prettyPrintKast(step, ALL_symbols))
+        for tx in txs:
+            print()
+            print()
+            _notif("calls")
+            print([ prettyPrintKast(buildStep(call), ALL_symbols) for call in tx['calls'] ])
+            _notif("state diff")
+            print(tx['state_diffs'])

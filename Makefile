@@ -39,7 +39,7 @@ export LUA_PATH
         deps deps-k deps-tangle deps-media        \
         defn defn-llvm defn-haskell               \
         build build-llvm build-haskell build-java \
-        test test-python-config                   \
+        test test-python-config test-python-run   \
         media media-sphinx
 .SECONDARY:
 
@@ -144,10 +144,17 @@ $(java_kompiled): $(java_files)
 # Test
 # ----
 
-test: test-python-config
+test: test-python-config test-python-run
 
 test-python-config:
 	./mcd-pyk.py
+
+test-python-run: deps/sneak-tx-tracking/results.json
+	./mcd-pyk.py $<
+
+deps/sneak-tx-tracking/results.json:
+	rm -rf deps/sneak-tx-tracking
+	git clone 'ssh://github.com/makerdao/sneak-tx-tracking' deps/sneak-tx-tracking
 
 # Media
 # -----
