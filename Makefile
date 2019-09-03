@@ -76,7 +76,7 @@ MAIN_DEFN_FILE    := kmcd
 KOMPILE_OPTS      ?=
 LLVM_KOMPILE_OPTS := $(KOMPILE_OPTS) -ccopt -O2
 
-k_files := $(MAIN_DEFN_FILE).k kmcd.k kmcd-driver.k cdp-core.k system-stabilizer.k collateral.k rates.k dai.k mkr-mcd-data.k
+k_files := $(MAIN_DEFN_FILE).k kmcd.k kmcd-driver.k cdp-core.k system-stabilizer.k collateral.k rates.k dai.k
 
 llvm_dir    := $(DEFN_DIR)/llvm
 haskell_dir := $(DEFN_DIR)/haskell
