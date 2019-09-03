@@ -6,3 +6,7 @@
     path = deps/k
     url = https://github.com/kframework/k
     ignore = untracked
+[submodule "deps/k-editor-support"]
+    path = deps/k-editor-support
+    url = https://github.com/kframework/k-editor-support
+    ignore = untracked

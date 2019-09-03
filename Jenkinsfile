@@ -38,5 +38,15 @@ pipeline {
         '''
       }
     }
+    stage('Documentation') {
+      steps {
+        sh '''
+          make deps-media
+          make .build/mkr-mcd-rtd.tar
+          cp .build/mkr-mcd-rtd.tar ./
+        '''
+        archiveArtifacts artifacts: 'mkr-mcd-rtd.tar'
+      }
+    }
   }
 }
