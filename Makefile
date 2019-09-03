@@ -163,7 +163,7 @@ $(SPHINX_INDEX): $(SPHINX_FILES)
 	    && $(SPHINX_BUILD) -b text $(ALLSPHINXOPTS) html/text
 
 $(SPHINX_BUILD_DIR)/%.rst: %.md $(SPHINX_BUILD_DIR)
-	pandoc --from markdown --to rst $< > $@
+	pandoc --from markdown --to rst $< | sed 's/.. code::/.. code-block::/' > $@
 
 $(SPHINX_BUILD_DIR):
 	mkdir -p $@
