@@ -87,7 +87,7 @@ Vat CDP State
 
 ```k
     configuration
-      <mkr-mcd>
+      <cdp-core>
         <vatStack> .List </vatStack>
         <vat>
           <vat-ward> .Map  </vat-ward> // mapping (address => uint)                 Address |-> Bool
@@ -109,7 +109,7 @@ Vat CDP State
           <jug-vow>  0:Address </jug-vow>  //                             Address
           <jug-base> 0         </jug-base> //                             Int
         </jug>
-      </mkr-mcd>
+      </cdp-core>
 ```
 
 Simulations

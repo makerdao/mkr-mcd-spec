@@ -20,6 +20,7 @@ module KMCD
     configuration
       <kmcd>
         <kmcd-driver/>
+        <cdp-core/>
       </kmcd>
 endmodule
 ```
