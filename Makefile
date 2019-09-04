@@ -70,9 +70,10 @@ $(K_SUBMODULE)/mvn.timestamp: $(K_SUBMODULE)/submodule.timestamp
 # Building
 # --------
 
-MAIN_MODULE       := KMCD
-SYNTAX_MODULE     := $(MAIN_MODULE)
-MAIN_DEFN_FILE    := kmcd
+MAIN_MODULE    := KMCD
+SYNTAX_MODULE  := $(MAIN_MODULE)
+MAIN_DEFN_FILE := kmcd
+
 KOMPILE_OPTS      ?=
 LLVM_KOMPILE_OPTS := $(KOMPILE_OPTS) -ccopt -O2
 
