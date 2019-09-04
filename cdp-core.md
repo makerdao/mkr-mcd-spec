@@ -155,7 +155,7 @@ Updating the `<vat>` happens in phases:
 
 -   Save off the current `<vat>`,
 -   Check if either (i) this step does not need admin authorization or (ii) we are authorized to take this step,
--   Check that the `Vat.invariant` holds, and
+-   Check that the `Vat.check` holds, and
 -   Roll back state on failure.
 
 **TODO**: Should every `notBool isAuthStep` be subject to `Vat . live`?
@@ -163,8 +163,8 @@ Updating the `<vat>` happens in phases:
 ```k
     syntax MCDStep ::= "Vat" "." VatStep
  // ------------------------------------
-    rule <k> step [ Vat . VAS:VatAuthStep ] => Vat . push ~> Vat . auth ~> Vat . VAS ~> Vat . invariant ~> Vat . catch ... </k>
-    rule <k> step [ Vat . VS              ] => Vat . push ~>               Vat . VS  ~> Vat . invariant ~> Vat . catch ... </k>
+    rule <k> step [ Vat . VAS:VatAuthStep ] => Vat . push ~> Vat . auth ~> Vat . VAS ~> Vat . check ~> Vat . catch ... </k>
+    rule <k> step [ Vat . VS              ] => Vat . push ~>               Vat . VS  ~> Vat . check ~> Vat . catch ... </k>
       requires notBool isVatAuthStep(VS)
 
     syntax VatStep ::= VatAuthStep
@@ -244,13 +244,13 @@ By adjusting the `<vat-ward>`, you can upgrade contracts in place by deploying a
 
 Vat safety is enforced by adding specific checks on the `<vat>` state updates.
 
--   `Vat.invariant` states basic invariants of the `Vat` quanities and is checked after every `VatStep`.
+-   `Vat.check` states basic properties of the `Vat` quanities and is checked after every `VatStep`.
 
 ```k
-    syntax VatStep ::= "invariant"
- // ------------------------------
-    rule <k> Vat . invariant => Vat . exception ... </k> [owise]
-    rule <k> Vat . invariant => .               ... </k>
+    syntax VatStep ::= "check"
+ // --------------------------
+    rule <k> Vat . check => Vat . exception ... </k> [owise]
+    rule <k> Vat . check => .               ... </k>
          <vatStack>
            ListItem ( <vat>
                         <vat-debt> DEBT:Int </vat-debt>
