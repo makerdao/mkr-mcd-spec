@@ -10,7 +10,7 @@ requires "collateral.k"
 requires "dai.k"
 requires "kmcd.k"
 requires "rates.k"
-requires "stabalize.k"
+requires "stabilize.k"
 
 module KMCD
     imports COLLATERAL
