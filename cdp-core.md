@@ -30,6 +30,7 @@ Some useful constants come up:
 
 -   `VatIlk`: `ART`, `RATE`, `SPOT`, `LINE`, `DUST`.
 -   `JugIlk`: `DUTY`, `RHO`.
+-   `CatIlk`: `FLIP`, `CHOP`, `LUMP`
 
 `Ilk` is a collateral with certain risk parameters.
 Vat doesn't care about parameters for auctions, so only has stuff like debt ceiling, penalty, etc.
@@ -43,6 +44,9 @@ Getters and setters for `Ilk` should be permissioned, and different combinations
  // -------------------------------------------------------------------------------
 
     syntax JugIlk ::= Ilk ( Int, Int )                    [klabel(#JugIlk), symbol]
+ // -------------------------------------------------------------------------------
+
+    syntax CatIlk ::= Ilk ( Address, Int, Int )           [klabel(#CatIlk), symbol]
  // -------------------------------------------------------------------------------
 ```
 
@@ -109,6 +113,12 @@ Vat CDP State
           <jug-vow>  0:Address </jug-vow>  //                             Address
           <jug-base> 0         </jug-base> //                             Int
         </jug>
+        <catStack> .List </catStack>
+        <cat>
+          <cat-ward> .Map </cat-ward>
+          <cat-ilks> .Map </cat-ilks>
+          <cat-live> 0    </cat-live>
+        </cat>
       </cdp-core>
 ```
 
@@ -234,8 +244,8 @@ By adjusting the `<vat-ward>`, you can upgrade contracts in place by deploying a
 **TODO**: Should be `note`.
 
 ```k
-    syntax VatAuthStep ::= "cage"
- // -----------------------------
+    syntax VatAuthStep ::= "cage" [klabel(#VatCage), symbol]
+ // --------------------------------------------------------
     rule <k> Vat . cage => . ... </k>
          <vat-live> _ => false </vat-live>
 ```
@@ -697,6 +707,38 @@ Jug Semantics
     rule #pow( X, 0 ) => ilk_init
     rule #pow( X, 1 ) => X
     rule #pow( X, N ) => X *Int #pow( X, N -Int 1 ) /Int ilk_init
+```
+
+Cat Semantics
+-------------
+
+```k
+    syntax MCDStep ::= "Cat" "." CatStep
+ // ------------------------------------
+
+    syntax CatStep ::= CatAuthStep
+ // ------------------------------
+
+    syntax CatAuthStep ::= AuthStep
+ // -------------------------------
+
+    syntax CatAuthStep ::= WardStep
+ // -------------------------------
+
+    syntax CatAuthStep ::= "init" Address
+ // -------------------------------------
+
+    syntax CatStep ::= StashStep
+ // ----------------------------
+
+    syntax CatStep ::= ExceptionStep
+ // --------------------------------
+
+    syntax CatStep ::= "bite" Int Address
+ // -------------------------------------
+
+    syntax CatStep ::= "cage" [klabel(#CatCage), symbol]
+ // ----------------------------------------------------
 ```
 
 ```k
