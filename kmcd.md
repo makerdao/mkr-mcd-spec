@@ -8,12 +8,14 @@ requires "kmcd-driver.k"
 requires "cdp-core.k"
 requires "collateral.k"
 requires "dai.k"
-requires "kmcd.k"
 requires "rates.k"
 requires "stabilize.k"
 
 module KMCD
+    imports CDP-CORE
     imports COLLATERAL
+    imports DAI
+    imports KMCD-DRIVER
     imports RATES
     imports SYSTEM-STABILIZER
 
@@ -21,6 +23,7 @@ module KMCD
       <kmcd>
         <kmcd-driver/>
         <cdp-core/>
+        <dai/>
       </kmcd>
 endmodule
 ```

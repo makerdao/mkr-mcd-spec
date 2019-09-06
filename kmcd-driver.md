@@ -6,6 +6,7 @@ This module defines common state and control flow between all the other KMCD mod
 ```k
 module KMCD-DRIVER
     imports BOOL
+    imports BYTES
     imports INT
     imports MAP
     imports STRING
