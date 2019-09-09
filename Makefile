@@ -103,23 +103,17 @@ defn-llvm:    $(llvm_files)
 defn-haskell: $(haskell_files)
 defn-java:    $(java_files)
 
-$(llvm_dir)/%.k: %.md $(llvm_dir)
+$(llvm_dir)/%.k: %.md
+	@mkdir -p $(llvm_dir)
 	pandoc --from markdown --to "$(TANGLER)" --metadata=code:".k" $< > $@
 
-$(haskell_dir)/%.k: %.md $(haskell_dir)
+$(haskell_dir)/%.k: %.md
+	@mkdir -p $(haskell_dir)
 	pandoc --from markdown --to "$(TANGLER)" --metadata=code:".k" $< > $@
 
-$(java_dir)/%.k: %.md $(java_dir)
+$(java_dir)/%.k: %.md
+	@mkdir -p $(java_dir)
 	pandoc --from markdown --to "$(TANGLER)" --metadata=code:".k" $< > $@
-
-$(llvm_dir):
-	mkdir -p $@
-
-$(haskell_dir):
-	mkdir -p $@
-
-$(java_dir):
-	mkdir -p $@
 
 # LLVM Backend
 
@@ -186,14 +180,12 @@ $(SPHINX_TAR): $(SPHINX_INDEX)
 	tar --directory $(BUILD_DIR) --create --verbose --file $@ $(SPHINX_DIR)
 
 $(SPHINX_INDEX): $(SPHINX_FILES)
-	mkdir -p $(SPHINX_BUILD_DIR)
+	@mkdir -p $(SPHINX_BUILD_DIR)
 	cp -r media/sphinx-docs/* $(SPHINX_BUILD_DIR)/
 	cd $(SPHINX_BUILD_DIR)                                    \
 	    && $(SPHINX_BUILD) -b dirhtml $(ALLSPHINXOPTS) html   \
 	    && $(SPHINX_BUILD) -b text $(ALLSPHINXOPTS) html/text
 
-$(SPHINX_BUILD_DIR)/%.rst: %.md $(SPHINX_BUILD_DIR)
+$(SPHINX_BUILD_DIR)/%.rst: %.md
+	@mkdir -p $(SPHINX_BUILD_DIR)
 	pandoc --from markdown --to rst $< | sed 's/.. code::/.. code-block::/' > $@
-
-$(SPHINX_BUILD_DIR):
-	mkdir -p $@
