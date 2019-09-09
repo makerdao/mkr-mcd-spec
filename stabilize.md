@@ -23,6 +23,18 @@ module SYSTEM-STABILIZER
           <flop-kicks> 0   </flop-kicks>
           <flop-live>  0   </flop-live>
         </flop>
+        <vowStack> .List </vowStack>
+        <vow>
+          <vow-ward>  .Map </vow-ward> // mapping (address => uint)    Address |-> Bool
+          <vow-sins>  .Map </vow-sins> // mapping (uint256 => uint256) Int     |-> Int
+          <vow-sin>   0    </vow-sin>
+          <vow-ash>   0    </vow-ash>
+          <vow-wait>  0    </vow-wait>
+          <vow-sump>  0    </vow-sump>
+          <vow-bump>  0    </vow-bump>
+          <vow-hump>  0    </vow-hump>
+          <vow-live>  0    </vow-live>
+        </vow>
       </stabilize>
 ```
 
@@ -112,6 +124,57 @@ Flop Semantics
 
     syntax FlopStep ::= "yank" Int
  // ------------------------------
+```
 
+Vow Semantics
+-------------
+
+```k
+    syntax MCDStep ::= "Vow" "." VowStep
+ // ------------------------------------
+
+    syntax VowStep ::= VowAuthStep
+ // ------------------------------
+
+    syntax VowAuthStep ::= AuthStep
+ // -------------------------------
+
+    syntax VowAuthStep ::= WardStep
+ // -------------------------------
+
+    syntax VowAuthStep ::= "init" Address Address Address
+ // -----------------------------------------------------
+
+    syntax VowStep ::= StashStep
+ // ----------------------------
+
+    syntax VowStep ::= ExceptionStep
+ // --------------------------------
+
+    syntax VowStep ::= "fess" Int
+ // -----------------------------
+
+    syntax VowStep ::= "flog" Int
+ // -----------------------------
+
+    syntax VowStep ::= "heal" Rad
+ // -----------------------------
+
+    syntax VowStep ::= "kiss" Rad
+ // -----------------------------
+
+ // TODO: "flop" and "flap" seem to conflict with the config cell names
+ // syntax VowStep ::= "flop"
+ // -------------------------
+
+ // syntax VowStep ::= "flap"
+ // -------------------------
+
+    syntax VowStep ::= "cage"
+ // -------------------------
+
+```
+
+```k
 endmodule
 ```
