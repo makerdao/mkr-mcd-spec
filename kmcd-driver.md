@@ -73,6 +73,26 @@ Base Data
  // -------------------------------
 ```
 
+Constants
+---------
+
+```k
+    syntax Int ::= "ilk_init"
+ // -------------------------
+    rule ilk_init => 1000000000000000000000000000 [macro]
+```
+
+Math Functions
+--------------
+
+```k
+    syntax Int ::= #pow ( Int, Int ) [function]
+ // -------------------------------------------
+    rule #pow( X, 0 ) => ilk_init
+    rule #pow( X, 1 ) => X
+    rule #pow( X, N ) => X *Int #pow( X, N -Int 1 ) /Int ilk_init
+```
+
 ```k
 endmodule
 ```
