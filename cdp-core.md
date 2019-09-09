@@ -23,6 +23,7 @@ CDP Data
 -   `VatIlk`: `ART`, `RATE`, `SPOT`, `LINE`, `DUST`.
 -   `JugIlk`: `DUTY`, `RHO`.
 -   `CatIlk`: `FLIP`, `CHOP`, `LUMP`
+-   `SpotIlk`: `MAT`
 
 `Ilk` is a collateral with certain risk parameters.
 Vat doesn't care about parameters for auctions, so only has stuff like debt ceiling, penalty, etc.
@@ -39,6 +40,9 @@ Getters and setters for `Ilk` should be permissioned, and different combinations
  // -------------------------------------------------------------------------------
 
     syntax CatIlk ::= Ilk ( Address, Int, Int )           [klabel(#CatIlk), symbol]
+ // -------------------------------------------------------------------------------
+
+    syntax SpotIlk ::= Ilk ( Int )                       [klabel(#SpotIlk), symbol]
  // -------------------------------------------------------------------------------
 ```
 
@@ -111,6 +115,12 @@ Vat CDP State
           <cat-ilks> .Map </cat-ilks>
           <cat-live> 0    </cat-live>
         </cat>
+        <spotStack> .List </spotStack>
+        <spot>
+          <spot-ward> .Map </spot-ward> // mapping (address => uint) Address |-> Bool
+          <spot-ilk>  .Map </spot-ilk>  // mapping (bytes32 => ilk)  Int     |-> SpotIlk
+          <spot-par>  0    </spot-par>
+        </spot>
       </cdp-core>
 ```
 
@@ -725,6 +735,36 @@ Cat Semantics
 
     syntax CatStep ::= "cage" [klabel(#CatCage), symbol]
  // ----------------------------------------------------
+```
+
+Spot Semantics
+--------------
+
+```k
+    syntax MCDStep ::= "Spot" "." SpotStep
+ // --------------------------------------
+
+    syntax SpotStep ::= SpotAuthStep
+ // --------------------------------
+
+    syntax SpotAuthStep ::= AuthStep
+ // --------------------------------
+
+    syntax SpotAuthStep ::= WardStep
+ // --------------------------------
+
+    syntax SpotAuthStep ::= "init" Address
+ // --------------------------------------
+
+    syntax SpotStep ::= StashStep
+ // -----------------------------
+
+    syntax SpotStep ::= ExceptionStep
+ // ---------------------------------
+
+    syntax SpotStep ::= "poke" Int
+ // ------------------------------
+
 ```
 
 ```k
