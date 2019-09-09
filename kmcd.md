@@ -25,6 +25,7 @@ module KMCD
         <cdp-core/>
         <dai/>
         <stabilize/>
+        <collateral/>
       </kmcd>
 endmodule
 ```
