@@ -24,6 +24,7 @@ module KMCD
         <kmcd-driver/>
         <cdp-core/>
         <dai/>
+        <stabilize/>
       </kmcd>
 endmodule
 ```
