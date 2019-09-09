@@ -26,6 +26,7 @@ module KMCD
         <dai/>
         <stabilize/>
         <collateral/>
+        <rates/>
       </kmcd>
 endmodule
 ```
