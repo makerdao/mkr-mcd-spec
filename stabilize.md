@@ -42,8 +42,8 @@ Flap Semantics
 --------------
 
 ```k
-    syntax Bid ::= Bid ( Int, Int, Address, Int, Int )
- // --------------------------------------------------
+    syntax Bid ::= Bid ( Int, Int, Address, Int, Int ) [klabel(BidBid)]
+ // -------------------------------------------------------------------
 
     syntax MCDStep ::= "Flap" "." FlapStep
  // --------------------------------------
