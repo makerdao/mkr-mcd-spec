@@ -13,6 +13,7 @@ module COLLATERAL
 
     configuration
       <collateral>
+        <flipStack> .List </flipStack>
         <flip>
           <flip-ward> .Map </flip-ward> // mapping (address => uint) Address |-> Bool
           <flip-bids> .Map </flip-bids> // mapping (uint => Bid)     Int     |-> Bid

@@ -11,18 +11,20 @@ module SYSTEM-STABILIZER
 
     configuration
       <stabilize>
-        <flap>
+        <flapStack> .List </flapStack>
+        <flapState>
           <flap-ward> .Map </flap-ward>  // mapping (address => uint) Address |-> Bool
           <flap-bids> .Map </flap-bids>  // mapping (uint => Bid)     Int     |-> Bid
           <flap-kicks> 0   </flap-kicks>
           <flap-live>  0   </flap-live>
-        </flap>
-        <flop>
+        </flapState>
+        <flopStack> .List </flopStack>
+        <flopState>
           <flop-ward> .Map </flop-ward>  // mapping (address => uint) Address |-> Bool
           <flop-bids> .Map </flop-bids>  // mapping (uint => Bid)     Int     |-> Bid
           <flop-kicks> 0   </flop-kicks>
           <flop-live>  0   </flop-live>
-        </flop>
+        </flopState>
         <vowStack> .List </vowStack>
         <vow>
           <vow-ward>  .Map </vow-ward> // mapping (address => uint)    Address |-> Bool
@@ -163,11 +165,10 @@ Vow Semantics
     syntax VowStep ::= "kiss" Rad
  // -----------------------------
 
- // TODO: "flop" and "flap" seem to conflict with the config cell names
- // syntax VowStep ::= "flop"
+    syntax VowStep ::= "flop"
  // -------------------------
 
- // syntax VowStep ::= "flap"
+    syntax VowStep ::= "flap"
  // -------------------------
 
     syntax VowStep ::= "cage"
