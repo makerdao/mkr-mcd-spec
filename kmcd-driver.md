@@ -94,6 +94,9 @@ Base Data
 
     syntax Address ::= Int | String
  // -------------------------------
+
+    syntax Value ::= Int | ".Value"
+ // -------------------------------
 ```
 
 Constants
