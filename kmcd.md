@@ -18,7 +18,15 @@ module KMCD
     imports KMCD-DRIVER
     imports RATES
     imports SYSTEM-STABILIZER
+```
 
+**TODO**: This is a HACK to get us past unparsing issues with `mcd-pyk.py`.
+
+```k
+    imports K-TERM
+```
+
+```k
     configuration
       <kmcd>
         <kmcd-driver/>
