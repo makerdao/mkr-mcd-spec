@@ -8,7 +8,6 @@ requires "kmcd-driver.k"
 
 module DAI
     imports KMCD-DRIVER
-    imports CDP-CORE
 
     configuration
       <dai>
@@ -46,6 +45,7 @@ module DAI
 
     syntax DaiStep ::= ExceptionStep
  // --------------------------------
+    rule <k> Dai . _:DaiStep => Dai . exception ... </k> [owise]
 
     syntax DaiStep ::= "transfer" Address Wad
  // -----------------------------------------
@@ -62,14 +62,12 @@ module DAI
          <msg-sender> ACCOUNT_SRC </msg-sender>
          <dai-balance>
            ...
-           ACCOUNT_SRC |-> BALANCE_SRC => BALANACE_SRC -Int AMOUNT
-           ACCOUNT_DST |-> BALANCE_SRC => BALANACE_SRC +Int AMOUNT
+           ACCOUNT_SRC |-> (BALANCE_SRC => BALANCE_SRC -Int AMOUNT)
+           ACCOUNT_DST |-> (BALANCE_SRC => BALANCE_SRC +Int AMOUNT)
            ...
          </dai-balance>
       requires ACCOUNT_SRC =/=K ACCOUNT_DST
        andBool BALANCE_SRC >=Int AMOUNT
-
-    rule <k> Dai . transfer _ _ => Dai . exception ... </k> [owise]
 
     syntax DaiStep ::= "transferFrom" Address Address Wad
  // -----------------------------------------------------
@@ -84,28 +82,41 @@ module DAI
     rule <k> Dai . transferFrom ACCOUNT_SRC ACCOUNT_DST AMOUNT => . ... </k>
          <dai-balance>
           ...
-          ACCOUNT_SRC |-> BALANCE_SRC -Int AMOUNT
-          ACCOUNT_DST |-> BALANCE_DST +Int AMOUNT
+          ACCOUNT_SRC |-> (BALANCE_SRC => BALANCE_SRC -Int AMOUNT)
+          ACCOUNT_DST |-> (BALANCE_DST => BALANCE_DST +Int AMOUNT)
           ...
         </dai-balance>
         <dai-allowance>
           ...
-          { ACCOUNT_SRC -> ACCOUNT_DST } |-> ALLOWANCE_SRC_DST
+          { ACCOUNT_SRC -> ACCOUNT_DST } |-> (ALLOWANCE_SRC_DST => ALLOWANCE_SRC_DST -Int AMOUNT)
           ...
         </dai-allowance>
       requires ACCOUNT_SRC =/=K ACCOUNT_DST
-       andBool BALANCE_SRC       >=Int AMOUNT
-       andBool (ALLOWANCE_SRC_DST >=Int AMOUNT orBool ALLOWANCE_SRC_DST ==Int -1)
+       andBool BALANCE_SRC >=Int AMOUNT
+       andBool ALLOWANCE_SRC_DST >=Int AMOUNT
 
-    rule <k> Dai . transferFrom _ _ => Dai . exception ... </k> [owise]
+    rule <k> Dai . transferFrom ACCOUNT_SRC ACCOUNT_DST AMOUNT => . ... </k>
+         <dai-balance>
+          ...
+          ACCOUNT_SRC |-> (BALANCE_SRC => BALANCE_SRC -Int AMOUNT)
+          ACCOUNT_DST |-> (BALANCE_DST => BALANCE_DST +Int AMOUNT)
+          ...
+        </dai-balance>
+        <dai-allowance>
+          ...
+          { ACCOUNT_SRC -> ACCOUNT_DST } |-> -1
+          ...
+        </dai-allowance>
+      requires ACCOUNT_SRC =/=K ACCOUNT_DST
+       andBool BALANCE_SRC >=Int AMOUNT
 
     syntax DaiStep ::= "mint" Address Wad
  // -------------------------------------
     rule <k> Dai . mint ACCOUNT_DST AMOUNT => . ... </k>
-         <dai-supply> DAI_SUPPLY => DAI_SUPPLY +Int AMOUNT </dai-supply>
+         <dai-totalSupply> DAI_SUPPLY => DAI_SUPPLY +Int AMOUNT </dai-totalSupply>
          <dai-balance>
           ...
-          ACCOUNT_DST |-> BALANCE_DST +Int AMOUNT
+          ACCOUNT_DST |-> (BALANCE_DST => BALANCE_DST +Int AMOUNT)
           ...
         </dai-balance>
 
