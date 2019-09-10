@@ -1,38 +1,35 @@
 # Settings
 # --------
 
-BUILD_DIR   := .build
-DEFN_DIR    := $(BUILD_DIR)/defn
-BUILD_LOCAL := $(CURDIR)/$(BUILD_DIR)/local
-
-LIBRARY_PATH       := $(BUILD_LOCAL)/lib
-C_INCLUDE_PATH     := $(BUILD_LOCAL)/include
-CPLUS_INCLUDE_PATH := $(BUILD_LOCAL)/include
-PKG_CONFIG_PATH    := $(LIBRARY_PATH)/pkgconfig
-
+BUILD_DIR:=.build
+DEFN_DIR:=$(BUILD_DIR)/defn
+BUILD_LOCAL:=$(CURDIR)/$(BUILD_DIR)/local
+LIBRARY_PATH:=$(BUILD_LOCAL)/lib
+C_INCLUDE_PATH:=$(BUILD_LOCAL)/include
+CPLUS_INCLUDE_PATH:=$(BUILD_LOCAL)/include
+PKG_CONFIG_PATH:=$(LIBRARY_PATH)/pkgconfig
 export LIBRARY_PATH
 export C_INCLUDE_PATH
 export CPLUS_INCLUDE_PATH
 export PKG_CONFIG_PATH
 
-DEPS_DIR                   := deps
-K_SUBMODULE                := $(abspath $(DEPS_DIR)/k)
-PANDOC_TANGLE_SUBMODULE    := $(DEPS_DIR)/pandoc-tangle
-K_EDITOR_SUPPORT_SUBMODULE := $(DEPS_DIR)/k-editor-support
+DEPS_DIR:=deps
+K_SUBMODULE:=$(abspath $(DEPS_DIR)/k)
+PANDOC_TANGLE_SUBMODULE:=$(DEPS_DIR)/pandoc-tangle
 
 K_RELEASE := $(K_SUBMODULE)/k-distribution/target/release/k
 K_BIN     := $(K_RELEASE)/bin
 K_LIB     := $(K_RELEASE)/lib
 export K_RELEASE
 
-PATH := $(K_BIN):$(PATH)
+PATH:=$(K_BIN):$(PATH)
 export PATH
 
-PYTHONPATH := $(K_LIB)
+PYTHONPATH:=$(K_LIB)
 export PYTHONPATH
 
-TANGLER  := $(PANDOC_TANGLE_SUBMODULE)/tangle.lua
-LUA_PATH := $(PANDOC_TANGLE_SUBMODULE)/?.lua;;
+TANGLER:=$(PANDOC_TANGLE_SUBMODULE)/tangle.lua
+LUA_PATH:=$(PANDOC_TANGLE_SUBMODULE)/?.lua;;
 export TANGLER
 export LUA_PATH
 
@@ -40,8 +37,7 @@ export LUA_PATH
         deps deps-k deps-tangle deps-media        \
         defn defn-llvm defn-haskell               \
         build build-llvm build-haskell build-java \
-        test test-python-config test-python-run   \
-        media media-sphinx
+        test test-python-config test-python-run
 .SECONDARY:
 
 all: build
@@ -56,7 +52,7 @@ clean-submodules:
 # ------------
 
 deps: deps-k deps-tangle
-deps-k:      $(K_SUBMODULE)/mvn.timestamp
+deps-k: $(K_SUBMODULE)/mvn.timestamp
 deps-tangle: $(PANDOC_TANGLE_SUBMODULE)/submodule.timestamp
 
 %/submodule.timestamp:
@@ -156,43 +152,3 @@ test-python-run: deps/sneak-tx-tracking/results.json
 deps/sneak-tx-tracking/results.json:
 	rm -rf deps/sneak-tx-tracking
 	git clone 'ssh://github.com/makerdao/sneak-tx-tracking' deps/sneak-tx-tracking
-
-# Media
-# -----
-
-media: media-sphinx
-
-deps-media: $(K_EDITOR_SUPPORT_SUBMODULE)/submodule.timestamp
-	cd $(K_EDITOR_SUPPORT_SUBMODULE)/pygments && python3 setup.py install --user
-
-# Sphinx Documentation
-
-SPHINX_OPTS      :=
-SPHINX_BUILD     := sphinx-build
-SPHINX_DIR       := mkr-mcd-rtd
-SPHINX_BUILD_DIR := $(BUILD_DIR)/$(SPHINX_DIR)
-SPHINX_INDEX     := $(SPHINX_BUILD_DIR)/html/index.html
-SPHINX_TAR       := $(SPHINX_BUILD_DIR).tar
-
-SPHINX_INCLUDE := README.rst $(k_files:.k=.rst)
-SPHINX_FILES   := $(patsubst %, $(SPHINX_BUILD_DIR)/%, $(SPHINX_INCLUDE))
-
-ALLSPHINXOPTS := -d ../$(SPHINX_BUILD_DIR)/doctrees $(SPHINX_OPTS) .
-
-media-sphinx: $(SPHINX_TAR)
-
-$(SPHINX_TAR): $(SPHINX_INDEX)
-	tar --directory $(BUILD_DIR) --create --verbose --file $@ $(SPHINX_DIR)
-
-$(SPHINX_INDEX): $(SPHINX_FILES)
-	mkdir -p $(SPHINX_BUILD_DIR)
-	cp -r media/sphinx-docs/* $(SPHINX_BUILD_DIR)/
-	cd $(SPHINX_BUILD_DIR)                                    \
-	    && $(SPHINX_BUILD) -b dirhtml $(ALLSPHINXOPTS) html   \
-	    && $(SPHINX_BUILD) -b text $(ALLSPHINXOPTS) html/text
-
-$(SPHINX_BUILD_DIR)/%.rst: %.md $(SPHINX_BUILD_DIR)
-	pandoc --from markdown --to rst $< | sed 's/.. code::/.. code-block::/' > $@
-
-$(SPHINX_BUILD_DIR):
-	mkdir -p $@
