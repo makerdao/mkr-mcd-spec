@@ -1,6 +1,8 @@
 KMCD - K Specification of MKR Multi-collateral Dai
 ==================================================
 
+{:toc}
+
 ```k
 requires "mkr-mcd-data.k"
 
