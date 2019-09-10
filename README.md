@@ -13,6 +13,12 @@ Useful Links
 -   MCD Documentation: <https://www.notion.so/MCD-Documentation-WIP-2ec33e10c4704243b1c473ec44f42576>
 -   MCD Wiki: <https://github.com/makerdao/dss/wiki/Actions>
 
+Structure
+---------
+
+-   [mkr-mcd-data](mkr-mcd-data.md) specifies basic data-structures used in the semantics.
+-   [mkr-mcd](mkr-mcd.md) specifies the semantics of Vat, which is the core accounting system for MCD.
+
 Potential Properties
 --------------------
 
