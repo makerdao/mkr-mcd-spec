@@ -14,7 +14,7 @@ module KMCD-DRIVER
     configuration
         <kmcd-driver>
           <k> $PGM:MCDSteps </k>
-          <msgSender> 0:Address </msgSender>
+          <msg-sender> 0:Address </msg-sender>
           <this> 0:Address </this>
           <currentTime> 0:Int </currentTime>
         </kmcd-driver>
@@ -36,6 +36,28 @@ The `step [_]` operator allows enforcing certain invariants during execution.
     syntax MCDStep ::= "step" "[" MCDStep "]"
  // -----------------------------------------
     rule <k> MCD:MCDStep MCDS:MCDSteps => step [ MCD ] ~> MCDS ... </k>
+```
+
+Simulations
+-----------
+
+Different contracts use the same names for external functions, so we declare them here.
+
+```k
+    syntax InitStep ::= "init" Int
+ // ------------------------------
+
+    syntax WardStep ::= "rely" Address | "deny" Address
+ // ---------------------------------------------------
+
+    syntax AuthStep ::= "auth"
+ // --------------------------
+
+    syntax StashStep ::= "push" | "pop" | "drop"
+ // --------------------------------------------
+
+    syntax ExceptionStep ::= "catch" | "exception"
+ // ----------------------------------------------
 ```
 
 Time Increments
