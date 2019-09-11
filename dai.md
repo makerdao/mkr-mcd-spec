@@ -65,7 +65,7 @@ module DAI
          <dai-balance>
            ...
            ACCOUNT_SRC |-> (BALANCE_SRC => BALANCE_SRC -Int AMOUNT)
-           ACCOUNT_DST |-> (BALANCE_SRC => BALANCE_SRC +Int AMOUNT)
+           ACCOUNT_DST |-> (BALANCE_DST => BALANCE_DST +Int AMOUNT)
            ...
          </dai-balance>
       requires ACCOUNT_SRC =/=K ACCOUNT_DST
