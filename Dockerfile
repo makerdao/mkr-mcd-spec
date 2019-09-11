@@ -15,10 +15,6 @@ RUN /.install-stack/install-stack.sh
 
 USER user:user
 
-ADD --chown=user:user deps/k/llvm-backend/src/main/native/llvm-backend/install-rust deps/k/llvm-backend/src/main/native/llvm-backend/rust-checksum /home/user/.install-rust/
-RUN    cd /home/user/.install-rust \
-    && ./install-rust
-
 ADD deps/k/k-distribution/src/main/scripts/bin/k-configure-opam-dev deps/k/k-distribution/src/main/scripts/bin/k-configure-opam-common /home/user/.tmp-opam/bin/
 ADD deps/k/k-distribution/src/main/scripts/lib/opam  /home/user/.tmp-opam/lib/opam/
 RUN    cd /home/user                        \
@@ -28,5 +24,3 @@ ADD --chown=user:user deps/k/haskell-backend/src/main/native/haskell-backend/sta
 ADD --chown=user:user deps/k/haskell-backend/src/main/native/haskell-backend/kore/package.yaml /home/user/.tmp-haskell/kore/
 RUN    cd /home/user/.tmp-haskell  \
     && stack build --only-snapshot
-
-ENV PATH=/home/user/.cargo/bin:$PATH

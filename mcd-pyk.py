@@ -21,6 +21,12 @@ def kast(inputFile, *kastArgs):
 def krun(inputFile, *krunArgs):
     return pyk.krun('.build/defn/llvm', inputFile, krunArgs = list(krunArgs))
 
+def kastJSON(inputJSON, *kastArgs):
+    return pyk.kastJSON('.build/defn/llvm', inputJSON, kastArgs = list(kastArgs))
+
+def krunJSON(inputJSON, *krunArgs):
+    return pyk.krunJSON('.build/defn/llvm', inputJSON, krunArgs = list(krunArgs))
+
 intToken     = lambda x: KToken(str(x), 'Int')
 boolToken    = lambda x: KToken(str(x).lower(), 'Bool')
 stringToken  = lambda x: KToken('"' + str(x) + '"', 'String')
@@ -60,59 +66,26 @@ for vat_function in vat_functions:
 
 ALL_symbols = combineDicts(K_symbols, MKR_MCD_symbols)
 
-symbolic_configuration = KApply ( '<generatedTop>' , [ KApply ( '<mkr-mcd>' , [ KApply ( '<k>', [ KVariable('K_CELL') ] )
-                                                                              , KApply ( '<msgSender>'  , [ KVariable('MSGSENDER_CELL') ] )
-                                                                              , KApply ( '<currentTime>', [ KVariable('CURRENTTIME_CELL') ] )
-                                                                              , KApply ( '<vatStack>' , [ KVariable('VATSTACK_CELL')  ] )
-                                                                              , KApply ( '<vat>'      , [ KApply ( '<vat-ward>' , [ KVariable('VAT_WARD_CELL') ] )
-                                                                                                        , KApply ( '<vat-can>'  , [ KVariable('VAT_CAN_CELL')  ] )
-                                                                                                        , KApply ( '<vat-ilks>' , [ KVariable('VAT_ILKS_CELL') ] )
-                                                                                                        , KApply ( '<vat-urns>' , [ KVariable('VAT_URNS_CELL') ] )
-                                                                                                        , KApply ( '<vat-gem>'  , [ KVariable('VAT_GEM_CELL')  ] )
-                                                                                                        , KApply ( '<vat-dai>'  , [ KVariable('VAT_DAI_CELL')  ] )
-                                                                                                        , KApply ( '<vat-sin>'  , [ KVariable('VAT_SIN_CELL')  ] )
-                                                                                                        , KApply ( '<vat-debt>' , [ KVariable('VAT_DEBT_CELL') ] )
-                                                                                                        , KApply ( '<vat-vice>' , [ KVariable('VAT_VICE_CELL') ] )
-                                                                                                        , KApply ( '<vat-Line>' , [ KVariable('VAT_LINE_CELL') ] )
-                                                                                                        , KApply ( '<vat-live>' , [ KVariable('VAT_LIVE_CELL') ] )
-                                                                                                        ]
-                                                                                       )
-                                                                              , KApply ( '<jugStack>' , [ KVariable('JUGSTACK_CELL')  ] )
-                                                                              , KApply ( '<jug>'      , [ KApply ( '<jug-ward>' , [ KVariable('JUG_WARD_CELL') ] )
-                                                                                                        , KApply ( '<jug-ilks>' , [ KVariable('JUG_ILKS_CELL') ] )
-                                                                                                        , KApply ( '<jug-vow>'  , [ KVariable('JUG_VOW_CELL')  ] )
-                                                                                                        , KApply ( '<jug-base>' , [ KVariable('JUG_BASE_CELL') ] )
-                                                                                                        ]
-                                                                                       )
-                                                                              ]
-                                                              )
-                                                     , KApply ( '<generatedCounter>' , [ KVariable('GENERATED_COUNTER_CELL') ] )
-                                                     ]
-                                )
+def make_symbolic_config_from(init_term):
+    kast_json = { 'format': 'KAST', 'version': 1, 'term': init_term }
+    (_, symbolic_configuration, _) = krunJSON(kast_json)
 
+    initial_substitution = {}
 
-init_cells = { 'K_CELL'                 : KSequence([KConstant('.MCDStep_MKR-MCD_')])
-             , 'MSGSENDER_CELL'         : KToken('0', 'Address')
-             , 'CURRENTTIME_CELL'       : KToken('0', 'Int')
-             , 'VATSTACK_CELL'          : KConstant('.List')
-             , 'VAT_WARD_CELL'          : KConstant('.Map')
-             , 'VAT_CAN_CELL'           : KConstant('.Map')
-             , 'VAT_ILKS_CELL'          : KConstant('.Map')
-             , 'VAT_URNS_CELL'          : KConstant('.Map')
-             , 'VAT_GEM_CELL'           : KConstant('.Map')
-             , 'VAT_DAI_CELL'           : KConstant('.Map')
-             , 'VAT_SIN_CELL'           : KConstant('.Map')
-             , 'VAT_DEBT_CELL'          : KToken('0', 'Rad')
-             , 'VAT_VICE_CELL'          : KToken('0', 'Rad')
-             , 'VAT_LINE_CELL'          : KToken('0', 'Rad')
-             , 'VAT_LIVE_CELL'          : KToken('true', 'Bool')
-             , 'JUGSTACK_CELL'          : KConstant('.List')
-             , 'JUG_WARD_CELL'          : KConstant('.Map')
-             , 'JUG_ILKS_CELL'          : KConstant('.Map')
-             , 'JUG_VOW_CELL'           : KToken('0', 'Address')
-             , 'JUG_BASE_CELL'          : KToken('0', 'Int')
-             , 'GENERATED_COUNTER_CELL' : KToken('0', 'Int')
-             }
+    _mkCellVar = lambda label: label.replace('-', '_').replace('<', '').replace('>', '').upper() + '_CELL'
+
+    def _replaceWithVar(k):
+        if pyk.isKApply(k) and pyk.isCellKLabel(k['label']):
+            if len(k['args']) == 1 and not (pyk.isKApply(k['args'][0]) and pyk.isCellKLabel(k['args'][0]['label'])):
+                config_var = _mkCellVar(k['label'])
+                initial_substitution[config_var] = k['args'][0]
+                return KApply(k['label'], [KVariable(config_var)])
+        return k
+
+    pyk.traverseBottomUp(symbolic_configuration, _replaceWithVar)
+    return (symbolic_configuration, initial_substitution)
+
+(symbolic_configuration, init_cells) = make_symbolic_config_from(KConstant('.MCDSteps_KMCD-DRIVER_'))
 
 initial_configuration = substitute(symbolic_configuration, init_cells)
 

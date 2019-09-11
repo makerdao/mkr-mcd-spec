@@ -1,22 +1,93 @@
-KMCD - K Specification of MKR Multi-collateral Dai
-==================================================
+CDP Core
+========
+
+This module represents the CDP core accounting engine, mostly encompassed by state in and operations over `<vat>`.
 
 ```k
-requires "mkr-mcd-data.k"
+requires "kmcd-driver.k"
 
-module MKR-MCD
-    imports MKR-MCD-DATA
+module CDP-CORE
+    imports KMCD-DRIVER
 ```
 
-MCD State
----------
+CDP Data
+--------
+
+-   `CDPID`: Identifies a given users `ilk` or `urn`.
+
+```k
+    syntax CDPID ::= "{" Int "," Address "}"
+ // ----------------------------------------
+```
+
+-   `VatIlk`: `ART`, `RATE`, `SPOT`, `LINE`, `DUST`.
+-   `JugIlk`: `DUTY`, `RHO`.
+-   `CatIlk`: `FLIP`, `CHOP`, `LUMP`
+-   `SpotIlk`: `MAT`
+
+`Ilk` is a collateral with certain risk parameters.
+Vat doesn't care about parameters for auctions, so only has stuff like debt ceiling, penalty, etc.
+Cat has stuff like penalty.
+Ok to say "this is the VatIlk, this is the CatIlk".
+"Could have one big `Ilk` type with all the parameters, but there are different types to project out relevant parts to those contracts."
+Getters and setters for `Ilk` should be permissioned, and different combinations of Contract + User might have `file` access to different fields (might be non-`file` access methods).
+
+```k
+    syntax VatIlk ::= Ilk ( Wad , Ray , Ray , Rad , Rad ) [klabel(#VatIlk), symbol]
+ // -------------------------------------------------------------------------------
+
+    syntax JugIlk ::= Ilk ( Int, Int )                    [klabel(#JugIlk), symbol]
+ // -------------------------------------------------------------------------------
+
+    syntax CatIlk ::= Ilk ( Address, Int, Int )           [klabel(#CatIlk), symbol]
+ // -------------------------------------------------------------------------------
+
+    syntax SpotIlk ::= Ilk ( Int )                       [klabel(#SpotIlk), symbol]
+ // -------------------------------------------------------------------------------
+```
+
+-   `ilkLine` returns the `LINE` associated with an `Ilk`.
+-   `ilkDust` returns the `DUST` associated with an `Ilk`.
+
+```k
+    syntax Int ::= ilkLine ( VatIlk ) [function, functional]
+                 | ilkDust ( VatIlk ) [function, functional]
+ // --------------------------------------------------------
+    rule ilkLine(Ilk(_, _, _, LINE, _   )) => LINE
+    rule ilkDust(Ilk(_, _, _, _,    DUST)) => DUST
+```
+
+-   `VatUrn`: `INK`, `ART`
+
+`Urn` is individual CDP of a certain `Ilk` for a certain address (actual data that comprises a CDP).
+`Urn` has the exact same definition everywhere, so we can get away with a single definition.
+
+```k
+    syntax VatUrn ::= Urn ( Wad , Wad ) [klabel(#VatUrn), symbol]
+ // -------------------------------------------------------------
+```
+
+-   `urnBalance` takes an `Urn` and it's corresponding `Ilk` and returns the "balance" of the `Urn` (`collateral - debt`).
+-   `urnDebt` calculates the `RATE`-scaled `ART` of an `Urn`.
+-   `urnCollateral` calculates the `SPOT`-scaled `INK` of an `Urn`.
+
+```k
+    syntax Int ::= urnBalance    ( VatIlk , VatUrn ) [function, functional]
+                 | urnDebt       ( VatIlk , VatUrn ) [function, functional]
+                 | urnCollateral ( VatIlk , VatUrn ) [function, functional]
+ // -----------------------------------------------------------------------
+    rule urnBalance(ILK, URN) => urnCollateral(ILK, URN) -Int urnDebt(ILK, URN)
+
+    rule urnDebt      (Ilk(_ , RATE , _    , _ , _), Urn( _   , ART )) => ART *Int RATE
+    rule urnCollateral(Ilk(_ , _    , SPOT , _ , _), Urn( INK , _   )) => INK *Int SPOT
+```
+
+Vat CDP State
+-------------
 
 ```k
     configuration
-      <mkr-mcd>
-        <k> $PGM:MCDSteps </k>
-        <msgSender> 0:Address </msgSender>
-        <currentTime> 0 </currentTime>
+      <cdp-core>
         <vatStack> .List </vatStack>
         <vat>
           <vat-ward> .Map  </vat-ward> // mapping (address => uint)                 Address |-> Bool
@@ -38,30 +109,23 @@ MCD State
           <jug-vow>  0:Address </jug-vow>  //                             Address
           <jug-base> 0         </jug-base> //                             Int
         </jug>
-      </mkr-mcd>
+        <catStack> .List </catStack>
+        <cat>
+          <cat-ward> .Map </cat-ward>
+          <cat-ilks> .Map </cat-ilks>
+          <cat-live> 0    </cat-live>
+        </cat>
+        <spotStack> .List </spotStack>
+        <spot>
+          <spot-ward> .Map </spot-ward> // mapping (address => uint) Address |-> Bool
+          <spot-ilk>  .Map </spot-ilk>  // mapping (bytes32 => ilk)  Int     |-> SpotIlk
+          <spot-par>  0    </spot-par>
+        </spot>
+      </cdp-core>
 ```
 
 Simulations
 -----------
-
-Simulations will be sequences of `MCDStep`.
-
-```k
-    syntax MCDSteps ::= MCDStep | MCDStep MCDSteps
- // ----------------------------------------------
-    rule <k> MCD:MCDStep MCDS:MCDSteps => step [ MCD ] ~> MCDS ... </k>
-
-    syntax MCDStep ::= ".MCDStep"
- // -----------------------------
-    rule <k> .MCDStep => . ... </k>
-```
-
-The `step [_]` operator allows enforcing certain invariants during execution.
-
-```k
-    syntax MCDStep ::= "step" "[" MCDStep "]"
- // -----------------------------------------
-```
 
 Different contracts use the same names for external functions, so we declare them here.
 
@@ -80,15 +144,6 @@ Different contracts use the same names for external functions, so we declare the
 
     syntax ExceptionStep ::= "catch" | "exception"
  // ----------------------------------------------
-```
-
-Some methods rely on a timestamp. We simulate that here.
-
-```k
-    syntax MCDStep ::= "TimeStep"
- // -----------------------------
-    rule <k> TimeStep => . ... </k>
-         <currentTime> TIME => TIME +Int 1 </currentTime>
 ```
 
 Vat Semantics
@@ -112,7 +167,7 @@ Updating the `<vat>` happens in phases:
 
 -   Save off the current `<vat>`,
 -   Check if either (i) this step does not need admin authorization or (ii) we are authorized to take this step,
--   Check that the `Vat.invariant` holds, and
+-   Check that the `Vat.check` holds, and
 -   Roll back state on failure.
 
 **TODO**: Should every `notBool isAuthStep` be subject to `Vat . live`?
@@ -120,8 +175,8 @@ Updating the `<vat>` happens in phases:
 ```k
     syntax MCDStep ::= "Vat" "." VatStep
  // ------------------------------------
-    rule <k> step [ Vat . VAS:VatAuthStep ] => Vat . push ~> Vat . auth ~> Vat . VAS ~> Vat . invariant ~> Vat . catch ... </k>
-    rule <k> step [ Vat . VS              ] => Vat . push ~>               Vat . VS  ~> Vat . invariant ~> Vat . catch ... </k>
+    rule <k> step [ Vat . VAS:VatAuthStep ] => Vat . push ~> Vat . auth ~> Vat . VAS ~> Vat . check ~> Vat . catch ... </k>
+    rule <k> step [ Vat . VS              ] => Vat . push ~>               Vat . VS  ~> Vat . check ~> Vat . catch ... </k>
       requires notBool isVatAuthStep(VS)
 
     syntax VatStep ::= VatAuthStep
@@ -191,8 +246,8 @@ By adjusting the `<vat-ward>`, you can upgrade contracts in place by deploying a
 **TODO**: Should be `note`.
 
 ```k
-    syntax VatAuthStep ::= "cage"
- // -----------------------------
+    syntax VatAuthStep ::= "cage" [klabel(#VatCage), symbol]
+ // --------------------------------------------------------
     rule <k> Vat . cage => . ... </k>
          <vat-live> _ => false </vat-live>
 ```
@@ -201,13 +256,13 @@ By adjusting the `<vat-ward>`, you can upgrade contracts in place by deploying a
 
 Vat safety is enforced by adding specific checks on the `<vat>` state updates.
 
--   `Vat.invariant` states basic invariants of the `Vat` quanities and is checked after every `VatStep`.
+-   `Vat.check` states basic properties of the `Vat` quanities and is checked after every `VatStep`.
 
 ```k
-    syntax VatStep ::= "invariant"
- // ------------------------------
-    rule <k> Vat . invariant => Vat . exception ... </k> [owise]
-    rule <k> Vat . invariant => .               ... </k>
+    syntax VatStep ::= "check"
+ // --------------------------
+    rule <k> Vat . check => Vat . exception ... </k> [owise]
+    rule <k> Vat . check => .               ... </k>
          <vatStack>
            ListItem ( <vat>
                         <vat-debt> DEBT:Int </vat-debt>
@@ -648,12 +703,68 @@ Jug Semantics
          <currentTime> TIME </currentTime>
          <jug-ilks> ... ILK |-> Ilk ( _, ILKRHO ) ... </jug-ilks>
       requires TIME <Int ILKRHO
+```
 
-    syntax Int ::= #pow ( Int, Int ) [function]
- // -------------------------------------------
-    rule #pow( X, 0 ) => ilk_init
-    rule #pow( X, 1 ) => X
-    rule #pow( X, N ) => X *Int #pow( X, N -Int 1 ) /Int ilk_init
+Cat Semantics
+-------------
+
+```k
+    syntax MCDStep ::= "Cat" "." CatStep
+ // ------------------------------------
+
+    syntax CatStep ::= CatAuthStep
+ // ------------------------------
+
+    syntax CatAuthStep ::= AuthStep
+ // -------------------------------
+
+    syntax CatAuthStep ::= WardStep
+ // -------------------------------
+
+    syntax CatAuthStep ::= "init" Address
+ // -------------------------------------
+
+    syntax CatStep ::= StashStep
+ // ----------------------------
+
+    syntax CatStep ::= ExceptionStep
+ // --------------------------------
+
+    syntax CatStep ::= "bite" Int Address
+ // -------------------------------------
+
+    syntax CatStep ::= "cage" [klabel(#CatCage), symbol]
+ // ----------------------------------------------------
+```
+
+Spot Semantics
+--------------
+
+```k
+    syntax MCDStep ::= "Spot" "." SpotStep
+ // --------------------------------------
+
+    syntax SpotStep ::= SpotAuthStep
+ // --------------------------------
+
+    syntax SpotAuthStep ::= AuthStep
+ // --------------------------------
+
+    syntax SpotAuthStep ::= WardStep
+ // --------------------------------
+
+    syntax SpotAuthStep ::= "init" Address
+ // --------------------------------------
+
+    syntax SpotStep ::= StashStep
+ // -----------------------------
+
+    syntax SpotStep ::= ExceptionStep
+ // ---------------------------------
+
+    syntax SpotStep ::= "poke" Int
+ // ------------------------------
+
 ```
 
 ```k
