@@ -90,27 +90,28 @@ def make_symbolic_config_from(init_term):
 initial_configuration = substitute(symbolic_configuration, init_cells)
 
 if __name__ == '__main__':
-    with tempfile.NamedTemporaryFile(mode = 'w') as tempf:
-        kast_json = { 'format': 'KAST', 'version': 1, 'term': initial_configuration }
-        json.dump(kast_json, tempf)
-        tempf.flush()
-        (returnCode, kastPrinted, _) = kast(tempf.name, '--input', 'json', '--output', 'pretty')
-        if returnCode != 0:
-            _fatal('kast returned non-zero exit code reading/printing the initial configuration')
-            sys.exit(returnCode)
+    if len(sys.argv) <= 1:
+        with tempfile.NamedTemporaryFile(mode = 'w') as tempf:
+            kast_json = { 'format': 'KAST', 'version': 1, 'term': initial_configuration }
+            json.dump(kast_json, tempf)
+            tempf.flush()
+            (returnCode, kastPrinted, _) = kast(tempf.name, '--input', 'json', '--output', 'pretty')
+            if returnCode != 0:
+                _fatal('kast returned non-zero exit code reading/printing the initial configuration')
+                sys.exit(returnCode)
 
-    fastPrinted = prettyPrintKast(initial_configuration['args'][0], ALL_symbols)
-    _notif('fastPrinted output')
-    print(fastPrinted)
+        fastPrinted = prettyPrintKast(initial_configuration['args'][0], ALL_symbols)
+        _notif('fastPrinted output')
+        print(fastPrinted)
 
-    kastPrinted = kastPrinted.strip()
-    if fastPrinted != kastPrinted:
-        _warning('kastPrinted and fastPrinted differ!')
-        for line in difflib.unified_diff(kastPrinted.split('\n'), fastPrinted.split('\n'), fromfile='kast', tofile='fast', lineterm='\n'):
-            sys.stderr.write(line + '\n')
-        sys.stderr.flush()
+        kastPrinted = kastPrinted.strip()
+        if fastPrinted != kastPrinted:
+            _warning('kastPrinted and fastPrinted differ!')
+            for line in difflib.unified_diff(kastPrinted.split('\n'), fastPrinted.split('\n'), fromfile='kast', tofile='fast', lineterm='\n'):
+                sys.stderr.write(line + '\n')
+            sys.stderr.flush()
 
-    if len(sys.argv) > 1:
+    elif len(sys.argv) > 1:
         input_scrape = sys.argv[1]
         scrape = None
         with open(input_scrape, 'r') as scrape_file:
