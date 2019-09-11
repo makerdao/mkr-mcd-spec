@@ -3,6 +3,8 @@ Dai Token
 
 The Dai token represents an ERC20 fungible asset reflecting the current state of the vat.
 
+**TODO**: Go over checks in dai.sol and make sure we implement the relevant ones.
+
 ```k
 requires "kmcd-driver.k"
 
