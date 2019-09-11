@@ -68,6 +68,7 @@ pipeline {
                 mkdir -p ~/.ssh
                 echo 'host github.com'                       > ~/.ssh/config
                 echo '    hostname github.com'              >> ~/.ssh/config
+                echo '    user git'                         >> ~/.ssh/config
                 echo '    identityagent SSH_AUTH_SOCK'      >> ~/.ssh/config
                 echo '    stricthostkeychecking accept-new' >> ~/.ssh/config
                 chmod go-rwx -R ~/.ssh
