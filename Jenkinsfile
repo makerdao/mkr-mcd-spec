@@ -17,40 +17,40 @@ pipeline {
         }
       }
     }
-    stage('Dependencies') {
-      steps {
-        sh '''
-          make deps
-        '''
-      }
-    }
-    stage('Build') {
-      steps {
-        sh '''
-          make build -j4
-        '''
-      }
-    }
-    stage('Test') {
-      parallel {
-        stage('Build Configuration') {
-          steps {
-            sh '''
-              make test-python-config
-            '''
-          }
-        }
-        // stage('Run Simple Tests') {
-        //   steps {
-        //     sh '''
-        //       make test-python-run
-        //     '''
-        //   }
-        // }
-      }
-    }
+    // stage('Dependencies') {
+    //   steps {
+    //     sh '''
+    //       make deps
+    //     '''
+    //   }
+    // }
+    // stage('Build') {
+    //   steps {
+    //     sh '''
+    //       make build -j4
+    //     '''
+    //   }
+    // }
+    // stage('Test') {
+    //   parallel {
+    //     stage('Build Configuration') {
+    //       steps {
+    //         sh '''
+    //           make test-python-config
+    //         '''
+    //       }
+    //     }
+    //     // stage('Run Simple Tests') {
+    //     //   steps {
+    //     //     sh '''
+    //     //       make test-python-run
+    //     //     '''
+    //     //   }
+    //     // }
+    //   }
+    // }
     stage('Deploy') {
-      when { branch 'master' }
+      // when { branch 'master' }
       post {
         failure {
           slackSend color: '#cb2431'                            \
