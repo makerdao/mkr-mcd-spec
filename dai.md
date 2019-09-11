@@ -122,19 +122,42 @@ module DAI
 
     syntax DaiStep ::= "burn" Address Wad
  // -------------------------------------
+    rule <k> Dai . burn ACCOUNT_SRC AMOUNT => . ... </k>
+         <dai-totalSupply> DAI_SUPPLY => DAI_SUPPLY -Int AMOUNT </dai-totalSupply>
+         <dai-balance>
+           ...
+           ACCOUNT_SRC |-> (AMOUNT_SRC => AMOUNT_SRC -Int AMOUNT)
+           ...
+         </dai-balance>
 
     syntax DaiStep ::= "approve" Address Wad
  // ----------------------------------------
+    rule <k> Dai . approve ACCOUNT_DST AMOUNT => . ... </k>
+         <msg-sender> ACCOUNT_SRC </msg-sender>
+         <dai-allowance>
+           ...
+           { ACCOUNT_SRC -> ACCOUNT_DST } |-> (_ => AMOUNT)
+           ...
+         </dai-allowance>
 
     syntax DaiStep ::= "push" Address Wad
  // -------------------------------------
+    rule <k> Dai . push ACCOUNT_DST AMOUNT => Dai . transferFrom ACCOUNT_SRC ACCOUNT_DST AMOUNT ... </k>
+         <msg-sender> ACCOUNT_SRC </msg-sender>
 
     syntax DaiStep ::= "pull" Address Wad
  // -------------------------------------
+    rule <k> Dai . pull ACCOUNT_SRC AMOUNT => Dai . transferFrom ACCOUNT_SRC ACCOUNT_DST AMOUNT ... </k>
+         <msg-sender> ACCOUNT_DST </msg-sender>
 
     syntax DaiStep ::= "move" Address Address Wad
  // ---------------------------------------------
+    rule <k> Dai . move ACCOUNT_SRC ACCOUNT_DST AMOUNT => Dai . transferFrom ACCOUNT_SRC ACCOUNT_DST AMOUNT ... </k>
+```
 
+**TODO**: `permit` logic, seems to be a time-locked allowance.
+
+```k
     syntax DaiStep ::= "permit" Address Address Int Int Bool Int Bytes Bytes
  // ------------------------------------------------------------------------
 
