@@ -55,11 +55,11 @@ module RATES
     syntax PotStep ::= AuthStep
  // ---------------------------
     rule <k> Pot . auth => . ... </k>
-         <msgSender> MSGSENDER </msgSender>
+         <msg-sender> MSGSENDER </msg-sender>
          <pot-ward> ... MSGSENDER |-> true ... </pot-ward>
 
     rule <k> Pot . auth => Pot . exception ... </k>
-         <msgSender> MSGSENDER </msgSender>
+         <msg-sender> MSGSENDER </msg-sender>
          <pot-ward> ... MSGSENDER |-> false ... </pot-ward>
 
     syntax PotAuthStep ::= WardStep

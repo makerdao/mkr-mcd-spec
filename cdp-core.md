@@ -124,28 +124,6 @@ Vat CDP State
       </cdp-core>
 ```
 
-Simulations
------------
-
-Different contracts use the same names for external functions, so we declare them here.
-
-```k
-    syntax InitStep ::= "init" Int
- // ------------------------------
-
-    syntax WardStep ::= "rely" Address | "deny" Address
- // ---------------------------------------------------
-
-    syntax AuthStep ::= "auth"
- // --------------------------
-
-    syntax StashStep ::= "push" | "pop" | "drop"
- // --------------------------------------------
-
-    syntax ExceptionStep ::= "catch" | "exception"
- // ----------------------------------------------
-```
-
 Vat Semantics
 -------------
 
@@ -223,11 +201,11 @@ By adjusting the `<vat-ward>`, you can upgrade contracts in place by deploying a
     syntax VatStep ::= AuthStep
  // ---------------------------
     rule <k> Vat . auth => . ... </k>
-         <msgSender> MSGSENDER </msgSender>
+         <msg-sender> MSGSENDER </msg-sender>
          <vat-ward> ... MSGSENDER |-> true ... </vat-ward>
 
     rule <k> Vat . auth => Vat . exception ... </k>
-         <msgSender> MSGSENDER </msgSender>
+         <msg-sender> MSGSENDER </msg-sender>
          <vat-ward> ... MSGSENDER |-> false ... </vat-ward>
 
     syntax VatAuthStep ::= WardStep
@@ -307,16 +285,16 @@ This is quite permissive, and would allow the account to drain all your locked c
     syntax VatStep ::= "wish" Address
  // ---------------------------------
     rule <k> Vat . wish ADDRFROM => . ... </k>
-         <msgSender> MSGSENDER </msgSender>
+         <msg-sender> MSGSENDER </msg-sender>
       requires ADDRFROM ==K MSGSENDER
 
     rule <k> Vat . wish ADDRFROM => . ... </k>
-         <msgSender> MSGSENDER </msgSender>
+         <msg-sender> MSGSENDER </msg-sender>
          <vat-can> ... ADDRFROM |-> CANADDRS:Set ... </vat-can>
       requires MSGSENDER in CANADDRS
 
     rule <k> Vat . wish ADDRFROM => Vat . exception ... </k>
-         <msgSender> MSGSENDER </msgSender>
+         <msg-sender> MSGSENDER </msg-sender>
          <vat-can> ... ADDRFROM |-> CANADDRS:Set ... </vat-can>
       requires ADDRFROM =/=K MSGSENDER
        andBool notBool MSGSENDER in CANADDRS
@@ -324,11 +302,11 @@ This is quite permissive, and would allow the account to drain all your locked c
     syntax VatStep ::= "hope" Address | "nope" Address
  // --------------------------------------------------
     rule <k> Vat . hope ADDRTO => . ... </k>
-         <msgSender> MSGSENDER </msgSender>
+         <msg-sender> MSGSENDER </msg-sender>
          <vat-can> ... MSGSENDER |-> (CANADDRS => CANADDRS SetItem(ADDRTO)) ... </vat-can>
 
     rule <k> Vat . nope ADDRTO => . ... </k>
-         <msgSender> MSGSENDER </msgSender>
+         <msg-sender> MSGSENDER </msg-sender>
          <vat-can> ... MSGSENDER |-> (CANADDRS => CANADDRS -Set SetItem(ADDRTO)) ... </vat-can>
 ```
 
@@ -585,7 +563,7 @@ This is quite permissive, and would allow the account to drain all your locked c
     syntax VatStep ::= "heal" Rad
  // -----------------------------
     rule <k> Vat . heal AMOUNT => . ... </k>
-         <msgSender> ADDRFROM </msgSender>
+         <msg-sender> ADDRFROM </msg-sender>
          <vat-debt> DEBT => DEBT -Int AMOUNT </vat-debt>
          <vat-vice> VICE => VICE -Int AMOUNT </vat-vice>
          <vat-sin> ... ADDRFROM |-> (SIN => SIN -Int AMOUNT) ... </vat-sin>
@@ -663,11 +641,11 @@ Jug Semantics
     syntax JugStep ::= AuthStep
  // ---------------------------
     rule <k> Jug . auth => . ... </k>
-         <msgSender> MSGSENDER </msgSender>
+         <msg-sender> MSGSENDER </msg-sender>
          <jug-ward> ... MSGSENDER |-> true ... </jug-ward>
 
     rule <k> Jug . auth => Jug . exception ... </k>
-         <msgSender> MSGSENDER </msgSender>
+         <msg-sender> MSGSENDER </msg-sender>
          <jug-ward> ... MSGSENDER |-> false ... </jug-ward>
 
     syntax JugAuthStep ::= WardStep
