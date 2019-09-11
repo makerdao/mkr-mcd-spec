@@ -7,8 +7,7 @@ RUN    apt-get update                                                           
         libgmp-dev libjemalloc-dev libmpfr-dev libprocps-dev libprotobuf-dev       \
         libsecp256k1-dev libtool libyaml-dev libz3-dev lld-8 llvm-8 llvm-8-tools   \
         make maven opam openjdk-11-jdk pandoc pkg-config protobuf-compiler python3 \
-        python3-pygments python3-recommonmark python3-setuptools python3-sphinx    \
-        python3-sphinx-rtd-theme z3 zlib1g-dev
+        z3 zlib1g-dev
 
 ADD deps/k/haskell-backend/src/main/native/haskell-backend/scripts/install-stack.sh /.install-stack/
 RUN /.install-stack/install-stack.sh
