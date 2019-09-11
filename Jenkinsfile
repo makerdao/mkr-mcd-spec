@@ -87,7 +87,7 @@ pipeline {
                 rm -rf .build .gitignore deps .gitmodules Dockerfile Jenkinsfile Makefile kmcd mcd-pyk.py
                 git add ./
                 git commit -m 'gh-pages: remove unrelated content'
-                git push --force-with-lease origin gh-pages
+                git push --force origin gh-pages
               '''
             }
           }
