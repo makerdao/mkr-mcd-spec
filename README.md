@@ -16,8 +16,16 @@ Useful Links
 Structure
 ---------
 
--   [mkr-mcd-data](mkr-mcd-data.md) specifies basic data-structures used in the semantics.
--   [mkr-mcd](mkr-mcd.md) specifies the semantics of Vat, which is the core accounting system for MCD.
+The semantics is broken into several sub-modules.
+
+-   [kmcd-driver](kmcd-driver.md) - common functionality in all modules.
+-   [kmcd](kmcd.md) - union all sub-modules.
+
+-   [cdp-core](cdp-core.md) - core accounting system for MCD.
+-   [collateral](collateral.md) - collateral linking.
+-   [dai](dai.md) - ERC20 fungible collateral version of Dai.
+-   [rates](rates.md) - rate adjustments and price feeds
+-   [stabilize](stabilize.md) - forcible stabilization of risky CDPs.
 
 Potential Properties
 --------------------
