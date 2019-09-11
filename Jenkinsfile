@@ -82,12 +82,12 @@ pipeline {
             sshagent(['2b3d8d6b-0855-4b59-864a-6b3ddf9c9d1a']) {
               sh '''
                 git remote set-url origin 'ssh://github.com/runtimeverification/mkr-mcd-spec'
-                git fetch --all
                 git checkout -B 'gh-pages'
                 rm -rf .build .gitignore deps .gitmodules Dockerfile Jenkinsfile Makefile kmcd mcd-pyk.py
                 git add ./
                 git commit -m 'gh-pages: remove unrelated content'
-                git merge --strategy ours origin/gh-pages
+                git fetch origin gh-pages
+                git merge --strategy ours FETCH_HEAD
                 git push origin gh-pages
               '''
             }
