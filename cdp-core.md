@@ -731,11 +731,11 @@ Spot Semantics
     syntax SpotAuthStep ::= AuthStep
  // --------------------------------
     rule <k> Spot . auth => . ... </k>
-         <msgSender> MSGSENDER </msgSender>
+         <msg-sender> MSGSENDER </msg-sender>
          <spot-ward> ... MSGSENDER |-> true ... </spot-ward>
 
     rule <k> Spot . auth => Spot . exception ... </k>
-         <msgSender> MSGSENDER </msgSender>
+         <msg-sender> MSGSENDER </msg-sender>
          <spot-ward> ... MSGSENDER |-> false ... </spot-ward>
 
     syntax SpotAuthStep ::= WardStep
