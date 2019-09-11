@@ -53,8 +53,8 @@ pipeline {
       when { branch 'master' }
       post {
         failure {
-          slackSend color: '#cb2431'
-                  , channel: '#maker-internal'
+          slackSend color: '#cb2431'                            \
+                  , channel: '#maker-internal'                  \
                   , message: "Deploy failure: ${env.BUILD_URL}"
         }
       }
