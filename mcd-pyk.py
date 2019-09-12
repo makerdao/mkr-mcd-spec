@@ -42,6 +42,9 @@ def buildArgument(arg):
         return hexIntToken(arg['value'])
     if arg['type'] == 'string':
         return stringToken(arg['value'])
+    if arg['type'] == 'uint256':
+        # TODO: Investigate rounding issues caused by casting large floats to int
+        return intToken(int(arg['value']))
     else:
         return unimplimentedToken('buildArgument: ' + str(arg))
 
