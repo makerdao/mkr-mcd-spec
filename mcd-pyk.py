@@ -82,8 +82,8 @@ def make_symbolic_config_from(init_term):
                 return KApply(k['label'], [KVariable(config_var)])
         return k
 
-    pyk.traverseBottomUp(symbolic_configuration, _replaceWithVar)
-    return (symbolic_configuration, initial_substitution)
+    symbolic_config = pyk.traverseBottomUp(symbolic_configuration, _replaceWithVar)
+    return (symbolic_config, initial_substitution)
 
 (symbolic_configuration, init_cells) = make_symbolic_config_from(KConstant('.MCDSteps_KMCD-DRIVER_MCDSteps'))
 
