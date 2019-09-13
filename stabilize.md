@@ -152,9 +152,24 @@ Flap Semantics
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
          <flap-live> _ => false </flap-live>
+```
 
-    syntax FlapStep ::= "yank" Int
- // ------------------------------
+- yank(uint id)
+- Part of Global Settlement. Refunds the highest bidder's bid.
+
+```k
+    syntax FlapStep ::= "yank" Int [klabel(FlapYank),symbol]
+ // --------------------------------------------------------
+    rule <k> Flap . yank ID
+          => call Gem "MKR" . move THIS GUY BID
+         ...
+         </k>
+         <this> THIS </this>
+         <flap-bids>...
+           ID |-> StableBid(... bid: BID, guy: GUY) => .Map
+         ...</flap-bids>
+         <flap-live> false </flap-live>
+      requires GUY =/=Int 0
 ```
 
 Flop Semantics
