@@ -119,9 +119,27 @@ Flap Semantics
        andBool LOT ==Int LOT'
        andBool BID  >Int BID'
        andBool BID >=Rat BID' *Rat BEG
+```
 
-    syntax FlapStep ::= "deal" Int
- // ------------------------------
+- deal(uint id)
+- Settles an auction, rewarding the lot to the highest bidder and burning their bid
+
+```k
+    syntax FlapStep ::= "deal" Int [klabel(FlapDeal),symbol]
+ // --------------------------------------------------------
+    rule <k> Flap . deal ID
+          => call Vat . move THIS GUY LOT
+          ~> call Gem "MKR" . burn THIS BID
+         ...
+         </k>
+         <this> THIS </this>
+         <currentTime> NOW </currentTime>
+         <flap-bids>...
+           ID |-> StableBid(... bid: BID, lot: LOT, guy: GUY, tic: TIC, end: END) => .Map
+         ...</flap-bids>
+         <flap-live> true </flap-live>
+      requires TIC <Int NOW
+       andBool (TIC =/=Int 0 orBool END <Int NOW)
 
     syntax FlapAuthStep ::= "cage" Int
  // ----------------------------------
