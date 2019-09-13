@@ -13,21 +13,25 @@ module SYSTEM-STABILIZER
 
     configuration
       <stabilize>
-        <flapState>
-          <flap-addr>  0:Address </flap-addr>
-          <flap-bids>  .Map      </flap-bids>  // mapping (uint => Bid)     Int     |-> Bid
-          <flap-kicks> 0         </flap-kicks>
-          <flap-live>  0         </flap-live>
-        </flapState>
+        <flap-state>
+          <flap-addr>  0:Address    </flap-addr>
+          <flap-bids> .Map          </flap-bids>  // mapping (uint => Bid) Int |-> StableBid
+          <flap-kicks> 0            </flap-kicks>
+          <flap-live>  true         </flap-live>
+          <flap-beg>   105 /Rat 100 </flap-beg>
+          <flap-ttl>   3 hours      </flap-ttl>
+          <flap-tau>   2 days       </flap-tau>
+        </flap-state>
+        <flopStack> .List </flopStack>
         <flopState>
           <flop-addr>  0:Address </flop-addr>
-          <flop-bids>  .Map      </flop-bids>  // mapping (uint => Bid)     Int     |-> Bid
+          <flop-bids>  .Map      </flop-bids>  // mapping (uint => Bid) Int |-> StableBid
           <flop-kicks> 0         </flop-kicks>
           <flop-live>  0         </flop-live>
         </flopState>
         <vow>
           <vow-addr> 0:Address </vow-addr>
-          <vow-sins> .Map      </vow-sins> // mapping (uint256 => uint256) Int     |-> Int
+          <vow-sins> .Map      </vow-sins> // mapping (uint256 => uint256) Int |-> Int
           <vow-sin>  0         </vow-sin>
           <vow-ash>  0         </vow-ash>
           <vow-wait> 0         </vow-wait>
