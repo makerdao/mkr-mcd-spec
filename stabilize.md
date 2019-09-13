@@ -110,9 +110,30 @@ Flap Semantics
          <flap-bids> M => M[KICK +Int 1 <- Bid(BID, LOT, MSGSENDER, 0, NOW +Int 172800)] </flap-bids>
          <flap-kicks> KICK => KICK +Int 1 </flap-kicks>
          <flap-live> 1 </flap-live>
+```
 
+- tend(uint id, uint lot, uint bid)
+- Places a bid made by the user. Refunds the previous bidder's bid.
+
+**TODO** Flap.tend needs to call Gem.move. We don't have Gem yet.
+`<k> Flap . tend ID LOT BID => Gem . move MSGSENDER GUY CURBID ~> Gem . move MSGSENDER THIS (BID -Int CURBID) ... </k>`
+**TODO** (TIC +Int 10800) Represents TIC plus 3 hours.
+
+```k
     syntax FlapStep ::= "tend" Int Int Int
  // --------------------------------------
+    rule <k> Flap . tend ID LOT BID => . ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         <this> THIS </this>
+         <currentTime> NOW </currentTime>
+         <flap-bids> ... ID |-> Bid( (CURBID => BID), CURLOT, (GUY => MSGSENDER), (TIC => TIC +Int 10800), END ) ... </flap-bids>
+         <flap-live> 1 </flap-live>
+      requires GUY =/=Int 0
+       andBool (TIC >Int NOW orBool TIC ==Int 0)
+       andBool END >Int NOW
+       andBool LOT ==Int CURLOT
+       andBool BID  >Int CURBID
+       andBool BID *Int ilk_init >=Int CURBID *Int 1050000000000000000000000000
 
     syntax FlapStep ::= "deal" Int
  // ------------------------------
