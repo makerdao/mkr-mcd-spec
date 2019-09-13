@@ -89,6 +89,10 @@ Flap Semantics
 
     syntax FlapStep ::= ExceptionStep
  // ---------------------------------
+    rule <k>                      Flap . catch => Flap . drop ... </k>
+    rule <k> Flap . exception ~>  Flap . catch => Flap . pop  ... </k>
+    rule <k> Flap . exception ~> (Flap . FS    => .)          ... </k>
+      requires FS =/=K catch
 
     syntax FlapStep ::= "kick" Int Int
  // ----------------------------------
