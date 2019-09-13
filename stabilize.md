@@ -134,9 +134,24 @@ Flap Semantics
        andBool LOT ==Int CURLOT
        andBool BID  >Int CURBID
        andBool BID *Int ilk_init >=Int CURBID *Int 1050000000000000000000000000
+```
 
-    syntax FlapStep ::= "deal" Int
- // ------------------------------
+- deal(uint id)
+- Settles an auction, rewarding the lot to the highest bidder and burning their bid
+
+**TODO** Flap.deal calls Gem.burn
+`<k> Flap . deal ID => Vat . move THIS GUY LOT ~> Gem . burn THIS BID ... </k>`
+
+```k
+    syntax FlapStep ::= "deal" Int [klabel(FlapDeal),symbol]
+ // --------------------------------------------------------
+    rule <k> Flap . deal ID => Vat . move THIS GUY LOT ... </k>
+         <this> THIS </this>
+         <currentTime> NOW </currentTime>
+         <flap-bids> ... (ID |-> Bid( BID, LOT, GUY, TIC, END ) => .Map) ... </flap-bids>
+         <flap-live> 1 </flap-live>
+      requires (TIC <Int NOW andBool TIC =/=Int 0)
+        orBool  END <Int NOW
 
     syntax FlapStep ::= "cage" Int
  // ------------------------------
