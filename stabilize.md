@@ -69,9 +69,6 @@ Flap Semantics
     syntax FlapAuthStep ::= WardStep
  // --------------------------------
 
-    syntax FlapAuthStep ::= "init" Address Address
- // ----------------------------------------------
-
     syntax FlapStep ::= StashStep
  // -----------------------------
 
