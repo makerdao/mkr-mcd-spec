@@ -68,6 +68,11 @@ Flap Semantics
 
     syntax FlapAuthStep ::= WardStep
  // --------------------------------
+    rule <k> Flap . rely ADDR => . ... </k>
+         <flap-ward> ... ADDR |-> (_ => true) ... </flap-ward>
+
+    rule <k> Flap . deny ADDR => . ... </k>
+         <flap-ward> ... ADDR |-> (_ => false) ... </flap-ward>
 
     syntax FlapStep ::= StashStep
  // -----------------------------
