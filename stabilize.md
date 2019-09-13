@@ -12,12 +12,12 @@ module SYSTEM-STABILIZER
     configuration
       <stabilize>
         <flapStack> .List </flapStack>
-        <flapState>
+        <flap-state>
           <flap-ward> .Map </flap-ward>  // mapping (address => uint) Address |-> Bool
           <flap-bids> .Map </flap-bids>  // mapping (uint => Bid)     Int     |-> Bid
           <flap-kicks> 0   </flap-kicks>
-          <flap-live>  0   </flap-live>
-        </flapState>
+          <flap-live>  1   </flap-live>
+        </flap-state>
         <flopStack> .List </flopStack>
         <flopState>
           <flop-ward> .Map </flop-ward>  // mapping (address => uint) Address |-> Bool
