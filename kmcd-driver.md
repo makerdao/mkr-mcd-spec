@@ -95,8 +95,8 @@ Base Data
     syntax Address ::= Int | String
  // -------------------------------
 
-    syntax Value ::= Rat | ".Value"
- // -------------------------------
+    syntax MaybeRay ::= Ray | ".MaybeRay"
+ // -------------------------------------
 ```
 
 Constants
