@@ -76,6 +76,16 @@ Flap Semantics
 
     syntax FlapStep ::= StashStep
  // -----------------------------
+    rule <k> Flap . push => . ... </k>
+         <flapStack> (.List => ListItem(FLAP)) ... </flapStack>
+         <flap-state> FLAP </flap-state>
+
+    rule <k> Flap . pop => . ... </k>
+         <flapStack> (ListItem(FLAP) => .List) ... </flapStack>
+         <flap-state> _ => FLAP </flap-state>
+
+    rule <k> Flap . drop => . ... </k>
+         <flapStack> (ListItem(_) => .List) ... </flapStack>
 
     syntax FlapStep ::= ExceptionStep
  // ---------------------------------
