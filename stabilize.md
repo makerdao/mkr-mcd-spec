@@ -49,6 +49,9 @@ Flap Semantics
 
     syntax MCDStep ::= "Flap" "." FlapStep
  // --------------------------------------
+    rule <k> step [ Flap . FAS:FlapAuthStep ] => Flap . push ~> Flap . auth ~> Flap . FAS ~> Flap . catch ... </k>
+    rule <k> step [ Flap . FS               ] => Flap . push ~>                Flap . FS  ~> Flap . catch ... </k>
+      requires notBool isFlapAuthStep(FS)
 
     syntax FlapStep ::= FlapAuthStep
  // --------------------------------
