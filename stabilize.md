@@ -93,9 +93,23 @@ Flap Semantics
     rule <k> Flap . exception ~>  Flap . catch => Flap . pop  ... </k>
     rule <k> Flap . exception ~> (Flap . FS    => .)          ... </k>
       requires FS =/=K catch
+```
 
+- kick(uint lot, uint bid) returns (uint id)
+- Starts a new surplus auction for a lot amount
+
+**TODO** The `end` field of the Bid (TIME +Int 172800) is supposed to be two days from the current time.
+
+```k
     syntax FlapStep ::= "kick" Int Int
  // ----------------------------------
+    rule <k> Flap . kick LOT BID => Vat . move MSGSENDER THIS LOT ~> KICK +Int 1  ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         <this> THIS </this>
+         <currentTime> NOW </currentTime>
+         <flap-bids> M => M[KICK +Int 1 <- Bid(BID, LOT, MSGSENDER, 0, NOW +Int 172800)] </flap-bids>
+         <flap-kicks> KICK => KICK +Int 1 </flap-kicks>
+         <flap-live> 1 </flap-live>
 
     syntax FlapStep ::= "tend" Int Int Int
  // --------------------------------------
