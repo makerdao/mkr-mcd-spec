@@ -61,9 +61,32 @@ Flap Semantics
     syntax AuthStep ::= FlapContract "." FlapAuthStep [klabel(flapStep)]
  // --------------------------------------------------------------------
     rule <k> Flap . _ => exception ... </k> [owise]
+```
 
-    syntax FlapStep ::= "kick" Int Int
- // ----------------------------------
+- kick(uint lot, uint bid) returns (uint id)
+- Starts a new surplus auction for a lot amount
+
+```k
+    syntax FlapAuthStep ::= "kick" Int Int
+ // --------------------------------------
+    rule <k> Flap . kick LOT BID
+          => call Vat . move MSGSENDER THIS LOT
+          ~> KICKS +Int 1
+          ...
+         </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         <this> THIS </this>
+         <currentTime> NOW </currentTime>
+         <flap-bids>... .Map =>
+            KICKS +Int 1 |-> StableBid(... bid: BID,
+                                           lot: LOT,
+                                           guy: MSGSENDER,
+                                           tic: 0,
+                                           end: NOW +Int TAU)
+         ...</flap-bids>
+         <flap-kicks> KICKS => KICKS +Int 1 </flap-kicks>
+         <flap-live> true </flap-live>
+         <flap-tau> TAU </flap-tau>
 
     syntax FlapStep ::= "tend" Int Int Int
  // --------------------------------------
