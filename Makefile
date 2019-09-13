@@ -114,23 +114,23 @@ $(java_dir)/%.k: %.md
 # LLVM Backend
 
 $(llvm_kompiled): $(llvm_files)
-	$(K_BIN)/kompile --debug --main-module $(MAIN_MODULE) --backend llvm              \
-	                 --syntax-module $(SYNTAX_MODULE) $(llvm_dir)/$(MAIN_DEFN_FILE).k \
-	                 --directory $(llvm_dir) -I $(llvm_dir)                           \
+	$(K_BIN)/kompile --debug --main-module $(MAIN_MODULE) --backend llvm \
+	                 --syntax-module $(SYNTAX_MODULE) $<                 \
+	                 --directory $(llvm_dir) -I $(llvm_dir)              \
 	                 $(LLVM_KOMPILE_OPTS)
 
 # Haskell Backend
 
 $(haskell_kompiled): $(haskell_files)
-	$(K_BIN)/kompile --debug --main-module $(MAIN_MODULE) --backend haskell              \
-	                 --syntax-module $(SYNTAX_MODULE) $(haskell_dir)/$(MAIN_DEFN_FILE).k \
+	$(K_BIN)/kompile --debug --main-module $(MAIN_MODULE) --backend haskell \
+	                 --syntax-module $(SYNTAX_MODULE) $<                    \
 	                 --directory $(haskell_dir) -I $(haskell_dir)
 
 # Java Backend
 
 $(java_kompiled): $(java_files)
-	$(K_BIN)/kompile --debug --main-module $(MAIN_MODULE) --backend java              \
-	                 --syntax-module $(SYNTAX_MODULE) $(java_dir)/$(MAIN_DEFN_FILE).k \
+	$(K_BIN)/kompile --debug --main-module $(MAIN_MODULE) --backend java \
+	                 --syntax-module $(SYNTAX_MODULE) $<                 \
 	                 --directory $(java_dir) -I $(java_dir)
 
 # Test
