@@ -87,9 +87,38 @@ Flap Semantics
          <flap-kicks> KICKS => KICKS +Int 1 </flap-kicks>
          <flap-live> true </flap-live>
          <flap-tau> TAU </flap-tau>
+```
 
+- tend(uint id, uint lot, uint bid)
+- Places a bid made by the user. Refunds the previous bidder's bid.
+
+```k
     syntax FlapStep ::= "tend" Int Int Int
  // --------------------------------------
+    rule <k> Flap . tend ID LOT BID
+          => call Gem "MKR" . move MSGSENDER GUY BID'
+          ~> call Gem "MKR" . move MSGSENDER THIS (BID -Int BID')
+         ...
+         </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         <this> THIS </this>
+         <currentTime> NOW </currentTime>
+         <flap-bids>...
+           ID |-> StableBid(... bid: BID' => BID,
+                                lot: LOT',
+                                guy: GUY => MSGSENDER,
+                                tic: TIC => TIC +Int TTL,
+                                end: END)
+         ...</flap-bids>
+         <flap-live> true </flap-live>
+         <flap-ttl> TTL </flap-ttl>
+         <flap-beg> BEG </flap-beg>
+      requires GUY =/=Int 0
+       andBool (TIC >Int NOW orBool TIC ==Int 0)
+       andBool END  >Int NOW
+       andBool LOT ==Int LOT'
+       andBool BID  >Int BID'
+       andBool BID >=Rat BID' *Rat BEG
 
     syntax FlapStep ::= "deal" Int
  // ------------------------------
