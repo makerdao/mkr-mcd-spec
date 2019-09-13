@@ -780,6 +780,8 @@ Spot Semantics
          <spot-par> PAR </spot-par>
       requires VALUE =/=K .Value
 
+    rule <k> Spot . poke ILK => . ... </k>
+         <spot-ilks> ... ILK |-> SpotIlk ( .Value, _ ) ... </spot-ilks>
 ```
 
 ```k
