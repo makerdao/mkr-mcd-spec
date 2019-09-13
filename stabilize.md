@@ -152,9 +152,18 @@ Flap Semantics
          <flap-live> 1 </flap-live>
       requires (TIC <Int NOW andBool TIC =/=Int 0)
         orBool  END <Int NOW
+```
 
-    syntax FlapStep ::= "cage" Int
- // ------------------------------
+- cage(uint rad)
+- Part of Global Settlement. Freezes the auction house.
+
+```k
+    syntax FlapAuthStep ::= "cage" Int
+ // ----------------------------------
+    rule <k> Flap . cage RAD => Vat . move THIS MSGSENDER RAD ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         <this> THIS </this>
+         <flap-live> _ => 0 </flap-live>
 
     syntax FlapStep ::= "yank" Int
  // ------------------------------
