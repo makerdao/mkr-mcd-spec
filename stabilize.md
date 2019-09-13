@@ -58,6 +58,13 @@ Flap Semantics
 
     syntax FlapAuthStep ::= AuthStep
  // --------------------------------
+    rule <k> Flap . auth => . ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         <flap-ward> ... MSGSENDER |-> true ... </flap-ward>
+
+    rule <k> Flap . auth => Flap . exception ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         <flap-ward> ... MSGSENDER |-> false ... </flap-ward>
 
     syntax FlapAuthStep ::= WardStep
  // --------------------------------
