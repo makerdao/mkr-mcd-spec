@@ -23,7 +23,7 @@ CDP Data
 -   `VatIlk`: `ART`, `RATE`, `SPOT`, `LINE`, `DUST`.
 -   `JugIlk`: `DUTY`, `RHO`.
 -   `CatIlk`: `FLIP`, `CHOP`, `LUMP`
--   `SpotIlk`: `MAT`
+-   `SpotIlk`: `VALUE`, `MAT`
 
 `Ilk` is a collateral with certain risk parameters.
 Vat doesn't care about parameters for auctions, so only has stuff like debt ceiling, penalty, etc.
@@ -42,7 +42,7 @@ Getters and setters for `Ilk` should be permissioned, and different combinations
     syntax CatIlk ::= Ilk ( Address, Int, Int )           [klabel(#CatIlk), symbol]
  // -------------------------------------------------------------------------------
 
-    syntax SpotIlk ::= Ilk ( Int )                       [klabel(#SpotIlk), symbol]
+    syntax SpotIlk ::= SpotIlk ( Value, Int )            [klabel(#SpotIlk), symbol]
  // -------------------------------------------------------------------------------
 ```
 
@@ -118,7 +118,7 @@ Vat CDP State
         <spotStack> .List </spotStack>
         <spot>
           <spot-ward> .Map </spot-ward> // mapping (address => uint) Address |-> Bool
-          <spot-ilk>  .Map </spot-ilk>  // mapping (bytes32 => ilk)  Int     |-> SpotIlk
+          <spot-ilks> .Map </spot-ilks> // mapping (bytes32 => ilk)  Int     |-> SpotIlk
           <spot-par>  0    </spot-par>
         </spot>
       </cdp-core>
@@ -721,28 +721,67 @@ Spot Semantics
 ```k
     syntax MCDStep ::= "Spot" "." SpotStep
  // --------------------------------------
+    rule <k> step [ Spot . SAS:SpotAuthStep ] => Spot . push ~> Spot . auth ~> Spot . SAS ~> Spot . catch ... </k>
+    rule <k> step [ Spot . SS               ] => Spot . push ~>                Spot . SS  ~> Spot . catch ... </k>
+      requires notBool isSpotAuthStep(SS)
 
     syntax SpotStep ::= SpotAuthStep
  // --------------------------------
 
     syntax SpotAuthStep ::= AuthStep
  // --------------------------------
+    rule <k> Spot . auth => . ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         <spot-ward> ... MSGSENDER |-> true ... </spot-ward>
+
+    rule <k> Spot . auth => Spot . exception ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         <spot-ward> ... MSGSENDER |-> false ... </spot-ward>
 
     syntax SpotAuthStep ::= WardStep
  // --------------------------------
+    rule <k> Spot . rely ADDR => . ... </k>
+         <spot-ward> ... ADDR |-> (_ => true) ... </spot-ward>
 
-    syntax SpotAuthStep ::= "init" Address
- // --------------------------------------
+    rule <k> Spot . deny ADDR => . ... </k>
+         <spot-ward> ... ADDR |-> (_ => false) ... </spot-ward>
+
+    syntax SpotAuthStep ::= InitStep
+ // --------------------------------
+    rule <k> Spot . init MSGSENDER => . ... </k>
+         <spot-ward> M => M[MSGSENDER <- true] </spot-ward>
+         <spot-par> _ => ilk_init </spot-par>
 
     syntax SpotStep ::= StashStep
  // -----------------------------
+    rule <k> Spot . push => . ... </k>
+         <spotStack> (.List => ListItem(SPOT)) ... </spotStack>
+         <spot> SPOT </spot>
+
+    rule <k> Spot . pop => . ... </k>
+         <spotStack> (ListItem(SPOT) => .List) ... </spotStack>
+         <spot> _ => SPOT </spot>
+
+    rule <k> Spot . drop => . ... </k>
+         <spotStack> (ListItem(_) => .List) ... </spotStack>
 
     syntax SpotStep ::= ExceptionStep
  // ---------------------------------
+    rule <k>                      Spot . catch => Spot . drop ... </k>
+    rule <k> Spot . exception ~>  Spot . catch => Spot . pop  ... </k>
+    rule <k> Spot . exception ~> (Spot . SS    => .)          ... </k>
+      requires SS =/=K catch
 
     syntax SpotStep ::= "poke" Int
  // ------------------------------
+    rule <k> Spot . poke ILK => . ... </k>
+         <vat-ilks> ... ILK |-> Ilk ( _, _, ( _ => ((VALUE *Int 1000000000) /Int PAR) /Int MAT ), _, _ ) ... </vat-ilks>
+         <spot-ilks> ... ILK |-> SpotIlk ( VALUE, MAT ) ... </spot-ilks>
+         <spot-par> PAR </spot-par>
+      requires VALUE =/=K .Value
 
+    rule <k> Spot . poke ILK => . ... </k>
+         <spot-ilks> ... ILK |-> SpotIlk ( .Value, _ ) ... </spot-ilks>
 ```
 
 ```k
