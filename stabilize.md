@@ -19,12 +19,15 @@ module SYSTEM-STABILIZER
           <flap-live>  0   </flap-live>
         </flapState>
         <flopStack> .List </flopStack>
-        <flopState>
-          <flop-ward> .Map </flop-ward>  // mapping (address => uint) Address |-> Bool
-          <flop-bids> .Map </flop-bids>  // mapping (uint => Bid)     Int     |-> Bid
-          <flop-kicks> 0   </flop-kicks>
-          <flop-live>  0   </flop-live>
-        </flopState>
+        <flop-state>
+          <flop-ward> .Map          </flop-ward>  // mapping (address => uint) Address |-> Bool
+          <flop-bids> .Map          </flop-bids>  // mapping (uint => Bid)     Int     |-> Bid
+          <flop-kicks> 0            </flop-kicks>
+          <flop-live>  true         </flop-live>
+          <flop-beg>   105 /Rat 100 </flop-beg>
+          <flop-ttl>   3 hours      </flop-ttl>
+          <flop-tau>   2 days       </flop-tau>
+        </flop-state>
         <vowStack> .List </vowStack>
         <vow>
           <vow-ward>  .Map </vow-ward> // mapping (address => uint)    Address |-> Bool
