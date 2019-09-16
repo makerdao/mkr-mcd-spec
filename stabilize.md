@@ -101,8 +101,8 @@ Flap Semantics
 **TODO** The `end` field of the Bid (TIME +Int 172800) is supposed to be two days from the current time.
 
 ```k
-    syntax FlapStep ::= "kick" Int Int
- // ----------------------------------
+    syntax FlapAuthStep ::= "kick" Int Int
+ // --------------------------------------
     rule <k> Flap . kick LOT BID => Vat . move MSGSENDER THIS LOT ~> KICK +Int 1  ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
