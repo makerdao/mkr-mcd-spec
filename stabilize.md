@@ -133,6 +133,10 @@ Flop Semantics
 
     syntax FlopStep ::= ExceptionStep
  // ---------------------------------
+    rule <k>                      Flop . catch => Flop . drop ... </k>
+    rule <k> Flop . exception ~>  Flop . catch => Flop . pop  ... </k>
+    rule <k> Flop . exception ~> (Flop . FS    => .)          ... </k>
+      requires FS =/=K catch
 
     syntax FlopStep ::= "kick" Int Int Int
  // --------------------------------------
