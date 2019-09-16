@@ -51,6 +51,8 @@ module KMCD
           <end-out>  .Map </end-out>  // mapping (bytes32 => mapping (address => uint256)) Int     |-> Wad
         </end>
       </kmcd>
+
+    syntax Dummy ::= "end"
 ```
 
 End Semantics

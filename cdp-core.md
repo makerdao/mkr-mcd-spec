@@ -113,7 +113,7 @@ Vat CDP State
         <cat>
           <cat-ward> .Map </cat-ward>
           <cat-ilks> .Map </cat-ilks>
-          <cat-live> 0    </cat-live>
+          <cat-live> 1    </cat-live>
         </cat>
         <spotStack> .List </spotStack>
         <spot>
@@ -198,8 +198,8 @@ By adjusting the `<vat-ward>`, you can upgrade contracts in place by deploying a
 **TODO**: `rely` and `deny` should be `note`.
 
 ```k
-    syntax VatStep ::= AuthStep
- // ---------------------------
+    syntax VatAuthStep ::= AuthStep
+ // -------------------------------
     rule <k> Vat . auth => . ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <vat-ward> ... MSGSENDER |-> true ... </vat-ward>
