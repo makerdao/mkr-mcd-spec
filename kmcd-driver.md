@@ -69,7 +69,28 @@ Some methods rely on a timestamp. We simulate that here.
     syntax MCDStep ::= "TimeStep"
  // -----------------------------
     rule <k> step [ TimeStep ] => . ... </k>
-         <currentTime> TIME => TIME +Int 1 </currentTime>
+         <currentTime> TIME => TIME +Int 1 second </currentTime>
+
+    syntax Int ::= Int "second"  [timeUnit]
+                 | Int "seconds" [timeUnit]
+                 | Int "minute"  [timeUnit]
+                 | Int "minutes" [timeUnit]
+                 | Int "hour"    [timeUnit]
+                 | Int "hours"   [timeUnit]
+                 | Int "day"     [timeUnit]
+                 | Int "days"    [timeUnit]
+ // -------------------------
+
+    syntax priorities timeUnit > _+Int_ _-Int_ _*Int_ _/Int_
+
+    rule 1 second  => 1                    [macro]
+    rule N seconds => N                    [macro]
+    rule 1 minute  =>        60    seconds [macro]
+    rule N minutes => N *Int 60    seconds [macro]
+    rule 1 hour    =>        3600  seconds [macro]
+    rule N hours   => N *Int 3600  seconds [macro]
+    rule 1 day     =>        84600 seconds [macro]
+    rule N days    => N *Int 84600 seconds [macro]
 ```
 
 Base Data
