@@ -13,10 +13,13 @@ module SYSTEM-STABILIZER
       <stabilize>
         <flapStack> .List </flapStack>
         <flap-state>
-          <flap-ward> .Map </flap-ward>  // mapping (address => uint) Address |-> Bool
-          <flap-bids> .Map </flap-bids>  // mapping (uint => Bid)     Int     |-> Bid
-          <flap-kicks> 0   </flap-kicks>
-          <flap-live>  1   </flap-live>
+          <flap-ward> .Map          </flap-ward>  // mapping (address => uint) Address |-> Bool
+          <flap-bids> .Map          </flap-bids>  // mapping (uint => Bid)     Int     |-> Bid
+          <flap-kicks> 0            </flap-kicks>
+          <flap-live>  1            </flap-live>
+          <flap-beg>   105 /Rat 100 </flap-beg>
+          <flap-ttl>   3 hours      </flap-ttl>
+          <flap-tau>   2 days       </flap-tau>
         </flap-state>
         <flopStack> .List </flopStack>
         <flopState>
@@ -98,8 +101,6 @@ Flap Semantics
 - kick(uint lot, uint bid) returns (uint id)
 - Starts a new surplus auction for a lot amount
 
-**TODO** The `end` field of the Bid (TIME +Int 172800) is supposed to be two days from the current time.
-
 ```k
     syntax FlapAuthStep ::= "kick" Int Int
  // --------------------------------------
@@ -107,9 +108,10 @@ Flap Semantics
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
          <currentTime> NOW </currentTime>
-         <flap-bids> M => M[KICK +Int 1 <- Bid(BID, LOT, MSGSENDER, 0, NOW +Int 172800)] </flap-bids>
+         <flap-bids> M => M[KICK +Int 1 <- Bid(BID, LOT, MSGSENDER, 0, NOW +Int TAU)] </flap-bids>
          <flap-kicks> KICK => KICK +Int 1 </flap-kicks>
          <flap-live> 1 </flap-live>
+         <flap-tau> TAU </flap-tau>
 ```
 
 - tend(uint id, uint lot, uint bid)
@@ -117,7 +119,6 @@ Flap Semantics
 
 **TODO** Flap.tend needs to call Gem.move. We don't have Gem yet.
 `<k> Flap . tend ID LOT BID => Gem . move MSGSENDER GUY CURBID ~> Gem . move MSGSENDER THIS (BID -Int CURBID) ... </k>`
-**TODO** (TIC +Int 10800) Represents TIC plus 3 hours.
 
 ```k
     syntax FlapStep ::= "tend" Int Int Int
@@ -126,14 +127,16 @@ Flap Semantics
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
          <currentTime> NOW </currentTime>
-         <flap-bids> ... ID |-> Bid( (CURBID => BID), CURLOT, (GUY => MSGSENDER), (TIC => TIC +Int 10800), END ) ... </flap-bids>
+         <flap-bids> ... ID |-> Bid( (CURBID => BID), CURLOT, (GUY => MSGSENDER), (TIC => TIC +Int TTL), END ) ... </flap-bids>
          <flap-live> 1 </flap-live>
+         <flap-ttl> TTL </flap-ttl>
+         <flap-beg> BEG </flap-beg>
       requires GUY =/=Int 0
        andBool (TIC >Int NOW orBool TIC ==Int 0)
-       andBool END >Int NOW
+       andBool END  >Int NOW
        andBool LOT ==Int CURLOT
        andBool BID  >Int CURBID
-       andBool BID *Int ilk_init >=Int CURBID *Int 1050000000000000000000000000
+       andBool BID >=Rat CURBID *Rat BEG
 ```
 
 - deal(uint id)
@@ -150,8 +153,8 @@ Flap Semantics
          <currentTime> NOW </currentTime>
          <flap-bids> ... (ID |-> Bid( BID, LOT, GUY, TIC, END ) => .Map) ... </flap-bids>
          <flap-live> 1 </flap-live>
-      requires (TIC <Int NOW andBool TIC =/=Int 0)
-        orBool  END <Int NOW
+      requires TIC <Int NOW
+       andBool (TIC =/=Int 0 orBool END <Int NOW)
 ```
 
 - cage(uint rad)
