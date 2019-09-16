@@ -4,12 +4,15 @@ KMCD Driver
 This module defines common state and control flow between all the other KMCD modules.
 
 ```k
+requires "rat.k"
+
 module KMCD-DRIVER
     imports BOOL
     imports BYTES
     imports INT
     imports MAP
     imports STRING
+    imports RAT
 
     configuration
         <kmcd-driver>
