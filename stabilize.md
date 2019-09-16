@@ -93,6 +93,9 @@ Flop Semantics
 ```k
     syntax MCDStep ::= "Flop" "." FlopStep
  // --------------------------------------
+    rule <k> step [ Flop . FAS:FlopAuthStep ] => Flop . push ~> Flop . auth ~> Flop . FAS ~> Flop . catch ... </k>
+    rule <k> step [ Flop . FS               ] => Flop . push ~>                Flop . FS  ~> Flop . catch ... </k>
+      requires notBool isFlopAuthStep(FS)
 
     syntax FlopStep ::= FlopAuthStep
  // --------------------------------
