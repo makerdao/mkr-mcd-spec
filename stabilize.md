@@ -118,9 +118,6 @@ Flop Semantics
     rule <k> Flop . deny ADDR => . ... </k>
          <flop-ward> ... ADDR |-> (_ => false) ... </flop-ward>
 
-    syntax FlopAuthStep ::= "init" Address Address
- // ----------------------------------------------
-
     syntax FlopStep ::= StashStep
  // -----------------------------
 
