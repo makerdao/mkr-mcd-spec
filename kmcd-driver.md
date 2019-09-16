@@ -12,6 +12,7 @@ module KMCD-DRIVER
     imports MAP
     imports RAT
     imports STRING
+    imports RAT
 
     configuration
         <kmcd-driver>
