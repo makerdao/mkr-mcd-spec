@@ -112,6 +112,11 @@ Flop Semantics
 
     syntax FlopAuthStep ::= WardStep
  // --------------------------------
+    rule <k> Flop . rely ADDR => . ... </k>
+         <flop-ward> ... ADDR |-> (_ => true) ... </flop-ward>
+
+    rule <k> Flop . deny ADDR => . ... </k>
+         <flop-ward> ... ADDR |-> (_ => false) ... </flop-ward>
 
     syntax FlopAuthStep ::= "init" Address Address
  // ----------------------------------------------
