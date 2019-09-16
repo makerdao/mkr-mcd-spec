@@ -113,7 +113,7 @@ Vat CDP State
         <cat>
           <cat-ward> .Map </cat-ward>
           <cat-ilks> .Map </cat-ilks>
-          <cat-live> 0    </cat-live>
+          <cat-live> 1    </cat-live>
         </cat>
         <spotStack> .List </spotStack>
         <spot>
