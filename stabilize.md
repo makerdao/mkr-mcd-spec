@@ -47,8 +47,8 @@ Flap Semantics
 --------------
 
 ```k
-    syntax Bid ::= Bid ( Int, Int, Address, Int, Int ) [klabel(BidBid)]
- // -------------------------------------------------------------------
+    syntax Bid ::= Bid ( bid: Int, lot: Int, guy: Address, tic: Int, end: Int ) [klabel(BidBid)]
+ // --------------------------------------------------------------------------------------------
 
     syntax MCDStep ::= "Flap" "." FlapStep
  // --------------------------------------
@@ -180,7 +180,7 @@ Flap Semantics
  // --------------------------------------------------------
     rule <k> Flap . yank ID => . ... </k>
          <this> THIS </this>
-         <flap-bids> ... (ID |-> Bid( BID, _, GUY, _, _ ) => .Map) ... </flap-bids>
+         <flap-bids> ... (ID |-> Bid(... bid: BID, guy: GUY) => .Map) ... </flap-bids>
          <flap-live> 0 </flap-live>
       requires GUY =/=Int 0
 ```
