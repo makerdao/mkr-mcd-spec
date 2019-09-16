@@ -92,8 +92,8 @@ Some methods rely on a timestamp. We simulate that here.
     rule N minutes => N *Int 60    seconds [macro]
     rule 1 hour    =>        3600  seconds [macro]
     rule N hours   => N *Int 3600  seconds [macro]
-    rule 1 day     =>        84600 seconds [macro]
-    rule N days    => N *Int 84600 seconds [macro]
+    rule 1 day     =>        86400 seconds [macro]
+    rule N days    => N *Int 86400 seconds [macro]
 ```
 
 Base Data

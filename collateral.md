@@ -173,7 +173,7 @@ module COLLATERAL
          <flip-bids>...
            ID |-> (Bid(... lot: LOT' => LOT, guy: GUY => MSGSENDER, tic: _ => NOW +Int TTL, usr: USR) #as AUCTION)
          ...</flip-bids>
-      requires notBool canDent(LOT, BID, NOW, BEG, AUCTION)
+      requires canDent(LOT, BID, NOW, BEG, AUCTION)
 
     syntax Bool ::= canDent(lot: Int, bid: Int, now: Int, beg: Int, auction: Bid) [function]
  // ----------------------------------------------------------------------------------------
