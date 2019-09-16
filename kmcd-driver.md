@@ -4,12 +4,15 @@ KMCD Driver
 This module defines common state and control flow between all the other KMCD modules.
 
 ```k
+requires "rat.k"
+
 module KMCD-DRIVER
     imports BOOL
     imports BYTES
     imports INT
     imports MAP
     imports STRING
+    imports RAT
 
     configuration
         <kmcd-driver>
@@ -69,7 +72,28 @@ Some methods rely on a timestamp. We simulate that here.
     syntax MCDStep ::= "TimeStep"
  // -----------------------------
     rule <k> step [ TimeStep ] => . ... </k>
-         <currentTime> TIME => TIME +Int 1 </currentTime>
+         <currentTime> TIME => TIME +Int 1 second </currentTime>
+
+    syntax Int ::= Int "second"  [timeUnit]
+                 | Int "seconds" [timeUnit]
+                 | Int "minute"  [timeUnit]
+                 | Int "minutes" [timeUnit]
+                 | Int "hour"    [timeUnit]
+                 | Int "hours"   [timeUnit]
+                 | Int "day"     [timeUnit]
+                 | Int "days"    [timeUnit]
+ // -------------------------
+
+    syntax priorities timeUnit > _+Int_ _-Int_ _*Int_ _/Int_
+
+    rule 1 second  => 1                    [macro]
+    rule N seconds => N                    [macro]
+    rule 1 minute  =>        60    seconds [macro]
+    rule N minutes => N *Int 60    seconds [macro]
+    rule 1 hour    =>        3600  seconds [macro]
+    rule N hours   => N *Int 3600  seconds [macro]
+    rule 1 day     =>        86400 seconds [macro]
+    rule N days    => N *Int 86400 seconds [macro]
 ```
 
 Base Data
