@@ -137,9 +137,33 @@ Flop Semantics
     rule <k> Flop . exception ~>  Flop . catch => Flop . pop  ... </k>
     rule <k> Flop . exception ~> (Flop . FS    => .)          ... </k>
       requires FS =/=K catch
+```
 
-    syntax FlopStep ::= "kick" Int Int Int
- // --------------------------------------
+- kick(address gal, uint lot, uint bid) returns (uint id)
+- Starts an auction
+
+```k
+    syntax FlopAuthStep ::= "kick" Address Int Int
+ // ----------------------------------------------
+    rule <k> Flop . kick GAL LOT BID
+          => Vat . move MSGSENDER THIS LOT
+          ~> KICKS +Int 1
+          ...
+         </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         <this> THIS </this>
+         <currentTime> NOW </currentTime>
+         <flop-live> true </flop-live>
+         <flop-bids>... .Map =>
+           KICKS +Int 1 |-> Bid(...
+                             bid: BID,
+                             lot: LOT,
+                             guy: GAL,
+                             tic: 0,
+                             end: NOW +Int TAU)
+         ...</flop-bids>
+         <flop-kicks> KICKS => KICKS +Int 1 </flop-kicks>
+         <flop-tau> TAU </flop-tau>
 
     syntax FlopStep ::= "tick" Int
  // ------------------------------
