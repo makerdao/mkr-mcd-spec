@@ -120,6 +120,16 @@ Flop Semantics
 
     syntax FlopStep ::= StashStep
  // -----------------------------
+    rule <k> Flop . push => . ... </k>
+         <flopStack> (.List => ListItem(<flop-state> FLOP </flop-state>)) ... </flopStack>
+         <flop-state> FLOP </flop-state>
+
+    rule <k> Flop . pop => . ... </k>
+         <flopStack> (ListItem(<flop-state> FLOP </flop-state>) => .List) ... </flopStack>
+         <flop-state> _ => FLOP </flop-state>
+
+    rule <k> Flop . drop => . ... </k>
+         <flopStack> (ListItem(_) => .List) ... </flopStack>
 
     syntax FlopStep ::= ExceptionStep
  // ---------------------------------
