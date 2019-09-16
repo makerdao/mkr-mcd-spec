@@ -102,6 +102,13 @@ Flop Semantics
 
     syntax FlopAuthStep ::= AuthStep
  // --------------------------------
+    rule <k> Flop . auth => . ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         <flop-ward> ... MSGSENDER |-> true ... </flop-ward>
+
+    rule <k> Flop . auth => Flop . exception ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         <flop-ward> ... MSGSENDER |-> false ... </flop-ward>
 
     syntax FlopAuthStep ::= WardStep
  // --------------------------------
