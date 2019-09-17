@@ -34,6 +34,7 @@ module COLLATERAL
     syntax MCDStep ::= FlipContract "." FlipStep [klabel(flipStep)]
  // ---------------------------------------------------------------
     rule contract(Flip ILK . _) => Flip ILK
+    rule [[ address(Flip ILK) => ADDR ]] <flip-ilk> ILK </flip-ilk> <flip-addr> ADDR </flip-addr>
 
     syntax FlipStep ::= FlipAuthStep
     syntax AuthStep ::= FlipContract "." FlipAuthStep [klabel(flipStep)]

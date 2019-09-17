@@ -152,6 +152,7 @@ Updating the `<vat>` happens in phases:
     syntax MCDStep ::= VatContract "." VatStep [klabel(vatStep)]
  // ------------------------------------------------------------
     rule contract(Vat . _) => Vat
+    rule [[ address(Vat) => ADDR ]] <vat-addr> ADDR </vat-addr>
 
     syntax VatStep ::= VatAuthStep
     syntax AuthStep ::= VatContract "." VatAuthStep [klabel(vatStep)]
@@ -458,6 +459,7 @@ Jug Semantics
     syntax MCDStep ::= JugContract "." JugStep [klabel(jugStep)]
  // ------------------------------------------------------------
     rule contract(Jug . _) => Jug
+    rule [[ address(Jug) => ADDR ]] <jug-addr> ADDR </jug-addr>
 
     syntax JugStep ::= JugAuthStep
     syntax AuthStep ::= JugContract "." JugAuthStep [klabel(jugStep)]
@@ -493,6 +495,7 @@ Cat Semantics
     syntax MCDStep ::= CatContract "." CatStep [klabel(catStep)]
  // ------------------------------------------------------------
     rule contract(Cat . _) => Cat
+    rule [[ address(Cat) => ADDR ]] <cat-addr> ADDR </cat-addr>
 
     syntax CatStep ::= CatAuthStep
     syntax AuthStep ::= CatContract "." CatAuthStep [klabel(catStep)]
@@ -515,6 +518,7 @@ Spot Semantics
     syntax MCDStep ::= SpotContract "." SpotStep [klabel(spotStep)]
  // ---------------------------------------------------------------
     rule contract(Spot . _) => Spot
+    rule [[ address(Spot) => ADDR ]] <spot-addr> ADDR </spot-addr>
 
     syntax SpotAuthStep
     syntax SpotStep ::= SpotAuthStep

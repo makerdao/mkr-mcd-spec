@@ -63,6 +63,7 @@ End Semantics
     syntax MCDStep ::= EndContract "." EndStep [klabel(endStep)]
  // ------------------------------------------------------------
     rule contract(End . _) => End
+    rule [[ address(End) => ADDR ]] <end-addr> ADDR </end-addr>
 
     syntax EndStep ::= EndAuthStep
     syntax AuthStep ::= EndContract "." EndAuthStep [klabel(endStep)]
