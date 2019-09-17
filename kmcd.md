@@ -38,7 +38,6 @@ module KMCD
         <endPhase> false </endPhase>
         <endStack> .List </endStack>
         <end>
-          <end-ward> .Map </end-ward> // mapping (address => uint)                         Address |-> Bool
           <end-live> 0    </end-live>
           <end-when> 0    </end-when>
           <end-wait> 0    </end-wait>

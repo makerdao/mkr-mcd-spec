@@ -90,7 +90,6 @@ Vat CDP State
       <cdp-core>
         <vatStack> .List </vatStack>
         <vat>
-          <vat-ward> .Map  </vat-ward> // mapping (address => uint)                 Address |-> Bool
           <vat-can>  .Map  </vat-can>  // mapping (address (address => uint))       Address |-> Set
           <vat-ilks> .Map  </vat-ilks> // mapping (bytes32 => Ilk)                  Int     |-> VatIlk
           <vat-urns> .Map  </vat-urns> // mapping (bytes32 => (address => Urn))     CDPID   |-> VatUrn
@@ -104,20 +103,17 @@ Vat CDP State
         </vat>
         <jugStack> .List </jugStack>
         <jug>
-          <jug-ward> .Map      </jug-ward> // mapping (address => uint)   Address |-> Bool
           <jug-ilks> .Map      </jug-ilks> // mapping (bytes32 => JugIlk) Int     |-> JugIlk
           <jug-vow>  0:Address </jug-vow>  //                             Address
           <jug-base> 0         </jug-base> //                             Int
         </jug>
         <catStack> .List </catStack>
         <cat>
-          <cat-ward> .Map </cat-ward>
           <cat-ilks> .Map </cat-ilks>
           <cat-live> 1    </cat-live>
         </cat>
         <spotStack> .List </spotStack>
         <spot>
-          <spot-ward> .Map </spot-ward> // mapping (address => uint) Address |-> Bool
           <spot-ilks> .Map </spot-ilks> // mapping (bytes32 => ilk)  Int     |-> SpotIlk
           <spot-par>  0    </spot-par>
         </spot>

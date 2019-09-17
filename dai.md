@@ -15,7 +15,6 @@ module DAI
       <dai>
         <dai-stack> .List </dai-stack>
         <dai-state>
-          <dai-ward>        .Map </dai-ward>        // mapping (address => uint)                      Address |-> Bool
           <dai-totalSupply> 0    </dai-totalSupply>
           <dai-account-id>  0    </dai-account-id>
           <dai-balance>     .Map </dai-balance>     // mapping (address => uint)                      Address |-> Int
