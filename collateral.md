@@ -73,6 +73,18 @@ module COLLATERAL
          </gem>
       requires ACCTDST =/=Int 0
 
+    syntax GemStep ::= "burn" Address Int
+ // -------------------------------------
+    rule <k> Gem ACCTGEM . burn ACCTSRC VALUE => . ... </k>
+         <gem>
+           <gem-addr> ACCTGEM </gem-addr>
+           <gem-balances>...
+             ACCTSRC |-> ( BALANCE_SRC => BALANCE_SRC -Int VALUE )
+           ...</gem-balances>
+         </gem>
+      requires ACCTSRC =/=Int 0
+       andBool BALANCE_SRC >=Int VALUE
+
     syntax Bid ::= Bid ( bid: Int, lot: Int, guy: Address, tic: Int, end: Int, usr: Address, gal: Address, tab: Int )
  // -----------------------------------------------------------------------------------------------------------------
 
