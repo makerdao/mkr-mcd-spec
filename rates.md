@@ -23,8 +23,10 @@ module RATES
         </pot>
       </rates>
 
-    syntax MCDStep ::= "Pot" "." PotStep
- // ------------------------------------
+    syntax MCDContract ::= PotContract
+    syntax PotContract ::= "Pot"
+    syntax MCDStep ::= PotContract "." PotStep
+ // ------------------------------------------
 
     syntax PotStep ::= PotAuthStep
  // ------------------------------

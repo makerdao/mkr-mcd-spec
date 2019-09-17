@@ -32,8 +32,10 @@ module COLLATERAL
     syntax Bid ::= Bid ( bid: Int, lot: Int, guy: Address, tic: Int, end: Int, usr: Address, gal: Address, tab: Int )
  // -----------------------------------------------------------------------------------------------------------------
 
-    syntax MCDStep ::= "Flip" Int "." FlipStep
- // ------------------------------------------
+    syntax MCDContract ::= FlipContract
+    syntax FlipContract ::= "Flip" Int
+    syntax MCDStep ::= FlipContract "." FlipStep
+ // --------------------------------------------
 
     syntax FlipStep ::= FlipAuthStep
  // --------------------------------

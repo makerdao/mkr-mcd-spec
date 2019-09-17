@@ -27,11 +27,13 @@ MCD Simulations
 ---------------
 
 ```k
-    syntax MCDStep
     syntax MCDSteps ::= ".MCDSteps" | MCDStep MCDSteps
  // --------------------------------------------------
     rule <k> .MCDSteps => . ... </k>
     rule <k> MCD:MCDStep MCDS:MCDSteps => MCD ~> MCDS ... </k>
+
+    syntax MCDContract
+ // ------------------
 ```
 
 Simulations
