@@ -13,18 +13,16 @@ module COLLATERAL
 
     configuration
       <collateral>
-        <flippers>
-          <flipper multiplicity="*" type="Map">
-            <flip-ilk> 0 </flip-ilk>
-            <flip>
-              <flip-bids>  .Map         </flip-bids> // mapping (uint => Bid)     Int     |-> Bid
-              <flip-beg>   105 /Rat 100 </flip-beg>  // Minimum Bid Increase
-              <flip-ttl>   3 hours      </flip-ttl>  // Single Bid Lifetime
-              <flip-tau>   2 days       </flip-tau>  // Total Auction Length
-              <flip-kicks> 0            </flip-kicks>
-            </flip>
-          </flipper>
-        </flippers>
+        <flips>
+          <flip multiplicity="*" type="Map">
+            <flip-ilk>   0            </flip-ilk>
+            <flip-bids>  .Map         </flip-bids> // mapping (uint => Bid)     Int     |-> Bid
+            <flip-beg>   105 /Rat 100 </flip-beg>  // Minimum Bid Increase
+            <flip-ttl>   3 hours      </flip-ttl>  // Single Bid Lifetime
+            <flip-tau>   2 days       </flip-tau>  // Total Auction Length
+            <flip-kicks> 0            </flip-kicks>
+          </flip>
+        </flips>
       </collateral>
 
     syntax Bid ::= Bid ( bid: Int, lot: Int, guy: Address, tic: Int, end: Int, usr: Address, gal: Address, tab: Int )
