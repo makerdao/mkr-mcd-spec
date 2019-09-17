@@ -33,8 +33,8 @@ Ok to say "this is the VatIlk, this is the CatIlk".
 Getters and setters for `Ilk` should be permissioned, and different combinations of Contract + User might have `file` access to different fields (might be non-`file` access methods).
 
 ```k
-    syntax VatIlk ::= Ilk ( Wad , Ray , Ray , Rad , Rad ) [klabel(#VatIlk), symbol]
- // -------------------------------------------------------------------------------
+    syntax VatIlk ::= Ilk ( Art: Wad , rate: Ray , spot: Ray , line: Rad , dust: Rad ) [klabel(#VatIlk), symbol]
+ // ------------------------------------------------------------------------------------------------------------
 
     syntax JugIlk ::= Ilk ( Int, Int )                    [klabel(#JugIlk), symbol]
  // -------------------------------------------------------------------------------
@@ -153,8 +153,8 @@ Updating the `<vat>` happens in phases:
 ```k
     syntax MCDStep ::= "Vat" "." VatStep
  // ------------------------------------
-    rule <k> step [ Vat . VAS:VatAuthStep ] => Vat . push ~> Vat . auth ~> Vat . VAS ~> Vat . check ~> Vat . catch ... </k>
-    rule <k> step [ Vat . VS              ] => Vat . push ~>               Vat . VS  ~> Vat . check ~> Vat . catch ... </k>
+    rule <k> step [ Vat . VAS:VatAuthStep ] => Vat . push ~> Vat . auth ~> Vat . VAS ~> Vat . catch ... </k>
+    rule <k> step [ Vat . VS              ] => Vat . push ~>               Vat . VS  ~> Vat . catch ... </k>
       requires notBool isVatAuthStep(VS)
 
     syntax VatStep ::= VatAuthStep
@@ -234,45 +234,6 @@ By adjusting the `<vat-ward>`, you can upgrade contracts in place by deploying a
 
 Vat safety is enforced by adding specific checks on the `<vat>` state updates.
 
--   `Vat.check` states basic properties of the `Vat` quanities and is checked after every `VatStep`.
-
-```k
-    syntax VatStep ::= "check"
- // --------------------------
-    rule <k> Vat . check => Vat . exception ... </k> [owise]
-    rule <k> Vat . check => .               ... </k>
-         <vatStack>
-           ListItem ( <vat>
-                        <vat-debt> DEBT:Int </vat-debt>
-                        <vat-Line> LINE:Int </vat-Line>
-                        <vat-vice> VICE:Int </vat-vice>
-                        <vat-dai>  DAI      </vat-dai>
-                        <vat-sin>  SIN      </vat-sin>
-                        ...
-                      </vat>
-                    )
-           ...
-         </vatStack>
-         <vat>
-           <vat-debt> DEBT':Int </vat-debt>
-           <vat-Line> LINE':Int </vat-Line>
-           <vat-vice> VICE':Int </vat-vice>
-           <vat-dai>  DAI'      </vat-dai>
-           <vat-sin>  SIN'      </vat-sin>
-           ...
-         </vat>
-      requires DEBT' >=Int 0 andBool (DEBT' >Int DEBT impliesBool DEBT' <=Int LINE')
-       andBool VICE' >=Int 0
-       andBool allPositive(values(DAI'))
-       andBool allPositive(values(SIN'))
-
-    syntax Bool ::= allPositive ( List ) [function]
- // -----------------------------------------------
-    rule allPositive(.List         ) => true
-    rule allPositive(ListItem(V) VS) => false           requires notBool V >=Int 0
-    rule allPositive(ListItem(V) VS) => allPositive(VS) requires         V >=Int 0
-```
-
 By setting `<vat-can>` for an account, you are authorizing it to manipulate your `<vat-gem>`, `<vat-dai>`, and `<vat-urns>` directly.
 This is quite permissive, and would allow the account to drain all your locked collateral and assets, for example.
 
@@ -282,22 +243,18 @@ This is quite permissive, and would allow the account to drain all your locked c
 **NOTE**: It is assumed that `<vat-can>` has already been initialized with the relevant accounts.
 
 ```k
-    syntax VatStep ::= "wish" Address
- // ---------------------------------
-    rule <k> Vat . wish ADDRFROM => . ... </k>
+    syntax Bool ::= "wish" Address [function]
+ // -----------------------------------------
+    rule [[ wish ADDRFROM => true ]]
          <msg-sender> MSGSENDER </msg-sender>
       requires ADDRFROM ==K MSGSENDER
 
-    rule <k> Vat . wish ADDRFROM => . ... </k>
+    rule [[ wish ADDRFROM => true ]]
          <msg-sender> MSGSENDER </msg-sender>
          <vat-can> ... ADDRFROM |-> CANADDRS:Set ... </vat-can>
       requires MSGSENDER in CANADDRS
 
-    rule <k> Vat . wish ADDRFROM => Vat . exception ... </k>
-         <msg-sender> MSGSENDER </msg-sender>
-         <vat-can> ... ADDRFROM |-> CANADDRS:Set ... </vat-can>
-      requires ADDRFROM =/=K MSGSENDER
-       andBool notBool MSGSENDER in CANADDRS
+    rule wish _ => false [owise]
 
     syntax VatStep ::= "hope" Address | "nope" Address
  // --------------------------------------------------
@@ -310,62 +267,9 @@ This is quite permissive, and would allow the account to drain all your locked c
          <vat-can> ... MSGSENDER |-> (CANADDRS => CANADDRS -Set SetItem(ADDRTO)) ... </vat-can>
 ```
 
--   `Vat.consent` checks whether a transaction was beneficial for a given account, otherwise makes sure that `Vat.wish` is set.
-    This encodes that "rational actors consent to actions which benefit them".
-
 -   `Vat.safe` checks that a given `Urn` of a certain `ilk` is not over-leveraged.
 
--   `Vat.nondusty` checks that a given `Urn` has either exactly 0 on a non-dusty amount of debt.
-    **TODO**: Currently we use `urnDebt ==Int 0`, whereas Solidity implementation uses `urnArt ==Int 0`.
-              Does it matter? They are equivalent as long as `urnRate =/=Int 0`.
-
 ```k
-    syntax VatStep ::= "consent" Int Address
- // ----------------------------------------
-    rule <k> Vat . consent _     ADDR => Vat . wish ADDR ... </k> [owise]
-    rule <k> Vat . consent ILKID ADDR => .               ... </k>
-         <vatStack>
-           ListItem ( <vat>
-                        <vat-ilks> ...   ILKID          |-> ILK' ... </vat-ilks>
-                        <vat-urns> ... { ILKID , ADDR } |-> URN' ... </vat-urns>
-                        <vat-gem>  ... { ILKID , ADDR } |-> COL' ... </vat-gem>
-                        <vat-dai>  ...           ADDR   |-> DAI' ... </vat-dai>
-                        ...
-                      </vat>
-                    )
-           ...
-         </vatStack>
-         <vat>
-           <vat-ilks> ...   ILKID          |-> ILK ... </vat-ilks>
-           <vat-urns> ... { ILKID , ADDR } |-> URN ... </vat-urns>
-           <vat-gem>  ... { ILKID , ADDR } |-> COL ... </vat-gem>
-           <vat-dai>  ...           ADDR   |-> DAI ... </vat-dai>
-           ...
-         </vat>
-      requires COL                  <=Int COL'
-       andBool DAI                  <=Int DAI'
-       andBool urnBalance(ILK, URN) <=Int urnBalance(ILK', URN')
-
-    syntax VatStep ::= "less-risky" Int Address
- // -------------------------------------------
-    rule <k> Vat . less-risky ILKID ADDR => Vat . safe ILKID ADDR ... </k> [owise]
-    rule <k> Vat . less-risky ILKID ADDR => .                     ... </k>
-         <vatStack>
-           ListItem ( <vat>
-                        <vat-ilks> ...   ILKID          |-> ILK' ... </vat-ilks>
-                        <vat-urns> ... { ILKID , ADDR } |-> URN' ... </vat-urns>
-                        ...
-                      </vat>
-                    )
-           ...
-         </vatStack>
-         <vat>
-           <vat-ilks> ...   ILKID          |-> ILK ... </vat-ilks>
-           <vat-urns> ... { ILKID , ADDR } |-> URN ... </vat-urns>
-           ...
-         </vat>
-      requires urnBalance(ILK, URN) <=Int urnBalance(ILK', URN')
-
     syntax VatStep ::= "safe" Int Address
  // -------------------------------------
     rule <k> Vat . safe ILKID ADDR => Vat . exception ... </k> [owise]
@@ -430,8 +334,7 @@ This is quite permissive, and would allow the account to drain all your locked c
 
     syntax VatStep ::= "flux" Int Address Address Wad
  // -------------------------------------------------
-    rule <k> Vat . flux ILKID ADDRFROM ADDRTO COL
-          => Vat . wish ADDRFROM
+    rule <k> Vat . flux ILKID ADDRFROM ADDRTO COL => .
          ...
          </k>
          <vat-gem>
@@ -440,6 +343,7 @@ This is quite permissive, and would allow the account to drain all your locked c
            { ILKID , ADDRTO   } |-> ( COLTO   => COLTO   +Int COL )
            ...
          </vat-gem>
+      requires wish ADDRFROM
 ```
 
 -   `Vat.move` transfers Dai between users.
@@ -450,8 +354,7 @@ This is quite permissive, and would allow the account to drain all your locked c
 ```k
     syntax VatStep ::= "move" Address Address Wad
  // ---------------------------------------------
-    rule <k> Vat . move ADDRFROM ADDRTO DAI
-          => Vat . wish ADDRFROM
+    rule <k> Vat . move ADDRFROM ADDRTO DAI => .
          ...
          </k>
          <vat-dai>
@@ -460,6 +363,7 @@ This is quite permissive, and would allow the account to drain all your locked c
            ADDRTO   |-> (DAITO   => DAITO   +Int DAI)
            ...
          </vat-dai>
+      requires wish ADDRFROM
 ```
 
 ### CDP Manipulation
@@ -474,8 +378,7 @@ This is quite permissive, and would allow the account to drain all your locked c
     syntax VatStep ::= "fork" Int Address Address Int Int
  // -----------------------------------------------------
     rule <k> Vat . fork ILKID ADDRFROM ADDRTO DINK DART
-          => Vat . wish           ADDRFROM ~> Vat . wish           ADDRTO
-          ~> Vat . safe     ILKID ADDRFROM ~> Vat . safe     ILKID ADDRTO
+          => Vat . safe     ILKID ADDRFROM ~> Vat . safe     ILKID ADDRTO
           ~> Vat . nondusty ILKID ADDRFROM ~> Vat . nondusty ILKID ADDRTO
          ...
          </k>
@@ -485,6 +388,8 @@ This is quite permissive, and would allow the account to drain all your locked c
            { ILKID , ADDRTO   } |-> Urn ( INKTO   => INKTO   +Int DINK , ARTTO   => ARTFROM +Int DART )
            ...
          </vat-urns>
+      requires wish ADDRFROM
+       andBool wish ADDRTO
 ```
 
 -   `Vat.grab` uses collateral from user `V` to burn `<vat-sin>` for user `W` via one of `U`s CDPs.
@@ -522,10 +427,7 @@ This is quite permissive, and would allow the account to drain all your locked c
 
     syntax VatStep ::= "frob" Int Address Address Address Int Int
  // -------------------------------------------------------------
-    rule <k> frob ILKID ADDRU ADDRV ADDRW DINK DART
-          => Vat . consent    ILKID ADDRU ~> Vat . consent ILKID ADDRV ~> Vat . consent ILKID ADDRW
-          ~> Vat . less-risky ILKID ADDRU
-          ~> Vat . nondusty   ILKID ADDRU
+    rule <k> Vat . frob ILKID ADDRU ADDRV ADDRW DINK DART => .
          ...
          </k>
          <vat-live> true </vat-live>
@@ -537,7 +439,7 @@ This is quite permissive, and would allow the account to drain all your locked c
          </vat-urns>
          <vat-ilks>
            ...
-           ILKID |-> Ilk ( ILKART => ILKART +Int DART , RATE , _ , _ , _ )
+           ILKID |-> Ilk (... Art: ILKART => ILKART +Int DART , rate: RATE , spot: SPOT, line: ILKLINE, dust: DUST )
            ...
          </vat-ilks>
          <vat-gem>
@@ -550,6 +452,19 @@ This is quite permissive, and would allow the account to drain all your locked c
            USERW |-> ( DAIW => DAIW +Int (RATE *Int DART) )
            ...
          </vat-dai>
+         <vat-Line> LINE </vat-Line>
+      requires      ( DART <=Int 0
+               orBool ((ILKART +Int DART) *Int RATE <=Int ILKLINE andBool DEBT +Int (RATE *Int DART) <=Int LINE)
+                    )
+       andBool      ( (DART <=Int 0 andBool DINK >=Int 0)
+               orBool (URNART +Int DART) *Int RATE <=Int (INK +Int DINK) *Int SPOT
+                    )
+       andBool      ( (DART <=Int 0 andBool DINK >=Int 0)
+               orBool wish ADDRU
+                    )
+       andBool (DINK <=Int 0 orBool wish ADDRV)
+       andBool (DART >=Int 0 orBool wish ADDRW)
+       andBool (URNART +Int DART ==Int 0 orBool (URNART +Int DART) *Int RATE >=Int DUST)
 ```
 
 ### Debt/Dai manipulation (`<vat-debt>`, `<vat-dai>`, `<vat-vice>`, `<vat-sin>`)
