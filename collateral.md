@@ -45,6 +45,18 @@ module COLLATERAL
  // -----------------------------------------------------------------
     rule <k> Gem _ . _ => exception ... </k> [owise]
 
+    syntax GemStep ::= "transferFrom" Address Address Int
+ // -----------------------------------------------------
+    rule <k> Gem ACCTGEM . transferFrom ACCTSRC ACCTDST VALUE => . ... </k>
+         <gem>
+           <gem-addr> ACCTGEM </gem-addr>
+           <gem-balances>...
+             ACCTSRC |-> ( BALANCE_SRC => BALANCE_SRC -Int VALUE )
+             ACCTDST |-> ( BALANCE_DST => BALANCE_DST +Int VALUE )
+           ...</gem-balances>
+         </gem>
+      requires BALANCE_SRC >=Int VALUE
+
     syntax Bid ::= Bid ( bid: Int, lot: Int, guy: Address, tic: Int, end: Int, usr: Address, gal: Address, tab: Int )
  // -----------------------------------------------------------------------------------------------------------------
 
