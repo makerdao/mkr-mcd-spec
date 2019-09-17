@@ -428,9 +428,6 @@ This is quite permissive, and would allow the account to drain all your locked c
     syntax VatStep ::= "frob" Int Address Address Address Int Int
  // -------------------------------------------------------------
     rule <k> frob ILKID ADDRU ADDRV ADDRW DINK DART
-          => Vat . consent    ILKID ADDRU ~> Vat . consent ILKID ADDRV ~> Vat . consent ILKID ADDRW
-          ~> Vat . less-risky ILKID ADDRU
-          ~> Vat . nondusty   ILKID ADDRU
          ...
          </k>
          <vat-live> true </vat-live>
@@ -442,7 +439,7 @@ This is quite permissive, and would allow the account to drain all your locked c
          </vat-urns>
          <vat-ilks>
            ...
-           ILKID |-> Ilk ( ILKART => ILKART +Int DART , RATE , _ , _ , _ )
+           ILKID |-> Ilk (... Art: ILKART => ILKART +Int DART , rate: RATE , spot: SPOT, line: ILKLINE, dust: DUST )
            ...
          </vat-ilks>
          <vat-gem>
@@ -455,6 +452,13 @@ This is quite permissive, and would allow the account to drain all your locked c
            USERW |-> ( DAIW => DAIW +Int (RATE *Int DART) )
            ...
          </vat-dai>
+      requires (DART <=Int 0
+        orBool ((ILKART +Int DART) *Int RATE <=Int ILKLINE andBool DEBT +Int (RATE *Int DART) <=Int LINE))
+       andBool ((DART <=Int 0 andBool DINK >=Int 0) orBool (URNART +Int DART) *Int RATE <=Int (INK +Int DINK) *Int SPOT)
+       andBool ((DART <=Int 0 andBool DINK >=Int 0) orBool wish ADDRU)
+       andBool (DINK <=Int 0 orBool wish ADDRV)
+       andBool (DART >=Int 0 orBool wish ADDRW)
+       andBool (URNART +Int DART ==Int 0 orBool (URNART +Int DART) *Int RATE >=Int DUST)
 ```
 
 ### Debt/Dai manipulation (`<vat-debt>`, `<vat-dai>`, `<vat-vice>`, `<vat-sin>`)
