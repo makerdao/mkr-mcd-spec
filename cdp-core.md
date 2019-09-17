@@ -153,9 +153,6 @@ Updating the `<vat>` happens in phases:
 ```k
     syntax MCDStep ::= "Vat" "." VatStep
  // ------------------------------------
-    rule <k> step [ Vat . VAS:VatAuthStep ] => Vat . push ~> Vat . auth ~> Vat . VAS ~> Vat . catch ... </k>
-    rule <k> step [ Vat . VS              ] => Vat . push ~>               Vat . VS  ~> Vat . catch ... </k>
-      requires notBool isVatAuthStep(VS)
 
     syntax VatStep ::= VatAuthStep
  // ------------------------------
@@ -518,9 +515,6 @@ Jug Semantics
 ```k
     syntax MCDStep ::= "Jug" "." JugStep
  // ------------------------------------
-    rule <k> step [ Jug . JAS:JugAuthStep ] => Jug . push ~> Jug . auth ~> Jug . JAS ~> Jug . catch ... </k>
-    rule <k> step [ Jug . JS              ] => Jug . push ~>               Jug . JS  ~> Jug . catch ... </k>
-      requires notBool isJugAuthStep(JS)
 
     syntax JugStep ::= JugAuthStep
  // ------------------------------
@@ -631,9 +625,6 @@ Spot Semantics
 ```k
     syntax MCDStep ::= "Spot" "." SpotStep
  // --------------------------------------
-    rule <k> step [ Spot . SAS:SpotAuthStep ] => Spot . push ~> Spot . auth ~> Spot . SAS ~> Spot . catch ... </k>
-    rule <k> step [ Spot . SS               ] => Spot . push ~>                Spot . SS  ~> Spot . catch ... </k>
-      requires notBool isSpotAuthStep(SS)
 
     syntax SpotStep ::= SpotAuthStep
  // --------------------------------
