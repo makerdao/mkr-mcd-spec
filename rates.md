@@ -50,5 +50,8 @@ module RATES
     syntax PotStep ::= "exit" Wad
  // -----------------------------
 
+    syntax PotAuthStep ::= "cage"
+ // -----------------------------
+
 endmodule
 ```

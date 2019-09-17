@@ -64,8 +64,8 @@ Flap Semantics
     syntax FlapStep ::= "deal" Int
  // ------------------------------
 
-    syntax FlapStep ::= "cage" Int
- // ------------------------------
+    syntax FlapAuthStep ::= "cage" Int
+ // ----------------------------------
 
     syntax FlapStep ::= "yank" Int
  // ------------------------------
@@ -86,8 +86,8 @@ Flop Semantics
  // --------------------------------------------------------------------
     rule <k> Flop . _ => exception ... </k> [owise]
 
-    syntax FlopStep ::= "kick" Int Int Int
- // --------------------------------------
+    syntax FlopAuthStep ::= "kick" Int Int Int
+ // ------------------------------------------
 
     syntax FlopStep ::= "tick" Int
  // ------------------------------
@@ -98,8 +98,8 @@ Flop Semantics
     syntax FlopStep ::= "deal" Int
  // ------------------------------
 
-    syntax FlopStep ::= "cage"
- // --------------------------
+    syntax FlopAuthStep ::= "cage"
+ // ------------------------------
 
     syntax FlopStep ::= "yank" Int
  // ------------------------------
@@ -120,8 +120,8 @@ Vow Semantics
  // -----------------------------------------------------------------
     rule <k> Vow . _ => exception ... </k> [owise]
 
-    syntax VowStep ::= "fess" Int
- // -----------------------------
+    syntax VowAuthStep ::= "fess" Int
+ // ---------------------------------
 
     syntax VowStep ::= "flog" Int
  // -----------------------------
@@ -138,8 +138,8 @@ Vow Semantics
     syntax VowStep ::= "flap"
  // -------------------------
 
-    syntax VowStep ::= "cage"
- // -------------------------
+    syntax VowAuthStep ::= "cage"
+ // -----------------------------
 
 ```
 

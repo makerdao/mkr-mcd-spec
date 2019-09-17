@@ -100,8 +100,8 @@ module DAI
       requires ACCOUNT_SRC =/=K ACCOUNT_DST
        andBool BALANCE_SRC >=Int AMOUNT
 
-    syntax DaiStep ::= "mint" Address Wad
- // -------------------------------------
+    syntax DaiAuthStep ::= "mint" Address Wad
+ // -----------------------------------------
     rule <k> Dai . mint ACCOUNT_DST AMOUNT => . ... </k>
          <dai-totalSupply> DAI_SUPPLY => DAI_SUPPLY +Int AMOUNT </dai-totalSupply>
          <dai-balance>
