@@ -16,6 +16,7 @@ module COLLATERAL
         <flips>
           <flip multiplicity="*" type="Map">
             <flip-ilk>   0            </flip-ilk>
+            <flip-addr>  0:Address    </flip-addr>
             <flip-bids>  .Map         </flip-bids> // mapping (uint => Bid)     Int     |-> Bid
             <flip-beg>   105 /Rat 100 </flip-beg>  // Minimum Bid Increase
             <flip-ttl>   3 hours      </flip-ttl>  // Single Bid Lifetime

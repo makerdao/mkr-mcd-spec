@@ -12,6 +12,7 @@ module RATES
     configuration
       <rates>
         <pot>
+          <pot-addr> 0:Address </pot-addr>
           <pot-pies> .Map      </pot-pies> // mapping (address => uint256) Address |-> Int
           <pot-pie>  0         </pot-pie>
           <pot-dsr>  0         </pot-dsr>
