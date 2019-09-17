@@ -468,8 +468,8 @@ Jug Semantics
  // -----------------------------------------------------------------
     rule <k> Jug . _ => exception ... </k> [owise]
 
-    syntax JugStep ::= InitStep
- // ---------------------------
+    syntax JugAuthStep ::= InitStep
+ // -------------------------------
     rule <k> Jug . init ILK => . ... </k>
          <currentTime> TIME </currentTime>
          <jug-ilks> ... ILK |-> Ilk ( ILKDUTY => ilk_init, _ => TIME ) ... </jug-ilks>
