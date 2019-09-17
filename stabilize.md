@@ -204,9 +204,25 @@ Flop Semantics
        andBool BID ==Int BID'
        andBool LOT <Int LOT'
        andBool LOT *Rat BEG <=Rat LOT'
+```
 
-    syntax FlopStep ::= "deal" Int
- // ------------------------------
+- deal(uint id)
+- Settles the auction.
+
+**TODO** Flop.deal calls Gem.mint. We don't have Gem yet.
+- `<k> Flop . deal ID => Gem . mint GUY LOT ... </k>`
+
+```k
+    syntax FlopStep ::= "deal" Int [klabel(FlopDeal),symbol]
+ // --------------------------------------------------------
+    rule <k> Flop . deal ID => . ... </k>
+         <currentTime> NOW </currentTime>
+         <flop-bids>...
+           ID |-> Bid(... lot: LOT, guy: GUY, tic: TIC, end: END) => .Map
+         ...</flop-bids>
+         <flop-live> true </flop-live>
+      requires TIC <Int NOW
+       andBool (TIC =/=Int 0 orBool END <Int NOW)
 
     syntax FlopStep ::= "cage"
  // --------------------------
