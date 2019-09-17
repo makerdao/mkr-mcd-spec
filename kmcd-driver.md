@@ -53,6 +53,7 @@ Function Calls
          <msg-sender> MSGSENDER => THIS </msg-sender>
          <this> THIS => address(contract(AS)) </this>
          <callStack> .List => ListItem(frame(MSGSENDER, CONT)) ... </callStack>
+
     rule <k> call MCD:MCDStep ~> CONT => MCD </k>
          <msg-sender> MSGSENDER => THIS </msg-sender>
          <this> THIS => address(contract(MCD)) </this>

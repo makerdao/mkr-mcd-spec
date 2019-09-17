@@ -215,7 +215,7 @@ This is quite permissive, and would allow the account to drain all your locked c
 ```k
     syntax VatStep ::= "safe" Int Address
  // -------------------------------------
-    rule <k> Vat . safe ILKID ADDR => .               ... </k>
+    rule <k> Vat . safe ILKID ADDR => . ... </k>
          <vat>
            <vat-ilks> ...   ILKID          |-> ILK ... </vat-ilks>
            <vat-urns> ... { ILKID , ADDR } |-> URN ... </vat-urns>
@@ -226,7 +226,7 @@ This is quite permissive, and would allow the account to drain all your locked c
 
     syntax VatStep ::= "nondusty" Int Address
  // -----------------------------------------
-    rule <k> Vat . nondusty ILKID ADDR => .               ... </k>
+    rule <k> Vat . nondusty ILKID ADDR => . ... </k>
          <vat>
            <vat-ilks> ...   ILKID          |-> ILK ... </vat-ilks>
            <vat-urns> ... { ILKID , ADDR } |-> URN ... </vat-urns>
