@@ -63,12 +63,6 @@ End Semantics
     syntax EndStep ::= EndAuthStep
  // ------------------------------
 
-    syntax EndAuthStep ::= AuthStep
- // -------------------------------
-
-    syntax EndAuthStep ::= WardStep
- // -------------------------------
-
     syntax EndAuthStep ::= "init"
  // -----------------------------
 

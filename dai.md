@@ -33,12 +33,6 @@ module DAI
     syntax DaiStep ::= DaiAuthStep
  // ------------------------------
 
-    syntax DaiAuthStep ::= AuthStep
- // -------------------------------
-
-    syntax DaiAuthStep ::= WardStep
- // -------------------------------
-
     syntax DaiAuthStep ::= "init" Int
  // ---------------------------------
 

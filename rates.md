@@ -29,24 +29,6 @@ module RATES
     syntax PotStep ::= PotAuthStep
  // ------------------------------
 
-    syntax PotStep ::= AuthStep
- // ---------------------------
-    rule <k> Pot . auth => . ... </k>
-         <msg-sender> MSGSENDER </msg-sender>
-         <pot-ward> ... MSGSENDER |-> true ... </pot-ward>
-
-    rule <k> Pot . auth => Pot . exception ... </k>
-         <msg-sender> MSGSENDER </msg-sender>
-         <pot-ward> ... MSGSENDER |-> false ... </pot-ward>
-
-    syntax PotAuthStep ::= WardStep
- // -------------------------------
-    rule <k> Pot . rely ADDR => . ... </k>
-         <pot-ward> ... ADDR |-> (_ => true) ... </pot-ward>
-
-    rule <k> Pot . deny ADDR => . ... </k>
-         <pot-ward> ... ADDR |-> (_ => false) ... </pot-ward>
-
     syntax PotAuthStep ::= "init" Address
  // -------------------------------------
     rule <k> Pot . init ILK => . ... </k>
