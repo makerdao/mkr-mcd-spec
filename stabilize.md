@@ -93,50 +93,21 @@ Flop Semantics
 ```k
     syntax MCDStep ::= "Flop" "." FlopStep
  // --------------------------------------
-    rule <k> step [ Flop . FAS:FlopAuthStep ] => Flop . push ~> Flop . auth ~> Flop . FAS ~> Flop . catch ... </k>
-    rule <k> step [ Flop . FS               ] => Flop . push ~>                Flop . FS  ~> Flop . catch ... </k>
-      requires notBool isFlopAuthStep(FS)
 
     syntax FlopStep ::= FlopAuthStep
  // --------------------------------
 
     syntax FlopAuthStep ::= AuthStep
  // --------------------------------
-    rule <k> Flop . auth => . ... </k>
-         <msg-sender> MSGSENDER </msg-sender>
-         <flop-ward> ... MSGSENDER |-> true ... </flop-ward>
-
-    rule <k> Flop . auth => Flop . exception ... </k>
-         <msg-sender> MSGSENDER </msg-sender>
-         <flop-ward> ... MSGSENDER |-> false ... </flop-ward>
 
     syntax FlopAuthStep ::= WardStep
  // --------------------------------
-    rule <k> Flop . rely ADDR => . ... </k>
-         <flop-ward> ... ADDR |-> (_ => true) ... </flop-ward>
-
-    rule <k> Flop . deny ADDR => . ... </k>
-         <flop-ward> ... ADDR |-> (_ => false) ... </flop-ward>
 
     syntax FlopStep ::= StashStep
  // -----------------------------
-    rule <k> Flop . push => . ... </k>
-         <flopStack> (.List => ListItem(<flop-state> FLOP </flop-state>)) ... </flopStack>
-         <flop-state> FLOP </flop-state>
-
-    rule <k> Flop . pop => . ... </k>
-         <flopStack> (ListItem(<flop-state> FLOP </flop-state>) => .List) ... </flopStack>
-         <flop-state> _ => FLOP </flop-state>
-
-    rule <k> Flop . drop => . ... </k>
-         <flopStack> (ListItem(_) => .List) ... </flopStack>
 
     syntax FlopStep ::= ExceptionStep
  // ---------------------------------
-    rule <k>                      Flop . catch => Flop . drop ... </k>
-    rule <k> Flop . exception ~>  Flop . catch => Flop . pop  ... </k>
-    rule <k> Flop . exception ~> (Flop . FS    => .)          ... </k>
-      requires FS =/=K catch
 ```
 
 - kick(address gal, uint lot, uint bid) returns (uint id)
