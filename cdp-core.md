@@ -151,8 +151,10 @@ Updating the `<vat>` happens in phases:
 **TODO**: Should every `notBool isAuthStep` be subject to `Vat . live`?
 
 ```k
-    syntax MCDStep ::= "Vat" "." VatStep
- // ------------------------------------
+    syntax MCDContract ::= VatContract
+    syntax VatContract ::= "Vat"
+    syntax MCDStep ::= VatContract "." VatStep
+ // ------------------------------------------
 
     syntax VatStep ::= VatAuthStep
  // ------------------------------
@@ -462,8 +464,10 @@ Jug Semantics
 -------------
 
 ```k
-    syntax MCDStep ::= "Jug" "." JugStep
- // ------------------------------------
+    syntax MCDContract ::= JugContract
+    syntax JugContract ::= "Jug"
+    syntax MCDStep ::= JugContract "." JugStep
+ // ------------------------------------------
 
     syntax JugStep ::= JugAuthStep
  // ------------------------------
@@ -499,8 +503,10 @@ Cat Semantics
 -------------
 
 ```k
-    syntax MCDStep ::= "Cat" "." CatStep
- // ------------------------------------
+    syntax MCDContract ::= CatContract
+    syntax CatContract ::= "Cat"
+    syntax MCDStep ::= CatContract "." CatStep
+ // ------------------------------------------
 
     syntax CatStep ::= CatAuthStep
  // ------------------------------
@@ -519,8 +525,10 @@ Spot Semantics
 --------------
 
 ```k
-    syntax MCDStep ::= "Spot" "." SpotStep
- // --------------------------------------
+    syntax MCDContract ::= SpotContract
+    syntax SpotContract ::= "Spot"
+    syntax MCDStep ::= SpotContract "." SpotStep
+ // --------------------------------------------
 
     syntax SpotStep ::= SpotAuthStep
  // --------------------------------

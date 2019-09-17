@@ -47,8 +47,10 @@ Flap Semantics
     syntax Bid ::= Bid ( Int, Int, Address, Int, Int ) [klabel(BidBid)]
  // -------------------------------------------------------------------
 
-    syntax MCDStep ::= "Flap" "." FlapStep
- // --------------------------------------
+    syntax MCDContract ::= FlapContract
+    syntax FlapContract ::= "Flap"
+    syntax MCDStep ::= FlapContract "." FlapStep
+ // --------------------------------------------
 
     syntax FlapStep ::= FlapAuthStep
  // --------------------------------
@@ -76,8 +78,10 @@ Flop Semantics
 --------------
 
 ```k
-    syntax MCDStep ::= "Flop" "." FlopStep
- // --------------------------------------
+    syntax MCDContract ::= FlopContract
+    syntax FlopContract ::= "Flop"
+    syntax MCDStep ::= FlopContract "." FlopStep
+ // --------------------------------------------
 
     syntax FlopStep ::= FlopAuthStep
  // --------------------------------
@@ -108,8 +112,10 @@ Vow Semantics
 -------------
 
 ```k
-    syntax MCDStep ::= "Vow" "." VowStep
- // ------------------------------------
+    syntax MCDContract ::= VowContract
+    syntax VowContract ::= "Vow"
+    syntax MCDStep ::= VowContract "." VowStep
+ // ------------------------------------------
 
     syntax VowStep ::= VowAuthStep
  // ------------------------------

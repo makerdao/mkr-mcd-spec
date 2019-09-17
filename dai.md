@@ -27,8 +27,10 @@ module DAI
     syntax AllowanceAddress ::= "{" Address "->" Address "}"
  // --------------------------------------------------------
 
-    syntax MCDStep ::= "Dai" "." DaiStep
- // ------------------------------------
+    syntax MCDContract ::= DaiContract
+    syntax DaiContract ::= "Dai"
+    syntax MCDStep ::= DaiContract "." DaiStep
+ // ------------------------------------------
 
     syntax DaiStep ::= DaiAuthStep
  // ------------------------------

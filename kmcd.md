@@ -57,8 +57,10 @@ End Semantics
 -------------
 
 ```k
-    syntax MCDStep ::= "End" "." EndStep
- // ------------------------------------
+    syntax MCDContract ::= EndContract
+    syntax EndContract ::= "End"
+    syntax MCDStep ::= EndContract "." EndStep
+ // ------------------------------------------
 
     syntax EndStep ::= EndAuthStep
  // ------------------------------
