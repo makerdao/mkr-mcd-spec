@@ -31,6 +31,7 @@ module DAI
     syntax MCDStep ::= DaiContract "." DaiStep [klabel(daiStep)]
  // ------------------------------------------------------------
     rule contract(Dai . _) => Dai
+    rule [[ address(Dai) => ADDR ]] <dai-addr> ADDR </dai-addr>
 
     syntax DaiStep ::= DaiAuthStep
     syntax AuthStep ::= DaiContract "." DaiAuthStep [klabel(daiStep)]

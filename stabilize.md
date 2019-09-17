@@ -49,6 +49,7 @@ Flap Semantics
     syntax MCDStep ::= FlapContract "." FlapStep [klabel(flapStep)]
  // ---------------------------------------------------------------
     rule contract(Flap . _) => Flap
+    rule [[ address(Flap) => ADDR ]] <flap-addr> ADDR </flap-addr>
 
     syntax FlapStep ::= FlapAuthStep
     syntax AuthStep ::= FlapContract "." FlapAuthStep [klabel(flapStep)]
@@ -80,6 +81,7 @@ Flop Semantics
     syntax MCDStep ::= FlopContract "." FlopStep [klabel(flopStep)]
  // ---------------------------------------------------------------
     rule contract(Flop . _) => Flop
+    rule [[ address(Flop) => ADDR ]] <flop-addr> ADDR </flop-addr>
 
     syntax FlopStep ::= FlopAuthStep
     syntax AuthStep ::= FlopContract "." FlopAuthStep [klabel(flopStep)]
@@ -114,6 +116,7 @@ Vow Semantics
     syntax MCDStep ::= VowContract "." VowStep [klabel(vowStep)]
  // ------------------------------------------------------------
     rule contract(Vow . _) => Vow
+    rule [[ address(Vow) => ADDR ]] <vow-addr> ADDR </vow-addr>
 
     syntax VowStep ::= VowAuthStep
     syntax AuthStep ::= VowContract "." VowAuthStep [klabel(vowStep)]
