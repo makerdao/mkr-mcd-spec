@@ -44,7 +44,7 @@ module COLLATERAL
     syntax FlipStep ::= "kick" Address Address Int Int Int
  // ------------------------------------------------------
     rule <k> Flip ILK . kick USR GAL TAB LOT BID
-          => Vat . flux ILK MSGSENDER THIS LOT
+          => call Vat . flux ILK MSGSENDER THIS LOT
           ~> KICKS +Int 1 ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
@@ -79,8 +79,8 @@ module COLLATERAL
     syntax FlipStep ::= "tend" Int Int Int
  // --------------------------------------
     rule <k> Flip ILK . tend ID LOT BID
-          => Vat . move MSGSENDER GUY BID'
-          ~> Vat . move MSGSENDER GAL (BID -Int BID') ... </k>
+          => call Vat . move MSGSENDER GUY BID'
+          ~> call Vat . move MSGSENDER GAL (BID -Int BID') ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <currentTime> NOW </currentTime>
          <flip-ilk> ILK </flip-ilk>
@@ -106,8 +106,8 @@ module COLLATERAL
     syntax FlipStep ::= "dent" Int Int Int
  // --------------------------------------
     rule <k> Flip ILK . dent ID LOT BID
-          => Vat.move MSGSENDER GUY BID
-          ~> Vat.flux ILK THIS USR (LOT' -Int LOT) ... </k>
+          => call Vat.move MSGSENDER GUY BID
+          ~> call Vat.flux ILK THIS USR (LOT' -Int LOT) ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
          <currentTime> NOW </currentTime>
@@ -133,7 +133,7 @@ module COLLATERAL
 
     syntax FlipStep ::= "deal" Int
  // ------------------------------
-    rule <k> Flip ILK . deal ID => Vat . flux ILK THIS GUY LOT ... </k>
+    rule <k> Flip ILK . deal ID => call Vat . flux ILK THIS GUY LOT ... </k>
          <this> THIS </this>
          <currentTime> NOW </currentTime>
          <flip-ilk> ILK </flip-ilk>
@@ -146,8 +146,8 @@ module COLLATERAL
     syntax FlipAuthStep ::= "yank" Int
  // ----------------------------------
     rule <k> Flip ILK . yank ID
-          => Vat . flux ILK THIS MSGSENDER LOT
-          ~> Vat . move MSGSENDER GUY BID ... </k>
+          => call Vat . flux ILK THIS MSGSENDER LOT
+          ~> call Vat . move MSGSENDER GUY BID ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
          <flip-ilk> ILK </flip-ilk>

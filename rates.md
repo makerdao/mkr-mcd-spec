@@ -36,7 +36,7 @@ module RATES
 
     syntax PotStep ::= "drip"
  // -------------------------
-    rule <k> Pot . drip => Vat . suck VOW THIS ( CHI +Int (((#pow(DSR, TIME -Int RHO) *Int CHI) -Int CHI) ) ) ... </k>
+    rule <k> Pot . drip => call Vat . suck VOW THIS ( CHI +Int (((#pow(DSR, TIME -Int RHO) *Int CHI) -Int CHI) ) ) ... </k>
          <this> THIS </this>
          <currentTime> TIME </currentTime>
          <pot-chi> CHI => CHI +Int (((#pow(DSR, TIME -Int RHO) *Int CHI) -Int CHI) ) </pot-chi>
