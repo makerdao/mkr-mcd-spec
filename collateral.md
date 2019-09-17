@@ -62,6 +62,17 @@ module COLLATERAL
     rule <k> Gem ACCTGEM . (transfer ACCTDST VALUE => transferFrom MSGSENDER ACCTDST VALUE) ... </k>
          <msg-sender> MSGSENDER </msg-sender>
 
+    syntax GemStep ::= "mint" Address Int
+ // -------------------------------------
+    rule <k> Gem ACCTGEM . mint ACCTDST VALUE => . ... </k>
+         <gem>
+           <gem-addr> ACCTGEM </gem-addr>
+           <gem-balances>...
+             ACCTDST |-> ( BALANCE_DST => BALANCE_DST +Int VALUE )
+           ...</gem-balances>
+         </gem>
+      requires ACCTDST =/=Int 0
+
     syntax Bid ::= Bid ( bid: Int, lot: Int, guy: Address, tic: Int, end: Int, usr: Address, gal: Address, tab: Int )
  // -----------------------------------------------------------------------------------------------------------------
 
