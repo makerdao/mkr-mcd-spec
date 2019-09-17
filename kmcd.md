@@ -66,9 +66,6 @@ End Semantics
     syntax EndStep ::= EndAuthStep
     syntax AuthStep ::= EndContract "." EndAuthStep [klabel(endStep)]
  // -----------------------------------------------------------------
-
-    syntax EndAuthStep ::= "init"
- // -----------------------------
     rule <k> End . _ => exception ... </k> [owise]
 
     syntax EndStep ::= "cage"

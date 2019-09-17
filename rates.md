@@ -34,14 +34,6 @@ module RATES
  // -----------------------------------------------------------------
     rule <k> Pot . _ => exception ... </k> [owise]
 
-    syntax PotAuthStep ::= "init" Address
- // -------------------------------------
-    rule <k> Pot . init ILK => . ... </k>
-         <currentTime> TIME </currentTime>
-         <pot-dsr> _ => ilk_init </pot-dsr>
-         <pot-chi> _ => ilk_init </pot-chi>
-         <pot-rho> _ => TIME </pot-rho>
-
     syntax PotStep ::= "drip"
  // -------------------------
     rule <k> Pot . drip => Vat . suck VOW THIS ( CHI +Int (((#pow(DSR, TIME -Int RHO) *Int CHI) -Int CHI) ) ) ... </k>

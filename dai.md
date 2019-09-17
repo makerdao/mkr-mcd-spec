@@ -38,9 +38,6 @@ module DAI
  // -----------------------------------------------------------------
     rule <k> Dai . _ => exception ... </k> [owise]
 
-    syntax DaiAuthStep ::= "init" Int
- // ---------------------------------
-
     syntax DaiStep ::= "transfer" Address Wad
  // -----------------------------------------
     rule <k> Dai . transfer ACCOUNT_SRC AMOUNT => . ... </k>
