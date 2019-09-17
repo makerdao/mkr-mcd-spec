@@ -427,7 +427,7 @@ This is quite permissive, and would allow the account to drain all your locked c
 
     syntax VatStep ::= "frob" Int Address Address Address Int Int
  // -------------------------------------------------------------
-    rule <k> frob ILKID ADDRU ADDRV ADDRW DINK DART
+    rule <k> Vat . frob ILKID ADDRU ADDRV ADDRW DINK DART => .
          ...
          </k>
          <vat-live> true </vat-live>
