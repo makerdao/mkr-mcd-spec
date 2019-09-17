@@ -12,24 +12,27 @@ module SYSTEM-STABILIZER
     configuration
       <stabilize>
         <flapState>
-          <flap-bids> .Map </flap-bids>  // mapping (uint => Bid)     Int     |-> Bid
-          <flap-kicks> 0   </flap-kicks>
-          <flap-live>  0   </flap-live>
+          <flap-addr>  0:Address </flap-addr>
+          <flap-bids>  .Map      </flap-bids>  // mapping (uint => Bid)     Int     |-> Bid
+          <flap-kicks> 0         </flap-kicks>
+          <flap-live>  0         </flap-live>
         </flapState>
         <flopState>
-          <flop-bids> .Map </flop-bids>  // mapping (uint => Bid)     Int     |-> Bid
-          <flop-kicks> 0   </flop-kicks>
-          <flop-live>  0   </flop-live>
+          <flop-addr>  0:Address </flop-addr>
+          <flop-bids>  .Map      </flop-bids>  // mapping (uint => Bid)     Int     |-> Bid
+          <flop-kicks> 0         </flop-kicks>
+          <flop-live>  0         </flop-live>
         </flopState>
         <vow>
-          <vow-sins>  .Map </vow-sins> // mapping (uint256 => uint256) Int     |-> Int
-          <vow-sin>   0    </vow-sin>
-          <vow-ash>   0    </vow-ash>
-          <vow-wait>  0    </vow-wait>
-          <vow-sump>  0    </vow-sump>
-          <vow-bump>  0    </vow-bump>
-          <vow-hump>  0    </vow-hump>
-          <vow-live>  0    </vow-live>
+          <vow-addr> 0:Address </vow-addr>
+          <vow-sins> .Map      </vow-sins> // mapping (uint256 => uint256) Int     |-> Int
+          <vow-sin>  0         </vow-sin>
+          <vow-ash>  0         </vow-ash>
+          <vow-wait> 0         </vow-wait>
+          <vow-sump> 0         </vow-sump>
+          <vow-bump> 0         </vow-bump>
+          <vow-hump> 0         </vow-hump>
+          <vow-live> 0         </vow-live>
         </vow>
       </stabilize>
 ```

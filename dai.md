@@ -14,11 +14,12 @@ module DAI
     configuration
       <dai>
         <dai-state>
-          <dai-totalSupply> 0    </dai-totalSupply>
-          <dai-account-id>  0    </dai-account-id>
-          <dai-balance>     .Map </dai-balance>     // mapping (address => uint)                      Address |-> Int
-          <dai-allowance>   .Map </dai-allowance>   // mapping (address => mapping (address => uint))
-          <dai-nonce>       .Map </dai-nonce>       // mapping (address => uint)                      Address |-> Int
+          <dai-addr>        0:Address </dai-addr>
+          <dai-totalSupply> 0         </dai-totalSupply>
+          <dai-account-id>  0         </dai-account-id>
+          <dai-balance>     .Map      </dai-balance>     // mapping (address => uint)                      Address |-> Int
+          <dai-allowance>   .Map      </dai-allowance>   // mapping (address => mapping (address => uint))
+          <dai-nonce>       .Map      </dai-nonce>       // mapping (address => uint)                      Address |-> Int
         </dai-state>
       </dai>
 

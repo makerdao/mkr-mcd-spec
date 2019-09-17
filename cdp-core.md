@@ -89,29 +89,33 @@ Vat CDP State
     configuration
       <cdp-core>
         <vat>
-          <vat-can>  .Map  </vat-can>  // mapping (address (address => uint))       Address |-> Set
-          <vat-ilks> .Map  </vat-ilks> // mapping (bytes32 => Ilk)                  Int     |-> VatIlk
-          <vat-urns> .Map  </vat-urns> // mapping (bytes32 => (address => Urn))     CDPID   |-> VatUrn
-          <vat-gem>  .Map  </vat-gem>  // mapping (bytes32 => (address => uint256)) CDPID   |-> Wad
-          <vat-dai>  .Map  </vat-dai>  // mapping (address => uint256)              Address |-> Rad
-          <vat-sin>  .Map  </vat-sin>  // mapping (address => uint256)              Address |-> Rad
-          <vat-debt> 0:Rad </vat-debt> // Total Dai Issued
-          <vat-vice> 0:Rad </vat-vice> // Total Unbacked Dai
-          <vat-Line> 0:Rad </vat-Line> // Total Debt Ceiling
-          <vat-live> true  </vat-live> // Access Flag
+          <vat-addr> 0:Address </vat-addr>
+          <vat-can>  .Map      </vat-can>  // mapping (address (address => uint))       Address |-> Set
+          <vat-ilks> .Map      </vat-ilks> // mapping (bytes32 => Ilk)                  Int     |-> VatIlk
+          <vat-urns> .Map      </vat-urns> // mapping (bytes32 => (address => Urn))     CDPID   |-> VatUrn
+          <vat-gem>  .Map      </vat-gem>  // mapping (bytes32 => (address => uint256)) CDPID   |-> Wad
+          <vat-dai>  .Map      </vat-dai>  // mapping (address => uint256)              Address |-> Rad
+          <vat-sin>  .Map      </vat-sin>  // mapping (address => uint256)              Address |-> Rad
+          <vat-debt> 0:Rad     </vat-debt> // Total Dai Issued
+          <vat-vice> 0:Rad     </vat-vice> // Total Unbacked Dai
+          <vat-Line> 0:Rad     </vat-Line> // Total Debt Ceiling
+          <vat-live> true      </vat-live> // Access Flag
         </vat>
         <jug>
+          <jug-addr> 0:Address </jug-addr>
           <jug-ilks> .Map      </jug-ilks> // mapping (bytes32 => JugIlk) Int     |-> JugIlk
           <jug-vow>  0:Address </jug-vow>  //                             Address
           <jug-base> 0         </jug-base> //                             Int
         </jug>
         <cat>
-          <cat-ilks> .Map </cat-ilks>
-          <cat-live> 1    </cat-live>
+          <cat-addr> 0:Address </cat-addr>
+          <cat-ilks> .Map      </cat-ilks>
+          <cat-live> 1         </cat-live>
         </cat>
         <spot>
-          <spot-ilks> .Map </spot-ilks> // mapping (bytes32 => ilk)  Int     |-> SpotIlk
-          <spot-par>  0    </spot-par>
+          <spot-addr> 0:Address </spot-addr>
+          <spot-ilks> .Map      </spot-ilks> // mapping (bytes32 => ilk)  Int     |-> SpotIlk
+          <spot-par>  0         </spot-par>
         </spot>
       </cdp-core>
 ```

@@ -38,16 +38,17 @@ module KMCD
           <rates/>
           <endPhase> false </endPhase>
           <end>
-            <end-live> 0    </end-live>
-            <end-when> 0    </end-when>
-            <end-wait> 0    </end-wait>
-            <end-debt> 0    </end-debt>
-            <end-tag>  .Map </end-tag>  // mapping (bytes32 => uint256)                      Int     |-> Ray
-            <end-gap>  .Map </end-gap>  // mapping (bytes32 => uint256)                      Int     |-> Wad
-            <end-art>  .Map </end-art>  // mapping (bytes32 => uint256)                      Int     |-> Wad
-            <end-fix>  .Map </end-fix>  // mapping (bytes32 => uint256)                      Int     |-> Ray
-            <end-bag>  .Map </end-bag>  // mapping (address => uint256)                      Int     |-> Wad
-            <end-out>  .Map </end-out>  // mapping (bytes32 => mapping (address => uint256)) Int     |-> Wad
+            <end-addr> 0:Address </end-addr>
+            <end-live> 0         </end-live>
+            <end-when> 0         </end-when>
+            <end-wait> 0         </end-wait>
+            <end-debt> 0         </end-debt>
+            <end-tag>  .Map      </end-tag>  // mapping (bytes32 => uint256)                      Int     |-> Ray
+            <end-gap>  .Map      </end-gap>  // mapping (bytes32 => uint256)                      Int     |-> Wad
+            <end-art>  .Map      </end-art>  // mapping (bytes32 => uint256)                      Int     |-> Wad
+            <end-fix>  .Map      </end-fix>  // mapping (bytes32 => uint256)                      Int     |-> Ray
+            <end-bag>  .Map      </end-bag>  // mapping (address => uint256)                      Int     |-> Wad
+            <end-out>  .Map      </end-out>  // mapping (bytes32 => mapping (address => uint256)) Int     |-> Wad
           </end>
         </kmcd-state>
       </kmcd>
