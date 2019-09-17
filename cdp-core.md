@@ -158,7 +158,8 @@ Updating the `<vat>` happens in phases:
     rule contract(Vat . _) => Vat
 
     syntax VatStep ::= VatAuthStep
- // ------------------------------
+    syntax AuthStep ::= VatAuthStep
+ // -------------------------------
 ```
 
 ### Deactivation
@@ -472,7 +473,8 @@ Jug Semantics
     rule contract(Jug . _) => Jug
 
     syntax JugStep ::= JugAuthStep
- // ------------------------------
+    syntax AuthStep ::= JugAuthStep
+ // -------------------------------
 
     syntax JugStep ::= InitStep
  // ---------------------------
@@ -512,7 +514,8 @@ Cat Semantics
     rule contract(Cat . _) => Cat
 
     syntax CatStep ::= CatAuthStep
- // ------------------------------
+    syntax AuthStep ::= CatAuthStep
+ // -------------------------------
 
     syntax CatAuthStep ::= "init" Address
  // -------------------------------------
@@ -535,6 +538,7 @@ Spot Semantics
     rule contract(Spot . _) => Spot
 
     syntax SpotStep ::= SpotAuthStep
+    syntax AuthStep ::= SpotAuthStep
  // --------------------------------
 
     syntax SpotAuthStep ::= InitStep
