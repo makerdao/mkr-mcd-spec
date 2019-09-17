@@ -453,13 +453,21 @@ This is quite permissive, and would allow the account to drain all your locked c
            ...
          </vat-dai>
          <vat-Line> LINE </vat-Line>
-      requires (DART <=Int 0
-        orBool ((ILKART +Int DART) *Int RATE <=Int ILKLINE andBool DEBT +Int (RATE *Int DART) <=Int LINE))
-       andBool ((DART <=Int 0 andBool DINK >=Int 0) orBool (URNART +Int DART) *Int RATE <=Int (INK +Int DINK) *Int SPOT)
-       andBool ((DART <=Int 0 andBool DINK >=Int 0) orBool wish ADDRU)
-       andBool (DINK <=Int 0 orBool wish ADDRV)
-       andBool (DART >=Int 0 orBool wish ADDRW)
-       andBool (URNART +Int DART ==Int 0 orBool (URNART +Int DART) *Int RATE >=Int DUST)
+      requires         (DART <=Int 0
+                orBool         ((ILKART +Int  DART) *Int RATE  <=Int ILKLINE
+                        andBool    DEBT +Int (RATE  *Int DART) <=Int LINE))
+       andBool                ((DART <=Int 0
+                        andBool DINK >=Int 0)
+                orBool (URNART +Int DART) *Int RATE <=Int (INK +Int DINK) *Int SPOT)
+       andBool                ((DART <=Int 0
+                        andBool DINK >=Int 0)
+                orBool  wish ADDRU)
+       andBool        (DINK <=Int 0
+                orBool wish ADDRV)
+       andBool        (DART >=Int 0
+                orBool wish ADDRW)
+       andBool         (URNART +Int DART ==Int 0
+                orBool (URNART +Int DART) *Int RATE >=Int DUST)
 ```
 
 ### Debt/Dai manipulation (`<vat-debt>`, `<vat-dai>`, `<vat-vice>`, `<vat-sin>`)
