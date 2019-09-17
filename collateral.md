@@ -57,6 +57,11 @@ module COLLATERAL
          </gem>
       requires BALANCE_SRC >=Int VALUE
 
+    syntax GemStep ::= "transfer" Address Int
+ // -----------------------------------------
+    rule <k> Gem ACCTGEM . (transfer ACCTDST VALUE => transferFrom MSGSENDER ACCTDST VALUE) ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+
     syntax Bid ::= Bid ( bid: Int, lot: Int, guy: Address, tic: Int, end: Int, usr: Address, gal: Address, tab: Int )
  // -----------------------------------------------------------------------------------------------------------------
 
