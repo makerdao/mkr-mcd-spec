@@ -88,38 +88,34 @@ Vat CDP State
 ```k
     configuration
       <cdp-core>
-        <vatStack> .List </vatStack>
         <vat>
-          <vat-ward> .Map  </vat-ward> // mapping (address => uint)                 Address |-> Bool
-          <vat-can>  .Map  </vat-can>  // mapping (address (address => uint))       Address |-> Set
-          <vat-ilks> .Map  </vat-ilks> // mapping (bytes32 => Ilk)                  Int     |-> VatIlk
-          <vat-urns> .Map  </vat-urns> // mapping (bytes32 => (address => Urn))     CDPID   |-> VatUrn
-          <vat-gem>  .Map  </vat-gem>  // mapping (bytes32 => (address => uint256)) CDPID   |-> Wad
-          <vat-dai>  .Map  </vat-dai>  // mapping (address => uint256)              Address |-> Rad
-          <vat-sin>  .Map  </vat-sin>  // mapping (address => uint256)              Address |-> Rad
-          <vat-debt> 0:Rad </vat-debt> // Total Dai Issued
-          <vat-vice> 0:Rad </vat-vice> // Total Unbacked Dai
-          <vat-Line> 0:Rad </vat-Line> // Total Debt Ceiling
-          <vat-live> true  </vat-live> // Access Flag
+          <vat-addr> 0:Address </vat-addr>
+          <vat-can>  .Map      </vat-can>  // mapping (address (address => uint))       Address |-> Set
+          <vat-ilks> .Map      </vat-ilks> // mapping (bytes32 => Ilk)                  Int     |-> VatIlk
+          <vat-urns> .Map      </vat-urns> // mapping (bytes32 => (address => Urn))     CDPID   |-> VatUrn
+          <vat-gem>  .Map      </vat-gem>  // mapping (bytes32 => (address => uint256)) CDPID   |-> Wad
+          <vat-dai>  .Map      </vat-dai>  // mapping (address => uint256)              Address |-> Rad
+          <vat-sin>  .Map      </vat-sin>  // mapping (address => uint256)              Address |-> Rad
+          <vat-debt> 0:Rad     </vat-debt> // Total Dai Issued
+          <vat-vice> 0:Rad     </vat-vice> // Total Unbacked Dai
+          <vat-Line> 0:Rad     </vat-Line> // Total Debt Ceiling
+          <vat-live> true      </vat-live> // Access Flag
         </vat>
-        <jugStack> .List </jugStack>
         <jug>
-          <jug-ward> .Map      </jug-ward> // mapping (address => uint)   Address |-> Bool
+          <jug-addr> 0:Address </jug-addr>
           <jug-ilks> .Map      </jug-ilks> // mapping (bytes32 => JugIlk) Int     |-> JugIlk
           <jug-vow>  0:Address </jug-vow>  //                             Address
           <jug-base> 0         </jug-base> //                             Int
         </jug>
-        <catStack> .List </catStack>
         <cat>
-          <cat-ward> .Map </cat-ward>
-          <cat-ilks> .Map </cat-ilks>
-          <cat-live> 1    </cat-live>
+          <cat-addr> 0:Address </cat-addr>
+          <cat-ilks> .Map      </cat-ilks>
+          <cat-live> 1         </cat-live>
         </cat>
-        <spotStack> .List </spotStack>
         <spot>
-          <spot-ward> .Map </spot-ward> // mapping (address => uint) Address |-> Bool
-          <spot-ilks> .Map </spot-ilks> // mapping (bytes32 => ilk)  Int     |-> SpotIlk
-          <spot-par>  0    </spot-par>
+          <spot-addr> 0:Address </spot-addr>
+          <spot-ilks> .Map      </spot-ilks> // mapping (bytes32 => ilk)  Int     |-> SpotIlk
+          <spot-par>  0         </spot-par>
         </spot>
       </cdp-core>
 ```
@@ -151,70 +147,17 @@ Updating the `<vat>` happens in phases:
 **TODO**: Should every `notBool isAuthStep` be subject to `Vat . live`?
 
 ```k
-    syntax MCDStep ::= "Vat" "." VatStep
- // ------------------------------------
-    rule <k> step [ Vat . VAS:VatAuthStep ] => Vat . push ~> Vat . auth ~> Vat . VAS ~> Vat . catch ... </k>
-    rule <k> step [ Vat . VS              ] => Vat . push ~>               Vat . VS  ~> Vat . catch ... </k>
-      requires notBool isVatAuthStep(VS)
+    syntax MCDContract ::= VatContract
+    syntax VatContract ::= "Vat"
+    syntax MCDStep ::= VatContract "." VatStep [klabel(vatStep)]
+ // ------------------------------------------------------------
+    rule contract(Vat . _) => Vat
+    rule [[ address(Vat) => ADDR ]] <vat-addr> ADDR </vat-addr>
 
     syntax VatStep ::= VatAuthStep
- // ------------------------------
-```
-
-We can save and restore the current `<vat>` state using `push`, `pop`, and `drop`.
-This allows us to enforce properties after each step, and restore the old state when violated.
-
-```k
-    syntax VatStep ::= StashStep
- // ----------------------------
-    rule <k> Vat . push => . ... </k>
-         <vatStack> (.List => ListItem(<vat> VAT </vat>)) ... </vatStack>
-         <vat> VAT </vat>
-
-    rule <k> Vat . pop => . ... </k>
-         <vatStack> (ListItem(<vat> VAT </vat>) => .List) ... </vatStack>
-         <vat> _ => VAT </vat>
-
-    rule <k> Vat . drop => . ... </k>
-         <vatStack> (ListItem(_) => .List) ... </vatStack>
-
-    syntax VatStep ::= ExceptionStep
- // --------------------------------
-    rule <k>                     Vat . catch => Vat . drop ... </k>
-    rule <k> Vat . exception ~>  Vat . catch => Vat . pop  ... </k>
-    rule <k> Vat . exception ~> (Vat . VS    => .)         ... </k>
-      requires VS =/=K catch
-```
-
-### Warding Control
-
-Warding allows controlling which versions of a smart contract are allowed to call into this one.
-By adjusting the `<vat-ward>`, you can upgrade contracts in place by deploying a new contract for some part of the MCD system.
-
--   `Vat.auth` checks that the given account has been `ward`ed.
--   `Vat.rely` sets authorization for a user.
--   `Vat.deny` removes authorization for a user.
-
-**TODO**: `rely` and `deny` should be `note`.
-
-```k
-    syntax VatAuthStep ::= AuthStep
- // -------------------------------
-    rule <k> Vat . auth => . ... </k>
-         <msg-sender> MSGSENDER </msg-sender>
-         <vat-ward> ... MSGSENDER |-> true ... </vat-ward>
-
-    rule <k> Vat . auth => Vat . exception ... </k>
-         <msg-sender> MSGSENDER </msg-sender>
-         <vat-ward> ... MSGSENDER |-> false ... </vat-ward>
-
-    syntax VatAuthStep ::= WardStep
- // -------------------------------
-    rule <k> Vat . rely ADDR => . ... </k>
-         <vat-ward> ... ADDR |-> (_ => true) ... </vat-ward>
-
-    rule <k> Vat . deny ADDR => . ... </k>
-         <vat-ward> ... ADDR |-> (_ => false) ... </vat-ward>
+    syntax AuthStep ::= VatContract "." VatAuthStep [klabel(vatStep)]
+ // -----------------------------------------------------------------
+    rule <k> Vat . _ => exception ... </k> [owise]
 ```
 
 ### Deactivation
@@ -272,8 +215,7 @@ This is quite permissive, and would allow the account to drain all your locked c
 ```k
     syntax VatStep ::= "safe" Int Address
  // -------------------------------------
-    rule <k> Vat . safe ILKID ADDR => Vat . exception ... </k> [owise]
-    rule <k> Vat . safe ILKID ADDR => .               ... </k>
+    rule <k> Vat . safe ILKID ADDR => . ... </k>
          <vat>
            <vat-ilks> ...   ILKID          |-> ILK ... </vat-ilks>
            <vat-urns> ... { ILKID , ADDR } |-> URN ... </vat-urns>
@@ -284,8 +226,7 @@ This is quite permissive, and would allow the account to drain all your locked c
 
     syntax VatStep ::= "nondusty" Int Address
  // -----------------------------------------
-    rule <k> Vat . nondusty ILKID ADDR => Vat . exception ... </k> [owise]
-    rule <k> Vat . nondusty ILKID ADDR => .               ... </k>
+    rule <k> Vat . nondusty ILKID ADDR => . ... </k>
          <vat>
            <vat-ilks> ...   ILKID          |-> ILK ... </vat-ilks>
            <vat-urns> ... { ILKID , ADDR } |-> URN ... </vat-urns>
@@ -306,9 +247,6 @@ This is quite permissive, and would allow the account to drain all your locked c
     rule <k> Vat . init ILKID => . ... </k>
          <vat-ilks> ILKS => ILKS [ ILKID <- ilk_init ] </vat-ilks>
       requires notBool ILKID in_keys(ILKS)
-
-    rule <k> Vat . init ILKID => Vat . exception ... </k>
-         <vat-ilks> ... ILKID |-> _ ... </vat-ilks>
 ```
 
 ### Collateral manipulation (`<vat-gem>`)
@@ -521,171 +459,77 @@ Jug Semantics
 -------------
 
 ```k
-    syntax MCDStep ::= "Jug" "." JugStep
- // ------------------------------------
-    rule <k> step [ Jug . JAS:JugAuthStep ] => Jug . push ~> Jug . auth ~> Jug . JAS ~> Jug . catch ... </k>
-    rule <k> step [ Jug . JS              ] => Jug . push ~>               Jug . JS  ~> Jug . catch ... </k>
-      requires notBool isJugAuthStep(JS)
+    syntax MCDContract ::= JugContract
+    syntax JugContract ::= "Jug"
+    syntax MCDStep ::= JugContract "." JugStep [klabel(jugStep)]
+ // ------------------------------------------------------------
+    rule contract(Jug . _) => Jug
+    rule [[ address(Jug) => ADDR ]] <jug-addr> ADDR </jug-addr>
 
     syntax JugStep ::= JugAuthStep
- // ------------------------------
+    syntax AuthStep ::= JugContract "." JugAuthStep [klabel(jugStep)]
+ // -----------------------------------------------------------------
+    rule <k> Jug . _ => exception ... </k> [owise]
 
-    syntax JugStep ::= StashStep
- // ----------------------------
-    rule <k> Jug . push => . ... </k>
-         <jugStack> (.List => ListItem(JUG)) ... </jugStack>
-         <jug> JUG </jug>
-
-    rule <k> Jug . pop => . ... </k>
-         <jugStack> (ListItem(JUG) => .List) ... </jugStack>
-         <jug> _ => JUG </jug>
-
-    rule <k> Jug . drop => . ... </k>
-         <jugStack> (ListItem(_) => .List) ... </jugStack>
-```
-
-**TODO**: Should we make cells for call stacks and exceptions?
-```k
-    syntax JugStep ::= ExceptionStep
- // --------------------------------
-    rule <k>                     Jug . catch => Jug . drop ... </k>
-    rule <k> Jug . exception ~>  Jug . catch => Jug . pop  ... </k>
-    rule <k> Jug . exception ~> (Jug . JS    => .)         ... </k>
-      requires JS =/=K catch
-
-    syntax JugStep ::= AuthStep
- // ---------------------------
-    rule <k> Jug . auth => . ... </k>
-         <msg-sender> MSGSENDER </msg-sender>
-         <jug-ward> ... MSGSENDER |-> true ... </jug-ward>
-
-    rule <k> Jug . auth => Jug . exception ... </k>
-         <msg-sender> MSGSENDER </msg-sender>
-         <jug-ward> ... MSGSENDER |-> false ... </jug-ward>
-
-    syntax JugAuthStep ::= WardStep
+    syntax JugAuthStep ::= InitStep
  // -------------------------------
-    rule <k> Jug . rely ADDR => . ... </k>
-         <jug-ward> ... ADDR |-> (_ => true) ... </jug-ward>
-
-    rule <k> Jug . deny ADDR => . ... </k>
-         <jug-ward> ... ADDR |-> (_ => false) ... </jug-ward>
-
-    syntax JugStep ::= InitStep
- // ---------------------------
     rule <k> Jug . init ILK => . ... </k>
          <currentTime> TIME </currentTime>
          <jug-ilks> ... ILK |-> Ilk ( ILKDUTY => ilk_init, _ => TIME ) ... </jug-ilks>
       requires ILKDUTY ==Int 0
-
-    rule <k> Jug . init _ => Jug . exception ... </k> [owise]
 ```
 
 ```k
     syntax JugStep ::= "drip" Int
  // -----------------------------
-    rule <k> Jug . drip ILK => Vat . fold ILK ADDRESS ( #pow( BASE +Int ILKDUTY, TIME -Int ILKRHO ) *Int ILKRATE ) -Int ILKRATE ... </k>
+    rule <k> Jug . drip ILK => call Vat . fold ILK ADDRESS ( #pow( BASE +Int ILKDUTY, TIME -Int ILKRHO ) *Int ILKRATE ) -Int ILKRATE ... </k>
          <currentTime> TIME </currentTime>
          <vat-ilks> ... ILK |-> Ilk ( _, ILKRATE, _, _, _ ) ... </vat-ilks>
          <jug-ilks> ... ILK |-> Ilk ( ILKDUTY, ILKRHO => TIME ) ... </jug-ilks>
          <jug-vow> ADDRESS </jug-vow>
          <jug-base> BASE </jug-base>
       requires TIME >=Int ILKRHO
-
-    rule <k> Jug . drip ILK => Jug . exception ... </k>
-         <currentTime> TIME </currentTime>
-         <jug-ilks> ... ILK |-> Ilk ( _, ILKRHO ) ... </jug-ilks>
-      requires TIME <Int ILKRHO
 ```
 
 Cat Semantics
 -------------
 
 ```k
-    syntax MCDStep ::= "Cat" "." CatStep
- // ------------------------------------
+    syntax MCDContract ::= CatContract
+    syntax CatContract ::= "Cat"
+    syntax MCDStep ::= CatContract "." CatStep [klabel(catStep)]
+ // ------------------------------------------------------------
+    rule contract(Cat . _) => Cat
+    rule [[ address(Cat) => ADDR ]] <cat-addr> ADDR </cat-addr>
 
     syntax CatStep ::= CatAuthStep
- // ------------------------------
-
-    syntax CatAuthStep ::= AuthStep
- // -------------------------------
-
-    syntax CatAuthStep ::= WardStep
- // -------------------------------
-
-    syntax CatAuthStep ::= "init" Address
- // -------------------------------------
-
-    syntax CatStep ::= StashStep
- // ----------------------------
-
-    syntax CatStep ::= ExceptionStep
- // --------------------------------
+    syntax AuthStep ::= CatContract "." CatAuthStep [klabel(catStep)]
+ // -----------------------------------------------------------------
+    rule <k> Cat . _ => exception ... </k> [owise]
 
     syntax CatStep ::= "bite" Int Address
  // -------------------------------------
 
-    syntax CatStep ::= "cage" [klabel(#CatCage), symbol]
- // ----------------------------------------------------
+    syntax CatAuthStep ::= "cage" [klabel(#CatCage), symbol]
+ // --------------------------------------------------------
 ```
 
 Spot Semantics
 --------------
 
 ```k
-    syntax MCDStep ::= "Spot" "." SpotStep
- // --------------------------------------
-    rule <k> step [ Spot . SAS:SpotAuthStep ] => Spot . push ~> Spot . auth ~> Spot . SAS ~> Spot . catch ... </k>
-    rule <k> step [ Spot . SS               ] => Spot . push ~>                Spot . SS  ~> Spot . catch ... </k>
-      requires notBool isSpotAuthStep(SS)
+    syntax MCDContract ::= SpotContract
+    syntax SpotContract ::= "Spot"
+    syntax MCDStep ::= SpotContract "." SpotStep [klabel(spotStep)]
+ // ---------------------------------------------------------------
+    rule contract(Spot . _) => Spot
+    rule [[ address(Spot) => ADDR ]] <spot-addr> ADDR </spot-addr>
 
+    syntax SpotAuthStep
     syntax SpotStep ::= SpotAuthStep
- // --------------------------------
-
-    syntax SpotAuthStep ::= AuthStep
- // --------------------------------
-    rule <k> Spot . auth => . ... </k>
-         <msg-sender> MSGSENDER </msg-sender>
-         <spot-ward> ... MSGSENDER |-> true ... </spot-ward>
-
-    rule <k> Spot . auth => Spot . exception ... </k>
-         <msg-sender> MSGSENDER </msg-sender>
-         <spot-ward> ... MSGSENDER |-> false ... </spot-ward>
-
-    syntax SpotAuthStep ::= WardStep
- // --------------------------------
-    rule <k> Spot . rely ADDR => . ... </k>
-         <spot-ward> ... ADDR |-> (_ => true) ... </spot-ward>
-
-    rule <k> Spot . deny ADDR => . ... </k>
-         <spot-ward> ... ADDR |-> (_ => false) ... </spot-ward>
-
-    syntax SpotAuthStep ::= InitStep
- // --------------------------------
-    rule <k> Spot . init MSGSENDER => . ... </k>
-         <spot-ward> M => M[MSGSENDER <- true] </spot-ward>
-         <spot-par> _ => ilk_init </spot-par>
-
-    syntax SpotStep ::= StashStep
- // -----------------------------
-    rule <k> Spot . push => . ... </k>
-         <spotStack> (.List => ListItem(SPOT)) ... </spotStack>
-         <spot> SPOT </spot>
-
-    rule <k> Spot . pop => . ... </k>
-         <spotStack> (ListItem(SPOT) => .List) ... </spotStack>
-         <spot> _ => SPOT </spot>
-
-    rule <k> Spot . drop => . ... </k>
-         <spotStack> (ListItem(_) => .List) ... </spotStack>
-
-    syntax SpotStep ::= ExceptionStep
- // ---------------------------------
-    rule <k>                      Spot . catch => Spot . drop ... </k>
-    rule <k> Spot . exception ~>  Spot . catch => Spot . pop  ... </k>
-    rule <k> Spot . exception ~> (Spot . SS    => .)          ... </k>
-      requires SS =/=K catch
+    syntax AuthStep ::= SpotContract "." SpotAuthStep [klabel(spotStep)]
+ // --------------------------------------------------------------------
+    rule <k> Spot . _ => exception ... </k> [owise]
 
     syntax SpotStep ::= "poke" Int
  // ------------------------------

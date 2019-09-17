@@ -30,56 +30,64 @@ module KMCD
     configuration
       <kmcd>
         <kmcd-driver/>
-        <cdp-core/>
-        <dai/>
-        <stabilize/>
-        <collateral/>
-        <rates/>
-        <endPhase> false </endPhase>
-        <endStack> .List </endStack>
-        <end>
-          <end-ward> .Map </end-ward> // mapping (address => uint)                         Address |-> Bool
-          <end-live> 0    </end-live>
-          <end-when> 0    </end-when>
-          <end-wait> 0    </end-wait>
-          <end-debt> 0    </end-debt>
-          <end-tag>  .Map </end-tag>  // mapping (bytes32 => uint256)                      Int     |-> Ray
-          <end-gap>  .Map </end-gap>  // mapping (bytes32 => uint256)                      Int     |-> Wad
-          <end-art>  .Map </end-art>  // mapping (bytes32 => uint256)                      Int     |-> Wad
-          <end-fix>  .Map </end-fix>  // mapping (bytes32 => uint256)                      Int     |-> Ray
-          <end-bag>  .Map </end-bag>  // mapping (address => uint256)                      Int     |-> Wad
-          <end-out>  .Map </end-out>  // mapping (bytes32 => mapping (address => uint256)) Int     |-> Wad
-        </end>
+        <kmcd-state>
+          <cdp-core/>
+          <dai/>
+          <stabilize/>
+          <collateral/>
+          <rates/>
+          <endPhase> false </endPhase>
+          <end>
+            <end-addr> 0:Address </end-addr>
+            <end-live> 0         </end-live>
+            <end-when> 0         </end-when>
+            <end-wait> 0         </end-wait>
+            <end-debt> 0         </end-debt>
+            <end-tag>  .Map      </end-tag>  // mapping (bytes32 => uint256)                      Int     |-> Ray
+            <end-gap>  .Map      </end-gap>  // mapping (bytes32 => uint256)                      Int     |-> Wad
+            <end-art>  .Map      </end-art>  // mapping (bytes32 => uint256)                      Int     |-> Wad
+            <end-fix>  .Map      </end-fix>  // mapping (bytes32 => uint256)                      Int     |-> Ray
+            <end-bag>  .Map      </end-bag>  // mapping (address => uint256)                      Int     |-> Wad
+            <end-out>  .Map      </end-out>  // mapping (bytes32 => mapping (address => uint256)) Int     |-> Wad
+          </end>
+        </kmcd-state>
       </kmcd>
+```
+
+State Storage/Revert Semantics
+------------------------------
+
+```k
+    rule <k> pushState => . ... </k>
+         <kmcd-state> STATE </kmcd-state>
+         <preState> _ => <kmcd-state> STATE </kmcd-state> </preState>
+
+    rule <k> dropState => . ... </k>
+         <preState> _ => .K </preState>
+
+    rule <k> popState => . ... </k>
+         (_:KmcdStateCell => <kmcd-state> STATE </kmcd-state>)
+         <preState> <kmcd-state> STATE </kmcd-state> </preState>
 ```
 
 End Semantics
 -------------
 
 ```k
-    syntax MCDStep ::= "End" "." EndStep
- // ------------------------------------
+    syntax MCDContract ::= EndContract
+    syntax EndContract ::= "End"
+    syntax MCDStep ::= EndContract "." EndStep [klabel(endStep)]
+ // ------------------------------------------------------------
+    rule contract(End . _) => End
+    rule [[ address(End) => ADDR ]] <end-addr> ADDR </end-addr>
 
     syntax EndStep ::= EndAuthStep
- // ------------------------------
+    syntax AuthStep ::= EndContract "." EndAuthStep [klabel(endStep)]
+ // -----------------------------------------------------------------
+    rule <k> End . _ => exception ... </k> [owise]
 
-    syntax EndAuthStep ::= AuthStep
- // -------------------------------
-
-    syntax EndAuthStep ::= WardStep
- // -------------------------------
-
-    syntax EndAuthStep ::= "init"
- // -----------------------------
-
-    syntax EndStep ::= StashStep
- // ----------------------------
-
-    syntax EndStep ::= ExceptionStep
- // --------------------------------
-
-    syntax EndStep ::= "cage"
-                     | "cage" Int
+    syntax EndAuthStep ::= "cage"
+    syntax EndStep ::= "cage" Int
  // -----------------------------
 
     syntax EndStep ::= "skip" Int Int

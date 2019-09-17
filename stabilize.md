@@ -11,31 +11,28 @@ module SYSTEM-STABILIZER
 
     configuration
       <stabilize>
-        <flapStack> .List </flapStack>
         <flapState>
-          <flap-ward> .Map </flap-ward>  // mapping (address => uint) Address |-> Bool
-          <flap-bids> .Map </flap-bids>  // mapping (uint => Bid)     Int     |-> Bid
-          <flap-kicks> 0   </flap-kicks>
-          <flap-live>  0   </flap-live>
+          <flap-addr>  0:Address </flap-addr>
+          <flap-bids>  .Map      </flap-bids>  // mapping (uint => Bid)     Int     |-> Bid
+          <flap-kicks> 0         </flap-kicks>
+          <flap-live>  0         </flap-live>
         </flapState>
-        <flopStack> .List </flopStack>
         <flopState>
-          <flop-ward> .Map </flop-ward>  // mapping (address => uint) Address |-> Bool
-          <flop-bids> .Map </flop-bids>  // mapping (uint => Bid)     Int     |-> Bid
-          <flop-kicks> 0   </flop-kicks>
-          <flop-live>  0   </flop-live>
+          <flop-addr>  0:Address </flop-addr>
+          <flop-bids>  .Map      </flop-bids>  // mapping (uint => Bid)     Int     |-> Bid
+          <flop-kicks> 0         </flop-kicks>
+          <flop-live>  0         </flop-live>
         </flopState>
-        <vowStack> .List </vowStack>
         <vow>
-          <vow-ward>  .Map </vow-ward> // mapping (address => uint)    Address |-> Bool
-          <vow-sins>  .Map </vow-sins> // mapping (uint256 => uint256) Int     |-> Int
-          <vow-sin>   0    </vow-sin>
-          <vow-ash>   0    </vow-ash>
-          <vow-wait>  0    </vow-wait>
-          <vow-sump>  0    </vow-sump>
-          <vow-bump>  0    </vow-bump>
-          <vow-hump>  0    </vow-hump>
-          <vow-live>  0    </vow-live>
+          <vow-addr> 0:Address </vow-addr>
+          <vow-sins> .Map      </vow-sins> // mapping (uint256 => uint256) Int     |-> Int
+          <vow-sin>  0         </vow-sin>
+          <vow-ash>  0         </vow-ash>
+          <vow-wait> 0         </vow-wait>
+          <vow-sump> 0         </vow-sump>
+          <vow-bump> 0         </vow-bump>
+          <vow-hump> 0         </vow-hump>
+          <vow-live> 0         </vow-live>
         </vow>
       </stabilize>
 ```
@@ -47,26 +44,17 @@ Flap Semantics
     syntax Bid ::= Bid ( Int, Int, Address, Int, Int ) [klabel(BidBid)]
  // -------------------------------------------------------------------
 
-    syntax MCDStep ::= "Flap" "." FlapStep
- // --------------------------------------
+    syntax MCDContract ::= FlapContract
+    syntax FlapContract ::= "Flap"
+    syntax MCDStep ::= FlapContract "." FlapStep [klabel(flapStep)]
+ // ---------------------------------------------------------------
+    rule contract(Flap . _) => Flap
+    rule [[ address(Flap) => ADDR ]] <flap-addr> ADDR </flap-addr>
 
     syntax FlapStep ::= FlapAuthStep
- // --------------------------------
-
-    syntax FlapAuthStep ::= AuthStep
- // --------------------------------
-
-    syntax FlapAuthStep ::= WardStep
- // --------------------------------
-
-    syntax FlapAuthStep ::= "init" Address Address
- // ----------------------------------------------
-
-    syntax FlapStep ::= StashStep
- // -----------------------------
-
-    syntax FlapStep ::= ExceptionStep
- // ---------------------------------
+    syntax AuthStep ::= FlapContract "." FlapAuthStep [klabel(flapStep)]
+ // --------------------------------------------------------------------
+    rule <k> Flap . _ => exception ... </k> [owise]
 
     syntax FlapStep ::= "kick" Int Int
  // ----------------------------------
@@ -77,8 +65,8 @@ Flap Semantics
     syntax FlapStep ::= "deal" Int
  // ------------------------------
 
-    syntax FlapStep ::= "cage" Int
- // ------------------------------
+    syntax FlapAuthStep ::= "cage" Int
+ // ----------------------------------
 
     syntax FlapStep ::= "yank" Int
  // ------------------------------
@@ -88,29 +76,20 @@ Flop Semantics
 --------------
 
 ```k
-    syntax MCDStep ::= "Flop" "." FlopStep
- // --------------------------------------
+    syntax MCDContract ::= FlopContract
+    syntax FlopContract ::= "Flop"
+    syntax MCDStep ::= FlopContract "." FlopStep [klabel(flopStep)]
+ // ---------------------------------------------------------------
+    rule contract(Flop . _) => Flop
+    rule [[ address(Flop) => ADDR ]] <flop-addr> ADDR </flop-addr>
 
     syntax FlopStep ::= FlopAuthStep
- // --------------------------------
+    syntax AuthStep ::= FlopContract "." FlopAuthStep [klabel(flopStep)]
+ // --------------------------------------------------------------------
+    rule <k> Flop . _ => exception ... </k> [owise]
 
-    syntax FlopAuthStep ::= AuthStep
- // --------------------------------
-
-    syntax FlopAuthStep ::= WardStep
- // --------------------------------
-
-    syntax FlopAuthStep ::= "init" Address Address
- // ----------------------------------------------
-
-    syntax FlopStep ::= StashStep
- // -----------------------------
-
-    syntax FlopStep ::= ExceptionStep
- // ---------------------------------
-
-    syntax FlopStep ::= "kick" Int Int Int
- // --------------------------------------
+    syntax FlopAuthStep ::= "kick" Int Int Int
+ // ------------------------------------------
 
     syntax FlopStep ::= "tick" Int
  // ------------------------------
@@ -121,8 +100,8 @@ Flop Semantics
     syntax FlopStep ::= "deal" Int
  // ------------------------------
 
-    syntax FlopStep ::= "cage"
- // --------------------------
+    syntax FlopAuthStep ::= "cage"
+ // ------------------------------
 
     syntax FlopStep ::= "yank" Int
  // ------------------------------
@@ -132,29 +111,20 @@ Vow Semantics
 -------------
 
 ```k
-    syntax MCDStep ::= "Vow" "." VowStep
- // ------------------------------------
+    syntax MCDContract ::= VowContract
+    syntax VowContract ::= "Vow"
+    syntax MCDStep ::= VowContract "." VowStep [klabel(vowStep)]
+ // ------------------------------------------------------------
+    rule contract(Vow . _) => Vow
+    rule [[ address(Vow) => ADDR ]] <vow-addr> ADDR </vow-addr>
 
     syntax VowStep ::= VowAuthStep
- // ------------------------------
+    syntax AuthStep ::= VowContract "." VowAuthStep [klabel(vowStep)]
+ // -----------------------------------------------------------------
+    rule <k> Vow . _ => exception ... </k> [owise]
 
-    syntax VowAuthStep ::= AuthStep
- // -------------------------------
-
-    syntax VowAuthStep ::= WardStep
- // -------------------------------
-
-    syntax VowAuthStep ::= "init" Address Address Address
- // -----------------------------------------------------
-
-    syntax VowStep ::= StashStep
- // ----------------------------
-
-    syntax VowStep ::= ExceptionStep
- // --------------------------------
-
-    syntax VowStep ::= "fess" Int
- // -----------------------------
+    syntax VowAuthStep ::= "fess" Int
+ // ---------------------------------
 
     syntax VowStep ::= "flog" Int
  // -----------------------------
@@ -171,8 +141,8 @@ Vow Semantics
     syntax VowStep ::= "flap"
  // -------------------------
 
-    syntax VowStep ::= "cage"
- // -------------------------
+    syntax VowAuthStep ::= "cage"
+ // -----------------------------
 
 ```
 

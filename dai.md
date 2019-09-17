@@ -13,41 +13,30 @@ module DAI
 
     configuration
       <dai>
-        <dai-stack> .List </dai-stack>
         <dai-state>
-          <dai-ward>        .Map </dai-ward>        // mapping (address => uint)                      Address |-> Bool
-          <dai-totalSupply> 0    </dai-totalSupply>
-          <dai-account-id>  0    </dai-account-id>
-          <dai-balance>     .Map </dai-balance>     // mapping (address => uint)                      Address |-> Int
-          <dai-allowance>   .Map </dai-allowance>   // mapping (address => mapping (address => uint))
-          <dai-nonce>       .Map </dai-nonce>       // mapping (address => uint)                      Address |-> Int
+          <dai-addr>        0:Address </dai-addr>
+          <dai-totalSupply> 0         </dai-totalSupply>
+          <dai-account-id>  0         </dai-account-id>
+          <dai-balance>     .Map      </dai-balance>     // mapping (address => uint)                      Address |-> Int
+          <dai-allowance>   .Map      </dai-allowance>   // mapping (address => mapping (address => uint))
+          <dai-nonce>       .Map      </dai-nonce>       // mapping (address => uint)                      Address |-> Int
         </dai-state>
       </dai>
 
     syntax AllowanceAddress ::= "{" Address "->" Address "}"
  // --------------------------------------------------------
 
-    syntax MCDStep ::= "Dai" "." DaiStep
- // ------------------------------------
+    syntax MCDContract ::= DaiContract
+    syntax DaiContract ::= "Dai"
+    syntax MCDStep ::= DaiContract "." DaiStep [klabel(daiStep)]
+ // ------------------------------------------------------------
+    rule contract(Dai . _) => Dai
+    rule [[ address(Dai) => ADDR ]] <dai-addr> ADDR </dai-addr>
 
     syntax DaiStep ::= DaiAuthStep
- // ------------------------------
-
-    syntax DaiAuthStep ::= AuthStep
- // -------------------------------
-
-    syntax DaiAuthStep ::= WardStep
- // -------------------------------
-
-    syntax DaiAuthStep ::= "init" Int
- // ---------------------------------
-
-    syntax DaiStep ::= StashStep
- // ----------------------------
-
-    syntax DaiStep ::= ExceptionStep
- // --------------------------------
-    rule <k> Dai . _:DaiStep => Dai . exception ... </k> [owise]
+    syntax AuthStep ::= DaiContract "." DaiAuthStep [klabel(daiStep)]
+ // -----------------------------------------------------------------
+    rule <k> Dai . _ => exception ... </k> [owise]
 
     syntax DaiStep ::= "transfer" Address Wad
  // -----------------------------------------
@@ -112,8 +101,8 @@ module DAI
       requires ACCOUNT_SRC =/=K ACCOUNT_DST
        andBool BALANCE_SRC >=Int AMOUNT
 
-    syntax DaiStep ::= "mint" Address Wad
- // -------------------------------------
+    syntax DaiAuthStep ::= "mint" Address Wad
+ // -----------------------------------------
     rule <k> Dai . mint ACCOUNT_DST AMOUNT => . ... </k>
          <dai-totalSupply> DAI_SUPPLY => DAI_SUPPLY +Int AMOUNT </dai-totalSupply>
          <dai-balance>

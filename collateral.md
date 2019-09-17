@@ -13,51 +13,38 @@ module COLLATERAL
 
     configuration
       <collateral>
-        <flippers>
-          <flipper multiplicity="*" type="Map">
-            <flip-ilk> 0 </flip-ilk>
-            <flipStack> .List </flipStack>
-            <flip>
-              <flip-ward>  .Map         </flip-ward> // mapping (address => uint) Address |-> Bool
-              <flip-bids>  .Map         </flip-bids> // mapping (uint => Bid)     Int     |-> Bid
-              <flip-beg>   105 /Rat 100 </flip-beg>  // Minimum Bid Increase
-              <flip-ttl>   3 hours      </flip-ttl>  // Single Bid Lifetime
-              <flip-tau>   2 days       </flip-tau>  // Total Auction Length
-              <flip-kicks> 0            </flip-kicks>
-            </flip>
-          </flipper>
-        </flippers>
+        <flips>
+          <flip multiplicity="*" type="Map">
+            <flip-ilk>   0            </flip-ilk>
+            <flip-addr>  0:Address    </flip-addr>
+            <flip-bids>  .Map         </flip-bids> // mapping (uint => Bid)     Int     |-> Bid
+            <flip-beg>   105 /Rat 100 </flip-beg>  // Minimum Bid Increase
+            <flip-ttl>   3 hours      </flip-ttl>  // Single Bid Lifetime
+            <flip-tau>   2 days       </flip-tau>  // Total Auction Length
+            <flip-kicks> 0            </flip-kicks>
+          </flip>
+        </flips>
       </collateral>
 
     syntax Bid ::= Bid ( bid: Int, lot: Int, guy: Address, tic: Int, end: Int, usr: Address, gal: Address, tab: Int )
  // -----------------------------------------------------------------------------------------------------------------
 
-    syntax MCDStep ::= "Flip" Int "." FlipStep
- // ------------------------------------------
-    rule <k> step [ Flip F . FAS:FlipAuthStep ] => Flip F . push ~> Flip F . auth ~> Flip F . FAS ~> Flip F . catch ... </k>
-    rule <k> step [ Flip F . FS               ] => Flip F . push ~>                  Flip F . FS  ~> Flip F . catch ... </k>
-      requires notBool isFlipAuthStep(FS)
-
+    syntax MCDContract ::= FlipContract
+    syntax FlipContract ::= "Flip" Int
+    syntax MCDStep ::= FlipContract "." FlipStep [klabel(flipStep)]
+ // ---------------------------------------------------------------
+    rule contract(Flip ILK . _) => Flip ILK
+    rule [[ address(Flip ILK) => ADDR ]] <flip-ilk> ILK </flip-ilk> <flip-addr> ADDR </flip-addr>
 
     syntax FlipStep ::= FlipAuthStep
- // --------------------------------
-
-    syntax FlipAuthStep ::= AuthStep
- // --------------------------------
-
-    syntax FlipAuthStep ::= WardStep
- // --------------------------------
-
-    syntax FlipStep ::= StashStep
- // -----------------------------
-
-    syntax FlipStep ::= ExceptionStep
- // ---------------------------------
+    syntax AuthStep ::= FlipContract "." FlipAuthStep [klabel(flipStep)]
+ // --------------------------------------------------------------------
+    rule <k> Flip _ . _ => exception ... </k> [owise]
 
     syntax FlipStep ::= "kick" Address Address Int Int Int
  // ------------------------------------------------------
     rule <k> Flip ILK . kick USR GAL TAB LOT BID
-          => Vat . flux ILK MSGSENDER THIS LOT
+          => call Vat . flux ILK MSGSENDER THIS LOT
           ~> KICKS +Int 1 ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
@@ -92,8 +79,8 @@ module COLLATERAL
     syntax FlipStep ::= "tend" Int Int Int
  // --------------------------------------
     rule <k> Flip ILK . tend ID LOT BID
-          => Vat . move MSGSENDER GUY BID'
-          ~> Vat . move MSGSENDER GAL (BID -Int BID') ... </k>
+          => call Vat . move MSGSENDER GUY BID'
+          ~> call Vat . move MSGSENDER GAL (BID -Int BID') ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <currentTime> NOW </currentTime>
          <flip-ilk> ILK </flip-ilk>
@@ -119,8 +106,8 @@ module COLLATERAL
     syntax FlipStep ::= "dent" Int Int Int
  // --------------------------------------
     rule <k> Flip ILK . dent ID LOT BID
-          => Vat.move MSGSENDER GUY BID
-          ~> Vat.flux ILK THIS USR (LOT' -Int LOT) ... </k>
+          => call Vat.move MSGSENDER GUY BID
+          ~> call Vat.flux ILK THIS USR (LOT' -Int LOT) ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
          <currentTime> NOW </currentTime>
@@ -146,7 +133,7 @@ module COLLATERAL
 
     syntax FlipStep ::= "deal" Int
  // ------------------------------
-    rule <k> Flip ILK . deal ID => Vat . flux ILK THIS GUY LOT ... </k>
+    rule <k> Flip ILK . deal ID => call Vat . flux ILK THIS GUY LOT ... </k>
          <this> THIS </this>
          <currentTime> NOW </currentTime>
          <flip-ilk> ILK </flip-ilk>
@@ -156,11 +143,11 @@ module COLLATERAL
       requires TIC =/=Int 0
        andBool (TIC <Int NOW orBool END <Int NOW)
 
-    syntax FlipStep ::= "yank" Int
- // ------------------------------
+    syntax FlipAuthStep ::= "yank" Int
+ // ----------------------------------
     rule <k> Flip ILK . yank ID
-          => Vat . flux ILK THIS MSGSENDER LOT
-          ~> Vat . move MSGSENDER GUY BID ... </k>
+          => call Vat . flux ILK THIS MSGSENDER LOT
+          ~> call Vat . move MSGSENDER GUY BID ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
          <flip-ilk> ILK </flip-ilk>

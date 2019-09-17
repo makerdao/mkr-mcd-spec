@@ -11,9 +11,8 @@ module RATES
 
     configuration
       <rates>
-        <potStack> .List </potStack>
         <pot>
-          <pot-ward> .Map      </pot-ward> // mapping (address => uint)    Address |-> Bool
+          <pot-addr> 0:Address </pot-addr>
           <pot-pies> .Map      </pot-pies> // mapping (address => uint256) Address |-> Int
           <pot-pie>  0         </pot-pie>
           <pot-dsr>  0         </pot-dsr>
@@ -23,66 +22,21 @@ module RATES
         </pot>
       </rates>
 
-    syntax MCDStep ::= "Pot" "." PotStep
- // ------------------------------------
-    rule <k> step [ Pot . PAS:PotAuthStep ] => Pot . push ~> Pot . auth ~> Pot . PAS ~> Pot . catch ... </k>
-    rule <k> step [ Pot . PS              ] => Pot . push ~>               Pot . PS  ~> Pot . catch ... </k>
-      requires notBool isPotAuthStep(PS)
+    syntax MCDContract ::= PotContract
+    syntax PotContract ::= "Pot"
+    syntax MCDStep ::= PotContract "." PotStep [klabel(potStep)]
+ // ------------------------------------------------------------
+    rule contract(Pot . _) => Pot
+    rule [[ address(Pot) => ADDR ]] <pot-addr> ADDR </pot-addr>
 
     syntax PotStep ::= PotAuthStep
- // ------------------------------
-
-    syntax PotStep ::= StashStep
- // ----------------------------
-    rule <k> Pot . push => . ... </k>
-         <potStack> (.List => ListItem(POT)) ... </potStack>
-         <pot> POT </pot>
-
-    rule <k> Pot . pop => . ... </k>
-         <potStack> (ListItem(POT) => .List) ... </potStack>
-         <pot> _ => POT </pot>
-
-    rule <k> Pot . drop => . ... </k>
-         <potStack> (ListItem(_) => .List) ... </potStack>
-
-    syntax PotStep ::= ExceptionStep
- // --------------------------------
-    rule <k>                     Pot . catch => Pot . drop ... </k>
-    rule <k> Pot . exception ~>  Pot . catch => Pot . pop  ... </k>
-    rule <k> Pot . exception ~> (Pot . PS    => .)         ... </k>
-      requires PS =/=K catch
-
-    syntax PotStep ::= AuthStep
- // ---------------------------
-    rule <k> Pot . auth => . ... </k>
-         <msg-sender> MSGSENDER </msg-sender>
-         <pot-ward> ... MSGSENDER |-> true ... </pot-ward>
-
-    rule <k> Pot . auth => Pot . exception ... </k>
-         <msg-sender> MSGSENDER </msg-sender>
-         <pot-ward> ... MSGSENDER |-> false ... </pot-ward>
-
-    syntax PotAuthStep ::= WardStep
- // -------------------------------
-    rule <k> Pot . rely ADDR => . ... </k>
-         <pot-ward> ... ADDR |-> (_ => true) ... </pot-ward>
-
-    rule <k> Pot . deny ADDR => . ... </k>
-         <pot-ward> ... ADDR |-> (_ => false) ... </pot-ward>
-
-    syntax PotAuthStep ::= "init" Address
- // -------------------------------------
-    rule <k> Pot . init ILK => . ... </k>
-         <currentTime> TIME </currentTime>
-         <pot-dsr> _ => ilk_init </pot-dsr>
-         <pot-chi> _ => ilk_init </pot-chi>
-         <pot-rho> _ => TIME </pot-rho>
-
-    rule <k> Pot . init _ => Pot . exception ... </k> [owise]
+    syntax AuthStep ::= PotContract "." PotAuthStep [klabel(potStep)]
+ // -----------------------------------------------------------------
+    rule <k> Pot . _ => exception ... </k> [owise]
 
     syntax PotStep ::= "drip"
  // -------------------------
-    rule <k> Pot . drip => Vat . suck VOW THIS ( CHI +Int (((#pow(DSR, TIME -Int RHO) *Int CHI) -Int CHI) ) ) ... </k>
+    rule <k> Pot . drip => call Vat . suck VOW THIS ( CHI +Int (((#pow(DSR, TIME -Int RHO) *Int CHI) -Int CHI) ) ) ... </k>
          <this> THIS </this>
          <currentTime> TIME </currentTime>
          <pot-chi> CHI => CHI +Int (((#pow(DSR, TIME -Int RHO) *Int CHI) -Int CHI) ) </pot-chi>
@@ -95,6 +49,9 @@ module RATES
  // -----------------------------
 
     syntax PotStep ::= "exit" Wad
+ // -----------------------------
+
+    syntax PotAuthStep ::= "cage"
  // -----------------------------
 
 endmodule
