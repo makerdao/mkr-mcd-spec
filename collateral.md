@@ -36,6 +36,7 @@ module COLLATERAL
     syntax FlipContract ::= "Flip" Int
     syntax MCDStep ::= FlipContract "." FlipStep
  // --------------------------------------------
+    rule contract(Flip ILK . _) => Flip ILK
 
     syntax FlipStep ::= FlipAuthStep
  // --------------------------------

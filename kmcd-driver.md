@@ -32,8 +32,8 @@ MCD Simulations
     rule <k> .MCDSteps => . ... </k>
     rule <k> MCD:MCDStep MCDS:MCDSteps => MCD ~> MCDS ... </k>
 
-    syntax MCDContract
- // ------------------
+    syntax MCDContract ::= contract(MCDStep) [function]
+ // ---------------------------------------------------
 ```
 
 Simulations

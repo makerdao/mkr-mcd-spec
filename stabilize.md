@@ -51,6 +51,7 @@ Flap Semantics
     syntax FlapContract ::= "Flap"
     syntax MCDStep ::= FlapContract "." FlapStep
  // --------------------------------------------
+    rule contract(Flap . _) => Flap
 
     syntax FlapStep ::= FlapAuthStep
  // --------------------------------
@@ -82,6 +83,7 @@ Flop Semantics
     syntax FlopContract ::= "Flop"
     syntax MCDStep ::= FlopContract "." FlopStep
  // --------------------------------------------
+    rule contract(Flop . _) => Flop
 
     syntax FlopStep ::= FlopAuthStep
  // --------------------------------
@@ -116,6 +118,7 @@ Vow Semantics
     syntax VowContract ::= "Vow"
     syntax MCDStep ::= VowContract "." VowStep
  // ------------------------------------------
+    rule contract(Vow . _) => Vow
 
     syntax VowStep ::= VowAuthStep
  // ------------------------------

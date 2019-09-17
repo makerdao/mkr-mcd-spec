@@ -31,6 +31,7 @@ module DAI
     syntax DaiContract ::= "Dai"
     syntax MCDStep ::= DaiContract "." DaiStep
  // ------------------------------------------
+    rule contract(Dai . _) => Dai
 
     syntax DaiStep ::= DaiAuthStep
  // ------------------------------

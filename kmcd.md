@@ -61,6 +61,7 @@ End Semantics
     syntax EndContract ::= "End"
     syntax MCDStep ::= EndContract "." EndStep
  // ------------------------------------------
+    rule contract(End . _) => End
 
     syntax EndStep ::= EndAuthStep
  // ------------------------------
