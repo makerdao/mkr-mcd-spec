@@ -54,6 +54,7 @@ Flap Semantics
     rule contract(Flap . _) => Flap
 
     syntax FlapStep ::= FlapAuthStep
+    syntax AuthStep ::= FlapAuthStep
  // --------------------------------
 
     syntax FlapAuthStep ::= "init" Address Address
@@ -86,6 +87,7 @@ Flop Semantics
     rule contract(Flop . _) => Flop
 
     syntax FlopStep ::= FlopAuthStep
+    syntax AuthStep ::= FlopAuthStep
  // --------------------------------
 
     syntax FlopAuthStep ::= "init" Address Address
@@ -121,7 +123,8 @@ Vow Semantics
     rule contract(Vow . _) => Vow
 
     syntax VowStep ::= VowAuthStep
- // ------------------------------
+    syntax AuthStep ::= VowAuthStep
+ // -------------------------------
 
     syntax VowAuthStep ::= "init" Address Address Address
  // -----------------------------------------------------

@@ -30,7 +30,8 @@ module RATES
     rule contract(Pot . _) => Pot
 
     syntax PotStep ::= PotAuthStep
- // ------------------------------
+    syntax AuthStep ::= PotAuthStep
+ // -------------------------------
 
     syntax PotAuthStep ::= "init" Address
  // -------------------------------------

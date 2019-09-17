@@ -34,7 +34,8 @@ module DAI
     rule contract(Dai . _) => Dai
 
     syntax DaiStep ::= DaiAuthStep
- // ------------------------------
+    syntax AuthStep ::= DaiAuthStep
+ // -------------------------------
 
     syntax DaiAuthStep ::= "init" Int
  // ---------------------------------

@@ -64,7 +64,8 @@ End Semantics
     rule contract(End . _) => End
 
     syntax EndStep ::= EndAuthStep
- // ------------------------------
+    syntax AuthStep ::= EndAuthStep
+ // -------------------------------
 
     syntax EndAuthStep ::= "init"
  // -----------------------------

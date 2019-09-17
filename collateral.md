@@ -39,6 +39,7 @@ module COLLATERAL
     rule contract(Flip ILK . _) => Flip ILK
 
     syntax FlipStep ::= FlipAuthStep
+    syntax AuthStep ::= FlipAuthStep
  // --------------------------------
 
     syntax FlipStep ::= "kick" Address Address Int Int Int
