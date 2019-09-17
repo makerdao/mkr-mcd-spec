@@ -59,13 +59,13 @@ End Semantics
 ```k
     syntax MCDContract ::= EndContract
     syntax EndContract ::= "End"
-    syntax MCDStep ::= EndContract "." EndStep
- // ------------------------------------------
+    syntax MCDStep ::= EndContract "." EndStep [klabel(endStep)]
+ // ------------------------------------------------------------
     rule contract(End . _) => End
 
     syntax EndStep ::= EndAuthStep
-    syntax AuthStep ::= EndAuthStep
- // -------------------------------
+    syntax AuthStep ::= EndContract "." EndAuthStep [klabel(endStep)]
+ // -----------------------------------------------------------------
 
     syntax EndAuthStep ::= "init"
  // -----------------------------

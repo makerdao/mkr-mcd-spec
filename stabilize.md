@@ -49,13 +49,13 @@ Flap Semantics
 
     syntax MCDContract ::= FlapContract
     syntax FlapContract ::= "Flap"
-    syntax MCDStep ::= FlapContract "." FlapStep
- // --------------------------------------------
+    syntax MCDStep ::= FlapContract "." FlapStep [klabel(flapStep)]
+ // ---------------------------------------------------------------
     rule contract(Flap . _) => Flap
 
     syntax FlapStep ::= FlapAuthStep
-    syntax AuthStep ::= FlapAuthStep
- // --------------------------------
+    syntax AuthStep ::= FlapContract "." FlapAuthStep [klabel(flapStep)]
+ // --------------------------------------------------------------------
 
     syntax FlapAuthStep ::= "init" Address Address
  // ----------------------------------------------
@@ -82,13 +82,13 @@ Flop Semantics
 ```k
     syntax MCDContract ::= FlopContract
     syntax FlopContract ::= "Flop"
-    syntax MCDStep ::= FlopContract "." FlopStep
- // --------------------------------------------
+    syntax MCDStep ::= FlopContract "." FlopStep [klabel(flopStep)]
+ // ---------------------------------------------------------------
     rule contract(Flop . _) => Flop
 
     syntax FlopStep ::= FlopAuthStep
-    syntax AuthStep ::= FlopAuthStep
- // --------------------------------
+    syntax AuthStep ::= FlopContract "." FlopAuthStep [klabel(flopStep)]
+ // --------------------------------------------------------------------
 
     syntax FlopAuthStep ::= "init" Address Address
  // ----------------------------------------------
@@ -118,13 +118,13 @@ Vow Semantics
 ```k
     syntax MCDContract ::= VowContract
     syntax VowContract ::= "Vow"
-    syntax MCDStep ::= VowContract "." VowStep
- // ------------------------------------------
+    syntax MCDStep ::= VowContract "." VowStep [klabel(vowStep)]
+ // ------------------------------------------------------------
     rule contract(Vow . _) => Vow
 
     syntax VowStep ::= VowAuthStep
-    syntax AuthStep ::= VowAuthStep
- // -------------------------------
+    syntax AuthStep ::= VowContract "." VowAuthStep [klabel(vowStep)]
+ // -----------------------------------------------------------------
 
     syntax VowAuthStep ::= "init" Address Address Address
  // -----------------------------------------------------

@@ -153,13 +153,13 @@ Updating the `<vat>` happens in phases:
 ```k
     syntax MCDContract ::= VatContract
     syntax VatContract ::= "Vat"
-    syntax MCDStep ::= VatContract "." VatStep
- // ------------------------------------------
+    syntax MCDStep ::= VatContract "." VatStep [klabel(vatStep)]
+ // ------------------------------------------------------------
     rule contract(Vat . _) => Vat
 
     syntax VatStep ::= VatAuthStep
-    syntax AuthStep ::= VatAuthStep
- // -------------------------------
+    syntax AuthStep ::= VatContract "." VatAuthStep [klabel(vatStep)]
+ // -----------------------------------------------------------------
 ```
 
 ### Deactivation
@@ -463,13 +463,13 @@ Jug Semantics
 ```k
     syntax MCDContract ::= JugContract
     syntax JugContract ::= "Jug"
-    syntax MCDStep ::= JugContract "." JugStep
- // ------------------------------------------
+    syntax MCDStep ::= JugContract "." JugStep [klabel(jugStep)]
+ // ------------------------------------------------------------
     rule contract(Jug . _) => Jug
 
     syntax JugStep ::= JugAuthStep
-    syntax AuthStep ::= JugAuthStep
- // -------------------------------
+    syntax AuthStep ::= JugContract "." JugAuthStep [klabel(jugStep)]
+ // -----------------------------------------------------------------
 
     syntax JugStep ::= InitStep
  // ---------------------------
@@ -504,13 +504,13 @@ Cat Semantics
 ```k
     syntax MCDContract ::= CatContract
     syntax CatContract ::= "Cat"
-    syntax MCDStep ::= CatContract "." CatStep
- // ------------------------------------------
+    syntax MCDStep ::= CatContract "." CatStep [klabel(catStep)]
+ // ------------------------------------------------------------
     rule contract(Cat . _) => Cat
 
     syntax CatStep ::= CatAuthStep
-    syntax AuthStep ::= CatAuthStep
- // -------------------------------
+    syntax AuthStep ::= CatContract "." CatAuthStep [klabel(catStep)]
+ // -----------------------------------------------------------------
 
     syntax CatAuthStep ::= "init" Address
  // -------------------------------------
@@ -528,13 +528,13 @@ Spot Semantics
 ```k
     syntax MCDContract ::= SpotContract
     syntax SpotContract ::= "Spot"
-    syntax MCDStep ::= SpotContract "." SpotStep
- // --------------------------------------------
+    syntax MCDStep ::= SpotContract "." SpotStep [klabel(spotStep)]
+ // ---------------------------------------------------------------
     rule contract(Spot . _) => Spot
 
     syntax SpotStep ::= SpotAuthStep
-    syntax AuthStep ::= SpotAuthStep
- // --------------------------------
+    syntax AuthStep ::= SpotContract "." SpotAuthStep [klabel(spotStep)]
+ // --------------------------------------------------------------------
 
     syntax SpotAuthStep ::= InitStep
  // --------------------------------
