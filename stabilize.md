@@ -233,9 +233,21 @@ Flop Semantics
  // --------------------------------------------------------
     rule <k> Flop . cage => . ... </k>
          <flop-live> _ => false </flop-live>
+```
 
-    syntax FlopStep ::= "yank" Int
- // ------------------------------
+- yank(uint id)
+- Global settlement. Refunds the current bid.
+
+```k
+    syntax FlopStep ::= "yank" Int [klabel(FlopYank),symbol]
+ // --------------------------------------------------------
+    rule <k> Flop . yank ID => Vat . move THIS GUY BID ... </k>
+         <this> THIS </this>
+         <flop-bids>...
+           ID |-> Bid(... bid: BID, guy: GUY) => .Map
+         ...</flop-bids>
+         <flop-live> false </flop-live>
+      requires GUY =/=Int 0
 ```
 
 Vow Semantics
