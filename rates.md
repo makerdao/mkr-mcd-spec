@@ -27,6 +27,7 @@ module RATES
     syntax PotContract ::= "Pot"
     syntax MCDStep ::= PotContract "." PotStep
  // ------------------------------------------
+    rule contract(Pot . _) => Pot
 
     syntax PotStep ::= PotAuthStep
  // ------------------------------

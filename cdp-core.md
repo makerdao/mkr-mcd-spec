@@ -155,6 +155,7 @@ Updating the `<vat>` happens in phases:
     syntax VatContract ::= "Vat"
     syntax MCDStep ::= VatContract "." VatStep
  // ------------------------------------------
+    rule contract(Vat . _) => Vat
 
     syntax VatStep ::= VatAuthStep
  // ------------------------------
@@ -463,6 +464,7 @@ Jug Semantics
     syntax JugContract ::= "Jug"
     syntax MCDStep ::= JugContract "." JugStep
  // ------------------------------------------
+    rule contract(Jug . _) => Jug
 
     syntax JugStep ::= JugAuthStep
  // ------------------------------
@@ -502,6 +504,7 @@ Cat Semantics
     syntax CatContract ::= "Cat"
     syntax MCDStep ::= CatContract "." CatStep
  // ------------------------------------------
+    rule contract(Cat . _) => Cat
 
     syntax CatStep ::= CatAuthStep
  // ------------------------------
@@ -524,6 +527,7 @@ Spot Semantics
     syntax SpotContract ::= "Spot"
     syntax MCDStep ::= SpotContract "." SpotStep
  // --------------------------------------------
+    rule contract(Spot . _) => Spot
 
     syntax SpotStep ::= SpotAuthStep
  // --------------------------------
