@@ -16,7 +16,6 @@ module COLLATERAL
         <flippers>
           <flipper multiplicity="*" type="Map">
             <flip-ilk> 0 </flip-ilk>
-            <flipStack> .List </flipStack>
             <flip>
               <flip-bids>  .Map         </flip-bids> // mapping (uint => Bid)     Int     |-> Bid
               <flip-beg>   105 /Rat 100 </flip-beg>  // Minimum Bid Increase

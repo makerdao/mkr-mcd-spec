@@ -37,7 +37,6 @@ module KMCD
           <collateral/>
           <rates/>
           <endPhase> false </endPhase>
-          <endStack> .List </endStack>
           <end>
             <end-live> 0    </end-live>
             <end-when> 0    </end-when>

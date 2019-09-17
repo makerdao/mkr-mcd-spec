@@ -11,7 +11,6 @@ module RATES
 
     configuration
       <rates>
-        <potStack> .List </potStack>
         <pot>
           <pot-pies> .Map      </pot-pies> // mapping (address => uint256) Address |-> Int
           <pot-pie>  0         </pot-pie>

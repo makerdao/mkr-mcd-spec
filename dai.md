@@ -13,7 +13,6 @@ module DAI
 
     configuration
       <dai>
-        <dai-stack> .List </dai-stack>
         <dai-state>
           <dai-totalSupply> 0    </dai-totalSupply>
           <dai-account-id>  0    </dai-account-id>
