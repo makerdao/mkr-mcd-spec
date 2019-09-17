@@ -217,7 +217,6 @@ This is quite permissive, and would allow the account to drain all your locked c
 ```k
     syntax VatStep ::= "safe" Int Address
  // -------------------------------------
-    rule <k> Vat . safe ILKID ADDR => Vat . exception ... </k> [owise]
     rule <k> Vat . safe ILKID ADDR => .               ... </k>
          <vat>
            <vat-ilks> ...   ILKID          |-> ILK ... </vat-ilks>
@@ -229,7 +228,6 @@ This is quite permissive, and would allow the account to drain all your locked c
 
     syntax VatStep ::= "nondusty" Int Address
  // -----------------------------------------
-    rule <k> Vat . nondusty ILKID ADDR => Vat . exception ... </k> [owise]
     rule <k> Vat . nondusty ILKID ADDR => .               ... </k>
          <vat>
            <vat-ilks> ...   ILKID          |-> ILK ... </vat-ilks>
@@ -251,9 +249,6 @@ This is quite permissive, and would allow the account to drain all your locked c
     rule <k> Vat . init ILKID => . ... </k>
          <vat-ilks> ILKS => ILKS [ ILKID <- ilk_init ] </vat-ilks>
       requires notBool ILKID in_keys(ILKS)
-
-    rule <k> Vat . init ILKID => Vat . exception ... </k>
-         <vat-ilks> ... ILKID |-> _ ... </vat-ilks>
 ```
 
 ### Collateral manipulation (`<vat-gem>`)
@@ -477,8 +472,6 @@ Jug Semantics
          <currentTime> TIME </currentTime>
          <jug-ilks> ... ILK |-> Ilk ( ILKDUTY => ilk_init, _ => TIME ) ... </jug-ilks>
       requires ILKDUTY ==Int 0
-
-    rule <k> Jug . init _ => Jug . exception ... </k> [owise]
 ```
 
 ```k
@@ -491,11 +484,6 @@ Jug Semantics
          <jug-vow> ADDRESS </jug-vow>
          <jug-base> BASE </jug-base>
       requires TIME >=Int ILKRHO
-
-    rule <k> Jug . drip ILK => Jug . exception ... </k>
-         <currentTime> TIME </currentTime>
-         <jug-ilks> ... ILK |-> Ilk ( _, ILKRHO ) ... </jug-ilks>
-      requires TIME <Int ILKRHO
 ```
 
 Cat Semantics

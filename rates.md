@@ -41,8 +41,6 @@ module RATES
          <pot-chi> _ => ilk_init </pot-chi>
          <pot-rho> _ => TIME </pot-rho>
 
-    rule <k> Pot . init _ => Pot . exception ... </k> [owise]
-
     syntax PotStep ::= "drip"
  // -------------------------
     rule <k> Pot . drip => Vat . suck VOW THIS ( CHI +Int (((#pow(DSR, TIME -Int RHO) *Int CHI) -Int CHI) ) ) ... </k>
