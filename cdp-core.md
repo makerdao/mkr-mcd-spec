@@ -33,8 +33,8 @@ Ok to say "this is the VatIlk, this is the CatIlk".
 Getters and setters for `Ilk` should be permissioned, and different combinations of Contract + User might have `file` access to different fields (might be non-`file` access methods).
 
 ```k
-    syntax VatIlk ::= Ilk ( Wad , Ray , Ray , Rad , Rad ) [klabel(#VatIlk), symbol]
- // -------------------------------------------------------------------------------
+    syntax VatIlk ::= Ilk ( Art: Wad , rate: Ray , spot: Ray , line: Rad , dust: Rad ) [klabel(#VatIlk), symbol]
+ // ------------------------------------------------------------------------------------------------------------
 
     syntax JugIlk ::= Ilk ( Int, Int )                    [klabel(#JugIlk), symbol]
  // -------------------------------------------------------------------------------
