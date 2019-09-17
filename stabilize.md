@@ -104,12 +104,22 @@ Flap Semantics
 ```k
     syntax FlapAuthStep ::= "kick" Int Int
  // --------------------------------------
-    rule <k> Flap . kick LOT BID => Vat . move MSGSENDER THIS LOT ~> KICK +Int 1  ... </k>
+    rule <k> Flap . kick LOT BID
+          => Vat . move MSGSENDER THIS LOT
+          ~> KICKS +Int 1
+          ...
+         </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
          <currentTime> NOW </currentTime>
-         <flap-bids> M => M[KICK +Int 1 <- Bid(BID, LOT, MSGSENDER, 0, NOW +Int TAU)] </flap-bids>
-         <flap-kicks> KICK => KICK +Int 1 </flap-kicks>
+         <flap-bids>... .Map =>
+            KICKS +Int 1 |-> Bid(... bid: BID,
+                                     lot: LOT,
+                                     guy: MSGSENDER,
+                                     tic: 0,
+                                     end: NOW +Int TAU)
+         ...</flap-bids>
+         <flap-kicks> KICKS => KICKS +Int 1 </flap-kicks>
          <flap-live> true </flap-live>
          <flap-tau> TAU </flap-tau>
 ```
@@ -118,7 +128,7 @@ Flap Semantics
 - Places a bid made by the user. Refunds the previous bidder's bid.
 
 **TODO** Flap.tend needs to call Gem.move. We don't have Gem yet.
-`<k> Flap . tend ID LOT BID => Gem . move MSGSENDER GUY CURBID ~> Gem . move MSGSENDER THIS (BID -Int CURBID) ... </k>`
+`<k> Flap . tend ID LOT BID => Gem . move MSGSENDER GUY BID' ~> Gem . move MSGSENDER THIS (BID -Int BID') ... </k>`
 
 ```k
     syntax FlapStep ::= "tend" Int Int Int
@@ -127,16 +137,22 @@ Flap Semantics
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
          <currentTime> NOW </currentTime>
-         <flap-bids> ... ID |-> Bid( (CURBID => BID), CURLOT, (GUY => MSGSENDER), (TIC => TIC +Int TTL), END ) ... </flap-bids>
+         <flap-bids>...
+           ID |-> Bid(... bid: BID' => BID,
+                          lot: LOT',
+                          guy: GUY => MSGSENDER,
+                          tic: TIC => TIC +Int TTL,
+                          end: END)
+         ...</flap-bids>
          <flap-live> true </flap-live>
          <flap-ttl> TTL </flap-ttl>
          <flap-beg> BEG </flap-beg>
       requires GUY =/=Int 0
        andBool (TIC >Int NOW orBool TIC ==Int 0)
        andBool END  >Int NOW
-       andBool LOT ==Int CURLOT
-       andBool BID  >Int CURBID
-       andBool BID >=Rat CURBID *Rat BEG
+       andBool LOT ==Int LOT'
+       andBool BID  >Int BID'
+       andBool BID >=Rat BID' *Rat BEG
 ```
 
 - deal(uint id)
@@ -151,7 +167,9 @@ Flap Semantics
     rule <k> Flap . deal ID => Vat . move THIS GUY LOT ... </k>
          <this> THIS </this>
          <currentTime> NOW </currentTime>
-         <flap-bids> ... (ID |-> Bid( BID, LOT, GUY, TIC, END ) => .Map) ... </flap-bids>
+         <flap-bids>...
+           ID |-> Bid(... bid: BID, lot: LOT, guy: GUY, tic: TIC, end: END) => .Map
+         ...</flap-bids>
          <flap-live> true </flap-live>
       requires TIC <Int NOW
        andBool (TIC =/=Int 0 orBool END <Int NOW)
@@ -180,7 +198,9 @@ Flap Semantics
  // --------------------------------------------------------
     rule <k> Flap . yank ID => . ... </k>
          <this> THIS </this>
-         <flap-bids> ... (ID |-> Bid(... bid: BID, guy: GUY) => .Map) ... </flap-bids>
+         <flap-bids>...
+           ID |-> Bid(... bid: BID, guy: GUY) => .Map
+         ...</flap-bids>
          <flap-live> false </flap-live>
       requires GUY =/=Int 0
 ```
