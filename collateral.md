@@ -34,13 +34,13 @@ module COLLATERAL
 
     syntax MCDContract ::= FlipContract
     syntax FlipContract ::= "Flip" Int
-    syntax MCDStep ::= FlipContract "." FlipStep
- // --------------------------------------------
+    syntax MCDStep ::= FlipContract "." FlipStep [klabel(flipStep)]
+ // ---------------------------------------------------------------
     rule contract(Flip ILK . _) => Flip ILK
 
     syntax FlipStep ::= FlipAuthStep
-    syntax AuthStep ::= FlipAuthStep
- // --------------------------------
+    syntax AuthStep ::= FlipContract "." FlipAuthStep [klabel(flipStep)]
+ // --------------------------------------------------------------------
 
     syntax FlipStep ::= "kick" Address Address Int Int Int
  // ------------------------------------------------------

@@ -25,13 +25,13 @@ module RATES
 
     syntax MCDContract ::= PotContract
     syntax PotContract ::= "Pot"
-    syntax MCDStep ::= PotContract "." PotStep
- // ------------------------------------------
+    syntax MCDStep ::= PotContract "." PotStep [klabel(potStep)]
+ // ------------------------------------------------------------
     rule contract(Pot . _) => Pot
 
     syntax PotStep ::= PotAuthStep
-    syntax AuthStep ::= PotAuthStep
- // -------------------------------
+    syntax AuthStep ::= PotContract "." PotAuthStep [klabel(potStep)]
+ // -----------------------------------------------------------------
 
     syntax PotAuthStep ::= "init" Address
  // -------------------------------------
