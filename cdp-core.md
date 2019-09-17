@@ -267,62 +267,9 @@ This is quite permissive, and would allow the account to drain all your locked c
          <vat-can> ... MSGSENDER |-> (CANADDRS => CANADDRS -Set SetItem(ADDRTO)) ... </vat-can>
 ```
 
--   `Vat.consent` checks whether a transaction was beneficial for a given account, otherwise makes sure that `Vat.wish` is set.
-    This encodes that "rational actors consent to actions which benefit them".
-
 -   `Vat.safe` checks that a given `Urn` of a certain `ilk` is not over-leveraged.
 
--   `Vat.nondusty` checks that a given `Urn` has either exactly 0 on a non-dusty amount of debt.
-    **TODO**: Currently we use `urnDebt ==Int 0`, whereas Solidity implementation uses `urnArt ==Int 0`.
-              Does it matter? They are equivalent as long as `urnRate =/=Int 0`.
-
 ```k
-    syntax VatStep ::= "consent" Int Address
- // ----------------------------------------
-    rule <k> Vat . consent _     ADDR => Vat . wish ADDR ... </k> [owise]
-    rule <k> Vat . consent ILKID ADDR => .               ... </k>
-         <vatStack>
-           ListItem ( <vat>
-                        <vat-ilks> ...   ILKID          |-> ILK' ... </vat-ilks>
-                        <vat-urns> ... { ILKID , ADDR } |-> URN' ... </vat-urns>
-                        <vat-gem>  ... { ILKID , ADDR } |-> COL' ... </vat-gem>
-                        <vat-dai>  ...           ADDR   |-> DAI' ... </vat-dai>
-                        ...
-                      </vat>
-                    )
-           ...
-         </vatStack>
-         <vat>
-           <vat-ilks> ...   ILKID          |-> ILK ... </vat-ilks>
-           <vat-urns> ... { ILKID , ADDR } |-> URN ... </vat-urns>
-           <vat-gem>  ... { ILKID , ADDR } |-> COL ... </vat-gem>
-           <vat-dai>  ...           ADDR   |-> DAI ... </vat-dai>
-           ...
-         </vat>
-      requires COL                  <=Int COL'
-       andBool DAI                  <=Int DAI'
-       andBool urnBalance(ILK, URN) <=Int urnBalance(ILK', URN')
-
-    syntax VatStep ::= "less-risky" Int Address
- // -------------------------------------------
-    rule <k> Vat . less-risky ILKID ADDR => Vat . safe ILKID ADDR ... </k> [owise]
-    rule <k> Vat . less-risky ILKID ADDR => .                     ... </k>
-         <vatStack>
-           ListItem ( <vat>
-                        <vat-ilks> ...   ILKID          |-> ILK' ... </vat-ilks>
-                        <vat-urns> ... { ILKID , ADDR } |-> URN' ... </vat-urns>
-                        ...
-                      </vat>
-                    )
-           ...
-         </vatStack>
-         <vat>
-           <vat-ilks> ...   ILKID          |-> ILK ... </vat-ilks>
-           <vat-urns> ... { ILKID , ADDR } |-> URN ... </vat-urns>
-           ...
-         </vat>
-      requires urnBalance(ILK, URN) <=Int urnBalance(ILK', URN')
-
     syntax VatStep ::= "safe" Int Address
  // -------------------------------------
     rule <k> Vat . safe ILKID ADDR => Vat . exception ... </k> [owise]
