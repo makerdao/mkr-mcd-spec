@@ -507,8 +507,8 @@ Cat Semantics
     syntax CatStep ::= "bite" Int Address
  // -------------------------------------
 
-    syntax CatStep ::= "cage" [klabel(#CatCage), symbol]
- // ----------------------------------------------------
+    syntax CatAuthStep ::= "cage" [klabel(#CatCage), symbol]
+ // --------------------------------------------------------
 ```
 
 Spot Semantics

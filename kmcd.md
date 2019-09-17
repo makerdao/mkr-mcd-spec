@@ -67,8 +67,8 @@ End Semantics
  // -----------------------------------------------------------------
     rule <k> End . _ => exception ... </k> [owise]
 
-    syntax EndStep ::= "cage"
-                     | "cage" Int
+    syntax EndAuthStep ::= "cage"
+    syntax EndStep ::= "cage" Int
  // -----------------------------
 
     syntax EndStep ::= "skip" Int Int
