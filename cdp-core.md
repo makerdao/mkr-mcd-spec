@@ -452,6 +452,7 @@ This is quite permissive, and would allow the account to drain all your locked c
            USERW |-> ( DAIW => DAIW +Int (RATE *Int DART) )
            ...
          </vat-dai>
+         <vat-Line> LINE </vat-Line>
       requires (DART <=Int 0
         orBool ((ILKART +Int DART) *Int RATE <=Int ILKLINE andBool DEBT +Int (RATE *Int DART) <=Int LINE))
        andBool ((DART <=Int 0 andBool DINK >=Int 0) orBool (URNART +Int DART) *Int RATE <=Int (INK +Int DINK) *Int SPOT)
