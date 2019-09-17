@@ -42,13 +42,6 @@ module DAI
     syntax DaiAuthStep ::= "init" Int
  // ---------------------------------
 
-    syntax DaiStep ::= StashStep
- // ----------------------------
-
-    syntax DaiStep ::= ExceptionStep
- // --------------------------------
-    rule <k> Dai . _:DaiStep => Dai . exception ... </k> [owise]
-
     syntax DaiStep ::= "transfer" Address Wad
  // -----------------------------------------
     rule <k> Dai . transfer ACCOUNT_SRC AMOUNT => . ... </k>

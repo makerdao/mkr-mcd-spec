@@ -29,26 +29,6 @@ module RATES
     syntax PotStep ::= PotAuthStep
  // ------------------------------
 
-    syntax PotStep ::= StashStep
- // ----------------------------
-    rule <k> Pot . push => . ... </k>
-         <potStack> (.List => ListItem(POT)) ... </potStack>
-         <pot> POT </pot>
-
-    rule <k> Pot . pop => . ... </k>
-         <potStack> (ListItem(POT) => .List) ... </potStack>
-         <pot> _ => POT </pot>
-
-    rule <k> Pot . drop => . ... </k>
-         <potStack> (ListItem(_) => .List) ... </potStack>
-
-    syntax PotStep ::= ExceptionStep
- // --------------------------------
-    rule <k>                     Pot . catch => Pot . drop ... </k>
-    rule <k> Pot . exception ~>  Pot . catch => Pot . pop  ... </k>
-    rule <k> Pot . exception ~> (Pot . PS    => .)         ... </k>
-      requires PS =/=K catch
-
     syntax PotStep ::= AuthStep
  // ---------------------------
     rule <k> Pot . auth => . ... </k>

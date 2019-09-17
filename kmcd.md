@@ -72,12 +72,6 @@ End Semantics
     syntax EndAuthStep ::= "init"
  // -----------------------------
 
-    syntax EndStep ::= StashStep
- // ----------------------------
-
-    syntax EndStep ::= ExceptionStep
- // --------------------------------
-
     syntax EndStep ::= "cage"
                      | "cage" Int
  // -----------------------------
