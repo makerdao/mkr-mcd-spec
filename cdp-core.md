@@ -153,8 +153,8 @@ Updating the `<vat>` happens in phases:
 ```k
     syntax MCDStep ::= "Vat" "." VatStep
  // ------------------------------------
-    rule <k> step [ Vat . VAS:VatAuthStep ] => Vat . push ~> Vat . auth ~> Vat . VAS ~> Vat . check ~> Vat . catch ... </k>
-    rule <k> step [ Vat . VS              ] => Vat . push ~>               Vat . VS  ~> Vat . check ~> Vat . catch ... </k>
+    rule <k> step [ Vat . VAS:VatAuthStep ] => Vat . push ~> Vat . auth ~> Vat . VAS ~> Vat . catch ... </k>
+    rule <k> step [ Vat . VS              ] => Vat . push ~>               Vat . VS  ~> Vat . catch ... </k>
       requires notBool isVatAuthStep(VS)
 
     syntax VatStep ::= VatAuthStep
@@ -233,45 +233,6 @@ By adjusting the `<vat-ward>`, you can upgrade contracts in place by deploying a
 ### Vat Safety Checks
 
 Vat safety is enforced by adding specific checks on the `<vat>` state updates.
-
--   `Vat.check` states basic properties of the `Vat` quanities and is checked after every `VatStep`.
-
-```k
-    syntax VatStep ::= "check"
- // --------------------------
-    rule <k> Vat . check => Vat . exception ... </k> [owise]
-    rule <k> Vat . check => .               ... </k>
-         <vatStack>
-           ListItem ( <vat>
-                        <vat-debt> DEBT:Int </vat-debt>
-                        <vat-Line> LINE:Int </vat-Line>
-                        <vat-vice> VICE:Int </vat-vice>
-                        <vat-dai>  DAI      </vat-dai>
-                        <vat-sin>  SIN      </vat-sin>
-                        ...
-                      </vat>
-                    )
-           ...
-         </vatStack>
-         <vat>
-           <vat-debt> DEBT':Int </vat-debt>
-           <vat-Line> LINE':Int </vat-Line>
-           <vat-vice> VICE':Int </vat-vice>
-           <vat-dai>  DAI'      </vat-dai>
-           <vat-sin>  SIN'      </vat-sin>
-           ...
-         </vat>
-      requires DEBT' >=Int 0 andBool (DEBT' >Int DEBT impliesBool DEBT' <=Int LINE')
-       andBool VICE' >=Int 0
-       andBool allPositive(values(DAI'))
-       andBool allPositive(values(SIN'))
-
-    syntax Bool ::= allPositive ( List ) [function]
- // -----------------------------------------------
-    rule allPositive(.List         ) => true
-    rule allPositive(ListItem(V) VS) => false           requires notBool V >=Int 0
-    rule allPositive(ListItem(V) VS) => allPositive(VS) requires         V >=Int 0
-```
 
 By setting `<vat-can>` for an account, you are authorizing it to manipulate your `<vat-gem>`, `<vat-dai>`, and `<vat-urns>` directly.
 This is quite permissive, and would allow the account to drain all your locked collateral and assets, for example.
