@@ -521,6 +521,7 @@ Spot Semantics
  // ---------------------------------------------------------------
     rule contract(Spot . _) => Spot
 
+    syntax SpotAuthStep
     syntax SpotStep ::= SpotAuthStep
     syntax AuthStep ::= SpotContract "." SpotAuthStep [klabel(spotStep)]
  // --------------------------------------------------------------------
