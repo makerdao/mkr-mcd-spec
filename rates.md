@@ -25,9 +25,6 @@ module RATES
 
     syntax MCDStep ::= "Pot" "." PotStep
  // ------------------------------------
-    rule <k> step [ Pot . PAS:PotAuthStep ] => Pot . push ~> Pot . auth ~> Pot . PAS ~> Pot . catch ... </k>
-    rule <k> step [ Pot . PS              ] => Pot . push ~>               Pot . PS  ~> Pot . catch ... </k>
-      requires notBool isPotAuthStep(PS)
 
     syntax PotStep ::= PotAuthStep
  // ------------------------------

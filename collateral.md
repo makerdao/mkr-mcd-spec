@@ -34,10 +34,6 @@ module COLLATERAL
 
     syntax MCDStep ::= "Flip" Int "." FlipStep
  // ------------------------------------------
-    rule <k> step [ Flip F . FAS:FlipAuthStep ] => Flip F . push ~> Flip F . auth ~> Flip F . FAS ~> Flip F . catch ... </k>
-    rule <k> step [ Flip F . FS               ] => Flip F . push ~>                  Flip F . FS  ~> Flip F . catch ... </k>
-      requires notBool isFlipAuthStep(FS)
-
 
     syntax FlipStep ::= FlipAuthStep
  // --------------------------------

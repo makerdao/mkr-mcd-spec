@@ -31,14 +31,7 @@ MCD Simulations
     syntax MCDSteps ::= ".MCDSteps" | MCDStep MCDSteps
  // --------------------------------------------------
     rule <k> .MCDSteps => . ... </k>
-```
-
-The `step [_]` operator allows enforcing certain invariants during execution.
-
-```k
-    syntax MCDStep ::= "step" "[" MCDStep "]"
- // -----------------------------------------
-    rule <k> MCD:MCDStep MCDS:MCDSteps => step [ MCD ] ~> MCDS ... </k>
+    rule <k> MCD:MCDStep MCDS:MCDSteps => MCD ~> MCDS ... </k>
 ```
 
 Simulations
@@ -71,7 +64,7 @@ Some methods rely on a timestamp. We simulate that here.
 ```k
     syntax MCDStep ::= "TimeStep"
  // -----------------------------
-    rule <k> step [ TimeStep ] => . ... </k>
+    rule <k> TimeStep => . ... </k>
          <currentTime> TIME => TIME +Int 1 second </currentTime>
 
     syntax Int ::= Int "second"  [timeUnit]
