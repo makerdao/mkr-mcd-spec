@@ -42,12 +42,6 @@ Different contracts use the same names for external functions, so we declare the
 ```k
     syntax InitStep ::= "init" Int
  // ------------------------------
-
-    syntax WardStep ::= "rely" Address | "deny" Address
- // ---------------------------------------------------
-
-    syntax AuthStep ::= "auth"
- // --------------------------
 ```
 
 Time Increments

@@ -53,12 +53,6 @@ Flap Semantics
     syntax FlapStep ::= FlapAuthStep
  // --------------------------------
 
-    syntax FlapAuthStep ::= AuthStep
- // --------------------------------
-
-    syntax FlapAuthStep ::= WardStep
- // --------------------------------
-
     syntax FlapAuthStep ::= "init" Address Address
  // ----------------------------------------------
 
@@ -86,12 +80,6 @@ Flop Semantics
  // --------------------------------------
 
     syntax FlopStep ::= FlopAuthStep
- // --------------------------------
-
-    syntax FlopAuthStep ::= AuthStep
- // --------------------------------
-
-    syntax FlopAuthStep ::= WardStep
  // --------------------------------
 
     syntax FlopAuthStep ::= "init" Address Address
@@ -125,12 +113,6 @@ Vow Semantics
 
     syntax VowStep ::= VowAuthStep
  // ------------------------------
-
-    syntax VowAuthStep ::= AuthStep
- // -------------------------------
-
-    syntax VowAuthStep ::= WardStep
- // -------------------------------
 
     syntax VowAuthStep ::= "init" Address Address Address
  // -----------------------------------------------------

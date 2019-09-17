@@ -158,37 +158,6 @@ Updating the `<vat>` happens in phases:
  // ------------------------------
 ```
 
-### Warding Control
-
-Warding allows controlling which versions of a smart contract are allowed to call into this one.
-By adjusting the `<vat-ward>`, you can upgrade contracts in place by deploying a new contract for some part of the MCD system.
-
--   `Vat.auth` checks that the given account has been `ward`ed.
--   `Vat.rely` sets authorization for a user.
--   `Vat.deny` removes authorization for a user.
-
-**TODO**: `rely` and `deny` should be `note`.
-
-```k
-    syntax VatAuthStep ::= AuthStep
- // -------------------------------
-    rule <k> Vat . auth => . ... </k>
-         <msg-sender> MSGSENDER </msg-sender>
-         <vat-ward> ... MSGSENDER |-> true ... </vat-ward>
-
-    rule <k> Vat . auth => Vat . exception ... </k>
-         <msg-sender> MSGSENDER </msg-sender>
-         <vat-ward> ... MSGSENDER |-> false ... </vat-ward>
-
-    syntax VatAuthStep ::= WardStep
- // -------------------------------
-    rule <k> Vat . rely ADDR => . ... </k>
-         <vat-ward> ... ADDR |-> (_ => true) ... </vat-ward>
-
-    rule <k> Vat . deny ADDR => . ... </k>
-         <vat-ward> ... ADDR |-> (_ => false) ... </vat-ward>
-```
-
 ### Deactivation
 
 -   `Vat.cage` disables access to this instance of MCD.
@@ -494,24 +463,6 @@ Jug Semantics
     syntax JugStep ::= JugAuthStep
  // ------------------------------
 
-    syntax JugStep ::= AuthStep
- // ---------------------------
-    rule <k> Jug . auth => . ... </k>
-         <msg-sender> MSGSENDER </msg-sender>
-         <jug-ward> ... MSGSENDER |-> true ... </jug-ward>
-
-    rule <k> Jug . auth => Jug . exception ... </k>
-         <msg-sender> MSGSENDER </msg-sender>
-         <jug-ward> ... MSGSENDER |-> false ... </jug-ward>
-
-    syntax JugAuthStep ::= WardStep
- // -------------------------------
-    rule <k> Jug . rely ADDR => . ... </k>
-         <jug-ward> ... ADDR |-> (_ => true) ... </jug-ward>
-
-    rule <k> Jug . deny ADDR => . ... </k>
-         <jug-ward> ... ADDR |-> (_ => false) ... </jug-ward>
-
     syntax JugStep ::= InitStep
  // ---------------------------
     rule <k> Jug . init ILK => . ... </k>
@@ -549,12 +500,6 @@ Cat Semantics
     syntax CatStep ::= CatAuthStep
  // ------------------------------
 
-    syntax CatAuthStep ::= AuthStep
- // -------------------------------
-
-    syntax CatAuthStep ::= WardStep
- // -------------------------------
-
     syntax CatAuthStep ::= "init" Address
  // -------------------------------------
 
@@ -574,24 +519,6 @@ Spot Semantics
 
     syntax SpotStep ::= SpotAuthStep
  // --------------------------------
-
-    syntax SpotAuthStep ::= AuthStep
- // --------------------------------
-    rule <k> Spot . auth => . ... </k>
-         <msg-sender> MSGSENDER </msg-sender>
-         <spot-ward> ... MSGSENDER |-> true ... </spot-ward>
-
-    rule <k> Spot . auth => Spot . exception ... </k>
-         <msg-sender> MSGSENDER </msg-sender>
-         <spot-ward> ... MSGSENDER |-> false ... </spot-ward>
-
-    syntax SpotAuthStep ::= WardStep
- // --------------------------------
-    rule <k> Spot . rely ADDR => . ... </k>
-         <spot-ward> ... ADDR |-> (_ => true) ... </spot-ward>
-
-    rule <k> Spot . deny ADDR => . ... </k>
-         <spot-ward> ... ADDR |-> (_ => false) ... </spot-ward>
 
     syntax SpotAuthStep ::= InitStep
  // --------------------------------

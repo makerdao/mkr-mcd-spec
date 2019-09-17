@@ -38,12 +38,6 @@ module COLLATERAL
     syntax FlipStep ::= FlipAuthStep
  // --------------------------------
 
-    syntax FlipAuthStep ::= AuthStep
- // --------------------------------
-
-    syntax FlipAuthStep ::= WardStep
- // --------------------------------
-
     syntax FlipStep ::= "kick" Address Address Int Int Int
  // ------------------------------------------------------
     rule <k> Flip ILK . kick USR GAL TAB LOT BID
