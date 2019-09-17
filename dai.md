@@ -36,6 +36,7 @@ module DAI
     syntax DaiStep ::= DaiAuthStep
     syntax AuthStep ::= DaiContract "." DaiAuthStep [klabel(daiStep)]
  // -----------------------------------------------------------------
+    rule <k> Dai . _ => exception ... </k> [owise]
 
     syntax DaiAuthStep ::= "init" Int
  // ---------------------------------

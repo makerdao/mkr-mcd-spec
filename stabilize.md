@@ -59,6 +59,7 @@ Flap Semantics
 
     syntax FlapAuthStep ::= "init" Address Address
  // ----------------------------------------------
+    rule <k> Flap . _ => exception ... </k> [owise]
 
     syntax FlapStep ::= "kick" Int Int
  // ----------------------------------
@@ -89,6 +90,7 @@ Flop Semantics
     syntax FlopStep ::= FlopAuthStep
     syntax AuthStep ::= FlopContract "." FlopAuthStep [klabel(flopStep)]
  // --------------------------------------------------------------------
+    rule <k> Flop . _ => exception ... </k> [owise]
 
     syntax FlopAuthStep ::= "init" Address Address
  // ----------------------------------------------
@@ -125,6 +127,7 @@ Vow Semantics
     syntax VowStep ::= VowAuthStep
     syntax AuthStep ::= VowContract "." VowAuthStep [klabel(vowStep)]
  // -----------------------------------------------------------------
+    rule <k> Vow . _ => exception ... </k> [owise]
 
     syntax VowAuthStep ::= "init" Address Address Address
  // -----------------------------------------------------

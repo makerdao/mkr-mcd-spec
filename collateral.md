@@ -41,6 +41,7 @@ module COLLATERAL
     syntax FlipStep ::= FlipAuthStep
     syntax AuthStep ::= FlipContract "." FlipAuthStep [klabel(flipStep)]
  // --------------------------------------------------------------------
+    rule <k> Flip _ . _ => exception ... </k> [owise]
 
     syntax FlipStep ::= "kick" Address Address Int Int Int
  // ------------------------------------------------------
