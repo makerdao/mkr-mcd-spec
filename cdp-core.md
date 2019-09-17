@@ -88,7 +88,6 @@ Vat CDP State
 ```k
     configuration
       <cdp-core>
-        <vatStack> .List </vatStack>
         <vat>
           <vat-can>  .Map  </vat-can>  // mapping (address (address => uint))       Address |-> Set
           <vat-ilks> .Map  </vat-ilks> // mapping (bytes32 => Ilk)                  Int     |-> VatIlk
@@ -101,18 +100,15 @@ Vat CDP State
           <vat-Line> 0:Rad </vat-Line> // Total Debt Ceiling
           <vat-live> true  </vat-live> // Access Flag
         </vat>
-        <jugStack> .List </jugStack>
         <jug>
           <jug-ilks> .Map      </jug-ilks> // mapping (bytes32 => JugIlk) Int     |-> JugIlk
           <jug-vow>  0:Address </jug-vow>  //                             Address
           <jug-base> 0         </jug-base> //                             Int
         </jug>
-        <catStack> .List </catStack>
         <cat>
           <cat-ilks> .Map </cat-ilks>
           <cat-live> 1    </cat-live>
         </cat>
-        <spotStack> .List </spotStack>
         <spot>
           <spot-ilks> .Map </spot-ilks> // mapping (bytes32 => ilk)  Int     |-> SpotIlk
           <spot-par>  0    </spot-par>

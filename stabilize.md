@@ -11,19 +11,16 @@ module SYSTEM-STABILIZER
 
     configuration
       <stabilize>
-        <flapStack> .List </flapStack>
         <flapState>
           <flap-bids> .Map </flap-bids>  // mapping (uint => Bid)     Int     |-> Bid
           <flap-kicks> 0   </flap-kicks>
           <flap-live>  0   </flap-live>
         </flapState>
-        <flopStack> .List </flopStack>
         <flopState>
           <flop-bids> .Map </flop-bids>  // mapping (uint => Bid)     Int     |-> Bid
           <flop-kicks> 0   </flop-kicks>
           <flop-live>  0   </flop-live>
         </flopState>
-        <vowStack> .List </vowStack>
         <vow>
           <vow-sins>  .Map </vow-sins> // mapping (uint256 => uint256) Int     |-> Int
           <vow-sin>   0    </vow-sin>
