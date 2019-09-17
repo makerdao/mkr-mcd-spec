@@ -32,6 +32,19 @@ module COLLATERAL
         </flips>
       </collateral>
 
+    syntax MCDContract ::= GemContract
+    syntax GemContract ::= "Gem" Address
+    syntax MCDStep ::= GemContract "." GemStep [klabel(gemStep)]
+ // ------------------------------------------------------------
+    rule contract(Gem ACCTGEM . _) => Gem ACCTGEM
+    rule [[ address(Gem ACCTGEM) => ACCTGEM ]] <gem-addr> ACCTGEM </gem-addr>
+
+    syntax GemAuthStep
+    syntax GemStep ::= GemAuthStep
+    syntax AuthStep ::= GemContract "." GemAuthStep [klabel(gemStep)]
+ // -----------------------------------------------------------------
+    rule <k> Gem _ . _ => exception ... </k> [owise]
+
     syntax Bid ::= Bid ( bid: Int, lot: Int, guy: Address, tic: Int, end: Int, usr: Address, gal: Address, tab: Int )
  // -----------------------------------------------------------------------------------------------------------------
 
