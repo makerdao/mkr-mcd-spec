@@ -52,50 +52,21 @@ Flap Semantics
 
     syntax MCDStep ::= "Flap" "." FlapStep
  // --------------------------------------
-    rule <k> step [ Flap . FAS:FlapAuthStep ] => Flap . push ~> Flap . auth ~> Flap . FAS ~> Flap . catch ... </k>
-    rule <k> step [ Flap . FS               ] => Flap . push ~>                Flap . FS  ~> Flap . catch ... </k>
-      requires notBool isFlapAuthStep(FS)
 
     syntax FlapStep ::= FlapAuthStep
  // --------------------------------
 
     syntax FlapAuthStep ::= AuthStep
  // --------------------------------
-    rule <k> Flap . auth => . ... </k>
-         <msg-sender> MSGSENDER </msg-sender>
-         <flap-ward> ... MSGSENDER |-> true ... </flap-ward>
-
-    rule <k> Flap . auth => Flap . exception ... </k>
-         <msg-sender> MSGSENDER </msg-sender>
-         <flap-ward> ... MSGSENDER |-> false ... </flap-ward>
 
     syntax FlapAuthStep ::= WardStep
  // --------------------------------
-    rule <k> Flap . rely ADDR => . ... </k>
-         <flap-ward> ... ADDR |-> (_ => true) ... </flap-ward>
-
-    rule <k> Flap . deny ADDR => . ... </k>
-         <flap-ward> ... ADDR |-> (_ => false) ... </flap-ward>
 
     syntax FlapStep ::= StashStep
  // -----------------------------
-    rule <k> Flap . push => . ... </k>
-         <flapStack> (.List => ListItem(FLAP)) ... </flapStack>
-         <flap-state> FLAP </flap-state>
-
-    rule <k> Flap . pop => . ... </k>
-         <flapStack> (ListItem(FLAP) => .List) ... </flapStack>
-         <flap-state> _ => FLAP </flap-state>
-
-    rule <k> Flap . drop => . ... </k>
-         <flapStack> (ListItem(_) => .List) ... </flapStack>
 
     syntax FlapStep ::= ExceptionStep
  // ---------------------------------
-    rule <k>                      Flap . catch => Flap . drop ... </k>
-    rule <k> Flap . exception ~>  Flap . catch => Flap . pop  ... </k>
-    rule <k> Flap . exception ~> (Flap . FS    => .)          ... </k>
-      requires FS =/=K catch
 ```
 
 - kick(uint lot, uint bid) returns (uint id)
