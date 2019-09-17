@@ -243,22 +243,18 @@ This is quite permissive, and would allow the account to drain all your locked c
 **NOTE**: It is assumed that `<vat-can>` has already been initialized with the relevant accounts.
 
 ```k
-    syntax VatStep ::= "wish" Address
- // ---------------------------------
-    rule <k> Vat . wish ADDRFROM => . ... </k>
+    syntax Bool ::= "wish" Address [function]
+ // -----------------------------------------
+    rule [[ wish ADDRFROM => true ]]
          <msg-sender> MSGSENDER </msg-sender>
       requires ADDRFROM ==K MSGSENDER
 
-    rule <k> Vat . wish ADDRFROM => . ... </k>
+    rule [[ wish ADDRFROM => true ]]
          <msg-sender> MSGSENDER </msg-sender>
          <vat-can> ... ADDRFROM |-> CANADDRS:Set ... </vat-can>
       requires MSGSENDER in CANADDRS
 
-    rule <k> Vat . wish ADDRFROM => Vat . exception ... </k>
-         <msg-sender> MSGSENDER </msg-sender>
-         <vat-can> ... ADDRFROM |-> CANADDRS:Set ... </vat-can>
-      requires ADDRFROM =/=K MSGSENDER
-       andBool notBool MSGSENDER in CANADDRS
+    rule wish _ => false [owise]
 
     syntax VatStep ::= "hope" Address | "nope" Address
  // --------------------------------------------------
@@ -391,8 +387,7 @@ This is quite permissive, and would allow the account to drain all your locked c
 
     syntax VatStep ::= "flux" Int Address Address Wad
  // -------------------------------------------------
-    rule <k> Vat . flux ILKID ADDRFROM ADDRTO COL
-          => Vat . wish ADDRFROM
+    rule <k> Vat . flux ILKID ADDRFROM ADDRTO COL => .
          ...
          </k>
          <vat-gem>
@@ -401,6 +396,7 @@ This is quite permissive, and would allow the account to drain all your locked c
            { ILKID , ADDRTO   } |-> ( COLTO   => COLTO   +Int COL )
            ...
          </vat-gem>
+      requires wish ADDRFROM
 ```
 
 -   `Vat.move` transfers Dai between users.
@@ -411,8 +407,7 @@ This is quite permissive, and would allow the account to drain all your locked c
 ```k
     syntax VatStep ::= "move" Address Address Wad
  // ---------------------------------------------
-    rule <k> Vat . move ADDRFROM ADDRTO DAI
-          => Vat . wish ADDRFROM
+    rule <k> Vat . move ADDRFROM ADDRTO DAI => .
          ...
          </k>
          <vat-dai>
@@ -421,6 +416,7 @@ This is quite permissive, and would allow the account to drain all your locked c
            ADDRTO   |-> (DAITO   => DAITO   +Int DAI)
            ...
          </vat-dai>
+      requires wish ADDRFROM
 ```
 
 ### CDP Manipulation
@@ -435,8 +431,7 @@ This is quite permissive, and would allow the account to drain all your locked c
     syntax VatStep ::= "fork" Int Address Address Int Int
  // -----------------------------------------------------
     rule <k> Vat . fork ILKID ADDRFROM ADDRTO DINK DART
-          => Vat . wish           ADDRFROM ~> Vat . wish           ADDRTO
-          ~> Vat . safe     ILKID ADDRFROM ~> Vat . safe     ILKID ADDRTO
+          => Vat . safe     ILKID ADDRFROM ~> Vat . safe     ILKID ADDRTO
           ~> Vat . nondusty ILKID ADDRFROM ~> Vat . nondusty ILKID ADDRTO
          ...
          </k>
@@ -446,6 +441,8 @@ This is quite permissive, and would allow the account to drain all your locked c
            { ILKID , ADDRTO   } |-> Urn ( INKTO   => INKTO   +Int DINK , ARTTO   => ARTFROM +Int DART )
            ...
          </vat-urns>
+      requires wish ADDRFROM
+       andBool wish ADDRTO
 ```
 
 -   `Vat.grab` uses collateral from user `V` to burn `<vat-sin>` for user `W` via one of `U`s CDPs.
