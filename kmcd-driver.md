@@ -20,6 +20,8 @@ module KMCD-DRIVER
           <msg-sender> 0:Address </msg-sender>
           <this> 0:Address </this>
           <currentTime> 0:Int </currentTime>
+          <callStack> .List </callStack>
+          <preState> .K </preState>
         </kmcd-driver>
 ```
 
@@ -35,6 +37,67 @@ MCD Simulations
     syntax MCDContract ::= contract(MCDStep) [function]
     syntax Address ::= address(MCDContract) [function]
  // ---------------------------------------------------
+```
+
+Function Calls
+--------------
+
+```k
+    syntax CallFrame ::= frame(prevSender: Address, continuation: K)
+
+    syntax AuthStep
+    syntax MCDStep ::= AuthStep
+    syntax MCDStep ::= "call" MCDStep
+ // ---------------------------------
+    rule <k> call AS:AuthStep ~> CONT => contract(AS) . auth ~> AS </k>
+         <msg-sender> MSGSENDER => THIS </msg-sender>
+         <this> THIS => address(contract(AS)) </this>
+         <callStack> .List => ListItem(frame(MSGSENDER, CONT)) ... </callStack>
+    rule <k> call MCD:MCDStep ~> CONT => MCD </k>
+         <msg-sender> MSGSENDER => THIS </msg-sender>
+         <this> THIS => address(contract(MCD)) </this>
+         <callStack> .List => ListItem(frame(MSGSENDER, CONT)) ... </callStack>
+      requires notBool isAuthStep(MCD)
+
+    syntax ReturnValue ::= Int | Rat
+ // --------------------------------
+    rule <k> R:ReturnValue => R ~> CONT </k>
+         <msg-sender> MSGSENDER => PREVSENDER </msg-sender>
+         <this> THIS => MSGSENDER </this>
+         <callStack> ListItem(frame(PREVSENDER, CONT)) => .List ... </callStack>
+
+    rule <k> . => CONT </k>
+         <msg-sender> MSGSENDER => PREVSENDER </msg-sender>
+         <this> THIS => MSGSENDER </this>
+         <callStack> ListItem(frame(PREVSENDER, CONT)) => .List ... </callStack>
+
+    syntax MCDStep ::= "transact" MCDStep
+ // -------------------------------------
+    rule <k> transact MCD:MCDStep => pushState ~> call MCD ~> dropState ... </k>
+
+    syntax MCDStep ::= "exception"
+ // ------------------------------
+    rule <k> exception ~> _ => exception ~> CONT </k>
+         <msg-sender> MSGSENDER => PREVSENDER </msg-sender>
+         <this> THIS => MSGSENDER </this>
+         <callStack> ListItem(frame(PREVSENDER, CONT)) => .List ...</callStack>
+
+    rule <k> exception ~> dropState => popState ... </k>
+         <callStack> .List </callStack>
+
+    syntax MCStep ::= "pushState" | "dropState" | "popState"
+ // --------------------------------------------------------
+```
+
+Authentiation
+-------------
+
+**TODO**: authentication and wards
+
+```k
+    syntax MCDStep ::= MCDContract "." "auth"
+ // -----------------------------------------
+    rule <k> MCD:MCDContract . auth => . ... </k>
 ```
 
 Simulations

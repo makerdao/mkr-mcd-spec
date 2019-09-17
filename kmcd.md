@@ -54,6 +54,22 @@ module KMCD
       </kmcd>
 ```
 
+State Storage/Revert Semantics
+------------------------------
+
+```k
+    rule <k> pushState => . ... </k>
+         <kmcd-state> STATE </kmcd-state>
+         <preState> _ => <kmcd-state> STATE </kmcd-state> </preState>
+
+    rule <k> dropState => . ... </k>
+         <preState> _ => .K </preState>
+
+    rule <k> popState => . ... </k>
+         (_:KmcdStateCell => <kmcd-state> STATE </kmcd-state>)
+         <preState> <kmcd-state> STATE </kmcd-state> </preState>
+```
+
 End Semantics
 -------------
 
