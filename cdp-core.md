@@ -160,6 +160,7 @@ Updating the `<vat>` happens in phases:
     syntax VatStep ::= VatAuthStep
     syntax AuthStep ::= VatContract "." VatAuthStep [klabel(vatStep)]
  // -----------------------------------------------------------------
+    rule <k> Vat . _ => exception ... </k> [owise]
 ```
 
 ### Deactivation
@@ -465,6 +466,7 @@ Jug Semantics
     syntax JugStep ::= JugAuthStep
     syntax AuthStep ::= JugContract "." JugAuthStep [klabel(jugStep)]
  // -----------------------------------------------------------------
+    rule <k> Jug . _ => exception ... </k> [owise]
 
     syntax JugStep ::= InitStep
  // ---------------------------
@@ -499,6 +501,7 @@ Cat Semantics
     syntax CatStep ::= CatAuthStep
     syntax AuthStep ::= CatContract "." CatAuthStep [klabel(catStep)]
  // -----------------------------------------------------------------
+    rule <k> Cat . _ => exception ... </k> [owise]
 
     syntax CatAuthStep ::= "init" Address
  // -------------------------------------
@@ -523,6 +526,7 @@ Spot Semantics
     syntax SpotStep ::= SpotAuthStep
     syntax AuthStep ::= SpotContract "." SpotAuthStep [klabel(spotStep)]
  // --------------------------------------------------------------------
+    rule <k> Spot . _ => exception ... </k> [owise]
 
     syntax SpotAuthStep ::= InitStep
  // --------------------------------
