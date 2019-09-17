@@ -13,21 +13,18 @@ module SYSTEM-STABILIZER
       <stabilize>
         <flapStack> .List </flapStack>
         <flapState>
-          <flap-ward> .Map </flap-ward>  // mapping (address => uint) Address |-> Bool
           <flap-bids> .Map </flap-bids>  // mapping (uint => Bid)     Int     |-> Bid
           <flap-kicks> 0   </flap-kicks>
           <flap-live>  0   </flap-live>
         </flapState>
         <flopStack> .List </flopStack>
         <flopState>
-          <flop-ward> .Map </flop-ward>  // mapping (address => uint) Address |-> Bool
           <flop-bids> .Map </flop-bids>  // mapping (uint => Bid)     Int     |-> Bid
           <flop-kicks> 0   </flop-kicks>
           <flop-live>  0   </flop-live>
         </flopState>
         <vowStack> .List </vowStack>
         <vow>
-          <vow-ward>  .Map </vow-ward> // mapping (address => uint)    Address |-> Bool
           <vow-sins>  .Map </vow-sins> // mapping (uint256 => uint256) Int     |-> Int
           <vow-sin>   0    </vow-sin>
           <vow-ash>   0    </vow-ash>

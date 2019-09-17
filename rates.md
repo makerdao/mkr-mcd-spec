@@ -13,7 +13,6 @@ module RATES
       <rates>
         <potStack> .List </potStack>
         <pot>
-          <pot-ward> .Map      </pot-ward> // mapping (address => uint)    Address |-> Bool
           <pot-pies> .Map      </pot-pies> // mapping (address => uint256) Address |-> Int
           <pot-pie>  0         </pot-pie>
           <pot-dsr>  0         </pot-dsr>

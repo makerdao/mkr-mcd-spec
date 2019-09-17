@@ -18,7 +18,6 @@ module COLLATERAL
             <flip-ilk> 0 </flip-ilk>
             <flipStack> .List </flipStack>
             <flip>
-              <flip-ward>  .Map         </flip-ward> // mapping (address => uint) Address |-> Bool
               <flip-bids>  .Map         </flip-bids> // mapping (uint => Bid)     Int     |-> Bid
               <flip-beg>   105 /Rat 100 </flip-beg>  // Minimum Bid Increase
               <flip-ttl>   3 hours      </flip-ttl>  // Single Bid Lifetime
