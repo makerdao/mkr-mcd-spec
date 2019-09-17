@@ -508,9 +508,6 @@ Cat Semantics
  // -----------------------------------------------------------------
     rule <k> Cat . _ => exception ... </k> [owise]
 
-    syntax CatAuthStep ::= "init" Address
- // -------------------------------------
-
     syntax CatStep ::= "bite" Int Address
  // -------------------------------------
 
@@ -532,12 +529,6 @@ Spot Semantics
     syntax AuthStep ::= SpotContract "." SpotAuthStep [klabel(spotStep)]
  // --------------------------------------------------------------------
     rule <k> Spot . _ => exception ... </k> [owise]
-
-    syntax SpotAuthStep ::= InitStep
- // --------------------------------
-    rule <k> Spot . init MSGSENDER => . ... </k>
-         <spot-ward> M => M[MSGSENDER <- true] </spot-ward>
-         <spot-par> _ => ilk_init </spot-par>
 
     syntax SpotStep ::= "poke" Int
  // ------------------------------
