@@ -158,31 +158,6 @@ Updating the `<vat>` happens in phases:
  // ------------------------------
 ```
 
-We can save and restore the current `<vat>` state using `push`, `pop`, and `drop`.
-This allows us to enforce properties after each step, and restore the old state when violated.
-
-```k
-    syntax VatStep ::= StashStep
- // ----------------------------
-    rule <k> Vat . push => . ... </k>
-         <vatStack> (.List => ListItem(<vat> VAT </vat>)) ... </vatStack>
-         <vat> VAT </vat>
-
-    rule <k> Vat . pop => . ... </k>
-         <vatStack> (ListItem(<vat> VAT </vat>) => .List) ... </vatStack>
-         <vat> _ => VAT </vat>
-
-    rule <k> Vat . drop => . ... </k>
-         <vatStack> (ListItem(_) => .List) ... </vatStack>
-
-    syntax VatStep ::= ExceptionStep
- // --------------------------------
-    rule <k>                     Vat . catch => Vat . drop ... </k>
-    rule <k> Vat . exception ~>  Vat . catch => Vat . pop  ... </k>
-    rule <k> Vat . exception ~> (Vat . VS    => .)         ... </k>
-      requires VS =/=K catch
-```
-
 ### Warding Control
 
 Warding allows controlling which versions of a smart contract are allowed to call into this one.
@@ -519,29 +494,6 @@ Jug Semantics
     syntax JugStep ::= JugAuthStep
  // ------------------------------
 
-    syntax JugStep ::= StashStep
- // ----------------------------
-    rule <k> Jug . push => . ... </k>
-         <jugStack> (.List => ListItem(JUG)) ... </jugStack>
-         <jug> JUG </jug>
-
-    rule <k> Jug . pop => . ... </k>
-         <jugStack> (ListItem(JUG) => .List) ... </jugStack>
-         <jug> _ => JUG </jug>
-
-    rule <k> Jug . drop => . ... </k>
-         <jugStack> (ListItem(_) => .List) ... </jugStack>
-```
-
-**TODO**: Should we make cells for call stacks and exceptions?
-```k
-    syntax JugStep ::= ExceptionStep
- // --------------------------------
-    rule <k>                     Jug . catch => Jug . drop ... </k>
-    rule <k> Jug . exception ~>  Jug . catch => Jug . pop  ... </k>
-    rule <k> Jug . exception ~> (Jug . JS    => .)         ... </k>
-      requires JS =/=K catch
-
     syntax JugStep ::= AuthStep
  // ---------------------------
     rule <k> Jug . auth => . ... </k>
@@ -606,12 +558,6 @@ Cat Semantics
     syntax CatAuthStep ::= "init" Address
  // -------------------------------------
 
-    syntax CatStep ::= StashStep
- // ----------------------------
-
-    syntax CatStep ::= ExceptionStep
- // --------------------------------
-
     syntax CatStep ::= "bite" Int Address
  // -------------------------------------
 
@@ -652,26 +598,6 @@ Spot Semantics
     rule <k> Spot . init MSGSENDER => . ... </k>
          <spot-ward> M => M[MSGSENDER <- true] </spot-ward>
          <spot-par> _ => ilk_init </spot-par>
-
-    syntax SpotStep ::= StashStep
- // -----------------------------
-    rule <k> Spot . push => . ... </k>
-         <spotStack> (.List => ListItem(SPOT)) ... </spotStack>
-         <spot> SPOT </spot>
-
-    rule <k> Spot . pop => . ... </k>
-         <spotStack> (ListItem(SPOT) => .List) ... </spotStack>
-         <spot> _ => SPOT </spot>
-
-    rule <k> Spot . drop => . ... </k>
-         <spotStack> (ListItem(_) => .List) ... </spotStack>
-
-    syntax SpotStep ::= ExceptionStep
- // ---------------------------------
-    rule <k>                      Spot . catch => Spot . drop ... </k>
-    rule <k> Spot . exception ~>  Spot . catch => Spot . pop  ... </k>
-    rule <k> Spot . exception ~> (Spot . SS    => .)          ... </k>
-      requires SS =/=K catch
 
     syntax SpotStep ::= "poke" Int
  // ------------------------------

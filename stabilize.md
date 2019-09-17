@@ -62,12 +62,6 @@ Flap Semantics
     syntax FlapAuthStep ::= "init" Address Address
  // ----------------------------------------------
 
-    syntax FlapStep ::= StashStep
- // -----------------------------
-
-    syntax FlapStep ::= ExceptionStep
- // ---------------------------------
-
     syntax FlapStep ::= "kick" Int Int
  // ----------------------------------
 
@@ -102,12 +96,6 @@ Flop Semantics
 
     syntax FlopAuthStep ::= "init" Address Address
  // ----------------------------------------------
-
-    syntax FlopStep ::= StashStep
- // -----------------------------
-
-    syntax FlopStep ::= ExceptionStep
- // ---------------------------------
 
     syntax FlopStep ::= "kick" Int Int Int
  // --------------------------------------
@@ -146,12 +134,6 @@ Vow Semantics
 
     syntax VowAuthStep ::= "init" Address Address Address
  // -----------------------------------------------------
-
-    syntax VowStep ::= StashStep
- // ----------------------------
-
-    syntax VowStep ::= ExceptionStep
- // --------------------------------
 
     syntax VowStep ::= "fess" Int
  // -----------------------------

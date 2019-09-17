@@ -48,12 +48,6 @@ Different contracts use the same names for external functions, so we declare the
 
     syntax AuthStep ::= "auth"
  // --------------------------
-
-    syntax StashStep ::= "push" | "pop" | "drop"
- // --------------------------------------------
-
-    syntax ExceptionStep ::= "catch" | "exception"
- // ----------------------------------------------
 ```
 
 Time Increments
