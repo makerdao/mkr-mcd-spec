@@ -142,8 +142,8 @@ module COLLATERAL
       requires TIC =/=Int 0
        andBool (TIC <Int NOW orBool END <Int NOW)
 
-    syntax FlipStep ::= "yank" Int
- // ------------------------------
+    syntax FlipAuthStep ::= "yank" Int
+ // ----------------------------------
     rule <k> Flip ILK . yank ID
           => Vat . flux ILK THIS MSGSENDER LOT
           ~> Vat . move MSGSENDER GUY BID ... </k>
