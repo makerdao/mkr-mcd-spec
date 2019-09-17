@@ -13,6 +13,12 @@ module COLLATERAL
 
     configuration
       <collateral>
+        <gems>
+          <gem multiplicity="*" type="Map">
+            <gem-addr>     0:Address </gem-addr>
+            <gem-balances> .Map      </gem-balances> // mapping (address => uint256) Address |-> Int
+          </gem>
+        </gems>
         <flips>
           <flip multiplicity="*" type="Map">
             <flip-ilk>   0            </flip-ilk>
