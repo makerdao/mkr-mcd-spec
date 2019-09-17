@@ -16,7 +16,7 @@ module SYSTEM-STABILIZER
           <flap-ward> .Map          </flap-ward>  // mapping (address => uint) Address |-> Bool
           <flap-bids> .Map          </flap-bids>  // mapping (uint => Bid)     Int     |-> Bid
           <flap-kicks> 0            </flap-kicks>
-          <flap-live>  1            </flap-live>
+          <flap-live>  true         </flap-live>
           <flap-beg>   105 /Rat 100 </flap-beg>
           <flap-ttl>   3 hours      </flap-ttl>
           <flap-tau>   2 days       </flap-tau>
@@ -110,7 +110,7 @@ Flap Semantics
          <currentTime> NOW </currentTime>
          <flap-bids> M => M[KICK +Int 1 <- Bid(BID, LOT, MSGSENDER, 0, NOW +Int TAU)] </flap-bids>
          <flap-kicks> KICK => KICK +Int 1 </flap-kicks>
-         <flap-live> 1 </flap-live>
+         <flap-live> true </flap-live>
          <flap-tau> TAU </flap-tau>
 ```
 
@@ -128,7 +128,7 @@ Flap Semantics
          <this> THIS </this>
          <currentTime> NOW </currentTime>
          <flap-bids> ... ID |-> Bid( (CURBID => BID), CURLOT, (GUY => MSGSENDER), (TIC => TIC +Int TTL), END ) ... </flap-bids>
-         <flap-live> 1 </flap-live>
+         <flap-live> true </flap-live>
          <flap-ttl> TTL </flap-ttl>
          <flap-beg> BEG </flap-beg>
       requires GUY =/=Int 0
@@ -152,7 +152,7 @@ Flap Semantics
          <this> THIS </this>
          <currentTime> NOW </currentTime>
          <flap-bids> ... (ID |-> Bid( BID, LOT, GUY, TIC, END ) => .Map) ... </flap-bids>
-         <flap-live> 1 </flap-live>
+         <flap-live> true </flap-live>
       requires TIC <Int NOW
        andBool (TIC =/=Int 0 orBool END <Int NOW)
 ```
@@ -166,7 +166,7 @@ Flap Semantics
     rule <k> Flap . cage RAD => Vat . move THIS MSGSENDER RAD ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
-         <flap-live> _ => 0 </flap-live>
+         <flap-live> _ => false </flap-live>
 ```
 
 - yank(uint id)
@@ -181,7 +181,7 @@ Flap Semantics
     rule <k> Flap . yank ID => . ... </k>
          <this> THIS </this>
          <flap-bids> ... (ID |-> Bid(... bid: BID, guy: GUY) => .Map) ... </flap-bids>
-         <flap-live> 0 </flap-live>
+         <flap-live> false </flap-live>
       requires GUY =/=Int 0
 ```
 
