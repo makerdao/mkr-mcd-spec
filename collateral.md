@@ -59,7 +59,7 @@ module COLLATERAL
 
     syntax GemStep ::= "move" Address Address Int
  // ---------------------------------------------
-    rule Gem ACCTGEM . (move ACCTSRC ACCTDST VALUE => transferFrom ACCTSRC ACCTDST VALUE)
+    rule <k> Gem ACCTGEM . (move ACCTSRC ACCTDST VALUE => transferFrom ACCTSRC ACCTDST VALUE) ... </k>
 
     syntax GemStep ::= "transfer" Address Int
  // -----------------------------------------
