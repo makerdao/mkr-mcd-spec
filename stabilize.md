@@ -275,9 +275,16 @@ Flop Semantics
          <flop-live> true </flop-live>
       requires TIC <Int NOW
        andBool (TIC =/=Int 0 orBool END <Int NOW)
+```
 
-    syntax FlopAuthStep ::= "cage"
- // ------------------------------
+- cage()
+- Part of global settlement. Freezes the auctions.
+
+```k
+    syntax FlopAuthStep ::= "cage" [klabel(FlopCage),symbol]
+ // --------------------------------------------------------
+    rule <k> Flop . cage => . ... </k>
+         <flop-live> _ => false </flop-live>
 
     syntax FlopStep ::= "yank" Int
  // ------------------------------
