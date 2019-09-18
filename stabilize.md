@@ -22,13 +22,15 @@ module SYSTEM-STABILIZER
           <flap-ttl>   3 hours      </flap-ttl>
           <flap-tau>   2 days       </flap-tau>
         </flap-state>
-        <flopStack> .List </flopStack>
-        <flopState>
-          <flop-addr>  0:Address </flop-addr>
-          <flop-bids>  .Map      </flop-bids>  // mapping (uint => Bid) Int |-> StableBid
-          <flop-kicks> 0         </flop-kicks>
-          <flop-live>  0         </flop-live>
-        </flopState>
+        <flop-state>
+          <flop-addr>  0:Address    </flop-addr>
+          <flop-bids> .Map          </flop-bids>  // mapping (uint => Bid) Int |-> StableBid
+          <flop-kicks> 0            </flop-kicks>
+          <flop-live>  true         </flop-live>
+          <flop-beg>   105 /Rat 100 </flop-beg>
+          <flop-ttl>   3 hours      </flop-ttl>
+          <flop-tau>   2 days       </flop-tau>
+        </flop-state>
         <vow>
           <vow-addr> 0:Address </vow-addr>
           <vow-sins> .Map      </vow-sins> // mapping (uint256 => uint256) Int |-> Int
