@@ -214,10 +214,19 @@ Flop Semantics
          ...</flop-bids>
          <flop-kicks> KICKS => KICKS +Int 1 </flop-kicks>
          <flop-tau> TAU </flop-tau>
+```
 
+- tick(uint id)
+- Extends the end time of the auction when no one has made a bid
 
+```k
     syntax FlopStep ::= "tick" Int
  // ------------------------------
+    rule <k> Flop . tick ID => . ... </k>
+         <currentTime> NOW </currentTime>
+         <flop-bids> ... ID |-> StableBid(... tic: 0, end: END => NOW +Int TAU ) ... </flop-bids>
+         <flop-tau> TAU </flop-tau>
+      requires END <Int NOW
 
     syntax FlopStep ::= "dent" Int Int Int
  // --------------------------------------
