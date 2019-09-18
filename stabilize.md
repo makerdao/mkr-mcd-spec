@@ -227,9 +227,35 @@ Flop Semantics
          <flop-bids> ... ID |-> StableBid(... tic: 0, end: END => NOW +Int TAU ) ... </flop-bids>
          <flop-tau> TAU </flop-tau>
       requires END <Int NOW
+```
 
+- dent(uint id, uint lot, uint bid)
+- User action to make a bid for a smaller lot.
+
+```k
     syntax FlopStep ::= "dent" Int Int Int
  // --------------------------------------
+    rule <k> Flop . dent ID LOT BID
+          => call Vat . move MSGSENDER GUY BID
+         ...
+         </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         <currentTime> NOW </currentTime>
+         <flop-bids>...
+           ID |-> StableBid(... bid: BID',
+                                lot: LOT' => LOT,
+                                guy: GUY => MSGSENDER,
+                                tic: TIC => TIC +Int TTL,
+                                end: END)
+         ...</flop-bids>
+         <flop-live> true </flop-live>
+         <flop-beg> BEG </flop-beg>
+         <flop-ttl> TTL </flop-ttl>
+      requires (TIC >Int NOW orBool TIC ==Int 0)
+       andBool END >Int NOW
+       andBool BID ==Int BID'
+       andBool LOT <Int LOT'
+       andBool LOT *Rat BEG <=Rat LOT'
 
     syntax FlopStep ::= "deal" Int
  // ------------------------------
