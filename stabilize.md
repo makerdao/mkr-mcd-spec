@@ -5,9 +5,11 @@ The system stabalizer takes forceful actions to mitigate risk in the MCD system.
 
 ```k
 requires "cdp-core.k"
+requires "collateral.k"
 
 module SYSTEM-STABILIZER
     imports CDP-CORE
+    imports COLLATERAL
 
     configuration
       <stabilize>
@@ -41,8 +43,8 @@ Flap Semantics
 --------------
 
 ```k
-    syntax Bid ::= Bid ( Int, Int, Address, Int, Int ) [klabel(BidBid)]
- // -------------------------------------------------------------------
+    syntax Bid ::= StableBid ( bid: Int, lot: Int, guy: Address, tic: Int, end: Int )
+ // ---------------------------------------------------------------------------------
 
     syntax MCDContract ::= FlapContract
     syntax FlapContract ::= "Flap"
