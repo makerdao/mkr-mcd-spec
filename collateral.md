@@ -55,7 +55,8 @@ module COLLATERAL
              ACCTDST |-> ( BALANCE_DST => BALANCE_DST +Int VALUE )
            ...</gem-balances>
          </gem>
-      requires BALANCE_SRC >=Int VALUE
+      requires VALUE >=Int 0
+       andBool BALANCE_SRC >=Int VALUE
 
     syntax GemStep ::= "move" Address Address Int
  // ---------------------------------------------
@@ -75,7 +76,7 @@ module COLLATERAL
              ACCTDST |-> ( BALANCE_DST => BALANCE_DST +Int VALUE )
            ...</gem-balances>
          </gem>
-      requires ACCTDST =/=Int 0
+      requires VALUE >=Int 0
 
     syntax GemStep ::= "burn" Address Int
  // -------------------------------------
@@ -86,8 +87,7 @@ module COLLATERAL
              ACCTSRC |-> ( BALANCE_SRC => BALANCE_SRC -Int VALUE )
            ...</gem-balances>
          </gem>
-      requires ACCTSRC =/=Int 0
-       andBool BALANCE_SRC >=Int VALUE
+      requires VALUE >=Int 0
 
     syntax Bid ::= Bid ( bid: Int, lot: Int, guy: Address, tic: Int, end: Int, usr: Address, gal: Address, tab: Int )
  // -----------------------------------------------------------------------------------------------------------------
