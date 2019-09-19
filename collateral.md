@@ -17,7 +17,7 @@ module COLLATERAL
           <gem multiplicity="*" type="Map">
             <gem-id>       "":String </gem-id>
             <gem-addr>     0:Address </gem-addr>
-            <gem-balances> .Map      </gem-balances> // mapping (address => uint256) Address |-> Int
+            <gem-balances> .Map      </gem-balances> // mapping (address => uint256) Address |-> Wad
           </gem>
         </gems>
         <flips>
@@ -46,7 +46,7 @@ module COLLATERAL
  // -----------------------------------------------------------------
     rule <k> Gem _ . _ => exception ... </k> [owise]
 
-    syntax GemStep ::= "transferFrom" Address Address Int
+    syntax GemStep ::= "transferFrom" Address Address Wad
  // -----------------------------------------------------
     rule <k> Gem GEMID . transferFrom ACCTSRC ACCTDST VALUE => . ... </k>
          <gem>
@@ -60,26 +60,26 @@ module COLLATERAL
       requires VALUE >=Int 0
        andBool BALANCE_SRC >=Int VALUE
 
-    syntax GemStep ::= "move" Address Address Int
+    syntax GemStep ::= "move" Address Address Wad
  // ---------------------------------------------
     rule <k> Gem _ . (move ACCTSRC ACCTDST VALUE => transferFrom ACCTSRC ACCTDST VALUE) ... </k>
 
-    syntax GemStep ::= "push" Address Int
+    syntax GemStep ::= "push" Address Wad
  // -------------------------------------
     rule <k> Gem _ . (push ACCTDST VALUE => transferFrom MSGSENDER ACCTDST VALUE) ... </k>
          <msg-sender> MSGSENDER </msg-sender>
 
-    syntax GemStep ::= "pull" Address Int
+    syntax GemStep ::= "pull" Address Wad
  // -------------------------------------
     rule <k> Gem _ . (push ACCTSRC VALUE => transferFrom ACCTSRC MSGSENDER VALUE) ... </k>
          <msg-sender> MSGSENDER </msg-sender>
 
-    syntax GemStep ::= "transfer" Address Int
+    syntax GemStep ::= "transfer" Address Wad
  // -----------------------------------------
     rule <k> Gem _ . (transfer ACCTDST VALUE => transferFrom MSGSENDER ACCTDST VALUE) ... </k>
          <msg-sender> MSGSENDER </msg-sender>
 
-    syntax GemStep ::= "mint" Address Int
+    syntax GemStep ::= "mint" Address Wad
  // -------------------------------------
     rule <k> Gem GEMID . mint ACCTDST VALUE => . ... </k>
          <gem>
@@ -91,7 +91,7 @@ module COLLATERAL
          </gem>
       requires VALUE >=Int 0
 
-    syntax GemStep ::= "burn" Address Int
+    syntax GemStep ::= "burn" Address Wad
  // -------------------------------------
     rule <k> Gem GEMID . burn ACCTSRC VALUE => . ... </k>
          <gem>
