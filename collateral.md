@@ -64,6 +64,16 @@ module COLLATERAL
  // ---------------------------------------------
     rule <k> Gem _ . (move ACCTSRC ACCTDST VALUE => transferFrom ACCTSRC ACCTDST VALUE) ... </k>
 
+    syntax GemStep ::= "push" Address Int
+ // -------------------------------------
+    rule <k> Gem _ . (push ACCTDST VALUE => transferFrom MSGSENDER ACCTDST VALUE) ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+
+    syntax GemStep ::= "pull" Address Int
+ // -------------------------------------
+    rule <k> Gem _ . (push ACCTSRC VALUE => transferFrom ACCTSRC MSGSENDER VALUE) ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+
     syntax GemStep ::= "transfer" Address Int
  // -----------------------------------------
     rule <k> Gem _ . (transfer ACCTDST VALUE => transferFrom MSGSENDER ACCTDST VALUE) ... </k>
