@@ -15,6 +15,7 @@ module COLLATERAL
       <collateral>
         <gems>
           <gem multiplicity="*" type="Map">
+            <gem-id>       "":String </gem-id>
             <gem-addr>     0:Address </gem-addr>
             <gem-balances> .Map      </gem-balances> // mapping (address => uint256) Address |-> Int
           </gem>
@@ -33,11 +34,11 @@ module COLLATERAL
       </collateral>
 
     syntax MCDContract ::= GemContract
-    syntax GemContract ::= "Gem" Address
+    syntax GemContract ::= "Gem" String
     syntax MCDStep ::= GemContract "." GemStep [klabel(gemStep)]
  // ------------------------------------------------------------
-    rule contract(Gem ACCTGEM . _) => Gem ACCTGEM
-    rule [[ address(Gem ACCTGEM) => ACCTGEM ]] <gem-addr> ACCTGEM </gem-addr>
+    rule contract(Gem GEMID . _) => Gem GEMID
+    rule [[ address(Gem GEMID) => ACCTGEM ]] <gem-id> GEMID </gem-id> <gem-addr> ACCTGEM </gem-addr>
 
     syntax GemAuthStep
     syntax GemStep ::= GemAuthStep
@@ -47,45 +48,48 @@ module COLLATERAL
 
     syntax GemStep ::= "transferFrom" Address Address Int
  // -----------------------------------------------------
-    rule <k> Gem ACCTGEM . transferFrom ACCTSRC ACCTDST VALUE => . ... </k>
+    rule <k> Gem GEMID . transferFrom ACCTSRC ACCTDST VALUE => . ... </k>
          <gem>
-           <gem-addr> ACCTGEM </gem-addr>
+           <gem-id> GEMID </gem-id>
            <gem-balances>...
              ACCTSRC |-> ( BALANCE_SRC => BALANCE_SRC -Int VALUE )
              ACCTDST |-> ( BALANCE_DST => BALANCE_DST +Int VALUE )
            ...</gem-balances>
+         ...
          </gem>
       requires VALUE >=Int 0
        andBool BALANCE_SRC >=Int VALUE
 
     syntax GemStep ::= "move" Address Address Int
  // ---------------------------------------------
-    rule <k> Gem ACCTGEM . (move ACCTSRC ACCTDST VALUE => transferFrom ACCTSRC ACCTDST VALUE) ... </k>
+    rule <k> Gem _ . (move ACCTSRC ACCTDST VALUE => transferFrom ACCTSRC ACCTDST VALUE) ... </k>
 
     syntax GemStep ::= "transfer" Address Int
  // -----------------------------------------
-    rule <k> Gem ACCTGEM . (transfer ACCTDST VALUE => transferFrom MSGSENDER ACCTDST VALUE) ... </k>
+    rule <k> Gem _ . (transfer ACCTDST VALUE => transferFrom MSGSENDER ACCTDST VALUE) ... </k>
          <msg-sender> MSGSENDER </msg-sender>
 
     syntax GemStep ::= "mint" Address Int
  // -------------------------------------
-    rule <k> Gem ACCTGEM . mint ACCTDST VALUE => . ... </k>
+    rule <k> Gem GEMID . mint ACCTDST VALUE => . ... </k>
          <gem>
-           <gem-addr> ACCTGEM </gem-addr>
+           <gem-id> GEMID </gem-id>
            <gem-balances>...
              ACCTDST |-> ( BALANCE_DST => BALANCE_DST +Int VALUE )
            ...</gem-balances>
+         ...
          </gem>
       requires VALUE >=Int 0
 
     syntax GemStep ::= "burn" Address Int
  // -------------------------------------
-    rule <k> Gem ACCTGEM . burn ACCTSRC VALUE => . ... </k>
+    rule <k> Gem GEMID . burn ACCTSRC VALUE => . ... </k>
          <gem>
-           <gem-addr> ACCTGEM </gem-addr>
+           <gem-id> GEMID </gem-id>
            <gem-balances>...
              ACCTSRC |-> ( BALANCE_SRC => BALANCE_SRC -Int VALUE )
            ...</gem-balances>
+         ...
          </gem>
       requires VALUE >=Int 0
 
