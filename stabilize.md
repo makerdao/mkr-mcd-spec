@@ -28,6 +28,7 @@ module SYSTEM-STABILIZER
           <flop-kicks> 0            </flop-kicks>
           <flop-live>  true         </flop-live>
           <flop-beg>   105 /Rat 100 </flop-beg>
+          <flop-pad>   150 /Rat 100 </flop-pad>
           <flop-ttl>   3 hours      </flop-ttl>
           <flop-tau>   2 days       </flop-tau>
         </flop-state>
@@ -92,6 +93,21 @@ Flap Semantics
          <flap-tau> TAU </flap-tau>
 ```
 
+- tick(uint id)
+- Extends the end time of the auction if no one has bid yet
+
+```k
+    syntax FlapStep ::= "tick" Int [klabel(FlapTick),symbol]
+ // --------------------------------------------------------
+    rule <k> Flap . tick ID => . ... </k>
+         <currentTime> NOW </currentTime>
+         <flap-bids>...
+           ID |-> FlapBid(... tic: 0, end: END => NOW +Int TAU)
+         ...</flap-bids>
+         <flap-tau> TAU </flap-tau>
+      requires END <Int NOW
+```
+
 - tend(uint id, uint lot, uint bid)
 - Places a bid made by the user. Refunds the previous bidder's bid.
 
@@ -141,8 +157,8 @@ Flap Semantics
            ID |-> FlapBid(... bid: BID, lot: LOT, guy: GUY, tic: TIC, end: END) => .Map
          ...</flap-bids>
          <flap-live> true </flap-live>
-      requires TIC <Int NOW
-       andBool (TIC =/=Int 0 orBool END <Int NOW)
+      requires TIC =/=Int 0
+       andBool (TIC <Int NOW orBool END <Int NOW)
 ```
 
 - cage(uint rad)
@@ -225,7 +241,8 @@ Flop Semantics
  // ------------------------------
     rule <k> Flop . tick ID => . ... </k>
          <currentTime> NOW </currentTime>
-         <flop-bids> ... ID |-> FlopBid(... tic: 0, end: END => NOW +Int TAU ) ... </flop-bids>
+         <flop-bids> ... ID |-> FlopBid(... lot: LOT => LOT *Rat PAD, tic: 0, end: END => NOW +Int TAU ) ... </flop-bids>
+         <flop-pad> PAD </flop-pad>
          <flop-tau> TAU </flop-tau>
       requires END <Int NOW
 ```
@@ -274,8 +291,8 @@ Flop Semantics
            ID |-> FlopBid(... lot: LOT, guy: GUY, tic: TIC, end: END) => .Map
          ...</flop-bids>
          <flop-live> true </flop-live>
-      requires TIC <Int NOW
-       andBool (TIC =/=Int 0 orBool END <Int NOW)
+      requires TIC =/=Int 0
+       andBool (TIC <Int NOW orBool END <Int NOW)
 ```
 
 - cage()
