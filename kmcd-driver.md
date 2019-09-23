@@ -155,13 +155,13 @@ Base Data
 **TODO**: Should we add operators like `+Wad` which emulate the precision limits described in `makerdao/dss/DEVELOPING.md`, or assume the abstract model to be inifinite precision?
 
 ```k
-    syntax Wad ::= Rat
+    syntax Wad ::= Int
  // ------------------
 
-    syntax Ray ::= Rat
+    syntax Ray ::= Int
  // ------------------
 
-    syntax Rad ::= Rat
+    syntax Rad ::= Int
  // ------------------
 
     syntax Address ::= Int | String
