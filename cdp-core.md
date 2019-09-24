@@ -39,8 +39,8 @@ Getters and setters for `Ilk` should be permissioned, and different combinations
     syntax JugIlk ::= Ilk ( duty: Ray, rho: Int )                    [klabel(#JugIlk), symbol]
  // ------------------------------------------------------------------------------------------
 
-    syntax CatIlk ::= Ilk ( Address, Int, Int )           [klabel(#CatIlk), symbol]
- // -------------------------------------------------------------------------------
+    syntax CatIlk ::= Ilk ( Art: Wad, rate: Ray, spot: Ray, line: Rad )           [klabel(#CatIlk), symbol]
+ // -------------------------------------------------------------------------------------------------------
 
     syntax SpotIlk ::= SpotIlk ( Value, Int )            [klabel(#SpotIlk), symbol]
  // -------------------------------------------------------------------------------
