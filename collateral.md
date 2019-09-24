@@ -172,7 +172,7 @@ module COLLATERAL
                           gal: GAL,
                           tab: TAB)
          ...</flip-bids>
-      requires GUY =/=Int 0
+      requires GUY =/=K 0
        andBool (TIC >Int NOW orBool TIC ==Int 0)
        andBool END >Int NOW
        andBool LOT ==Rat LOT'
@@ -200,7 +200,7 @@ module COLLATERAL
                           usr: USR,
                           tab: TAB)
          ...</flip-bids>
-      requires GUY =/=Int 0
+      requires GUY =/=K 0
        andBool (TIC >Int NOW orBool TIC ==Int 0)
        andBool END >Int NOW
        andBool BID ==Rat BID'
@@ -231,7 +231,7 @@ module COLLATERAL
          <flip-bids>...
            ID |-> Bid(... bid: BID, lot: LOT, guy: GUY, tab: TAB) => .Map
          ...</flip-bids>
-      requires GUY =/=Int 0 andBool BID <Rat TAB
+      requires GUY =/=K 0 andBool BID <Rat TAB
 
 endmodule
 ```
