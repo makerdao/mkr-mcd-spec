@@ -117,7 +117,7 @@ Flap Semantics
  // --------------------------------------
     rule <k> Flap . tend ID LOT BID
           => call Gem "MKR" . move MSGSENDER GUY BID'
-          ~> call Gem "MKR" . move MSGSENDER THIS (BID -Int BID')
+          ~> call Gem "MKR" . move MSGSENDER THIS (BID -Rat BID')
          ...
          </k>
          <msg-sender> MSGSENDER </msg-sender>
@@ -135,8 +135,8 @@ Flap Semantics
          <flap-beg> BEG </flap-beg>
       requires (TIC >Int NOW orBool TIC ==Int 0)
        andBool END  >Int NOW
-       andBool LOT ==Int LOT'
-       andBool BID  >Int BID'
+       andBool LOT ==Rat LOT'
+       andBool BID  >Rat BID'
        andBool BID >=Rat BID' *Rat BEG
 ```
 
@@ -273,8 +273,8 @@ Flop Semantics
          <flop-ttl> TTL </flop-ttl>
       requires (TIC >Int NOW orBool TIC ==Int 0)
        andBool END >Int NOW
-       andBool BID ==Int BID'
-       andBool LOT <Int LOT'
+       andBool BID ==Rat BID'
+       andBool LOT <Rat LOT'
        andBool LOT *Rat BEG <=Rat LOT'
 ```
 
