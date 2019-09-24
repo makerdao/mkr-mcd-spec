@@ -13,10 +13,10 @@ module RATES
       <rates>
         <pot>
           <pot-addr> 0:Address </pot-addr>
-          <pot-pies> .Map      </pot-pies> // mapping (address => uint256) Address |-> Int
-          <pot-pie>  0         </pot-pie>
-          <pot-dsr>  0         </pot-dsr>
-          <pot-chi>  0         </pot-chi>
+          <pot-pies> .Map      </pot-pies> // mapping (address => uint256) Address |-> Wad
+          <pot-pie>  0:Wad     </pot-pie>
+          <pot-dsr>  0:Ray     </pot-dsr>
+          <pot-chi>  0:Ray     </pot-chi>
           <pot-vow>  0:Address </pot-vow>
           <pot-rho>  0         </pot-rho>
         </pot>
@@ -36,10 +36,10 @@ module RATES
 
     syntax PotStep ::= "drip"
  // -------------------------
-    rule <k> Pot . drip => call Vat . suck VOW THIS ( CHI +Int (((#pow(DSR, TIME -Int RHO) *Int CHI) -Int CHI) ) ) ... </k>
+    rule <k> Pot . drip => call Vat . suck VOW THIS ( CHI +Rat (((DSR ^Rat (TIME -Int RHO) *Rat CHI) -Rat CHI) ) ) ... </k>
          <this> THIS </this>
          <currentTime> TIME </currentTime>
-         <pot-chi> CHI => CHI +Int (((#pow(DSR, TIME -Int RHO) *Int CHI) -Int CHI) ) </pot-chi>
+         <pot-chi> CHI => CHI +Rat (((DSR ^Rat (TIME -Int RHO) *Rat CHI) -Rat CHI) ) </pot-chi>
          <pot-rho> RHO => TIME </pot-rho>
          <pot-dsr> DSR </pot-dsr>
          <pot-vow> VOW </pot-vow>
