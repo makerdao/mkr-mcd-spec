@@ -22,7 +22,7 @@ module COLLATERAL
         </gems>
         <flips>
           <flip multiplicity="*" type="Map">
-            <flip-ilk>   0            </flip-ilk>
+            <flip-ilk>   ""           </flip-ilk>
             <flip-addr>  0:Address    </flip-addr>
             <flip-bids>  .Map         </flip-bids> // mapping (uint => Bid)     Int     |-> Bid
             <flip-beg>   105 /Rat 100 </flip-beg>  // Minimum Bid Increase
@@ -107,7 +107,7 @@ module COLLATERAL
  // -----------------------------------------------------------------------------------------------------------------
 
     syntax MCDContract ::= FlipContract
-    syntax FlipContract ::= "Flip" Int
+    syntax FlipContract ::= "Flip" String
     syntax MCDStep ::= FlipContract "." FlipStep [klabel(flipStep)]
  // ---------------------------------------------------------------
     rule contract(Flip ILK . _) => Flip ILK
