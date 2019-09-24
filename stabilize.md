@@ -133,8 +133,7 @@ Flap Semantics
          <flap-live> true </flap-live>
          <flap-ttl> TTL </flap-ttl>
          <flap-beg> BEG </flap-beg>
-      requires GUY =/=Int 0
-       andBool (TIC >Int NOW orBool TIC ==Int 0)
+      requires (TIC >Int NOW orBool TIC ==Int 0)
        andBool END  >Int NOW
        andBool LOT ==Int LOT'
        andBool BID  >Int BID'
@@ -189,7 +188,6 @@ Flap Semantics
            ID |-> FlapBid(... bid: BID, guy: GUY) => .Map
          ...</flap-bids>
          <flap-live> false </flap-live>
-      requires GUY =/=Int 0
 ```
 
 Flop Semantics
