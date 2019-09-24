@@ -15,11 +15,11 @@ module RATES
           <pot-addr> 0:Address </pot-addr>
           <pot-pies> .Map      </pot-pies> // mapping (address => uint256) Address |-> Wad
           <pot-pie>  0:Wad     </pot-pie>
-          <pot-dsr>  0:Ray     </pot-dsr>
-          <pot-chi>  0:Rat     </pot-chi> // arbitrary precision
+          <pot-dsr>  1:Ray     </pot-dsr>
+          <pot-chi>  1:Rat     </pot-chi> // arbitrary precision
           <pot-vow>  0:Address </pot-vow>
           <pot-rho>  0         </pot-rho>
-          <pot-live> false     </pot-live>
+          <pot-live> true      </pot-live>
         </pot>
       </rates>
 
