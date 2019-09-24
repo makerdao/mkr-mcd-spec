@@ -46,17 +46,6 @@ Getters and setters for `Ilk` should be permissioned, and different combinations
  // -------------------------------------------------------------------------------
 ```
 
--   `ilkLine` returns the `LINE` associated with an `Ilk`.
--   `ilkDust` returns the `DUST` associated with an `Ilk`.
-
-```k
-    syntax Int ::= ilkLine ( VatIlk ) [function, functional]
-                 | ilkDust ( VatIlk ) [function, functional]
- // --------------------------------------------------------
-    rule ilkLine(Ilk(_, _, _, LINE, _   )) => LINE
-    rule ilkDust(Ilk(_, _, _, _,    DUST)) => DUST
-```
-
 -   `VatUrn`: `INK`, `ART`
 
 `Urn` is individual CDP of a certain `Ilk` for a certain address (actual data that comprises a CDP).
