@@ -36,8 +36,8 @@ Getters and setters for `Ilk` should be permissioned, and different combinations
     syntax VatIlk ::= Ilk ( Art: Wad , rate: Ray , spot: Ray , line: Rad , dust: Rad ) [klabel(#VatIlk), symbol]
  // ------------------------------------------------------------------------------------------------------------
 
-    syntax JugIlk ::= Ilk ( Int, Int )                    [klabel(#JugIlk), symbol]
- // -------------------------------------------------------------------------------
+    syntax JugIlk ::= Ilk ( duty: Ray, rho: Int )                    [klabel(#JugIlk), symbol]
+ // ------------------------------------------------------------------------------------------
 
     syntax CatIlk ::= Ilk ( Address, Int, Int )           [klabel(#CatIlk), symbol]
  // -------------------------------------------------------------------------------
@@ -464,14 +464,14 @@ Jug Semantics
  // -------------------------------
     rule <k> Jug . init ILK => . ... </k>
          <currentTime> TIME </currentTime>
-         <jug-ilks> ... ILK |-> Ilk ( ILKDUTY => ilk_init, _ => TIME ) ... </jug-ilks>
+         <jug-ilks> ... ILK |-> Ilk ( ILKDUTY => 1, _ => TIME ) ... </jug-ilks>
       requires ILKDUTY ==Int 0
 ```
 
 ```k
     syntax JugStep ::= "drip" Int
  // -----------------------------
-    rule <k> Jug . drip ILK => call Vat . fold ILK ADDRESS ( #pow( BASE +Int ILKDUTY, TIME -Int ILKRHO ) *Int ILKRATE ) -Int ILKRATE ... </k>
+    rule <k> Jug . drip ILK => call Vat . fold ILK ADDRESS ( ( (BASE +Rat ILKDUTY) ^Rat (TIME -Int ILKRHO) ) *Rat ILKRATE ) -Rat ILKRATE ... </k>
          <currentTime> TIME </currentTime>
          <vat-ilks> ... ILK |-> Ilk ( _, ILKRATE, _, _, _ ) ... </vat-ilks>
          <jug-ilks> ... ILK |-> Ilk ( ILKDUTY, ILKRHO => TIME ) ... </jug-ilks>
