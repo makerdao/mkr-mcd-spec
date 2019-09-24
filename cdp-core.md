@@ -42,8 +42,8 @@ Getters and setters for `Ilk` should be permissioned, and different combinations
     syntax CatIlk ::= Ilk ( Art: Wad, rate: Ray, spot: Ray, line: Rad )           [klabel(#CatIlk), symbol]
  // -------------------------------------------------------------------------------------------------------
 
-    syntax SpotIlk ::= SpotIlk ( Value, Int )            [klabel(#SpotIlk), symbol]
- // -------------------------------------------------------------------------------
+    syntax SpotIlk ::= SpotIlk ( pip: MaybeWad, mat: Ray )            [klabel(#SpotIlk), symbol]
+ // --------------------------------------------------------------------------------------------
 ```
 
 -   `VatUrn`: `INK`, `ART`
@@ -523,13 +523,13 @@ Spot Semantics
     syntax SpotStep ::= "poke" Int
  // ------------------------------
     rule <k> Spot . poke ILK => . ... </k>
-         <vat-ilks> ... ILK |-> Ilk ( _, _, ( _ => ((VALUE *Int 1000000000) /Int PAR) /Int MAT ), _, _ ) ... </vat-ilks>
+         <vat-ilks> ... ILK |-> Ilk ( _, _, ( _ => (VALUE /Rat PAR) /Rat MAT ), _, _ ) ... </vat-ilks>
          <spot-ilks> ... ILK |-> SpotIlk ( VALUE, MAT ) ... </spot-ilks>
          <spot-par> PAR </spot-par>
-      requires VALUE =/=K .Value
+      requires VALUE =/=K .Wad
 
     rule <k> Spot . poke ILK => . ... </k>
-         <spot-ilks> ... ILK |-> SpotIlk ( .Value, _ ) ... </spot-ilks>
+         <spot-ilks> ... ILK |-> SpotIlk ( .Wad, _ ) ... </spot-ilks>
 ```
 
 ```k
