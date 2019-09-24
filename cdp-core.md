@@ -16,8 +16,8 @@ CDP Data
 -   `CDPID`: Identifies a given users `ilk` or `urn`.
 
 ```k
-    syntax CDPID ::= "{" Int "," Address "}"
- // ----------------------------------------
+    syntax CDPID ::= "{" String "," Address "}"
+ // -------------------------------------------
 ```
 
 -   `VatIlk`: `ART`, `RATE`, `SPOT`, `LINE`, `DUST`.
@@ -80,7 +80,7 @@ Vat CDP State
         <vat>
           <vat-addr> 0:Address </vat-addr>
           <vat-can>  .Map      </vat-can>  // mapping (address (address => uint))       Address |-> Set
-          <vat-ilks> .Map      </vat-ilks> // mapping (bytes32 => Ilk)                  Int     |-> VatIlk
+          <vat-ilks> .Map      </vat-ilks> // mapping (bytes32 => Ilk)                  String  |-> VatIlk
           <vat-urns> .Map      </vat-urns> // mapping (bytes32 => (address => Urn))     CDPID   |-> VatUrn
           <vat-gem>  .Map      </vat-gem>  // mapping (bytes32 => (address => uint256)) CDPID   |-> Wad
           <vat-dai>  .Map      </vat-dai>  // mapping (address => uint256)              Address |-> Rad
@@ -92,9 +92,9 @@ Vat CDP State
         </vat>
         <jug>
           <jug-addr> 0:Address </jug-addr>
-          <jug-ilks> .Map      </jug-ilks> // mapping (bytes32 => JugIlk) Int     |-> JugIlk
+          <jug-ilks> .Map      </jug-ilks> // mapping (bytes32 => JugIlk) String  |-> JugIlk
           <jug-vow>  0:Address </jug-vow>  //                             Address
-          <jug-base> 0:Ray     </jug-base> //                             Int
+          <jug-base> 0:Ray     </jug-base> //                             Ray
         </jug>
         <cat>
           <cat-addr> 0:Address </cat-addr>
@@ -103,7 +103,7 @@ Vat CDP State
         </cat>
         <spot>
           <spot-addr> 0:Address </spot-addr>
-          <spot-ilks> .Map      </spot-ilks> // mapping (bytes32 => ilk)  Int     |-> SpotIlk
+          <spot-ilks> .Map      </spot-ilks> // mapping (bytes32 => ilk)  String  |-> SpotIlk
           <spot-par>  0:Ray     </spot-par>
         </spot>
       </cdp-core>
@@ -202,8 +202,8 @@ This is quite permissive, and would allow the account to drain all your locked c
 -   `Vat.safe` checks that a given `Urn` of a certain `ilk` is not over-leveraged.
 
 ```k
-    syntax VatStep ::= "safe" Int Address
- // -------------------------------------
+    syntax VatStep ::= "safe" String Address
+ // ----------------------------------------
     rule <k> Vat . safe ILKID ADDR => . ... </k>
          <vat>
            <vat-ilks> ...   ILKID          |-> ILK ... </vat-ilks>
@@ -213,8 +213,8 @@ This is quite permissive, and would allow the account to drain all your locked c
       requires 0 <=Rat urnBalance(ILK, URN)
        andBool urnDebt(ILK, URN) <=Rat line(ILK)
 
-    syntax VatStep ::= "nondusty" Int Address
- // -----------------------------------------
+    syntax VatStep ::= "nondusty" String Address
+ // --------------------------------------------
     rule <k> Vat . nondusty ILKID ADDR => . ... </k>
          <vat>
            <vat-ilks> ...   ILKID          |-> ILK ... </vat-ilks>
@@ -250,8 +250,8 @@ This is quite permissive, and would allow the account to drain all your locked c
     **TODO**: Should `Vat.flux` use `Vat.consent` or `Vat.wish`?
 
 ```k
-    syntax VatAuthStep ::= "slip" Int Address Wad
- // ---------------------------------------------
+    syntax VatAuthStep ::= "slip" String Address Wad
+ // ------------------------------------------------
     rule <k> Vat . slip ILKID ADDRTO NEWCOL => . ... </k>
          <vat-gem>
            ...
@@ -259,8 +259,8 @@ This is quite permissive, and would allow the account to drain all your locked c
            ...
          </vat-gem>
 
-    syntax VatStep ::= "flux" Int Address Address Wad
- // -------------------------------------------------
+    syntax VatStep ::= "flux" String Address Address Wad
+ // ----------------------------------------------------
     rule <k> Vat . flux ILKID ADDRFROM ADDRTO COL => .
          ...
          </k>
@@ -302,8 +302,8 @@ This is quite permissive, and would allow the account to drain all your locked c
     **TODO**: Should `Vat.fork` use `Vat.consent` or `Vat.wish`?
 
 ```k
-    syntax VatStep ::= "fork" Int Address Address Wad Wad
- // -----------------------------------------------------
+    syntax VatStep ::= "fork" String Address Address Wad Wad
+ // --------------------------------------------------------
     rule <k> Vat . fork ILKID ADDRFROM ADDRTO DINK DART
           => Vat . safe     ILKID ADDRFROM ~> Vat . safe     ILKID ADDRTO
           ~> Vat . nondusty ILKID ADDRFROM ~> Vat . nondusty ILKID ADDRTO
@@ -327,8 +327,8 @@ This is quite permissive, and would allow the account to drain all your locked c
 **TODO**: Double-check implemented checks for `Vat.frob`.
 
 ```k
-    syntax VatAuthStep ::= "grab" Int Address Address Address Wad Wad
- // -----------------------------------------------------------------
+    syntax VatAuthStep ::= "grab" String Address Address Address Wad Wad
+ // --------------------------------------------------------------------
     rule <k> Vat . grab ILKID ADDRU ADDRV ADDRW DINK DART => . ... </k>
          <vat-vice> VICE => VICE -Rat (RATE *Rat DART) </vat-vice>
          <vat-urns>
@@ -352,8 +352,8 @@ This is quite permissive, and would allow the account to drain all your locked c
            ...
          </vat-sin>
 
-    syntax VatStep ::= "frob" Int Address Address Address Wad Wad
- // -------------------------------------------------------------
+    syntax VatStep ::= "frob" String Address Address Address Wad Wad
+ // ----------------------------------------------------------------
     rule <k> Vat . frob ILKID ADDRU ADDRV ADDRW DINK DART => .
          ...
          </k>
@@ -427,8 +427,8 @@ This is quite permissive, and would allow the account to drain all your locked c
 **TODO**: Should be `note`.
 
 ```k
-    syntax VatAuthStep ::= "fold" Int Address Ray
- // ---------------------------------------------
+    syntax VatAuthStep ::= "fold" String Address Ray
+ // ------------------------------------------------
     rule <k> Vat . fold ILKID ADDRU RATE => . ... </k>
          <vat-live> true </vat-live>
          <vat-debt> DEBT => DEBT +Rat (ILKART *Rat RATE) </vat-debt>
@@ -469,8 +469,8 @@ Jug Semantics
 ```
 
 ```k
-    syntax JugStep ::= "drip" Int
- // -----------------------------
+    syntax JugStep ::= "drip" String
+ // --------------------------------
     rule <k> Jug . drip ILK => call Vat . fold ILK ADDRESS ( ( (BASE +Rat ILKDUTY) ^Rat (TIME -Int ILKRHO) ) *Rat ILKRATE ) -Rat ILKRATE ... </k>
          <currentTime> TIME </currentTime>
          <vat-ilks> ... ILK |-> Ilk ( _, ILKRATE, _, _, _ ) ... </vat-ilks>
@@ -496,8 +496,8 @@ Cat Semantics
  // -----------------------------------------------------------------
     rule <k> Cat . _ => exception ... </k> [owise]
 
-    syntax CatStep ::= "bite" Int Address
- // -------------------------------------
+    syntax CatStep ::= "bite" String Address
+ // ----------------------------------------
 
     syntax CatAuthStep ::= "cage" [klabel(#CatCage), symbol]
  // --------------------------------------------------------
@@ -520,8 +520,8 @@ Spot Semantics
  // --------------------------------------------------------------------
     rule <k> Spot . _ => exception ... </k> [owise]
 
-    syntax SpotStep ::= "poke" Int
- // ------------------------------
+    syntax SpotStep ::= "poke" String
+ // ---------------------------------
     rule <k> Spot . poke ILK => . ... </k>
          <vat-ilks> ... ILK |-> Ilk ( _, _, ( _ => (VALUE /Rat PAR) /Rat MAT ), _, _ ) ... </vat-ilks>
          <spot-ilks> ... ILK |-> SpotIlk ( VALUE, MAT ) ... </spot-ilks>
