@@ -17,9 +17,9 @@ module DAI
           <dai-addr>        0:Address </dai-addr>
           <dai-totalSupply> 0         </dai-totalSupply>
           <dai-account-id>  0         </dai-account-id>
-          <dai-balance>     .Map      </dai-balance>     // mapping (address => uint)                      Address |-> Int
+          <dai-balance>     .Map      </dai-balance>     // mapping (address => uint)                      Address |-> Rat
           <dai-allowance>   .Map      </dai-allowance>   // mapping (address => mapping (address => uint))
-          <dai-nonce>       .Map      </dai-nonce>       // mapping (address => uint)                      Address |-> Int
+          <dai-nonce>       .Map      </dai-nonce>       // mapping (address => uint)                      Address |-> Rat
         </dai-state>
       </dai>
 
@@ -47,18 +47,18 @@ module DAI
            ACCOUNT_SRC |-> BALANCE_SRC
            ...
          </dai-balance>
-      requires BALANCE_SRC >=Int AMOUNT
+      requires BALANCE_SRC >=Rat AMOUNT
 
     rule <k> Dai . transfer ACCOUNT_DST AMOUNT => . ... </k>
          <msg-sender> ACCOUNT_SRC </msg-sender>
          <dai-balance>
            ...
-           ACCOUNT_SRC |-> (BALANCE_SRC => BALANCE_SRC -Int AMOUNT)
-           ACCOUNT_DST |-> (BALANCE_DST => BALANCE_DST +Int AMOUNT)
+           ACCOUNT_SRC |-> (BALANCE_SRC => BALANCE_SRC -Rat AMOUNT)
+           ACCOUNT_DST |-> (BALANCE_DST => BALANCE_DST +Rat AMOUNT)
            ...
          </dai-balance>
       requires ACCOUNT_SRC =/=K ACCOUNT_DST
-       andBool BALANCE_SRC >=Int AMOUNT
+       andBool BALANCE_SRC >=Rat AMOUNT
 
     syntax DaiStep ::= "transferFrom" Address Address Wad
  // -----------------------------------------------------
@@ -68,29 +68,29 @@ module DAI
            ACCOUNT_SRC |-> BALANCE_SRC
            ...
          </dai-balance>
-      requires BALANCE_SRC >=Int AMOUNT
+      requires BALANCE_SRC >=Rat AMOUNT
 
     rule <k> Dai . transferFrom ACCOUNT_SRC ACCOUNT_DST AMOUNT => . ... </k>
          <dai-balance>
           ...
-          ACCOUNT_SRC |-> (BALANCE_SRC => BALANCE_SRC -Int AMOUNT)
-          ACCOUNT_DST |-> (BALANCE_DST => BALANCE_DST +Int AMOUNT)
+          ACCOUNT_SRC |-> (BALANCE_SRC => BALANCE_SRC -Rat AMOUNT)
+          ACCOUNT_DST |-> (BALANCE_DST => BALANCE_DST +Rat AMOUNT)
           ...
         </dai-balance>
         <dai-allowance>
           ...
-          { ACCOUNT_SRC -> ACCOUNT_DST } |-> (ALLOWANCE_SRC_DST => ALLOWANCE_SRC_DST -Int AMOUNT)
+          { ACCOUNT_SRC -> ACCOUNT_DST } |-> (ALLOWANCE_SRC_DST => ALLOWANCE_SRC_DST -Rat AMOUNT)
           ...
         </dai-allowance>
       requires ACCOUNT_SRC =/=K ACCOUNT_DST
-       andBool BALANCE_SRC >=Int AMOUNT
-       andBool ALLOWANCE_SRC_DST >=Int AMOUNT
+       andBool BALANCE_SRC >=Rat AMOUNT
+       andBool ALLOWANCE_SRC_DST >=Rat AMOUNT
 
     rule <k> Dai . transferFrom ACCOUNT_SRC ACCOUNT_DST AMOUNT => . ... </k>
          <dai-balance>
           ...
-          ACCOUNT_SRC |-> (BALANCE_SRC => BALANCE_SRC -Int AMOUNT)
-          ACCOUNT_DST |-> (BALANCE_DST => BALANCE_DST +Int AMOUNT)
+          ACCOUNT_SRC |-> (BALANCE_SRC => BALANCE_SRC -Rat AMOUNT)
+          ACCOUNT_DST |-> (BALANCE_DST => BALANCE_DST +Rat AMOUNT)
           ...
         </dai-balance>
         <dai-allowance>
@@ -99,25 +99,25 @@ module DAI
           ...
         </dai-allowance>
       requires ACCOUNT_SRC =/=K ACCOUNT_DST
-       andBool BALANCE_SRC >=Int AMOUNT
+       andBool BALANCE_SRC >=Rat AMOUNT
 
     syntax DaiAuthStep ::= "mint" Address Wad
  // -----------------------------------------
     rule <k> Dai . mint ACCOUNT_DST AMOUNT => . ... </k>
-         <dai-totalSupply> DAI_SUPPLY => DAI_SUPPLY +Int AMOUNT </dai-totalSupply>
+         <dai-totalSupply> DAI_SUPPLY => DAI_SUPPLY +Rat AMOUNT </dai-totalSupply>
          <dai-balance>
           ...
-          ACCOUNT_DST |-> (BALANCE_DST => BALANCE_DST +Int AMOUNT)
+          ACCOUNT_DST |-> (BALANCE_DST => BALANCE_DST +Rat AMOUNT)
           ...
         </dai-balance>
 
     syntax DaiStep ::= "burn" Address Wad
  // -------------------------------------
     rule <k> Dai . burn ACCOUNT_SRC AMOUNT => . ... </k>
-         <dai-totalSupply> DAI_SUPPLY => DAI_SUPPLY -Int AMOUNT </dai-totalSupply>
+         <dai-totalSupply> DAI_SUPPLY => DAI_SUPPLY -Rat AMOUNT </dai-totalSupply>
          <dai-balance>
            ...
-           ACCOUNT_SRC |-> (AMOUNT_SRC => AMOUNT_SRC -Int AMOUNT)
+           ACCOUNT_SRC |-> (AMOUNT_SRC => AMOUNT_SRC -Rat AMOUNT)
            ...
          </dai-balance>
 
