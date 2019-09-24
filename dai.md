@@ -15,11 +15,11 @@ module DAI
       <dai>
         <dai-state>
           <dai-addr>        0:Address </dai-addr>
-          <dai-totalSupply> 0         </dai-totalSupply>
+          <dai-totalSupply> 0:Wad      </dai-totalSupply>
           <dai-account-id>  0         </dai-account-id>
-          <dai-balance>     .Map      </dai-balance>     // mapping (address => uint)                      Address |-> Rat
+          <dai-balance>     .Map      </dai-balance>     // mapping (address => uint)                      Address |-> Wad
           <dai-allowance>   .Map      </dai-allowance>   // mapping (address => mapping (address => uint))
-          <dai-nonce>       .Map      </dai-nonce>       // mapping (address => uint)                      Address |-> Rat
+          <dai-nonce>       .Map      </dai-nonce>       // mapping (address => uint)                      Address |-> Wad
         </dai-state>
       </dai>
 
