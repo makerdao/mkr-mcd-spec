@@ -21,7 +21,7 @@ module SYSTEM-STABILIZER
           <flop-addr>  0:Address </flop-addr>
           <flop-bids>  .Map      </flop-bids>  // mapping (uint => Bid)     Int     |-> Bid
           <flop-kicks> 0         </flop-kicks>
-          <flop-live>  0         </flop-live>
+          <flop-live>  true      </flop-live>
         </flopState>
         <vow>
           <vow-addr> 0:Address </vow-addr>
@@ -76,6 +76,9 @@ Flop Semantics
 --------------
 
 ```k
+    syntax Bid ::= FlopBid ( bid: Rad, lot: Wad, guy: Address, tic: Int, end: Int )
+ // -------------------------------------------------------------------------------
+
     syntax MCDContract ::= FlopContract
     syntax FlopContract ::= "Flop"
     syntax MCDStep ::= FlopContract "." FlopStep [klabel(flopStep)]
