@@ -52,13 +52,13 @@ module COLLATERAL
          <gem>
            <gem-id> GEMID </gem-id>
            <gem-balances>...
-             ACCTSRC |-> ( BALANCE_SRC => BALANCE_SRC -Int VALUE )
-             ACCTDST |-> ( BALANCE_DST => BALANCE_DST +Int VALUE )
+             ACCTSRC |-> ( BALANCE_SRC => BALANCE_SRC -Rat VALUE )
+             ACCTDST |-> ( BALANCE_DST => BALANCE_DST +Rat VALUE )
            ...</gem-balances>
          ...
          </gem>
-      requires VALUE >=Int 0
-       andBool BALANCE_SRC >=Int VALUE
+      requires VALUE >=Rat 0
+       andBool BALANCE_SRC >=Rat VALUE
 
     syntax GemStep ::= "move" Address Address Wad
  // ---------------------------------------------
@@ -85,11 +85,11 @@ module COLLATERAL
          <gem>
            <gem-id> GEMID </gem-id>
            <gem-balances>...
-             ACCTDST |-> ( BALANCE_DST => BALANCE_DST +Int VALUE )
+             ACCTDST |-> ( BALANCE_DST => BALANCE_DST +Rat VALUE )
            ...</gem-balances>
          ...
          </gem>
-      requires VALUE >=Int 0
+      requires VALUE >=Rat 0
 
     syntax GemStep ::= "burn" Address Wad
  // -------------------------------------
@@ -97,11 +97,11 @@ module COLLATERAL
          <gem>
            <gem-id> GEMID </gem-id>
            <gem-balances>...
-             ACCTSRC |-> ( BALANCE_SRC => BALANCE_SRC -Int VALUE )
+             ACCTSRC |-> ( BALANCE_SRC => BALANCE_SRC -Rat VALUE )
            ...</gem-balances>
          ...
          </gem>
-      requires VALUE >=Int 0
+      requires VALUE >=Rat 0
 
     syntax Bid ::= Bid ( bid: Rad, lot: Wad, guy: Address, tic: Int, end: Int, usr: Address, gal: Address, tab: Rad )
  // -----------------------------------------------------------------------------------------------------------------
