@@ -15,24 +15,25 @@ module SYSTEM-STABILIZER
           <flap-addr>  0:Address </flap-addr>
           <flap-bids>  .Map      </flap-bids>  // mapping (uint => Bid)     Int     |-> Bid
           <flap-kicks> 0         </flap-kicks>
-          <flap-live>  0         </flap-live>
+          <flap-live>  true      </flap-live>
         </flapState>
         <flopState>
           <flop-addr>  0:Address </flop-addr>
           <flop-bids>  .Map      </flop-bids>  // mapping (uint => Bid)     Int     |-> Bid
           <flop-kicks> 0         </flop-kicks>
-          <flop-live>  0         </flop-live>
+          <flop-live>  true      </flop-live>
         </flopState>
         <vow>
           <vow-addr> 0:Address </vow-addr>
-          <vow-sins> .Map      </vow-sins> // mapping (uint256 => uint256) Int     |-> Int
-          <vow-sin>  0         </vow-sin>
-          <vow-ash>  0         </vow-ash>
+          <vow-sins> .Map      </vow-sins> // mapping (uint256 => uint256) Int     |-> Rad
+          <vow-sin>  0:Rad      </vow-sin>
+          <vow-ash>  0:Rad     </vow-ash>
           <vow-wait> 0         </vow-wait>
-          <vow-sump> 0         </vow-sump>
-          <vow-bump> 0         </vow-bump>
-          <vow-hump> 0         </vow-hump>
-          <vow-live> 0         </vow-live>
+          <vow-dump> 0:Wad     </vow-dump>
+          <vow-sump> 0:Rad     </vow-sump>
+          <vow-bump> 0:Rad     </vow-bump>
+          <vow-hump> 0:Rad     </vow-hump>
+          <vow-live> true      </vow-live>
         </vow>
       </stabilize>
 ```
@@ -41,8 +42,8 @@ Flap Semantics
 --------------
 
 ```k
-    syntax Bid ::= Bid ( Int, Int, Address, Int, Int ) [klabel(BidBid)]
- // -------------------------------------------------------------------
+    syntax Bid ::= FlapBid ( bid: Wad, lot: Rad, guy: Address, tic: Int, end: Int )
+ // -------------------------------------------------------------------------------
 
     syntax MCDContract ::= FlapContract
     syntax FlapContract ::= "Flap"
@@ -56,7 +57,7 @@ Flap Semantics
  // --------------------------------------------------------------------
     rule <k> Flap . _ => exception ... </k> [owise]
 
-    syntax FlapStep ::= "kick" Int Int
+    syntax FlapStep ::= "kick" Rad Int
  // ----------------------------------
 
     syntax FlapStep ::= "tend" Int Int Int
@@ -76,6 +77,9 @@ Flop Semantics
 --------------
 
 ```k
+    syntax Bid ::= FlopBid ( bid: Rad, lot: Wad, guy: Address, tic: Int, end: Int )
+ // -------------------------------------------------------------------------------
+
     syntax MCDContract ::= FlopContract
     syntax FlopContract ::= "Flop"
     syntax MCDStep ::= FlopContract "." FlopStep [klabel(flopStep)]

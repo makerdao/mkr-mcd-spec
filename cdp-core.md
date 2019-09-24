@@ -36,25 +36,14 @@ Getters and setters for `Ilk` should be permissioned, and different combinations
     syntax VatIlk ::= Ilk ( Art: Wad , rate: Ray , spot: Ray , line: Rad , dust: Rad ) [klabel(#VatIlk), symbol]
  // ------------------------------------------------------------------------------------------------------------
 
-    syntax JugIlk ::= Ilk ( Int, Int )                    [klabel(#JugIlk), symbol]
- // -------------------------------------------------------------------------------
+    syntax JugIlk ::= Ilk ( duty: Ray, rho: Int )                    [klabel(#JugIlk), symbol]
+ // ------------------------------------------------------------------------------------------
 
-    syntax CatIlk ::= Ilk ( Address, Int, Int )           [klabel(#CatIlk), symbol]
- // -------------------------------------------------------------------------------
+    syntax CatIlk ::= Ilk ( Art: Wad, rate: Ray, spot: Ray, line: Rad )           [klabel(#CatIlk), symbol]
+ // -------------------------------------------------------------------------------------------------------
 
-    syntax SpotIlk ::= SpotIlk ( Value, Int )            [klabel(#SpotIlk), symbol]
- // -------------------------------------------------------------------------------
-```
-
--   `ilkLine` returns the `LINE` associated with an `Ilk`.
--   `ilkDust` returns the `DUST` associated with an `Ilk`.
-
-```k
-    syntax Int ::= ilkLine ( VatIlk ) [function, functional]
-                 | ilkDust ( VatIlk ) [function, functional]
- // --------------------------------------------------------
-    rule ilkLine(Ilk(_, _, _, LINE, _   )) => LINE
-    rule ilkDust(Ilk(_, _, _, _,    DUST)) => DUST
+    syntax SpotIlk ::= SpotIlk ( pip: MaybeWad, mat: Ray )            [klabel(#SpotIlk), symbol]
+ // --------------------------------------------------------------------------------------------
 ```
 
 -   `VatUrn`: `INK`, `ART`
@@ -63,8 +52,8 @@ Getters and setters for `Ilk` should be permissioned, and different combinations
 `Urn` has the exact same definition everywhere, so we can get away with a single definition.
 
 ```k
-    syntax VatUrn ::= Urn ( Wad , Wad ) [klabel(#VatUrn), symbol]
- // -------------------------------------------------------------
+    syntax VatUrn ::= Urn ( ink: Wad , art: Wad ) [klabel(#VatUrn), symbol]
+ // -----------------------------------------------------------------------
 ```
 
 -   `urnBalance` takes an `Urn` and it's corresponding `Ilk` and returns the "balance" of the `Urn` (`collateral - debt`).
@@ -72,14 +61,14 @@ Getters and setters for `Ilk` should be permissioned, and different combinations
 -   `urnCollateral` calculates the `SPOT`-scaled `INK` of an `Urn`.
 
 ```k
-    syntax Int ::= urnBalance    ( VatIlk , VatUrn ) [function, functional]
+    syntax Rad ::= urnBalance    ( VatIlk , VatUrn ) [function, functional]
                  | urnDebt       ( VatIlk , VatUrn ) [function, functional]
                  | urnCollateral ( VatIlk , VatUrn ) [function, functional]
  // -----------------------------------------------------------------------
-    rule urnBalance(ILK, URN) => urnCollateral(ILK, URN) -Int urnDebt(ILK, URN)
+    rule urnBalance(ILK, URN) => urnCollateral(ILK, URN) -Rat urnDebt(ILK, URN)
 
-    rule urnDebt      (Ilk(_ , RATE , _    , _ , _), Urn( _   , ART )) => ART *Int RATE
-    rule urnCollateral(Ilk(_ , _    , SPOT , _ , _), Urn( INK , _   )) => INK *Int SPOT
+    rule urnDebt      (Ilk(_ , RATE , _    , _ , _), Urn( _   , ART )) => ART *Rat RATE
+    rule urnCollateral(Ilk(_ , _    , SPOT , _ , _), Urn( INK , _   )) => INK *Rat SPOT
 ```
 
 Vat CDP State
@@ -105,17 +94,17 @@ Vat CDP State
           <jug-addr> 0:Address </jug-addr>
           <jug-ilks> .Map      </jug-ilks> // mapping (bytes32 => JugIlk) Int     |-> JugIlk
           <jug-vow>  0:Address </jug-vow>  //                             Address
-          <jug-base> 0         </jug-base> //                             Int
+          <jug-base> 0:Ray     </jug-base> //                             Int
         </jug>
         <cat>
           <cat-addr> 0:Address </cat-addr>
           <cat-ilks> .Map      </cat-ilks>
-          <cat-live> 1         </cat-live>
+          <cat-live> true      </cat-live>
         </cat>
         <spot>
           <spot-addr> 0:Address </spot-addr>
           <spot-ilks> .Map      </spot-ilks> // mapping (bytes32 => ilk)  Int     |-> SpotIlk
-          <spot-par>  0         </spot-par>
+          <spot-par>  0:Ray     </spot-par>
         </spot>
       </cdp-core>
 ```
@@ -221,8 +210,8 @@ This is quite permissive, and would allow the account to drain all your locked c
            <vat-urns> ... { ILKID , ADDR } |-> URN ... </vat-urns>
            ...
          </vat>
-      requires 0 <=Int urnBalance(ILK, URN)
-       andBool urnDebt(ILK, URN) <=Int ilkLine(ILK)
+      requires 0 <=Rat urnBalance(ILK, URN)
+       andBool urnDebt(ILK, URN) <=Rat line(ILK)
 
     syntax VatStep ::= "nondusty" Int Address
  // -----------------------------------------
@@ -232,7 +221,7 @@ This is quite permissive, and would allow the account to drain all your locked c
            <vat-urns> ... { ILKID , ADDR } |-> URN ... </vat-urns>
            ...
          </vat>
-      requires ilkDust(ILK) <=Int urnDebt(ILK, URN) orBool 0 ==Int urnDebt(ILK, URN)
+      requires dust(ILK) <=Rat urnDebt(ILK, URN) orBool 0 ==Rat urnDebt(ILK, URN)
 ```
 
 ### Ilk Initialization (`<vat-ilks>`)
@@ -245,7 +234,7 @@ This is quite permissive, and would allow the account to drain all your locked c
     syntax VatAuthStep ::= InitStep
  // -------------------------------
     rule <k> Vat . init ILKID => . ... </k>
-         <vat-ilks> ILKS => ILKS [ ILKID <- ilk_init ] </vat-ilks>
+         <vat-ilks> ILKS => ILKS [ ILKID <- 1 ] </vat-ilks>
       requires notBool ILKID in_keys(ILKS)
 ```
 
@@ -266,7 +255,7 @@ This is quite permissive, and would allow the account to drain all your locked c
     rule <k> Vat . slip ILKID ADDRTO NEWCOL => . ... </k>
          <vat-gem>
            ...
-           { ILKID , ADDRTO } |-> ( COL => COL +Int NEWCOL )
+           { ILKID , ADDRTO } |-> ( COL => COL +Rat NEWCOL )
            ...
          </vat-gem>
 
@@ -277,8 +266,8 @@ This is quite permissive, and would allow the account to drain all your locked c
          </k>
          <vat-gem>
            ...
-           { ILKID , ADDRFROM } |-> ( COLFROM => COLFROM -Int COL )
-           { ILKID , ADDRTO   } |-> ( COLTO   => COLTO   +Int COL )
+           { ILKID , ADDRFROM } |-> ( COLFROM => COLFROM -Rat COL )
+           { ILKID , ADDRTO   } |-> ( COLTO   => COLTO   +Rat COL )
            ...
          </vat-gem>
       requires wish ADDRFROM
@@ -297,8 +286,8 @@ This is quite permissive, and would allow the account to drain all your locked c
          </k>
          <vat-dai>
            ...
-           ADDRFROM |-> (DAIFROM => DAIFROM -Int DAI)
-           ADDRTO   |-> (DAITO   => DAITO   +Int DAI)
+           ADDRFROM |-> (DAIFROM => DAIFROM -Rat DAI)
+           ADDRTO   |-> (DAITO   => DAITO   +Rat DAI)
            ...
          </vat-dai>
       requires wish ADDRFROM
@@ -313,7 +302,7 @@ This is quite permissive, and would allow the account to drain all your locked c
     **TODO**: Should `Vat.fork` use `Vat.consent` or `Vat.wish`?
 
 ```k
-    syntax VatStep ::= "fork" Int Address Address Int Int
+    syntax VatStep ::= "fork" Int Address Address Wad Wad
  // -----------------------------------------------------
     rule <k> Vat . fork ILKID ADDRFROM ADDRTO DINK DART
           => Vat . safe     ILKID ADDRFROM ~> Vat . safe     ILKID ADDRTO
@@ -322,8 +311,8 @@ This is quite permissive, and would allow the account to drain all your locked c
          </k>
          <vat-urns>
            ...
-           { ILKID , ADDRFROM } |-> Urn ( INKFROM => INKFROM -Int DINK , ARTFROM => ARTFROM -Int DART )
-           { ILKID , ADDRTO   } |-> Urn ( INKTO   => INKTO   +Int DINK , ARTTO   => ARTFROM +Int DART )
+           { ILKID , ADDRFROM } |-> Urn ( INKFROM => INKFROM -Rat DINK , ARTFROM => ARTFROM -Rat DART )
+           { ILKID , ADDRTO   } |-> Urn ( INKTO   => INKTO   +Rat DINK , ARTTO   => ARTFROM +Rat DART )
            ...
          </vat-urns>
       requires wish ADDRFROM
@@ -338,71 +327,71 @@ This is quite permissive, and would allow the account to drain all your locked c
 **TODO**: Double-check implemented checks for `Vat.frob`.
 
 ```k
-    syntax VatAuthStep ::= "grab" Int Address Address Address Int Int
+    syntax VatAuthStep ::= "grab" Int Address Address Address Wad Wad
  // -----------------------------------------------------------------
     rule <k> Vat . grab ILKID ADDRU ADDRV ADDRW DINK DART => . ... </k>
-         <vat-vice> VICE => VICE -Int (RATE *Int DART) </vat-vice>
+         <vat-vice> VICE => VICE -Rat (RATE *Rat DART) </vat-vice>
          <vat-urns>
            ...
-           { ILKID , ADDRU } |-> Urn ( INK => INK +Int DINK , URNART => URNART +Int DART )
+           { ILKID , ADDRU } |-> Urn ( INK => INK +Rat DINK , URNART => URNART +Rat DART )
            ...
          </vat-urns>
          <vat-ilks>
            ...
-           ILKID |-> Ilk ( ILKART => ILKART +Int DART , RATE , _ , _ , _ )
+           ILKID |-> Ilk ( ILKART => ILKART +Rat DART , RATE , _ , _ , _ )
            ...
          </vat-ilks>
          <vat-gem>
            ...
-           { ILKID , ADDRV } |-> ( ILKV => ILKV -Int DINK )
+           { ILKID , ADDRV } |-> ( ILKV => ILKV -Rat DINK )
            ...
          </vat-gem>
          <vat-sin>
            ...
-           USERW |-> ( SINW => SINW -Int (RATE *Int DART) )
+           USERW |-> ( SINW => SINW -Rat (RATE *Rat DART) )
            ...
          </vat-sin>
 
-    syntax VatStep ::= "frob" Int Address Address Address Int Int
+    syntax VatStep ::= "frob" Int Address Address Address Wad Wad
  // -------------------------------------------------------------
     rule <k> Vat . frob ILKID ADDRU ADDRV ADDRW DINK DART => .
          ...
          </k>
          <vat-live> true </vat-live>
-         <vat-debt> DEBT => DEBT +Int (RATE *Int DART) </vat-debt>
+         <vat-debt> DEBT => DEBT +Rat (RATE *Rat DART) </vat-debt>
          <vat-urns>
            ...
-           { ILKID , ADDRU } |-> Urn ( INK => INK +Int DINK , URNART => URNART +Int DART )
+           { ILKID , ADDRU } |-> Urn ( INK => INK +Rat DINK , URNART => URNART +Rat DART )
            ...
          </vat-urns>
          <vat-ilks>
            ...
-           ILKID |-> Ilk (... Art: ILKART => ILKART +Int DART , rate: RATE , spot: SPOT, line: ILKLINE, dust: DUST )
+           ILKID |-> Ilk (... Art: ILKART => ILKART +Rat DART , rate: RATE , spot: SPOT, line: ILKLINE, dust: DUST )
            ...
          </vat-ilks>
          <vat-gem>
            ...
-           { ILKID , ADDRV } |-> ( ILKV => ILKV -Int DINK )
+           { ILKID , ADDRV } |-> ( ILKV => ILKV -Rat DINK )
            ...
          </vat-gem>
          <vat-dai>
            ...
-           USERW |-> ( DAIW => DAIW +Int (RATE *Int DART) )
+           USERW |-> ( DAIW => DAIW +Rat (RATE *Rat DART) )
            ...
          </vat-dai>
          <vat-Line> LINE </vat-Line>
-      requires      ( DART <=Int 0
-               orBool ((ILKART +Int DART) *Int RATE <=Int ILKLINE andBool DEBT +Int (RATE *Int DART) <=Int LINE)
+      requires      ( DART <=Rat 0
+               orBool ((ILKART +Rat DART) *Rat RATE <=Rat ILKLINE andBool DEBT +Rat (RATE *Rat DART) <=Rat LINE)
                     )
-       andBool      ( (DART <=Int 0 andBool DINK >=Int 0)
-               orBool (URNART +Int DART) *Int RATE <=Int (INK +Int DINK) *Int SPOT
+       andBool      ( (DART <=Rat 0 andBool DINK >=Rat 0)
+               orBool (URNART +Rat DART) *Rat RATE <=Rat (INK +Rat DINK) *Rat SPOT
                     )
-       andBool      ( (DART <=Int 0 andBool DINK >=Int 0)
+       andBool      ( (DART <=Rat 0 andBool DINK >=Rat 0)
                orBool wish ADDRU
                     )
-       andBool (DINK <=Int 0 orBool wish ADDRV)
-       andBool (DART >=Int 0 orBool wish ADDRW)
-       andBool (URNART +Int DART ==Int 0 orBool (URNART +Int DART) *Int RATE >=Int DUST)
+       andBool (DINK <=Rat 0 orBool wish ADDRV)
+       andBool (DART >=Rat 0 orBool wish ADDRW)
+       andBool (URNART +Rat DART ==Rat 0 orBool (URNART +Rat DART) *Rat RATE >=Rat DUST)
 ```
 
 ### Debt/Dai manipulation (`<vat-debt>`, `<vat-dai>`, `<vat-vice>`, `<vat-sin>`)
@@ -417,18 +406,18 @@ This is quite permissive, and would allow the account to drain all your locked c
  // -----------------------------
     rule <k> Vat . heal AMOUNT => . ... </k>
          <msg-sender> ADDRFROM </msg-sender>
-         <vat-debt> DEBT => DEBT -Int AMOUNT </vat-debt>
-         <vat-vice> VICE => VICE -Int AMOUNT </vat-vice>
-         <vat-sin> ... ADDRFROM |-> (SIN => SIN -Int AMOUNT) ... </vat-sin>
-         <vat-dai> ... ADDRFROM |-> (DAI => DAI -Int AMOUNT) ... </vat-dai>
+         <vat-debt> DEBT => DEBT -Rat AMOUNT </vat-debt>
+         <vat-vice> VICE => VICE -Rat AMOUNT </vat-vice>
+         <vat-sin> ... ADDRFROM |-> (SIN => SIN -Rat AMOUNT) ... </vat-sin>
+         <vat-dai> ... ADDRFROM |-> (DAI => DAI -Rat AMOUNT) ... </vat-dai>
 
     syntax VatAuthStep ::= "suck" Address Address Rad
  // -------------------------------------------------
     rule <k> Vat . suck ADDRU ADDRV AMOUNT => . ... </k>
-         <vat-debt> DEBT => DEBT +Int AMOUNT </vat-debt>
-         <vat-vice> VICE => VICE +Int AMOUNT </vat-vice>
-         <vat-sin> ... ADDRU |-> (SIN => SIN +Int AMOUNT) ... </vat-sin>
-         <vat-dai> ... ADDRV |-> (DAI => DAI +Int AMOUNT) ... </vat-dai>
+         <vat-debt> DEBT => DEBT +Rat AMOUNT </vat-debt>
+         <vat-vice> VICE => VICE +Rat AMOUNT </vat-vice>
+         <vat-sin> ... ADDRU |-> (SIN => SIN +Rat AMOUNT) ... </vat-sin>
+         <vat-dai> ... ADDRV |-> (DAI => DAI +Rat AMOUNT) ... </vat-dai>
 ```
 
 ### CDP Manipulation
@@ -438,19 +427,19 @@ This is quite permissive, and would allow the account to drain all your locked c
 **TODO**: Should be `note`.
 
 ```k
-    syntax VatAuthStep ::= "fold" Int Address Int
+    syntax VatAuthStep ::= "fold" Int Address Ray
  // ---------------------------------------------
     rule <k> Vat . fold ILKID ADDRU RATE => . ... </k>
          <vat-live> true </vat-live>
-         <vat-debt> DEBT => DEBT +Int (ILKART *Int RATE) </vat-debt>
+         <vat-debt> DEBT => DEBT +Rat (ILKART *Rat RATE) </vat-debt>
          <vat-ilks>
            ...
-           ILKID |-> Ilk ( ILKART , ILKRATE => ILKRATE +Int RATE , _ , _ , _ )
+           ILKID |-> Ilk ( ILKART , ILKRATE => ILKRATE +Rat RATE , _ , _ , _ )
            ...
          </vat-ilks>
          <vat-dai>
            ...
-           ADDRU |-> ( DAI => DAI +Int (ILKART *Int RATE) )
+           ADDRU |-> ( DAI => DAI +Rat (ILKART *Rat RATE) )
            ...
          </vat-dai>
 ```
@@ -475,14 +464,14 @@ Jug Semantics
  // -------------------------------
     rule <k> Jug . init ILK => . ... </k>
          <currentTime> TIME </currentTime>
-         <jug-ilks> ... ILK |-> Ilk ( ILKDUTY => ilk_init, _ => TIME ) ... </jug-ilks>
+         <jug-ilks> ... ILK |-> Ilk ( ILKDUTY => 1, _ => TIME ) ... </jug-ilks>
       requires ILKDUTY ==Int 0
 ```
 
 ```k
     syntax JugStep ::= "drip" Int
  // -----------------------------
-    rule <k> Jug . drip ILK => call Vat . fold ILK ADDRESS ( #pow( BASE +Int ILKDUTY, TIME -Int ILKRHO ) *Int ILKRATE ) -Int ILKRATE ... </k>
+    rule <k> Jug . drip ILK => call Vat . fold ILK ADDRESS ( ( (BASE +Rat ILKDUTY) ^Rat (TIME -Int ILKRHO) ) *Rat ILKRATE ) -Rat ILKRATE ... </k>
          <currentTime> TIME </currentTime>
          <vat-ilks> ... ILK |-> Ilk ( _, ILKRATE, _, _, _ ) ... </vat-ilks>
          <jug-ilks> ... ILK |-> Ilk ( ILKDUTY, ILKRHO => TIME ) ... </jug-ilks>
@@ -534,13 +523,13 @@ Spot Semantics
     syntax SpotStep ::= "poke" Int
  // ------------------------------
     rule <k> Spot . poke ILK => . ... </k>
-         <vat-ilks> ... ILK |-> Ilk ( _, _, ( _ => ((VALUE *Int 1000000000) /Int PAR) /Int MAT ), _, _ ) ... </vat-ilks>
+         <vat-ilks> ... ILK |-> Ilk ( _, _, ( _ => (VALUE /Rat PAR) /Rat MAT ), _, _ ) ... </vat-ilks>
          <spot-ilks> ... ILK |-> SpotIlk ( VALUE, MAT ) ... </spot-ilks>
          <spot-par> PAR </spot-par>
-      requires VALUE =/=K .Value
+      requires VALUE =/=K .Wad
 
     rule <k> Spot . poke ILK => . ... </k>
-         <spot-ilks> ... ILK |-> SpotIlk ( .Value, _ ) ... </spot-ilks>
+         <spot-ilks> ... ILK |-> SpotIlk ( .Wad, _ ) ... </spot-ilks>
 ```
 
 ```k
