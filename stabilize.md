@@ -38,10 +38,11 @@ module SYSTEM-STABILIZER
           <vow-sin>  0         </vow-sin>
           <vow-ash>  0         </vow-ash>
           <vow-wait> 0         </vow-wait>
-          <vow-sump> 0         </vow-sump>
-          <vow-bump> 0         </vow-bump>
-          <vow-hump> 0         </vow-hump>
-          <vow-live> 0         </vow-live>
+          <vow-dump> 0:Wad     </vow-dump>
+          <vow-sump> 0:Rad     </vow-sump>
+          <vow-bump> 0:Rad     </vow-bump>
+          <vow-hump> 0:Rad     </vow-hump>
+          <vow-live> true      </vow-live>
         </vow>
       </stabilize>
 ```
@@ -195,6 +196,9 @@ Flop Semantics
 --------------
 
 ```k
+    syntax Bid ::= FlopBid ( bid: Rad, lot: Wad, guy: Address, tic: Int, end: Int )
+ // -------------------------------------------------------------------------------
+
     syntax MCDContract ::= FlopContract
     syntax FlopContract ::= "Flop"
     syntax MCDStep ::= FlopContract "." FlopStep [klabel(flopStep)]

@@ -52,13 +52,13 @@ module COLLATERAL
          <gem>
            <gem-id> GEMID </gem-id>
            <gem-balances>...
-             ACCTSRC |-> ( BALANCE_SRC => BALANCE_SRC -Int VALUE )
-             ACCTDST |-> ( BALANCE_DST => BALANCE_DST +Int VALUE )
+             ACCTSRC |-> ( BALANCE_SRC => BALANCE_SRC -Rat VALUE )
+             ACCTDST |-> ( BALANCE_DST => BALANCE_DST +Rat VALUE )
            ...</gem-balances>
          ...
          </gem>
-      requires VALUE >=Int 0
-       andBool BALANCE_SRC >=Int VALUE
+      requires VALUE >=Rat 0
+       andBool BALANCE_SRC >=Rat VALUE
 
     syntax GemStep ::= "move" Address Address Wad
  // ---------------------------------------------
@@ -85,11 +85,11 @@ module COLLATERAL
          <gem>
            <gem-id> GEMID </gem-id>
            <gem-balances>...
-             ACCTDST |-> ( BALANCE_DST => BALANCE_DST +Int VALUE )
+             ACCTDST |-> ( BALANCE_DST => BALANCE_DST +Rat VALUE )
            ...</gem-balances>
          ...
          </gem>
-      requires VALUE >=Int 0
+      requires VALUE >=Rat 0
 
     syntax GemStep ::= "burn" Address Wad
  // -------------------------------------
@@ -97,13 +97,13 @@ module COLLATERAL
          <gem>
            <gem-id> GEMID </gem-id>
            <gem-balances>...
-             ACCTSRC |-> ( BALANCE_SRC => BALANCE_SRC -Int VALUE )
+             ACCTSRC |-> ( BALANCE_SRC => BALANCE_SRC -Rat VALUE )
            ...</gem-balances>
          ...
          </gem>
-      requires VALUE >=Int 0
+      requires VALUE >=Rat 0
 
-    syntax Bid ::= Bid ( bid: Int, lot: Int, guy: Address, tic: Int, end: Int, usr: Address, gal: Address, tab: Int )
+    syntax Bid ::= Bid ( bid: Rad, lot: Wad, guy: Address, tic: Int, end: Int, usr: Address, gal: Address, tab: Rad )
  // -----------------------------------------------------------------------------------------------------------------
 
     syntax MCDContract ::= FlipContract
@@ -118,7 +118,7 @@ module COLLATERAL
  // --------------------------------------------------------------------
     rule <k> Flip _ . _ => exception ... </k> [owise]
 
-    syntax FlipStep ::= "kick" Address Address Int Int Int
+    syntax FlipStep ::= "kick" Address Address Rad Wad Rad
  // ------------------------------------------------------
     rule <k> Flip ILK . kick USR GAL TAB LOT BID
           => call Vat . flux ILK MSGSENDER THIS LOT
@@ -153,11 +153,11 @@ module COLLATERAL
       requires END  <Int NOW
        andBool TIC ==Int 0
 
-    syntax FlipStep ::= "tend" Int Int Int
+    syntax FlipStep ::= "tend" Int Wad Rad
  // --------------------------------------
     rule <k> Flip ILK . tend ID LOT BID
           => call Vat . move MSGSENDER GUY BID'
-          ~> call Vat . move MSGSENDER GAL (BID -Int BID') ... </k>
+          ~> call Vat . move MSGSENDER GAL (BID -Rat BID') ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <currentTime> NOW </currentTime>
          <flip-ilk> ILK </flip-ilk>
@@ -172,19 +172,19 @@ module COLLATERAL
                           gal: GAL,
                           tab: TAB)
          ...</flip-bids>
-      requires GUY =/=Int 0
+      requires GUY =/=K 0
        andBool (TIC >Int NOW orBool TIC ==Int 0)
        andBool END >Int NOW
-       andBool LOT ==Int LOT'
-       andBool BID <=Int TAB
-       andBool BID >Int BID'
-       andBool (BID >=Rat BEG *Rat BID' orBool BID ==Int TAB)
+       andBool LOT ==Rat LOT'
+       andBool BID <=Rat TAB
+       andBool BID >Rat BID'
+       andBool (BID >=Rat BEG *Rat BID' orBool BID ==Rat TAB)
 
-    syntax FlipStep ::= "dent" Int Int Int
+    syntax FlipStep ::= "dent" Int Wad Rad
  // --------------------------------------
     rule <k> Flip ILK . dent ID LOT BID
           => call Vat.move MSGSENDER GUY BID
-          ~> call Vat.flux ILK THIS USR (LOT' -Int LOT) ... </k>
+          ~> call Vat.flux ILK THIS USR (LOT' -Rat LOT) ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
          <currentTime> NOW </currentTime>
@@ -200,12 +200,12 @@ module COLLATERAL
                           usr: USR,
                           tab: TAB)
          ...</flip-bids>
-      requires GUY =/=Int 0
+      requires GUY =/=K 0
        andBool (TIC >Int NOW orBool TIC ==Int 0)
        andBool END >Int NOW
-       andBool BID ==Int BID'
-       andBool BID ==Int TAB
-       andBool LOT <Int LOT'
+       andBool BID ==Rat BID'
+       andBool BID ==Rat TAB
+       andBool LOT <Rat LOT'
        andBool BEG *Rat LOT <Rat LOT'
 
     syntax FlipStep ::= "deal" Int
@@ -231,7 +231,7 @@ module COLLATERAL
          <flip-bids>...
            ID |-> Bid(... bid: BID, lot: LOT, guy: GUY, tab: TAB) => .Map
          ...</flip-bids>
-      requires GUY =/=Int 0 andBool BID <Int TAB
+      requires GUY =/=K 0 andBool BID <Rat TAB
 
 endmodule
 ```
