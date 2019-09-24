@@ -15,7 +15,7 @@ module SYSTEM-STABILIZER
           <flap-addr>  0:Address </flap-addr>
           <flap-bids>  .Map      </flap-bids>  // mapping (uint => Bid)     Int     |-> Bid
           <flap-kicks> 0         </flap-kicks>
-          <flap-live>  0         </flap-live>
+          <flap-live>  true      </flap-live>
         </flapState>
         <flopState>
           <flop-addr>  0:Address </flop-addr>
@@ -41,8 +41,8 @@ Flap Semantics
 --------------
 
 ```k
-    syntax Bid ::= Bid ( Int, Int, Address, Int, Int ) [klabel(BidBid)]
- // -------------------------------------------------------------------
+    syntax Bid ::= FlapBid ( bid: Wad, lot: Rad, guy: Address, tic: Int, end: Int )
+ // -------------------------------------------------------------------------------
 
     syntax MCDContract ::= FlapContract
     syntax FlapContract ::= "Flap"
@@ -56,7 +56,7 @@ Flap Semantics
  // --------------------------------------------------------------------
     rule <k> Flap . _ => exception ... </k> [owise]
 
-    syntax FlapStep ::= "kick" Int Int
+    syntax FlapStep ::= "kick" Rad Int
  // ----------------------------------
 
     syntax FlapStep ::= "tend" Int Int Int
