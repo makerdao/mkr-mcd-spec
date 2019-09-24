@@ -264,7 +264,7 @@ module COLLATERAL
          <msg-sender> MSGSENDER </msg-sender>
 
     syntax MCDContract ::= DaiJoinContract
-    syntax GemJoinContract ::= "DaiJoin"
+    syntax DaiJoinContract ::= "DaiJoin"
     syntax MCDStep ::= DaiJoinContract "." DaiJoinStep [klabel(daiJoinStep)]
  // ------------------------------------------------------------------------
     rule contract(DaiJoin . _) => DaiJoin
