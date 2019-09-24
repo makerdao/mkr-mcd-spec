@@ -37,28 +37,28 @@ module RATES
 
     syntax PotStep ::= "drip"
  // -------------------------
-    rule <k> Pot . drip => call Vat . suck VOW THIS ( PIE *Rat CHI *Rat ( DSR ^Rat (TIME -Int RHO) -Rat 1 ) ) ... </k>
+    rule <k> Pot . drip => call Vat . suck VOW THIS ( PIE *Rat CHI *Rat ( DSR ^Rat (NOW -Int RHO) -Rat 1 ) ) ... </k>
          <this> THIS </this>
-         <currentTime> TIME </currentTime>
-         <pot-chi> CHI => CHI *Rat DSR ^Rat (TIME -Int RHO) </pot-chi>
-         <pot-rho> RHO => TIME </pot-rho>
+         <currentTime> NOW </currentTime>
+         <pot-chi> CHI => CHI *Rat DSR ^Rat (NOW -Int RHO) </pot-chi>
+         <pot-rho> RHO => NOW </pot-rho>
          <pot-dsr> DSR </pot-dsr>
          <pot-vow> VOW </pot-vow>
          <pot-pie> PIE </pot-pie>
-      requires TIME >=Int RHO
+      requires NOW >=Int RHO
        andBool DSR >=Rat 1 // to ensure positive interest rate
 
     syntax PotStep ::= "join" Wad
  // -----------------------------
     rule <k> Pot . join WAD => call Vat . move MSGSENDER THIS ( CHI *Rat WAD ) ... </k>
          <this> THIS </this>
-         <currentTime> TIME </currentTime>
+         <currentTime> NOW </currentTime>
          <msg-sender> MSGSENDER </msg-sender>
          <pot-pies> ... MSGSENDER |-> ( MSGSENDER_PIE => MSGSENDER_PIE +Rat WAD ) ... </pot-pies>
          <pot-pie> PIE => PIE +Rat WAD </pot-pie>
          <pot-chi> CHI </pot-chi>
          <pot-rho> RHO </pot-rho>
-      requires TIME ==Int RHO
+      requires NOW ==Int RHO
 
     syntax PotStep ::= "exit" Wad
  // -----------------------------
