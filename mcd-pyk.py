@@ -85,7 +85,7 @@ def make_symbolic_config_from(init_term):
     pyk.traverseBottomUp(symbolic_configuration, _replaceWithVar)
     return (symbolic_configuration, initial_substitution)
 
-(symbolic_configuration, init_cells) = make_symbolic_config_from(KConstant('.MCDSteps_KMCD-DRIVER_'))
+(symbolic_configuration, init_cells) = make_symbolic_config_from(KConstant('.MCDSteps_KMCD-DRIVER_MCDSteps'))
 
 initial_configuration = substitute(symbolic_configuration, init_cells)
 
