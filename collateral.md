@@ -255,6 +255,7 @@ module COLLATERAL
           ~> call Gem GEMID . transferFrom MSGSENDER THIS AMOUNT ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
+      requires AMOUNT =>Rat 0
 
     syntax GemJoinStep ::= "exit" Address Wad
  // -----------------------------------------
@@ -262,6 +263,7 @@ module COLLATERAL
           => call Vat . slip GEMID MSGSENDER (0 -Rat AMOUNT)
           ~> call Gem GEMID . transfer USR AMOUNT ... </k>
          <msg-sender> MSGSENDER </msg-sender>
+      requires AMOUNT =>Rat 0
 
     syntax MCDContract ::= DaiJoinContract
     syntax DaiJoinContract ::= "DaiJoin"
@@ -278,6 +280,7 @@ module COLLATERAL
           ~> call Dai . burn MSGSENDER AMOUNT ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
+      requires AMOUNT =>Rat 0
 
     syntax DaiJoinStep ::= "exit" Address Wad
  // -----------------------------------------
@@ -286,6 +289,7 @@ module COLLATERAL
           ~> call Dai . mint USR AMOUNT ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
+      requires AMOUNT =>Rat 0
 
 endmodule
 ```
