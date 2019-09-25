@@ -39,16 +39,16 @@ module KMCD
           <endPhase> false </endPhase>
           <end>
             <end-addr> 0:Address </end-addr>
-            <end-live> 0         </end-live>
+            <end-live> true      </end-live>
             <end-when> 0         </end-when>
             <end-wait> 0         </end-wait>
-            <end-debt> 0         </end-debt>
+            <end-debt> 0:Rad      </end-debt>
             <end-tag>  .Map      </end-tag>  // mapping (bytes32 => uint256)                      String  |-> Ray
             <end-gap>  .Map      </end-gap>  // mapping (bytes32 => uint256)                      String  |-> Wad
             <end-art>  .Map      </end-art>  // mapping (bytes32 => uint256)                      String  |-> Wad
             <end-fix>  .Map      </end-fix>  // mapping (bytes32 => uint256)                      String  |-> Ray
-            <end-bag>  .Map      </end-bag>  // mapping (address => uint256)                      String  |-> Wad
-            <end-out>  .Map      </end-out>  // mapping (bytes32 => mapping (address => uint256)) String  |-> Wad
+            <end-bag>  .Map      </end-bag>  // mapping (address => uint256)                      Address |-> Wad
+            <end-out>  .Map      </end-out>  // mapping (bytes32 => mapping (address => uint256)) CDPID   |-> Wad
           </end>
         </kmcd-state>
       </kmcd>
@@ -87,30 +87,189 @@ End Semantics
     rule <k> End . _ => exception ... </k> [owise]
 
     syntax EndAuthStep ::= "cage"
-    syntax EndStep ::= "cage" Int
  // -----------------------------
+    rule <k> End . cage
+          => call Vat . cage
+          ~> call Cat . cage
+          ~> call Vow . cage
+          ~> call Pot . cage ... </k>
+         <currentTime> NOW </currentTime>
+         <end-live> true => false </end-live>
+         <end-when> _ => NOW </end-when>
 
-    syntax EndStep ::= "skip" Int Int
- // ---------------------------------
+    syntax EndStep ::= "cage" String
+ // --------------------------------
+    rule <k> End . cage ILK:String => . ... </k>
+         <end-live> false </end-live>
+         <end-tag> TAGS => TAGS [ ILK <- PAR /Rat PIP ] </end-tag>
+         <end-art> ARTS => ARTS [ ILK <- ART ] </end-art>
+         <spot-par> PAR </spot-par>
+         <spot-ilks>
+           ...
+           ILK |-> SpotIlk(... pip: PIP)
+           ...
+         </spot-ilks>
+         <vat-ilks>
+           ...
+           ILK |-> Ilk(... Art: ART)::VatIlk
+           ...
+         </vat-ilks>
+       requires notBool ILK in_keys(TAGS)
 
-    syntax EndStep ::= "skim" Int Address
- // -------------------------------------
+    syntax EndStep ::= "skip" String Int
+ // ------------------------------------
+    rule <k> End . skip ILK ID
+          => call Vat . suck address(Vow) address(Vow) TAB
+          ~> call Vat . suck address(Vow) THIS BID
+          ~> call Vat . hope address(Flip ILK)
+	  ~> call Flip ILK . yank ID
+          ~> call Vat . grab ILK USR THIS address(Vow) LOT (TAB /Rat RATE) ... </k>
+         <this> THIS </this>
+         <end-tag>
+          ...
+          ILK |-> TAG
+          ...
+         </end-tag>
+         <end-art>
+           ...
+           ILK |-> (ART => ART +Rat (TAB /Rat RATE))
+           ...
+         </end-art>
+         <vat-ilks>
+           ...
+           ILK |-> Ilk(... rate: RATE)::VatIlk
+           ...
+         </vat-ilks>
+         <flip-ilk> ILK </flip-ilk>
+         <flip-bids>
+           ...
+           ID |-> Bid(... bid: BID, lot: LOT, usr: USR, tab: TAB)
+           ...
+         </flip-bids>
+      requires TAG =/=Rat 0
+       andBool LOT >=Rat 0
+       andBool TAB /Rat RATE >=Rat 0
 
-    syntax EndStep ::= "free" Int
- // -----------------------------
+    syntax EndStep ::= "skim" String Address
+ // ----------------------------------------
+    rule <k> End . skim ILK URN
+          => call Vat . grab ILK URN THIS address(Vow) (0 -Rat minRat(INK, ART *Rat RATE *Rat TAG)) (0 -Rat ART) ... </k>
+         <this> THIS </this>
+         <end-tag>
+          ...
+          ILK |-> TAG
+          ...
+         </end-tag>
+         <end-gap>
+          ...
+          ILK |-> (GAP => GAP +Rat ((ART *Rat RATE *Rat TAG) -Rat minRat(INK, (ART *Rat RATE *Rat TAG))))
+          ...
+         </end-gap>
+         <vat-ilks>
+           ...
+           ILK |-> Ilk(... rate: RATE)::VatIlk
+           ...
+         </vat-ilks>
+         <vat-urns>
+           ...
+           {ILK, URN} |-> Urn(... ink: INK, art: ART)
+           ...
+         </vat-urns>
+      requires TAG =/=Rat 0
+
+    syntax EndStep ::= "free" String
+ // --------------------------------
+    rule <k> End . free ILK
+          => call Vat . grab ILK MSGSENDER MSGSENDER address(Vow) (0 -Rat INK) 0 ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         <end-live> false </end-live>
+         <vat-urns>
+           ...
+           {ILK, MSGSENDER} |-> Urn(... ink: INK, art: ART)
+           ...
+         </vat-urns>
+      requires ART ==Int 0
 
     syntax EndStep ::= "thaw"
  // -------------------------
+    rule <k> End . thaw ... </k>
+         <currentTime> NOW </currentTime>
+         <end-live> false </end-live>
+         <end-debt> 0 => DEBT </end-debt>
+         <end-when> WHEN </end-when>
+         <end-wait> WAIT </end-wait>
+         <vat-dai>
+           ...
+           address(Vow) |-> 0
+           ...
+         </vat-dai>
+         <vat-debt> DEBT </vat-debt>
+      requires NOW >=Int WHEN +Int WAIT
 
-    syntax EndStep ::= "flow" Int
- // -----------------------------
+    syntax EndStep ::= "flow" String
+ // --------------------------------
+    rule <k> End . flow ILK => . ... </k>
+         <end-debt> DEBT </end-debt>
+         <end-fix> FIX => FIX [ ILK <- (ART *Rat RATE *Rat TAG -Rat GAP) /Rat DEBT ] </end-fix>
+         <end-tag>
+          ...
+          ILK |-> TAG
+          ...
+         </end-tag>
+         <end-gap>
+           ...
+           ILK |-> GAP
+           ...
+         </end-gap>
+         <end-art>
+           ...
+           ILK |-> ART
+           ...
+         </end-art>
+         <vat-ilks>
+           ...
+           ILK |-> Ilk(... rate: RATE)::VatIlk
+           ...
+         </vat-ilks>
+      requires DEBT =/=Rat 0
+       andBool notBool ILK in_keys(FIX)
 
     syntax EndStep ::= "pack" Wad
  // -----------------------------
+    rule <k> End . pack AMOUNT
+          => call Vat . move MSGSENDER address(Vow) AMOUNT ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         <end-debt> DEBT </end-debt>
+         <end-bag>
+           ...
+           MSGSENDER |-> (BAG => BAG +Rat AMOUNT)
+           ...
+         </end-bag>
+      requires DEBT =/=Rat 0
 
-    syntax EndStep ::= "cash" Int Wad
- // ---------------------------------
-
+    syntax EndStep ::= "cash" String Wad
+ // ------------------------------------
+    rule <k> End . cash ILK AMOUNT
+          => call Vat . flux ILK THIS MSGSENDER (AMOUNT *Rat FIX) ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         <this> THIS </this>
+         <end-fix>
+           ...
+           ILK |-> FIX
+           ...
+         </end-fix>
+         <end-out>
+          ...
+          {ILK, MSGSENDER} |-> (OUT => OUT +Rat AMOUNT)
+          ...
+         </end-out>
+         <end-bag>
+           ...
+           MSGSENDER |-> BAG
+           ...
+         </end-bag>
+      requires FIX =/=Rat 0
+       andBool OUT +Rat AMOUNT <=Rat BAG
 ```
 
 ```k
