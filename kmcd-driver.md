@@ -29,8 +29,9 @@ MCD Simulations
 ---------------
 
 ```k
-    syntax MCDSteps ::= ".MCDSteps" | MCDStep MCDSteps
- // --------------------------------------------------
+    syntax MCDSteps ::= ".MCDSteps"      [klabel('.MCDSteps'), symbol]
+                      | MCDStep MCDSteps [klabel('MCDSteps'),  symbol]
+ // ------------------------------------------------------------------
     rule <k> .MCDSteps => . ... </k>
     rule <k> MCD:MCDStep MCDS:MCDSteps => MCD ~> MCDS ... </k>
 
