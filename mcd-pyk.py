@@ -55,10 +55,13 @@ def buildStep(inputCall):
 vat_functions = [ 'auth' , 'cage_' , 'deny_' , 'drip_' , 'flux____' , 'fold___' , 'fork_____' , 'frob______' , 'grab______' , 'heal_' , 'hope_' , 'init_' , 'move___' , 'nope_' , 'rely_' , 'slip___' , 'suck___' , 'wish_' ]
 vat_functions_without_underbars = [ vFunc.rstrip('_') for vFunc in vat_functions ]
 
-MKR_MCD_symbols = { '.List'             : constLabel('.List')
-                  , '.MCDStep_MKR-MCD_' : constLabel('.MCDStep')
-                  , 'MCDSteps'          : underbarUnparsing('__')
-                  , 'VatStep'           : underbarUnparsing('Vat ._')
+MKR_MCD_symbols = { '.List'                           : constLabel('.List')
+                  , '.MCDSteps_KMCD-DRIVER_MCDSteps'  : constLabel('.MCDStep')
+                  , 'MCDSteps'                        : underbarUnparsing('__')
+                  , 'VatStep'                         : underbarUnparsing('Vat ._')
+                  , '<_,_>Rat_RAT-COMMON_Rat_Int_Int' : underbarUnparsing('_/Rat_')
+                  , '.GemCellMap'                     : constLabel('.GemCellMap')
+                  , '.FlipCellMap'                    : constLabel('.FlipCellMap')
                   }
 
 for vat_function in vat_functions:
@@ -85,7 +88,7 @@ def make_symbolic_config_from(init_term):
     pyk.traverseBottomUp(symbolic_configuration, _replaceWithVar)
     return (symbolic_configuration, initial_substitution)
 
-(symbolic_configuration, init_cells) = make_symbolic_config_from(KConstant('.MCDSteps_KMCD-DRIVER_'))
+(symbolic_configuration, init_cells) = make_symbolic_config_from(KConstant('.MCDSteps_KMCD-DRIVER_MCDSteps'))
 
 initial_configuration = substitute(symbolic_configuration, init_cells)
 
