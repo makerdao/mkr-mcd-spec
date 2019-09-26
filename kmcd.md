@@ -5,19 +5,35 @@ This module combines all sub-modules to model the entire MCD system.
 
 ```k
 requires "kmcd-driver.k"
-requires "cdp-core.k"
-requires "collateral.k"
+requires "cat.k"
 requires "dai.k"
-requires "rates.k"
-requires "stabilize.k"
+requires "end.k"
+requires "flap.k"
+requires "flip.k"
+requires "flop.k"
+requires "gem.k"
+requires "join.k"
+requires "jug.k"
+requires "pot.k"
+requires "spot.k"
+requires "vat.k"
+requires "vow.k"
 
 module KMCD
-    imports CDP-CORE
-    imports COLLATERAL
-    imports DAI
     imports KMCD-DRIVER
-    imports RATES
-    imports SYSTEM-STABILIZER
+    imports CAT
+    imports DAI
+    imports END
+    imports FLAP
+    imports FLIP
+    imports FLOP
+    imports GEM
+    imports JOIN
+    imports JUG
+    imports POT
+    imports SPOT
+    imports VAT
+    imports VOW
 ```
 
 **TODO**: This is a HACK to get us past unparsing issues with `mcd-pyk.py`.
@@ -31,11 +47,7 @@ module KMCD
       <kmcd>
         <kmcd-driver/>
         <kmcd-state>
-          <cdp-core/>
           <dai/>
-          <stabilize/>
-          <collateral/>
-          <rates/>
           <endPhase> false </endPhase>
           <end>
             <end-addr> 0:Address </end-addr>
