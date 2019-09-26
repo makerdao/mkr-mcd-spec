@@ -47,6 +47,7 @@ module KMCD
       <kmcd>
         <kmcd-driver/>
         <kmcd-state>
+          <cat/>
           <dai/>
           <gems/>
           <jug/>
