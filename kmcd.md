@@ -49,6 +49,7 @@ module KMCD
         <kmcd-state>
           <dai/>
           <gems/>
+          <vat/>
           <endPhase> false </endPhase>
           <end>
             <end-addr> 0:Address </end-addr>
