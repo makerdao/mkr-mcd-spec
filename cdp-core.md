@@ -10,8 +10,6 @@ module CDP-CORE
     imports KMCD-DRIVER
 ```
 
-
--   `JugIlk`: `DUTY`, `RHO`.
 -   `CatIlk`: `FLIP`, `CHOP`, `LUMP`
 -   `SpotIlk`: `VALUE`, `MAT`
 
@@ -19,9 +17,6 @@ module CDP-CORE
 Cat has stuff like penalty.
 
 ```k
-    syntax JugIlk ::= Ilk ( duty: Ray, rho: Int )                    [klabel(#JugIlk), symbol]
- // ------------------------------------------------------------------------------------------
-
     syntax CatIlk ::= Ilk ( Art: Wad, rate: Ray, spot: Ray, line: Rad )           [klabel(#CatIlk), symbol]
  // -------------------------------------------------------------------------------------------------------
 
@@ -35,12 +30,6 @@ Vat CDP State
 ```k
     configuration
       <cdp-core>
-        <jug>
-          <jug-addr> 0:Address </jug-addr>
-          <jug-ilks> .Map      </jug-ilks> // mapping (bytes32 => JugIlk) String  |-> JugIlk
-          <jug-vow>  0:Address </jug-vow>  //                             Address
-          <jug-base> 0:Ray     </jug-base> //                             Ray
-        </jug>
         <cat>
           <cat-addr> 0:Address </cat-addr>
           <cat-ilks> .Map      </cat-ilks>
@@ -52,42 +41,6 @@ Vat CDP State
           <spot-par>  0:Ray     </spot-par>
         </spot>
       </cdp-core>
-```
-
-Jug Semantics
--------------
-
-```k
-    syntax MCDContract ::= JugContract
-    syntax JugContract ::= "Jug"
-    syntax MCDStep ::= JugContract "." JugStep [klabel(jugStep)]
- // ------------------------------------------------------------
-    rule contract(Jug . _) => Jug
-    rule [[ address(Jug) => ADDR ]] <jug-addr> ADDR </jug-addr>
-
-    syntax JugStep ::= JugAuthStep
-    syntax AuthStep ::= JugContract "." JugAuthStep [klabel(jugStep)]
- // -----------------------------------------------------------------
-    rule <k> Jug . _ => exception ... </k> [owise]
-
-    syntax JugAuthStep ::= InitStep
- // -------------------------------
-    rule <k> Jug . init ILK => . ... </k>
-         <currentTime> TIME </currentTime>
-         <jug-ilks> ... ILK |-> Ilk ( ILKDUTY => 1, _ => TIME ) ... </jug-ilks>
-      requires ILKDUTY ==Int 0
-```
-
-```k
-    syntax JugStep ::= "drip" String
- // --------------------------------
-    rule <k> Jug . drip ILK => call Vat . fold ILK ADDRESS ( ( (BASE +Rat ILKDUTY) ^Rat (TIME -Int ILKRHO) ) *Rat ILKRATE ) -Rat ILKRATE ... </k>
-         <currentTime> TIME </currentTime>
-         <vat-ilks> ... ILK |-> Ilk ( _, ILKRATE, _, _, _ ) ... </vat-ilks>
-         <jug-ilks> ... ILK |-> Ilk ( ILKDUTY, ILKRHO => TIME ) ... </jug-ilks>
-         <jug-vow> ADDRESS </jug-vow>
-         <jug-base> BASE </jug-base>
-      requires TIME >=Int ILKRHO
 ```
 
 Cat Semantics

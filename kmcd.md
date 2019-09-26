@@ -49,6 +49,7 @@ module KMCD
         <kmcd-state>
           <dai/>
           <gems/>
+          <jug/>
           <vat/>
           <endPhase> false </endPhase>
           <end>
