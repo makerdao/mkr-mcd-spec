@@ -398,7 +398,7 @@ Vow Semantics
     syntax VowStep ::= "flop"
  // -------------------------
     rule <k> Vow . flop
-          => Flop . kick THIS DUMP SUMP ... </k>
+          => call Flop . kick THIS DUMP SUMP ... </k>
          <this> THIS </this>
          <vat-sin>
            ...
@@ -421,7 +421,7 @@ Vow Semantics
     syntax VowStep ::= "flap"
  // -------------------------
     rule <k> Vow . flap
-          => Flap . kick BUMP 0 ... </k>
+          => call Flap . kick BUMP 0 ... </k>
          <this> THIS </this>
          <vat-sin>
            ...
