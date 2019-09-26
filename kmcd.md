@@ -50,6 +50,7 @@ module KMCD
           <dai/>
           <gems/>
           <jug/>
+          <spot/>
           <vat/>
           <endPhase> false </endPhase>
           <end>
