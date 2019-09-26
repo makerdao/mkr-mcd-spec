@@ -48,6 +48,7 @@ module KMCD
         <kmcd-driver/>
         <kmcd-state>
           <dai/>
+          <gems/>
           <endPhase> false </endPhase>
           <end>
             <end-addr> 0:Address </end-addr>
