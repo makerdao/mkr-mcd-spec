@@ -49,6 +49,7 @@ module KMCD
         <kmcd-state>
           <cat/>
           <dai/>
+          <flap-state/>
           <gems/>
           <jug/>
           <spot/>
