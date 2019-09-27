@@ -51,6 +51,7 @@ module KMCD
           <dai/>
           <flap-state/>
           <flips/>
+          <flop-state/>
           <gems/>
           <jug/>
           <spot/>
