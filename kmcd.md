@@ -122,7 +122,7 @@ End Semantics
           => call Vat . suck address(Vow) address(Vow) TAB
           ~> call Vat . suck address(Vow) THIS BID
           ~> call Vat . hope address(Flip ILK)
-	  ~> call Flip ILK . yank ID
+          ~> call Flip ILK . yank ID
           ~> call Vat . grab ILK USR THIS address(Vow) LOT (TAB /Rat RATE) ... </k>
          <this> THIS </this>
          <end-tag>
@@ -232,6 +232,7 @@ End Semantics
            ...
          </vat-ilks>
       requires DEBT =/=Rat 0
+       andBool ART *Rat RATE *Rat TAG >=Rat GAP
        andBool notBool ILK in_keys(FIX)
 
     syntax EndStep ::= "pack" Wad
