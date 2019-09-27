@@ -58,6 +58,7 @@ module KMCD
           <pot/>
           <spot/>
           <vat/>
+          <vow/>
           <endPhase> false </endPhase>
           <end>
             <end-addr> 0:Address </end-addr>
