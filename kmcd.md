@@ -53,6 +53,7 @@ module KMCD
           <flips/>
           <flop-state/>
           <gems/>
+          <join-state/>
           <jug/>
           <pot/>
           <spot/>
