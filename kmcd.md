@@ -54,6 +54,7 @@ module KMCD
           <flop-state/>
           <gems/>
           <jug/>
+          <pot/>
           <spot/>
           <vat/>
           <endPhase> false </endPhase>
