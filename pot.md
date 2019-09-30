@@ -1,28 +1,33 @@
-Rate Setting
-============
+```k
+requires "kmcd-driver.k"
+requires "vat.k"
 
-Rates are set by external oracles, which are modelled here.
+module POT
+    imports KMCD-DRIVER
+    imports VAT
+```
+
+Pot Configuration
+-----------------
 
 ```k
-requires "cdp-core.k"
-
-module RATES
-    imports CDP-CORE
-
     configuration
-      <rates>
-        <pot>
-          <pot-addr> 0:Address </pot-addr>
-          <pot-pies> .Map      </pot-pies> // mapping (address => uint256) Address |-> Wad
-          <pot-pie>  0:Wad     </pot-pie>
-          <pot-dsr>  1:Ray     </pot-dsr>
-          <pot-chi>  1:Rat     </pot-chi> // arbitrary precision
-          <pot-vow>  0:Address </pot-vow>
-          <pot-rho>  0         </pot-rho>
-          <pot-live> true      </pot-live>
-        </pot>
-      </rates>
+      <pot>
+        <pot-addr> 0:Address </pot-addr>
+        <pot-pies> .Map      </pot-pies> // mapping (address => uint256) Address |-> Wad
+        <pot-pie>  0:Wad     </pot-pie>
+        <pot-dsr>  1:Ray     </pot-dsr>
+        <pot-chi>  1:Rat     </pot-chi> // arbitrary precision
+        <pot-vow>  0:Address </pot-vow>
+        <pot-rho>  0         </pot-rho>
+        <pot-live> true      </pot-live>
+      </pot>
+```
 
+Pot Semantics
+-------------
+
+```k
     syntax MCDContract ::= PotContract
     syntax PotContract ::= "Pot"
     syntax MCDStep ::= PotContract "." PotStep [klabel(potStep)]
@@ -74,6 +79,8 @@ module RATES
     rule <k> Pot . cage => . ... </k>
          <pot-live> _ => false </pot-live>
          <pot-dsr> _ => 1 </pot-dsr>
+```
 
+```k
 endmodule
 ```
