@@ -78,7 +78,7 @@ module COLLATERAL
 
     syntax GemStep ::= "pull" Address Wad
  // -------------------------------------
-    rule <k> Gem _ . (push ACCTSRC VALUE => transferFrom ACCTSRC MSGSENDER VALUE) ... </k>
+    rule <k> Gem _ . (pull ACCTSRC VALUE => transferFrom ACCTSRC MSGSENDER VALUE) ... </k>
          <msg-sender> MSGSENDER </msg-sender>
 
     syntax GemStep ::= "transfer" Address Wad
