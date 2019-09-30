@@ -8,8 +8,8 @@ module FLIP
 ```
 
 ```k
-    syntax Bid ::= Bid ( bid: Rad, lot: Wad, guy: Address, tic: Int, end: Int, usr: Address, gal: Address, tab: Rad )
- // -----------------------------------------------------------------------------------------------------------------
+    syntax Bid ::= FlipBid ( bid: Rad, lot: Wad, guy: Address, tic: Int, end: Int, usr: Address, gal: Address, tab: Rad )
+ // ---------------------------------------------------------------------------------------------------------------------
 ```
 
 Flip Configuration
@@ -21,7 +21,7 @@ Flip Configuration
         <flip multiplicity="*" type="Map">
           <flip-ilk>   ""           </flip-ilk>
           <flip-addr>  0:Address    </flip-addr>
-          <flip-bids>  .Map         </flip-bids> // mapping (uint => Bid)     Int     |-> Bid
+          <flip-bids>  .Map         </flip-bids> // mapping (uint => Bid)     Int     |-> FlipBid
           <flip-beg>   105 /Rat 100 </flip-beg>  // Minimum Bid Increase
           <flip-ttl>   3 hours      </flip-ttl>  // Single Bid Lifetime
           <flip-tau>   2 days       </flip-tau>  // Total Auction Length
@@ -58,7 +58,7 @@ Flip Semantics
          <flip-tau> TAU </flip-tau>
          <flip-kicks> KICKS => KICKS +Int 1 </flip-kicks>
          <flip-bids>... .Map =>
-           KICKS +Int 1 |-> Bid(...
+           KICKS +Int 1 |-> FlipBid(...
                              bid: BID,
                              lot: LOT,
                              guy: MSGSENDER,
@@ -76,7 +76,7 @@ Flip Semantics
          <flip-ilk> ILK </flip-ilk>
          <flip-tau> TAU </flip-tau>
          <flip-bids>...
-           ID |-> Bid(... tic: TIC, end: END => NOW +Int TAU)
+           ID |-> FlipBid(... tic: TIC, end: END => NOW +Int TAU)
          ...</flip-bids>
       requires END  <Int NOW
        andBool TIC ==Int 0
@@ -92,13 +92,13 @@ Flip Semantics
          <flip-beg> BEG </flip-beg>
          <flip-ttl> TTL </flip-ttl>
          <flip-bids>...
-           ID |-> Bid(... bid: BID' => BID,
-                          lot: LOT',
-                          guy: GUY => MSGSENDER,
-                          tic: TIC => NOW +Int TTL,
-                          end: END,
-                          gal: GAL,
-                          tab: TAB)
+           ID |-> FlipBid(... bid: BID' => BID,
+                              lot: LOT',
+                              guy: GUY => MSGSENDER,
+                              tic: TIC => NOW +Int TTL,
+                              end: END,
+                              gal: GAL,
+                              tab: TAB)
          ...</flip-bids>
       requires GUY =/=K 0
        andBool (TIC >Int NOW orBool TIC ==Int 0)
@@ -120,13 +120,13 @@ Flip Semantics
          <flip-beg> BEG </flip-beg>
          <flip-ttl> TTL </flip-ttl>
          <flip-bids>...
-           ID |-> Bid(... bid: BID',
-                          lot: LOT' => LOT,
-                          guy: GUY => MSGSENDER,
-                          tic: TIC => NOW +Int TTL,
-                          end: END,
-                          usr: USR,
-                          tab: TAB)
+           ID |-> FlipBid(... bid: BID',
+                              lot: LOT' => LOT,
+                              guy: GUY => MSGSENDER,
+                              tic: TIC => NOW +Int TTL,
+                              end: END,
+                              usr: USR,
+                              tab: TAB)
          ...</flip-bids>
       requires GUY =/=K 0
        andBool (TIC >Int NOW orBool TIC ==Int 0)
@@ -143,7 +143,7 @@ Flip Semantics
          <currentTime> NOW </currentTime>
          <flip-ilk> ILK </flip-ilk>
          <flip-bids>...
-           ID |-> Bid(... lot: LOT, guy: GUY, tic: TIC, end: END) => .Map
+           ID |-> FlipBid(... lot: LOT, guy: GUY, tic: TIC, end: END) => .Map
          ...</flip-bids>
       requires TIC =/=Int 0
        andBool (TIC <Int NOW orBool END <Int NOW)
@@ -157,7 +157,7 @@ Flip Semantics
          <this> THIS </this>
          <flip-ilk> ILK </flip-ilk>
          <flip-bids>...
-           ID |-> Bid(... bid: BID, lot: LOT, guy: GUY, tab: TAB) => .Map
+           ID |-> FlipBid(... bid: BID, lot: LOT, guy: GUY, tab: TAB) => .Map
          ...</flip-bids>
       requires GUY =/=K 0 andBool BID <Rat TAB
 ```

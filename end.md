@@ -113,7 +113,7 @@ End Semantics
          <flip-ilk> ILK </flip-ilk>
          <flip-bids>
            ...
-           ID |-> Bid(... bid: BID, lot: LOT, usr: USR, tab: TAB)
+           ID |-> FlipBid(... bid: BID, lot: LOT, usr: USR, tab: TAB)
            ...
          </flip-bids>
       requires TAG =/=Rat 0

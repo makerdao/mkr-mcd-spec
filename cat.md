@@ -5,14 +5,9 @@ module CAT
     imports KMCD-DRIVER
 ```
 
--   `CatIlk`: `FLIP`, `CHOP`, `LUMP`
-
-`Ilk` is a collateral with certain risk parameters.
-Cat has stuff like penalty.
-
 ```k
-    syntax CatIlk ::= Ilk ( Art: Wad, rate: Ray, spot: Ray, line: Rad )           [klabel(#CatIlk), symbol]
- // -------------------------------------------------------------------------------------------------------
+    syntax CatIlk ::= Ilk ( Art: Wad, rate: Ray, spot: Ray, line: Rad ) [klabel(#CatIlk), symbol]
+ // ---------------------------------------------------------------------------------------------
 ```
 
 Cat Configuration

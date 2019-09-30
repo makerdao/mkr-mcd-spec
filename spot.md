@@ -9,6 +9,8 @@ module SPOT
 
 -   `SpotIlk`: `VALUE`, `MAT`
 
+`pip` represents the value of the Ilk as returned by a Pip (oracle)
+
 ```k
     syntax SpotIlk ::= SpotIlk ( pip: MaybeWad, mat: Ray )            [klabel(#SpotIlk), symbol]
  // --------------------------------------------------------------------------------------------
@@ -46,13 +48,17 @@ Spot Semantics
     syntax SpotStep ::= "poke" String
  // ---------------------------------
     rule <k> Spot . poke ILK => . ... </k>
-         <vat-ilks> ... ILK |-> Ilk ( _, _, ( _ => (VALUE /Rat PAR) /Rat MAT ), _, _ ) ... </vat-ilks>
-         <spot-ilks> ... ILK |-> SpotIlk ( VALUE, MAT ) ... </spot-ilks>
+         <vat-ilks>...
+           ILK |-> Ilk (... spot: _ => (VALUE /Rat PAR) /Rat MAT )
+         ...</vat-ilks>
+         <spot-ilks>...
+           ILK |-> SpotIlk (... pip: VALUE, mat: MAT )
+         ...</spot-ilks>
          <spot-par> PAR </spot-par>
       requires VALUE =/=K .Wad
 
     rule <k> Spot . poke ILK => . ... </k>
-         <spot-ilks> ... ILK |-> SpotIlk ( .Wad, _ ) ... </spot-ilks>
+         <spot-ilks> ... ILK |-> SpotIlk (... pip: .Wad) ... </spot-ilks>
 ```
 
 ```k
