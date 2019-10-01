@@ -70,7 +70,7 @@ MAIN_MODULE    := KMCD
 SYNTAX_MODULE  := $(MAIN_MODULE)
 MAIN_DEFN_FILE := kmcd
 
-KOMPILE_OPTS      ?=
+KOMPILE_OPTS      ?= --emit-json
 LLVM_KOMPILE_OPTS := $(KOMPILE_OPTS) -ccopt -O2
 
 k_files := $(MAIN_DEFN_FILE).k kmcd.k kmcd-driver.k cat.k dai.k end.k flap.k flip.k flop.k gem.k join.k jug.k pot.k spot.k vat.k vow.k
