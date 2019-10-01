@@ -141,10 +141,6 @@ test: test-python-config test-python-run
 test-python-config:
 	./mcd-pyk.py
 
-test-python-run: deps/sneak-tx-tracking/results.json
+test-python-run: tests/sneak-tx.json
 	./mcd-pyk.py $<
-
-deps/sneak-tx-tracking/results.json:
-	rm -rf deps/sneak-tx-tracking
-	git clone 'ssh://github.com/makerdao/sneak-tx-tracking' deps/sneak-tx-tracking
 
