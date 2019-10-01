@@ -57,13 +57,7 @@ def buildStep(inputCall):
 
 MCD_symbols = pyk.buildSymbolTable(MCD_definition_llvm)
 
-vat_functions = [ 'auth' , 'cage_' , 'deny_' , 'drip_' , 'flux____' , 'fold___' , 'fork_____' , 'frob______' , 'grab______' , 'heal_' , 'hope_' , 'init_' , 'move___' , 'nope_' , 'rely_' , 'slip___' , 'suck___' , 'wish_' ]
-vat_functions_without_underbars = [ vFunc.rstrip('_') for vFunc in vat_functions ]
-
 MCD_symbols [ '<_,_>Rat_RAT-COMMON_Rat_Int_Int' ] = pyk.underbarUnparsing('_/Rat_')
-
-for vat_function in vat_functions:
-    MCD_symbols[vat_function + '_MKR-MCD_'] = pyk.underbarUnparsing(vat_function)
 
 def get_init_config():
     kast_json = { 'format': 'KAST', 'version': 1, 'term': KConstant('.MCDSteps_KMCD-DRIVER_MCDSteps') }
@@ -107,7 +101,7 @@ if __name__ == '__main__':
             if scrape[txKey]['status'] != 'ok':
                 continue
             tx_result = scrape[txKey]['response']
-            tx_calls = [ call for call in tx_result['calls'] if call['contract_name'] == 'Vat' and call['function_name'] in vat_functions_without_underbars ]
+            tx_calls = tx_result['calls']
             if len(tx_calls) > 0:
                 txs.append({ 'calls': tx_calls, 'state_diffs': tx_result['state_diffs'] })
 
