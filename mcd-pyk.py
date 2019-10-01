@@ -8,9 +8,7 @@ import tempfile
 from functools import reduce
 
 import pyk
-
-from pyk.kast      import combineDicts, appliedLabelStr, constLabel, underbarUnparsing, K_symbols, KApply, KConstant, KSequence, KVariable, KToken, _notif, _warning, _fatal
-from pyk.kastManip import substitute, prettyPrintKast
+from pyk import KApply, KConstant, KSequence, KVariable, KToken, _notif, _warning, _fatal
 
 def printerr(msg):
     sys.stderr.write(msg + '\n')
@@ -26,6 +24,8 @@ def kastJSON(inputJSON, *kastArgs):
 
 def krunJSON(inputJSON, *krunArgs):
     return pyk.krunJSON('.build/defn/llvm', inputJSON, krunArgs = list(krunArgs))
+
+MCD_definition_llvm = pyk.readKastTerm('.build/defn/llvm/kmcd-kompiled/compiled.json')
 
 intToken     = lambda x: KToken(str(x), 'Int')
 boolToken    = lambda x: KToken(str(x).lower(), 'Bool')
@@ -55,19 +55,18 @@ def buildStep(inputCall):
     function_klabel = function_name + '_'.join(['' for i in arguments]) + '_MKR-MCD_'
     return KApply(contract_name + 'Step', [KApply(function_klabel, arguments)])
 
+MCD_symbols = pyk.buildSymbolTable(MCD_definition_llvm)
+
 vat_functions = [ 'auth' , 'cage_' , 'deny_' , 'drip_' , 'flux____' , 'fold___' , 'fork_____' , 'frob______' , 'grab______' , 'heal_' , 'hope_' , 'init_' , 'move___' , 'nope_' , 'rely_' , 'slip___' , 'suck___' , 'wish_' ]
 vat_functions_without_underbars = [ vFunc.rstrip('_') for vFunc in vat_functions ]
 
-MKR_MCD_symbols = { '.List'             : constLabel('.List')
-                  , '.MCDStep_MKR-MCD_' : constLabel('.MCDStep')
-                  , 'MCDSteps'          : underbarUnparsing('__')
-                  , 'VatStep'           : underbarUnparsing('Vat ._')
-                  }
+MCD_symbols [ '.List'             ] = pyk.constLabel('.List')
+MCD_symbols [ '.MCDStep_MKR-MCD_' ] = pyk.constLabel('.MCDStep')
+MCD_symbols [ 'MCDSteps'          ] = pyk.underbarUnparsing('__')
+MCD_symbols [ 'VatStep'           ] = pyk.underbarUnparsing('Vat ._')
 
 for vat_function in vat_functions:
-    MKR_MCD_symbols[vat_function + '_MKR-MCD_'] = underbarUnparsing(vat_function)
-
-ALL_symbols = combineDicts(K_symbols, MKR_MCD_symbols)
+    MCD_symbols[vat_function + '_MKR-MCD_'] = pyk.underbarUnparsing(vat_function)
 
 def get_init_config():
     kast_json = { 'format': 'KAST', 'version': 1, 'term': KConstant('.MCDSteps_KMCD-DRIVER_MCDSteps') }
@@ -75,7 +74,7 @@ def get_init_config():
     return pyk.splitConfigFrom(init_config)
 
 (symbolic_configuration, init_cells) = get_init_config()
-initial_configuration = substitute(symbolic_configuration, init_cells)
+initial_configuration = pyk.substitute(symbolic_configuration, init_cells)
 
 if __name__ == '__main__':
     if len(sys.argv) <= 1:
@@ -88,7 +87,7 @@ if __name__ == '__main__':
                 _fatal('kast returned non-zero exit code reading/printing the initial configuration')
                 sys.exit(returnCode)
 
-        fastPrinted = prettyPrintKast(initial_configuration['args'][0], ALL_symbols)
+        fastPrinted = pyk.prettyPrintKast(initial_configuration['args'][0], MCD_symbols)
         _notif('fastPrinted output')
         print(fastPrinted)
 
@@ -119,6 +118,6 @@ if __name__ == '__main__':
             print()
             print()
             _notif("calls")
-            print([ prettyPrintKast(buildStep(call), ALL_symbols) for call in tx['calls'] ])
+            print([ pyk.prettyPrintKast(buildStep(call), ALL_symbols) for call in tx['calls'] ])
             _notif("state diff")
             print(tx['state_diffs'])
