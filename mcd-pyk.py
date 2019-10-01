@@ -60,10 +60,7 @@ MCD_symbols = pyk.buildSymbolTable(MCD_definition_llvm)
 vat_functions = [ 'auth' , 'cage_' , 'deny_' , 'drip_' , 'flux____' , 'fold___' , 'fork_____' , 'frob______' , 'grab______' , 'heal_' , 'hope_' , 'init_' , 'move___' , 'nope_' , 'rely_' , 'slip___' , 'suck___' , 'wish_' ]
 vat_functions_without_underbars = [ vFunc.rstrip('_') for vFunc in vat_functions ]
 
-MCD_symbols [ '.List'             ] = pyk.constLabel('.List')
-MCD_symbols [ '.MCDStep_MKR-MCD_' ] = pyk.constLabel('.MCDStep')
-MCD_symbols [ 'MCDSteps'          ] = pyk.underbarUnparsing('__')
-MCD_symbols [ 'VatStep'           ] = pyk.underbarUnparsing('Vat ._')
+MCD_symbols [ '<_,_>Rat_RAT-COMMON_Rat_Int_Int' ] = pyk.underbarUnparsing('_/Rat_')
 
 for vat_function in vat_functions:
     MCD_symbols[vat_function + '_MKR-MCD_'] = pyk.underbarUnparsing(vat_function)
