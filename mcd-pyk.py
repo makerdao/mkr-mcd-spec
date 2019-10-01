@@ -97,18 +97,18 @@ if __name__ == '__main__':
 
         txs = []
         for txKey in scrape.keys():
-            # TODO: handle all txs
             if scrape[txKey]['status'] != 'ok':
                 continue
             tx_result = scrape[txKey]['response']
-            tx_calls = tx_result['calls']
+            tx_calls = [ call for call in tx_result['calls'] if call['contract_name'] == 'Vat' ]
             if len(tx_calls) > 0:
                 txs.append({ 'calls': tx_calls, 'state_diffs': tx_result['state_diffs'] })
+            print(tx_result)
+            print(tx_calls)
+            sys.stdout.flush()
 
         for tx in txs:
-            print()
-            print()
-            _notif("calls")
-            print([ pyk.prettyPrintKast(buildStep(call), ALL_symbols) for call in tx['calls'] ])
+            print([ pyk.prettyPrintKast(buildStep(call), MCD_symbols) for call in tx['calls'] ])
             _notif("state diff")
             print(tx['state_diffs'])
+            sys.stdout.flush()
