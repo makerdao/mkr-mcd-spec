@@ -25,6 +25,7 @@ Cat Configuration
         <cat-addr> 0:Address </cat-addr>
         <cat-ilks> .Map      </cat-ilks>
         <cat-live> true      </cat-live>
+        <cat-vow>  0:Address </cat-vow>
       </cat>
 ```
 
@@ -63,7 +64,7 @@ Cat Semantics
          <vat-urns>...
            { ILK, URN } |-> Urn( INK, ART )
          ...</vat-urns>
-         <vow-addr> VOWADDR </vow-addr>
+         <cat-vow> VOWADDR </cat-vow>
       requires (INK *Rat SPOT) <Rat (ART *Rat RATE)
 
     syntax CatAuthStep ::= "cage" [klabel(#CatCage), symbol]
