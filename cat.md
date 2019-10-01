@@ -55,13 +55,13 @@ Cat Semantics
          <this> THIS </this>
          <cat-live> true </cat-live>
          <cat-ilks>...
-           ID |-> Ilk(... flip: FLIP, chop: CHOP, lump: LUMP)
+           ILK |-> Ilk(... flip: FLIP, chop: CHOP, lump: LUMP)
          ...</cat-ilks>
          <vat-ilks>...
-           ID |-> Ilk(... rate: RATE, spot: SPOT)
+           ILK |-> Ilk(... rate: RATE, spot: SPOT)
          ...</vat-ilks>
          <vat-urns>...
-           ID |-> Urn( INK, ART )
+           { ILK, URN } |-> Urn( INK, ART )
          ...</vat-urns>
          <vow-addr> VOWADDR </vow-addr>
       requires (INK *Rat SPOT) <Rat (ART *Rat RATE)
