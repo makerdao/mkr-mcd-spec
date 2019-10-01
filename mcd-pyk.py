@@ -69,27 +69,12 @@ for vat_function in vat_functions:
 
 ALL_symbols = combineDicts(K_symbols, MKR_MCD_symbols)
 
-def make_symbolic_config_from(init_term):
-    kast_json = { 'format': 'KAST', 'version': 1, 'term': init_term }
-    (_, symbolic_configuration, _) = krunJSON(kast_json)
+def get_init_config():
+    kast_json = { 'format': 'KAST', 'version': 1, 'term': KConstant('.MCDSteps_KMCD-DRIVER_MCDSteps') }
+    (_, init_config, _) = krunJSON(kast_json)
+    return pyk.splitConfigFrom(init_config)
 
-    initial_substitution = {}
-
-    _mkCellVar = lambda label: label.replace('-', '_').replace('<', '').replace('>', '').upper() + '_CELL'
-
-    def _replaceWithVar(k):
-        if pyk.isKApply(k) and pyk.isCellKLabel(k['label']):
-            if len(k['args']) == 1 and not (pyk.isKApply(k['args'][0]) and pyk.isCellKLabel(k['args'][0]['label'])):
-                config_var = _mkCellVar(k['label'])
-                initial_substitution[config_var] = k['args'][0]
-                return KApply(k['label'], [KVariable(config_var)])
-        return k
-
-    symbolic_config = pyk.traverseBottomUp(symbolic_configuration, _replaceWithVar)
-    return (symbolic_config, initial_substitution)
-
-(symbolic_configuration, init_cells) = make_symbolic_config_from(KConstant('.MCDSteps_KMCD-DRIVER_MCDSteps'))
-
+(symbolic_configuration, init_cells) = get_init_config()
 initial_configuration = substitute(symbolic_configuration, init_cells)
 
 if __name__ == '__main__':
