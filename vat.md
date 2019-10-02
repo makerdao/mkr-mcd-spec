@@ -156,7 +156,7 @@ This is quite permissive, and would allow the account to drain all your locked c
     rule <k> Vat . hope ADDRTO => . ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <vat-can> ... MSGSENDER |-> (CANADDRS => CANADDRS SetItem(ADDRTO)) ... </vat-can>
-	 <frame-events> _ => .List </frame-events>
+         <frame-events> _ => .List </frame-events>
 
     rule <k> Vat . nope ADDRTO => . ... </k>
          <msg-sender> MSGSENDER </msg-sender>
