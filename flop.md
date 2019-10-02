@@ -46,6 +46,9 @@ Flop Semantics
     syntax AuthStep ::= FlopContract "." FlopAuthStep [klabel(flopStep)]
  // --------------------------------------------------------------------
     rule <k> Flop . _ => exception ... </k> [owise]
+
+    syntax Event ::= FlopKick(Int, Wad, Rad, Address)
+ // -------------------------------------------------
 ```
 
 - kick(address gal, uint lot, uint bid) returns (uint id)
@@ -71,6 +74,7 @@ Flop Semantics
          ...</flop-bids>
          <flop-kicks> KICKS => KICKS +Int 1 </flop-kicks>
          <flop-tau> TAU </flop-tau>
+         <frame-events> _ => ListItem(FlopKick(KICKS +Int 1, LOT, BID, GAL)) </frame-events>
 ```
 
 - tick(uint id)
