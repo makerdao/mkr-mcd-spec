@@ -45,7 +45,7 @@ Function Calls
 --------------
 
 ```k
-    syntax CallFrame ::= frame(prevSender: Address, prevEvents: List, ntinuation: K)
+    syntax CallFrame ::= frame(prevSender: Address, prevEvents: List, continuation: K)
 
     syntax AuthStep
     syntax MCDStep ::= AuthStep
