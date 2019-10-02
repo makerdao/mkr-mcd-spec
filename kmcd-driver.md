@@ -61,7 +61,7 @@ Function Calls
          <msg-sender> MSGSENDER => THIS </msg-sender>
          <this> THIS => address(contract(MCD)) </this>
          <callStack> .List => ListItem(frame(MSGSENDER, EVENTS, CONT)) ... </callStack>
-         <frame-events> EVENTS => ListItem(LogNote(MSGSENDER, AS)) </frame-events>
+         <frame-events> EVENTS => ListItem(LogNote(MSGSENDER, MCD)) </frame-events>
       requires notBool isAuthStep(MCD)
 
     syntax ReturnValue ::= Int | Rat
