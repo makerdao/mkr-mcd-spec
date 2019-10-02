@@ -22,6 +22,8 @@ module KMCD-DRIVER
           <currentTime> 0:Int </currentTime>
           <callStack> .List </callStack>
           <preState> .K </preState>
+          <events> .List </events>
+          <frame-events> .List </frame-events>
         </kmcd-driver>
 ```
 
@@ -43,7 +45,7 @@ Function Calls
 --------------
 
 ```k
-    syntax CallFrame ::= frame(prevSender: Address, continuation: K)
+    syntax CallFrame ::= frame(prevSender: Address, prevEvents: List, ntinuation: K)
 
     syntax AuthStep
     syntax MCDStep ::= AuthStep
@@ -52,12 +54,14 @@ Function Calls
     rule <k> call AS:AuthStep ~> CONT => contract(AS) . auth ~> AS </k>
          <msg-sender> MSGSENDER => THIS </msg-sender>
          <this> THIS => address(contract(AS)) </this>
-         <callStack> .List => ListItem(frame(MSGSENDER, CONT)) ... </callStack>
+         <callStack> .List => ListItem(frame(MSGSENDER, EVENTS, CONT)) ... </callStack>
+         <frame-events> EVENTS => ListItem(LogNote(MSGSENDER, AS)) </frame-events>
 
     rule <k> call MCD:MCDStep ~> CONT => MCD </k>
          <msg-sender> MSGSENDER => THIS </msg-sender>
          <this> THIS => address(contract(MCD)) </this>
-         <callStack> .List => ListItem(frame(MSGSENDER, CONT)) ... </callStack>
+         <callStack> .List => ListItem(frame(MSGSENDER, EVENTS, CONT)) ... </callStack>
+         <frame-events> EVENTS => ListItem(LogNote(MSGSENDER, AS)) </frame-events>
       requires notBool isAuthStep(MCD)
 
     syntax ReturnValue ::= Int | Rat
@@ -65,12 +69,16 @@ Function Calls
     rule <k> R:ReturnValue => R ~> CONT </k>
          <msg-sender> MSGSENDER => PREVSENDER </msg-sender>
          <this> THIS => MSGSENDER </this>
-         <callStack> ListItem(frame(PREVSENDER, CONT)) => .List ... </callStack>
+         <callStack> ListItem(frame(PREVSENDER, PREVEVENTS, CONT)) => .List ... </callStack>
+         <events> L => L EVENTS </events>
+         <frame-events> EVENTS => PREVEVENTS </frame-events>
 
     rule <k> . => CONT </k>
          <msg-sender> MSGSENDER => PREVSENDER </msg-sender>
          <this> THIS => MSGSENDER </this>
-         <callStack> ListItem(frame(PREVSENDER, CONT)) => .List ... </callStack>
+         <callStack> ListItem(frame(PREVSENDER, PREVEVENTS, CONT)) => .List ... </callStack>
+         <events> L => L EVENTS </events>
+         <frame-events> EVENTS => PREVEVENTS </frame-events>
 
     syntax MCDStep ::= "transact" MCDStep
  // -------------------------------------
@@ -81,13 +89,17 @@ Function Calls
     rule <k> exception ~> _ => exception ~> CONT </k>
          <msg-sender> MSGSENDER => PREVSENDER </msg-sender>
          <this> THIS => MSGSENDER </this>
-         <callStack> ListItem(frame(PREVSENDER, CONT)) => .List ...</callStack>
+         <callStack> ListItem(frame(PREVSENDER, PREVEVENTS, CONT)) => .List ...</callStack>
+         <frame-events> _ => PREVEVENTS </frame-events>
 
     rule <k> exception ~> dropState => popState ... </k>
          <callStack> .List </callStack>
 
     syntax MCStep ::= "pushState" | "dropState" | "popState"
  // --------------------------------------------------------
+
+    syntax Event ::= LogNote(Address, MCDStep)
+ // ------------------------------------------
 ```
 
 Authentiation
