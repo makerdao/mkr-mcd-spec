@@ -12,7 +12,7 @@ module CAT
 ```
 
 ```k
-    syntax CatIlk ::= Ilk ( flip: Address, chop: Ray, lump: Wad ) [klabel(#CatIlk), symbol]
+    syntax CatIlk ::= Ilk ( chop: Ray, lump: Wad ) [klabel(#CatIlk), symbol]
  // ---------------------------------------------------------------------------------------
 ```
 
@@ -50,13 +50,14 @@ Cat Semantics
     rule <k> Cat . bite ILK URN
           => call Vat . grab ILK URN THIS VOWADDR (-1 *Rat minRat(INK,LUMP)) (-1 *Rat minRat(ART, minRat(INK,LUMP) *Rat ART /Rat INK))
           ~> call Vow . fess (ART *Rat RATE)
-          ~> call Flip FLIP . kick URN VOWADDR (ART *Rat RATE *Rat CHOP) minRat(INK,LUMP) 0
+          ~> call Flip ILK . kick URN VOWADDR (minRat(ART, minRat(INK, LUMP) *Rat ART /Rat INK) *Rat RATE *Rat CHOP) minRat(INK,LUMP) 0
+          ~> emitBite ILK URN
          ...
          </k>
          <this> THIS </this>
          <cat-live> true </cat-live>
          <cat-ilks>...
-           ILK |-> Ilk(... flip: FLIP, chop: CHOP, lump: LUMP)
+           ILK |-> Ilk(... chop: CHOP, lump: LUMP)
          ...</cat-ilks>
          <vat-ilks>...
            ILK |-> Ilk(... rate: RATE, spot: SPOT)
@@ -66,6 +67,21 @@ Cat Semantics
          ...</vat-urns>
          <cat-vow> VOWADDR </cat-vow>
       requires (INK *Rat SPOT) <Rat (ART *Rat RATE)
+
+    syntax CatStep ::= "emitBite" String Address
+    syntax Event ::= Bite(ilk: String, urn: Address, ink: Wad, art: Wad, tab: Wad, flip: Address, id: Int)
+ // ------------------------------------------------------------------------------------------------------
+    rule <k> ID:Int ~> emitBite ILK URN => ID ... </k>
+         <frame-events> _ => ListItem(Bite(ILK, URN, minRat(INK, LUMP), minRat(ART, minRat(INK, LUMP) *Rat ART /Rat INK), minRat(ART, minRat(INK, LUMP) *Rat ART /Rat INK) *Rat RATE *Rat CHOP, address(Flip ILK), ID)) </frame-events>
+         <cat-ilks>...
+           ILK |-> Ilk(... chop: CHOP, lump: LUMP)
+         ...</cat-ilks>
+         <vat-urns>...
+           { ILK, URN } |-> Urn( INK, ART )
+         ...</vat-urns>
+         <vat-ilks>...
+           ILK |-> Ilk(... rate: RATE)
+         ...</vat-ilks>
 
     syntax CatAuthStep ::= "cage" [klabel(#CatCage), symbol]
  // --------------------------------------------------------
