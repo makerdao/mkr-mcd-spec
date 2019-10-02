@@ -46,6 +46,9 @@ Flip Semantics
  // --------------------------------------------------------------------
     rule <k> Flip _ . _ => exception ... </k> [owise]
 
+    syntax Event ::= FlipKick(Int, Wad, Rad, Rad, Address, Address)
+ // ---------------------------------------------------------------
+
     syntax FlipStep ::= "kick" Address Address Rad Wad Rad
  // ------------------------------------------------------
     rule <k> Flip ILK . kick USR GAL TAB LOT BID
@@ -68,6 +71,7 @@ Flip Semantics
                              gal: GAL,
                              tab: TAB)
          ...</flip-bids>
+         <frame-events> _ => ListItem(FlipKick(KICKS +Int 1, LOT, BID, TAB, USR, GAL)) </frame-events>
 
     syntax FlipStep ::= "tick" Int
  // ------------------------------
