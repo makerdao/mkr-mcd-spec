@@ -45,6 +45,9 @@ Flap Semantics
     syntax AuthStep ::= FlapContract "." FlapAuthStep [klabel(flapStep)]
  // --------------------------------------------------------------------
     rule <k> Flap . _ => exception ... </k> [owise]
+
+    syntax Event ::= FlapKick(Int, Rad, Wad)
+ // ----------------------------------------
 ```
 
 - kick(uint lot, uint bid) returns (uint id)
@@ -71,6 +74,7 @@ Flap Semantics
          <flap-kicks> KICKS => KICKS +Int 1 </flap-kicks>
          <flap-live> true </flap-live>
          <flap-tau> TAU </flap-tau>
+         <frame-events> _ => ListItem(FlapKick(KICKS +Int 1, LOT, BID)) </frame-events>
 ```
 
 - tick(uint id)
