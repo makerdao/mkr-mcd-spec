@@ -45,6 +45,9 @@ Spot Semantics
  // --------------------------------------------------------------------
     rule <k> Spot . _ => exception ... </k> [owise]
 
+    syntax Event ::= Poke(String, Wad, Ray)
+ // ---------------------------------------
+
     syntax SpotStep ::= "poke" String
  // ---------------------------------
     rule <k> Spot . poke ILK => . ... </k>
@@ -55,10 +58,12 @@ Spot Semantics
            ILK |-> SpotIlk (... pip: VALUE, mat: MAT )
          ...</spot-ilks>
          <spot-par> PAR </spot-par>
+         <frame-events> _ => ListItem(Poke(ILK, VALUE, VALUE /Rat PAR /Rat MAT)) </frame-events>
       requires VALUE =/=K .Wad
 
     rule <k> Spot . poke ILK => . ... </k>
          <spot-ilks> ... ILK |-> SpotIlk (... pip: .Wad) ... </spot-ilks>
+         <frame-events> _ => .List </frame-events>
 ```
 
 ```k

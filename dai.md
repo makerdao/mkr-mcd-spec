@@ -38,6 +38,10 @@ module DAI
  // -----------------------------------------------------------------
     rule <k> Dai . _ => exception ... </k> [owise]
 
+    syntax Event ::= Transfer(Address, Address, Wad)
+                   | Approval(Address, Address, Wad)
+ // ------------------------------------------------
+
     syntax DaiStep ::= "transfer" Address Wad
  // -----------------------------------------
     rule <k> Dai . transfer ACCOUNT_SRC AMOUNT => . ... </k>
@@ -47,6 +51,7 @@ module DAI
            ACCOUNT_SRC |-> BALANCE_SRC
            ...
          </dai-balance>
+         <frame-events> _ => ListItem(Transfer(ACCOUNT_SRC, ACCOUNT_SRC, AMOUNT)) </frame-events>
       requires BALANCE_SRC >=Rat AMOUNT
 
     rule <k> Dai . transfer ACCOUNT_DST AMOUNT => . ... </k>
@@ -57,6 +62,7 @@ module DAI
            ACCOUNT_DST |-> (BALANCE_DST => BALANCE_DST +Rat AMOUNT)
            ...
          </dai-balance>
+         <frame-events> _ => ListItem(Transfer(ACCOUNT_SRC, ACCOUNT_DST, AMOUNT)) </frame-events>
       requires ACCOUNT_SRC =/=K ACCOUNT_DST
        andBool BALANCE_SRC >=Rat AMOUNT
 
@@ -68,36 +74,39 @@ module DAI
            ACCOUNT_SRC |-> BALANCE_SRC
            ...
          </dai-balance>
+         <frame-events> _ => ListItem(Transfer(ACCOUNT_SRC, ACCOUNT_SRC, AMOUNT)) </frame-events>
       requires BALANCE_SRC >=Rat AMOUNT
 
     rule <k> Dai . transferFrom ACCOUNT_SRC ACCOUNT_DST AMOUNT => . ... </k>
          <dai-balance>
-          ...
-          ACCOUNT_SRC |-> (BALANCE_SRC => BALANCE_SRC -Rat AMOUNT)
-          ACCOUNT_DST |-> (BALANCE_DST => BALANCE_DST +Rat AMOUNT)
-          ...
-        </dai-balance>
-        <dai-allowance>
-          ...
-          { ACCOUNT_SRC -> ACCOUNT_DST } |-> (ALLOWANCE_SRC_DST => ALLOWANCE_SRC_DST -Rat AMOUNT)
-          ...
-        </dai-allowance>
+           ...
+           ACCOUNT_SRC |-> (BALANCE_SRC => BALANCE_SRC -Rat AMOUNT)
+           ACCOUNT_DST |-> (BALANCE_DST => BALANCE_DST +Rat AMOUNT)
+           ...
+         </dai-balance>
+         <dai-allowance>
+           ...
+           { ACCOUNT_SRC -> ACCOUNT_DST } |-> (ALLOWANCE_SRC_DST => ALLOWANCE_SRC_DST -Rat AMOUNT)
+           ...
+         </dai-allowance>
+         <frame-events> _ => ListItem(Transfer(ACCOUNT_SRC, ACCOUNT_DST, AMOUNT)) </frame-events>
       requires ACCOUNT_SRC =/=K ACCOUNT_DST
        andBool BALANCE_SRC >=Rat AMOUNT
        andBool ALLOWANCE_SRC_DST >=Rat AMOUNT
 
     rule <k> Dai . transferFrom ACCOUNT_SRC ACCOUNT_DST AMOUNT => . ... </k>
          <dai-balance>
-          ...
-          ACCOUNT_SRC |-> (BALANCE_SRC => BALANCE_SRC -Rat AMOUNT)
-          ACCOUNT_DST |-> (BALANCE_DST => BALANCE_DST +Rat AMOUNT)
-          ...
-        </dai-balance>
-        <dai-allowance>
-          ...
-          { ACCOUNT_SRC -> ACCOUNT_DST } |-> -1
-          ...
-        </dai-allowance>
+           ...
+           ACCOUNT_SRC |-> (BALANCE_SRC => BALANCE_SRC -Rat AMOUNT)
+           ACCOUNT_DST |-> (BALANCE_DST => BALANCE_DST +Rat AMOUNT)
+           ...
+         </dai-balance>
+         <dai-allowance>
+           ...
+           { ACCOUNT_SRC -> ACCOUNT_DST } |-> -1
+           ...
+         </dai-allowance>
+         <frame-events> _ => ListItem(Transfer(ACCOUNT_SRC, ACCOUNT_DST, AMOUNT)) </frame-events>
       requires ACCOUNT_SRC =/=K ACCOUNT_DST
        andBool BALANCE_SRC >=Rat AMOUNT
 
@@ -106,10 +115,11 @@ module DAI
     rule <k> Dai . mint ACCOUNT_DST AMOUNT => . ... </k>
          <dai-totalSupply> DAI_SUPPLY => DAI_SUPPLY +Rat AMOUNT </dai-totalSupply>
          <dai-balance>
-          ...
-          ACCOUNT_DST |-> (BALANCE_DST => BALANCE_DST +Rat AMOUNT)
-          ...
-        </dai-balance>
+           ...
+           ACCOUNT_DST |-> (BALANCE_DST => BALANCE_DST +Rat AMOUNT)
+           ...
+         </dai-balance>
+         <frame-events> _ => ListItem(Transfer(0, ACCOUNT_DST, AMOUNT)) </frame-events>
 
     syntax DaiStep ::= "burn" Address Wad
  // -------------------------------------
@@ -120,6 +130,7 @@ module DAI
            ACCOUNT_SRC |-> (AMOUNT_SRC => AMOUNT_SRC -Rat AMOUNT)
            ...
          </dai-balance>
+         <frame-events> _ => ListItem(Transfer(ACCOUNT_SRC, 0, AMOUNT)) </frame-events>
 
     syntax DaiStep ::= "approve" Address Wad
  // ----------------------------------------
@@ -130,6 +141,7 @@ module DAI
            { ACCOUNT_SRC -> ACCOUNT_DST } |-> (_ => AMOUNT)
            ...
          </dai-allowance>
+         <frame-events> _ => ListItem(Approval(ACCOUNT_SRC, ACCOUNT_DST, AMOUNT)) </frame-events>
 
     syntax DaiStep ::= "push" Address Wad
  // -------------------------------------
