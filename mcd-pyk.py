@@ -8,9 +8,7 @@ import tempfile
 from functools import reduce
 
 import pyk
-
-from pyk.kast      import combineDicts, appliedLabelStr, constLabel, underbarUnparsing, K_symbols, KApply, KConstant, KSequence, KVariable, KToken, _notif, _warning, _fatal
-from pyk.kastManip import substitute, prettyPrintKast
+from pyk import KApply, KConstant, KSequence, KVariable, KToken, _notif, _warning, _fatal
 
 def printerr(msg):
     sys.stderr.write(msg + '\n')
@@ -27,6 +25,8 @@ def kastJSON(inputJSON, *kastArgs):
 def krunJSON(inputJSON, *krunArgs):
     return pyk.krunJSON('.build/defn/llvm', inputJSON, krunArgs = list(krunArgs))
 
+MCD_definition_llvm = pyk.readKastTerm('.build/defn/llvm/kmcd-kompiled/compiled.json')
+
 intToken     = lambda x: KToken(str(x), 'Int')
 boolToken    = lambda x: KToken(str(x).lower(), 'Bool')
 stringToken  = lambda x: KToken('"' + str(x) + '"', 'String')
@@ -42,6 +42,9 @@ def buildArgument(arg):
         return hexIntToken(arg['value'])
     if arg['type'] == 'string':
         return stringToken(arg['value'])
+    if arg['type'] == 'uint256':
+        # TODO: Investigate rounding issues caused by casting large floats to int
+        return intToken(int(arg['value']))
     else:
         return unimplimentedToken('buildArgument: ' + str(arg))
 
@@ -52,65 +55,41 @@ def buildStep(inputCall):
     function_klabel = function_name + '_'.join(['' for i in arguments]) + '_MKR-MCD_'
     return KApply(contract_name + 'Step', [KApply(function_klabel, arguments)])
 
-vat_functions = [ 'auth' , 'cage_' , 'deny_' , 'drip_' , 'flux____' , 'fold___' , 'fork_____' , 'frob______' , 'grab______' , 'heal_' , 'hope_' , 'init_' , 'move___' , 'nope_' , 'rely_' , 'slip___' , 'suck___' , 'wish_' ]
-vat_functions_without_underbars = [ vFunc.rstrip('_') for vFunc in vat_functions ]
+MCD_symbols = pyk.buildSymbolTable(MCD_definition_llvm)
 
-MKR_MCD_symbols = { '.List'             : constLabel('.List')
-                  , '.MCDStep_MKR-MCD_' : constLabel('.MCDStep')
-                  , 'MCDSteps'          : underbarUnparsing('__')
-                  , 'VatStep'           : underbarUnparsing('Vat ._')
-                  }
+MCD_symbols [ '<_,_>Rat_RAT-COMMON_Rat_Int_Int' ] = pyk.underbarUnparsing('_/Rat_')
 
-for vat_function in vat_functions:
-    MKR_MCD_symbols[vat_function + '_MKR-MCD_'] = underbarUnparsing(vat_function)
+def get_init_config():
+    kast_json = { 'format': 'KAST', 'version': 1, 'term': KConstant('.MCDSteps_KMCD-DRIVER_MCDSteps') }
+    (_, init_config, _) = krunJSON(kast_json)
+    return pyk.splitConfigFrom(init_config)
 
-ALL_symbols = combineDicts(K_symbols, MKR_MCD_symbols)
-
-def make_symbolic_config_from(init_term):
-    kast_json = { 'format': 'KAST', 'version': 1, 'term': init_term }
-    (_, symbolic_configuration, _) = krunJSON(kast_json)
-
-    initial_substitution = {}
-
-    _mkCellVar = lambda label: label.replace('-', '_').replace('<', '').replace('>', '').upper() + '_CELL'
-
-    def _replaceWithVar(k):
-        if pyk.isKApply(k) and pyk.isCellKLabel(k['label']):
-            if len(k['args']) == 1 and not (pyk.isKApply(k['args'][0]) and pyk.isCellKLabel(k['args'][0]['label'])):
-                config_var = _mkCellVar(k['label'])
-                initial_substitution[config_var] = k['args'][0]
-                return KApply(k['label'], [KVariable(config_var)])
-        return k
-
-    pyk.traverseBottomUp(symbolic_configuration, _replaceWithVar)
-    return (symbolic_configuration, initial_substitution)
-
-(symbolic_configuration, init_cells) = make_symbolic_config_from(KConstant('.MCDSteps_KMCD-DRIVER_MCDSteps'))
-
-initial_configuration = substitute(symbolic_configuration, init_cells)
+(symbolic_configuration, init_cells) = get_init_config()
+initial_configuration = pyk.substitute(symbolic_configuration, init_cells)
 
 if __name__ == '__main__':
-    with tempfile.NamedTemporaryFile(mode = 'w') as tempf:
-        kast_json = { 'format': 'KAST', 'version': 1, 'term': initial_configuration }
-        json.dump(kast_json, tempf)
-        tempf.flush()
-        (returnCode, kastPrinted, _) = kast(tempf.name, '--input', 'json', '--output', 'pretty')
-        if returnCode != 0:
-            _fatal('kast returned non-zero exit code reading/printing the initial configuration')
-            sys.exit(returnCode)
+    if len(sys.argv) <= 1:
+        with tempfile.NamedTemporaryFile(mode = 'w') as tempf:
+            kast_json = { 'format': 'KAST', 'version': 1, 'term': initial_configuration }
+            json.dump(kast_json, tempf)
+            tempf.flush()
+            (returnCode, kastPrinted, _) = kast(tempf.name, '--input', 'json', '--output', 'pretty')
+            if returnCode != 0:
+                _fatal('kast returned non-zero exit code reading/printing the initial configuration')
+                sys.exit(returnCode)
 
-    fastPrinted = prettyPrintKast(initial_configuration['args'][0], ALL_symbols)
-    _notif('fastPrinted output')
-    print(fastPrinted)
+        fastPrinted = pyk.prettyPrintKast(initial_configuration['args'][0], MCD_symbols)
+        _notif('fastPrinted output')
+        print(fastPrinted)
 
-    kastPrinted = kastPrinted.strip()
-    if fastPrinted != kastPrinted:
-        _warning('kastPrinted and fastPrinted differ!')
-        for line in difflib.unified_diff(kastPrinted.split('\n'), fastPrinted.split('\n'), fromfile='kast', tofile='fast', lineterm='\n'):
-            sys.stderr.write(line + '\n')
-        sys.stderr.flush()
+        kastPrinted = kastPrinted.strip()
+        if fastPrinted != kastPrinted:
+            _warning('kastPrinted and fastPrinted differ!')
+            for line in difflib.unified_diff(kastPrinted.split('\n'), fastPrinted.split('\n'), fromfile='kast', tofile='fast', lineterm='\n'):
+                sys.stderr.write(line + '\n')
+            sys.stderr.flush()
 
-    if len(sys.argv) > 1:
+    elif len(sys.argv) > 1:
         input_scrape = sys.argv[1]
         scrape = None
         with open(input_scrape, 'r') as scrape_file:
@@ -118,18 +97,18 @@ if __name__ == '__main__':
 
         txs = []
         for txKey in scrape.keys():
-            # TODO: handle all txs
             if scrape[txKey]['status'] != 'ok':
                 continue
             tx_result = scrape[txKey]['response']
-            tx_calls = [ call for call in tx_result['calls'] if call['contract_name'] == 'Vat' and call['function_name'] in vat_functions_without_underbars ]
+            tx_calls = [ call for call in tx_result['calls'] if call['contract_name'] == 'Vat' ]
             if len(tx_calls) > 0:
                 txs.append({ 'calls': tx_calls, 'state_diffs': tx_result['state_diffs'] })
+            print(tx_result)
+            print(tx_calls)
+            sys.stdout.flush()
 
         for tx in txs:
-            print()
-            print()
-            _notif("calls")
-            print([ prettyPrintKast(buildStep(call), ALL_symbols) for call in tx['calls'] ])
+            print([ pyk.prettyPrintKast(buildStep(call), MCD_symbols) for call in tx['calls'] ])
             _notif("state diff")
             print(tx['state_diffs'])
+            sys.stdout.flush()

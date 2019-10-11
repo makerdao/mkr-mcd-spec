@@ -40,13 +40,13 @@ pipeline {
             '''
           }
         }
-        // stage('Run Simple Tests') {
-        //   steps {
-        //     sh '''
-        //       make test-python-run
-        //     '''
-        //   }
-        // }
+        stage('Run Simple Tests') {
+          steps {
+            sh '''
+              make test-python-run
+            '''
+          }
+        }
       }
     }
     stage('Deploy') {
