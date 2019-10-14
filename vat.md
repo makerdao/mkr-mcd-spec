@@ -8,34 +8,34 @@ module VAT
 CDP Data
 --------
 
--   `CDPID`: Identifies a given users `ilk` or `urn`.
+-   `VatIlk` tracks several parameters of a given `Ilk`:
 
-```k
-    syntax CDPID ::= "{" String "," Address "}"
- // -------------------------------------------
-```
-
--   `VatIlk`: `ART`, `RATE`, `SPOT`, `LINE`, `DUST`.
-
-Vat doesn't care about parameters for auctions, so only has stuff like debt ceiling, penalty, etc.
-Ok to say "this is the VatIlk, this is the CatIlk".
-"Could have one big `Ilk` type with all the parameters, but there are different types to project out relevant parts to those contracts."
-Getters and setters for `Ilk` should be permissioned, and different combinations of Contract + User might have `file` access to different fields (might be non-`file` access methods).
+    -   `Art`: Total debt across all `Address` for this `Ilk`.
+    -   `rate`: Debt scaling factor.
+    -   `spot`: Collateral scaling factor.
+    -   `line`: Maximum allowed scaled debt for this `Ilk`.
+    -   `dust`: Effectively zero (minimum) amount of debt allowed in this `Ilk`.
 
 ```k
     syntax VatIlk ::= Ilk ( Art: Wad , rate: Ray , spot: Ray , line: Rad , dust: Rad ) [klabel(#VatIlk), symbol]
  // ------------------------------------------------------------------------------------------------------------
 ```
 
--   `VatUrn`: `INK`, `ART`
+-   `CDPID`: Identifies a given `Ilk` (collateral type) for a given `Address` (user).
+-   `VatUrn` trackes a given CDP (collateralized-debt position) with parameters:
 
-`Urn` is individual CDP of a certain `Ilk` for a certain address (actual data that comprises a CDP).
-`Urn` has the exact same definition everywhere, so we can get away with a single definition.
+    -   `ink`: Total amount of collateral supporting the CDP.
+    -   `art`: Total amount of debt against the CDP.
 
 ```k
+    syntax CDPID ::= "{" String "," Address "}"
+ // -------------------------------------------
+
     syntax VatUrn ::= Urn ( ink: Wad , art: Wad ) [klabel(#VatUrn), symbol]
  // -----------------------------------------------------------------------
 ```
+
+### CDP Measurables
 
 -   `urnBalance` takes an `Urn` and it's corresponding `Ilk` and returns the "balance" of the `Urn` (`collateral - debt`).
 -   `urnDebt` calculates the `RATE`-scaled `ART` of an `Urn`.
