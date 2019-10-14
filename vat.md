@@ -48,8 +48,8 @@ CDP Data
  // -----------------------------------------------------------------------
     rule urnBalance(ILK, URN) => urnCollateral(ILK, URN) -Rat urnDebt(ILK, URN)
 
-    rule urnDebt      (Ilk(_ , RATE , _    , _ , _), Urn( _   , ART )) => ART *Rat RATE
-    rule urnCollateral(Ilk(_ , _    , SPOT , _ , _), Urn( INK , _   )) => INK *Rat SPOT
+    rule urnDebt      (ILK, URN) => rate(ILK) *Rat art(URN)
+    rule urnCollateral(ILK, URN) => spot(ILK) *Rat ink(URN)
 ```
 
 Vat Configuration
