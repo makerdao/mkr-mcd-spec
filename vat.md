@@ -89,13 +89,6 @@ For convenience, total Dai/Sin are tracked:
 
 ### Vat Steps
 
-Updating the `<vat>` happens in phases:
-
--   Save off the current `<vat>`,
--   Check if either (i) this step does not need admin authorization or (ii) we are authorized to take this step,
--   Check that the `Vat.check` holds, and
--   Roll back state on failure.
-
 **TODO**: Should every `notBool isAuthStep` be subject to `Vat . live`?
 
 ```k
@@ -162,6 +155,7 @@ This is quite permissive, and would allow the account to drain all your locked c
 ```
 
 -   `Vat.safe` checks that a given `Urn` of a certain `ilk` is not over-leveraged.
+-   `Vat.nondusty` checks that a given `Urn` has the minumum deposit (is effectively non-zero).
 
 ```k
     syntax VatStep ::= "safe" String Address
