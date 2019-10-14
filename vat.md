@@ -5,6 +5,26 @@ module VAT
     imports KMCD-DRIVER
 ```
 
+Vat Configuration
+-----------------
+
+```k
+    configuration
+      <vat>
+        <vat-addr> 0:Address </vat-addr>
+        <vat-can>  .Map      </vat-can>  // mapping (address (address => uint))       Address |-> Set
+        <vat-ilks> .Map      </vat-ilks> // mapping (bytes32 => Ilk)                  String  |-> VatIlk
+        <vat-urns> .Map      </vat-urns> // mapping (bytes32 => (address => Urn))     CDPID   |-> VatUrn
+        <vat-gem>  .Map      </vat-gem>  // mapping (bytes32 => (address => uint256)) CDPID   |-> Wad
+        <vat-dai>  .Map      </vat-dai>  // mapping (address => uint256)              Address |-> Rad
+        <vat-sin>  .Map      </vat-sin>  // mapping (address => uint256)              Address |-> Rad
+        <vat-debt> 0:Rad     </vat-debt> // Total Dai Issued
+        <vat-vice> 0:Rad     </vat-vice> // Total Unbacked Dai
+        <vat-Line> 0:Rad     </vat-Line> // Total Debt Ceiling
+        <vat-live> true      </vat-live> // Access Flag
+      </vat>
+```
+
 CDP Data
 --------
 
@@ -50,26 +70,6 @@ CDP Data
 
     rule urnDebt      (ILK, URN) => rate(ILK) *Rat art(URN)
     rule urnCollateral(ILK, URN) => spot(ILK) *Rat ink(URN)
-```
-
-Vat Configuration
------------------
-
-```k
-    configuration
-      <vat>
-        <vat-addr> 0:Address </vat-addr>
-        <vat-can>  .Map      </vat-can>  // mapping (address (address => uint))       Address |-> Set
-        <vat-ilks> .Map      </vat-ilks> // mapping (bytes32 => Ilk)                  String  |-> VatIlk
-        <vat-urns> .Map      </vat-urns> // mapping (bytes32 => (address => Urn))     CDPID   |-> VatUrn
-        <vat-gem>  .Map      </vat-gem>  // mapping (bytes32 => (address => uint256)) CDPID   |-> Wad
-        <vat-dai>  .Map      </vat-dai>  // mapping (address => uint256)              Address |-> Rad
-        <vat-sin>  .Map      </vat-sin>  // mapping (address => uint256)              Address |-> Rad
-        <vat-debt> 0:Rad     </vat-debt> // Total Dai Issued
-        <vat-vice> 0:Rad     </vat-vice> // Total Unbacked Dai
-        <vat-Line> 0:Rad     </vat-Line> // Total Debt Ceiling
-        <vat-live> true      </vat-live> // Access Flag
-      </vat>
 ```
 
 Vat Semantics
