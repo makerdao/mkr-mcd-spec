@@ -45,9 +45,6 @@ def krunJSON_llvm(inputJSON, *krunArgs):
 def krunJSON_haskell(inputJSON, *krunArgs):
     return pyk.krunJSON(MCD_definition_haskell_dir, inputJSON, krunArgs = list(krunArgs))
 
-def ksearchJSON_haskell(inputJSON, *krunArgs):
-    return krunJSON_haskell(inputJSON, krunArgs = list(krunArgs) + ['--search'])
-
 MCD_definition_llvm    = pyk.readKastTerm(MCD_definition_llvm_kompiled)
 MCD_definition_haskell = pyk.readKastTerm(MCD_definition_haskell_kompiled)
 
