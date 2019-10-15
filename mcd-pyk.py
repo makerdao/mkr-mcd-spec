@@ -25,7 +25,11 @@ def kastJSON(inputJSON, *kastArgs):
 def krunJSON(inputJSON, *krunArgs):
     return pyk.krunJSON('.build/defn/llvm', inputJSON, krunArgs = list(krunArgs))
 
-MCD_definition_llvm = pyk.readKastTerm('.build/defn/llvm/kmcd-kompiled/compiled.json')
+MCD_definition_llvm_dir    = '.build/defn/llvm/kmcd-bmc-kompiled/compiled.json'
+MCD_definition_haskell_dir = '.build/defn/haskell/kmcd-bmc-kompiled/compiled.json'
+
+MCD_definition_llvm    = pyk.readKastTerm(MCD_definition_llvm_dir)
+MCD_definition_haskell = pyk.readKastTerm(MCD_definition_haskell_dir)
 
 intToken     = lambda x: KToken(str(x), 'Int')
 boolToken    = lambda x: KToken(str(x).lower(), 'Bool')
