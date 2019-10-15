@@ -59,9 +59,11 @@ def buildStep(inputCall):
     function_klabel = function_name + '_'.join(['' for i in arguments]) + '_MKR-MCD_'
     return KApply(contract_name + 'Step', [KApply(function_klabel, arguments)])
 
-MCD_symbols = pyk.buildSymbolTable(MCD_definition_llvm)
+MCD_definition_llvm_symbols    = pyk.buildSymbolTable(MCD_definition_llvm)
+MCD_definition_haskell_symbols = pyk.buildSymbolTable(MCD_definition_haskell)
 
-MCD_symbols [ '<_,_>Rat_RAT-COMMON_Rat_Int_Int' ] = pyk.underbarUnparsing('_/Rat_')
+MCD_definition_llvm_symbols    [ '<_,_>Rat_RAT-COMMON_Rat_Int_Int' ] = pyk.underbarUnparsing('_/Rat_')
+MCD_definition_haskell_symbols [ '<_,_>Rat_RAT-COMMON_Rat_Int_Int' ] = pyk.underbarUnparsing('_/Rat_')
 
 def get_init_config():
     kast_json = { 'format': 'KAST', 'version': 1, 'term': KConstant('.MCDSteps_KMCD-DRIVER_MCDSteps') }
