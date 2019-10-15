@@ -80,9 +80,11 @@ Function Calls
          <events> L => L EVENTS </events>
          <frame-events> EVENTS => PREVEVENTS </frame-events>
 
-    syntax MCDStep ::= "transact" MCDStep
- // -------------------------------------
-    rule <k> transact MCD:MCDStep => pushState ~> call MCD ~> dropState ... </k>
+    syntax MCDStep ::= "transact" Address MCDStep
+ // ---------------------------------------------
+    rule <k> transact ADDR:Address MCD:MCDStep => pushState ~> call MCD ~> dropState ... </k>
+         <this> _ => ADDR </this>
+         <msg-sender> _ => ADDR </msg-sender>
 
     syntax MCDStep ::= "exception"
  // ------------------------------
