@@ -139,6 +139,9 @@ Some methods rely on a timestamp. We simulate that here.
     rule <k> TimeStep => . ... </k>
          <currentTime> TIME => TIME +Int 1 second </currentTime>
 
+    syntax priorities timeUnit > _+Int_ _-Int_ _*Int_ _/Int_
+ // --------------------------------------------------------
+
     syntax Int ::= Int "second"  [timeUnit]
                  | Int "seconds" [timeUnit]
                  | Int "minute"  [timeUnit]
@@ -147,10 +150,7 @@ Some methods rely on a timestamp. We simulate that here.
                  | Int "hours"   [timeUnit]
                  | Int "day"     [timeUnit]
                  | Int "days"    [timeUnit]
- // -------------------------
-
-    syntax priorities timeUnit > _+Int_ _-Int_ _*Int_ _/Int_
-
+ // ---------------------------------------
     rule 1 second  => 1                    [macro]
     rule N seconds => N                    [macro]
     rule 1 minute  =>        60    seconds [macro]
@@ -159,6 +159,18 @@ Some methods rely on a timestamp. We simulate that here.
     rule N hours   => N *Int 3600  seconds [macro]
     rule 1 day     =>        86400 seconds [macro]
     rule N days    => N *Int 86400 seconds [macro]
+```
+
+Collateral Increments
+---------------------
+
+```k
+    syntax priorities collateralUnit > _+Int_ _-Int_ _*Int_ _/Int_
+ // --------------------------------------------------------------
+
+    syntax Int ::= Int "ether" [collateralUnit]
+ // -------------------------------------------
+    rule N ether => N *Int 1000000000 [macro]
 ```
 
 Base Data
