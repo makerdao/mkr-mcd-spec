@@ -128,6 +128,7 @@ $(haskell_kompiled): $(haskell_files)
 	                 --directory $(haskell_dir) -I $(haskell_dir)                        \
 	                 --emit-json                                                         \
 	                 $(KOMPILE_OPTS)
+	./strip-erroneous-labels.sh $(haskell_kompiled)
 
 # Java Backend
 
