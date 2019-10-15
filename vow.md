@@ -44,7 +44,6 @@ Vow Semantics
     syntax VowStep ::= VowAuthStep
     syntax AuthStep ::= VowContract "." VowAuthStep [klabel(vowStep)]
  // -----------------------------------------------------------------
-    rule <k> Vow . _ => exception ... </k> [owise]
 
     syntax VowAuthStep ::= "fess" Rad
  // ---------------------------------

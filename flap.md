@@ -44,7 +44,6 @@ Flap Semantics
     syntax FlapStep ::= FlapAuthStep
     syntax AuthStep ::= FlapContract "." FlapAuthStep [klabel(flapStep)]
  // --------------------------------------------------------------------
-    rule <k> Flap . _ => exception ... </k> [owise]
 
     syntax Event ::= FlapKick(Int, Rad, Wad)
  // ----------------------------------------

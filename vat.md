@@ -109,7 +109,6 @@ Updating the `<vat>` happens in phases:
     syntax VatStep ::= VatAuthStep
     syntax AuthStep ::= VatContract "." VatAuthStep [klabel(vatStep)]
  // -----------------------------------------------------------------
-    rule <k> Vat . _ => exception ... </k> [owise]
 ```
 
 ### Deactivation

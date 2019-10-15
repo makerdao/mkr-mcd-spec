@@ -82,15 +82,18 @@ Function Calls
          <this> _ => ADDR </this>
          <msg-sender> _ => ADDR </msg-sender>
 
-    syntax MCDStep ::= "exception"
- // ------------------------------
-    rule <k> exception ~> _ => exception ~> CONT </k>
+    syntax MCDStep ::= MCDExceptionStep
+    syntax MCDExceptionStep ::= "exception" MCDStep
+ // -----------------------------------------------
+    rule <k> MCDSTEP:MCDStep => exception MCDSTEP ... </k> requires notBool isMCDExceptionStep(MCDSTEP) [owise]
+
+    rule <k> exception E ~> _ => exception E ~> CONT </k>
          <msg-sender> MSGSENDER => PREVSENDER </msg-sender>
          <this> THIS => MSGSENDER </this>
          <callStack> ListItem(frame(PREVSENDER, PREVEVENTS, CONT)) => .List ...</callStack>
          <frame-events> _ => PREVEVENTS </frame-events>
 
-    rule <k> exception ~> dropState => popState ... </k>
+    rule <k> exception _ ~> dropState => popState ... </k>
          <callStack> .List </callStack>
 
     syntax MCStep ::= "pushState" | "dropState" | "popState"

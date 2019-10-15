@@ -45,7 +45,6 @@ Flop Semantics
     syntax FlopStep ::= FlopAuthStep
     syntax AuthStep ::= FlopContract "." FlopAuthStep [klabel(flopStep)]
  // --------------------------------------------------------------------
-    rule <k> Flop . _ => exception ... </k> [owise]
 
     syntax Event ::= FlopKick(Int, Wad, Rad, Address)
  // -------------------------------------------------
