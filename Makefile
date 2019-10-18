@@ -22,6 +22,8 @@ K_BIN     := $(K_RELEASE)/bin
 K_LIB     := $(K_RELEASE)/lib
 export K_RELEASE
 
+K_BUILD_TYPE := Debug
+
 PATH:=$(K_BIN):$(PATH)
 export PATH
 
@@ -60,7 +62,7 @@ deps-tangle: $(PANDOC_TANGLE_SUBMODULE)/submodule.timestamp
 	touch $@
 
 $(K_SUBMODULE)/mvn.timestamp: $(K_SUBMODULE)/submodule.timestamp
-	cd $(K_SUBMODULE) && mvn package -DskipTests
+	cd $(K_SUBMODULE) && mvn package -DskipTests -Dproject.build.type=$(K_BUILD_TYPE)
 	touch $(K_SUBMODULE)/mvn.timestamp
 
 # Building
