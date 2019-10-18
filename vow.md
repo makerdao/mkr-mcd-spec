@@ -30,9 +30,6 @@ Vow Configuration
       </vow>
 ```
 
-Vow Semantics
--------------
-
 ```k
     syntax MCDContract ::= VowContract
     syntax VowContract ::= "Vow"
@@ -44,7 +41,49 @@ Vow Semantics
     syntax VowStep ::= VowAuthStep
     syntax AuthStep ::= VowContract "." VowAuthStep [klabel(vowStep)]
  // -----------------------------------------------------------------
+```
 
+File-able Data
+--------------
+
+These praameters are set by governance:
+
+-   `wait`: delay before `flog`ing is allowed.
+-   `bump`: Flap auction lot size.
+-   `hump`: Buffer on Flap auction lot size.
+-   `sump`: Flop auction initial bid.
+-   `dump`: Flop auction lot size.
+
+```k
+    syntax VowAuthStep ::= "file" VowFile
+ // -------------------------------------
+
+    syntax VowFile ::= "wait" Int
+                     | "bump" Rad
+                     | "hump" Rad
+                     | "sump" Rad
+                     | "dump" Wad
+ // -----------------------------
+    rule <k> Vow . file wait WAIT => . ... </k>
+         <vow-wait> _ => WAIT </vow-wait>
+
+    rule <k> Vow . file bump BUMP => . ... </k>
+         <vow-bump> _ => BUMP </vow-bump>
+
+    rule <k> Vow . file hump HUMP => . ... </k>
+         <vow-hump> _ => HUMP </vow-hump>
+
+    rule <k> Vow . file sump SUMP => . ... </k>
+         <vow-sump> _ => SUMP </vow-sump>
+
+    rule <k> Vow . file dump DUMP => . ... </k>
+         <vow-dump> _ => DUMP </vow-dump>
+```
+
+Vow Semantics
+-------------
+
+```k
     syntax VowAuthStep ::= "fess" Rad
  // ---------------------------------
     rule <k> Vow . fess TAB => . ... </k>
