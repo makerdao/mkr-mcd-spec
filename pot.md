@@ -24,9 +24,6 @@ Pot Configuration
       </pot>
 ```
 
-Pot Semantics
--------------
-
 ```k
     syntax MCDContract ::= PotContract
     syntax PotContract ::= "Pot"
@@ -38,7 +35,36 @@ Pot Semantics
     syntax PotStep ::= PotAuthStep
     syntax AuthStep ::= PotContract "." PotAuthStep [klabel(potStep)]
  // -----------------------------------------------------------------
+```
 
+File-able Fields
+----------------
+
+These parameters are controlled by governance:
+
+-   `dsr`: interest rate of the Dai savings accounts.
+-   `vow`: where debt is accumulated to offset user savings.
+
+```k
+    syntax PotAuthStep ::= "file" PotFile
+ // -------------------------------------
+
+    syntax PotFile ::= "dsr" Ray
+                     | "vow-file" Address
+ // -------------------------------------
+    rule <k> Pot . file dsr DSR => . ... </k>
+         <pot-dsr> _ => DSR </pot-dsr>
+
+    rule <k> Pot . file vow-file ADDR => . ... </k>
+         <pot-vow> _ => ADDR </pot-vow>
+```
+
+**TODO**: Need to use `vow-file` as name to avoid conflict with `<vow>` cell.
+
+Pot Semantics
+-------------
+
+```k
     syntax PotStep ::= "drip"
  // -------------------------
     rule <k> Pot . drip => call Vat . suck VOW THIS ( PIE *Rat CHI *Rat ( DSR ^Rat (NOW -Int RHO) -Rat 1 ) ) ... </k>
