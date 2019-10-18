@@ -22,10 +22,9 @@ module DAI
           <dai-nonce>       .Map      </dai-nonce>       // mapping (address => uint)                      Address |-> Wad
         </dai-state>
       </dai>
+```
 
-    syntax AllowanceAddress ::= "{" Address "->" Address "}"
- // --------------------------------------------------------
-
+```k
     syntax MCDContract ::= DaiContract
     syntax DaiContract ::= "Dai"
     syntax MCDStep ::= DaiContract "." DaiStep [klabel(daiStep)]
@@ -36,11 +35,33 @@ module DAI
     syntax DaiStep ::= DaiAuthStep
     syntax AuthStep ::= DaiContract "." DaiAuthStep [klabel(daiStep)]
  // -----------------------------------------------------------------
+```
 
+Dai Data
+--------
+
+-   `AllowanceAddress` is a tuple of two addresses, representing that a given account allows a certain amount to be `transferFrom`ed by another account.
+
+```k
+    syntax AllowanceAddress ::= "{" Address "->" Address "}"
+ // --------------------------------------------------------
+```
+
+Dai Events
+----------
+
+```k
     syntax Event ::= Transfer(Address, Address, Wad)
                    | Approval(Address, Address, Wad)
  // ------------------------------------------------
+```
 
+Dai Semantics
+-------------
+
+The Dai token is a mintable/burnable ERC20 token.
+
+```k
     syntax DaiStep ::= "transfer" Address Wad
  // -----------------------------------------
     rule <k> Dai . transfer ACCOUNT_SRC AMOUNT => . ... </k>
