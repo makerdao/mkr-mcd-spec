@@ -11,11 +11,6 @@ module CAT
     imports VOW
 ```
 
-```k
-    syntax CatIlk ::= Ilk ( chop: Ray, lump: Wad ) [klabel(#CatIlk), symbol]
- // ------------------------------------------------------------------------
-```
-
 Cat Configuration
 -----------------
 
@@ -29,9 +24,6 @@ Cat Configuration
       </cat>
 ```
 
-Cat Semantics
--------------
-
 ```k
     syntax MCDContract ::= CatContract
     syntax CatContract ::= "Cat"
@@ -43,7 +35,71 @@ Cat Semantics
     syntax CatStep ::= CatAuthStep
     syntax AuthStep ::= CatContract "." CatAuthStep [klabel(catStep)]
  // -----------------------------------------------------------------
+```
 
+Cat Data
+--------
+
+-   `CatIlk` tracks parameters needed for `bite`ing CDPs.
+
+    -   `chop`: liquidation penalty (scaling parameter to reduce amount of `ink` retrievable from auction upon liquidation).
+    -   `lump`: maximum liquidation lot quantity.
+
+```k
+    syntax CatIlk ::= Ilk ( chop: Ray, lump: Wad ) [klabel(#CatIlk), symbol]
+ // ------------------------------------------------------------------------
+```
+
+**NOTE**: The `flip` liquidator address is not included in `CatIlk` because we assume a unique `Flipper` for each `Ilk`.
+
+Cat Events
+----------
+
+```k
+    syntax Event ::= Bite(ilk: String, urn: Address, ink: Wad, art: Wad, tab: Wad, flip: Address, id: Int)
+ // ------------------------------------------------------------------------------------------------------
+
+    syntax CatStep ::= "emitBite" String Address Wad Wad Wad
+ // --------------------------------------------------------
+    rule <k> ID:Int ~> emitBite ILK URN INK ART TAB => ID ... </k>
+         <frame-events> _ => ListItem(Bite(ILK, URN, INK, ART, TAB, address(Flip ILK), ID)) </frame-events>
+```
+
+File-able Fields
+----------------
+
+The parameters controlled by governance are:
+
+-   `vow`: debt accumulator for bitten CDPs.
+-   `chop`: liquidation penalty.
+-   `lump`: liquidation lot quantity.
+
+```k
+    syntax CatFile ::= "vow-file" Address
+                     | "chop" String Ray
+                     | "lump" String Wad
+ // ------------------------------------
+
+    syntax CatAuthStep ::= "file" CatFile
+ // -------------------------------------
+    rule <k> Cat . file vow-file ADDR => . ... </k>
+         <cat-vow> _ => ADDR </cat-vow>
+
+    rule <k> Cat . file chop ILKID CHOP => . ... </k>
+         <cat-ilks> ... ILKID |-> Ilk ( ... chop: (_ => CHOP) ) ... </cat-ilks>
+
+    rule <k> Cat . file lump ILKID LUMP => . ... </k>
+         <cat-ilks> ... ILKID |-> Ilk ( ... lump: (_ => LUMP) ) ... </cat-ilks>
+```
+
+**NOTE**: `flip` is not fileable since we are assuming a unique liquidator for each ilk.
+
+**TODO**: Have to name it `vow-file` fileable step to avoid conflict with `<vow>` cell.
+
+Cat Semantics
+-------------
+
+```k
     syntax CatStep ::= "bite" String Address
  // ----------------------------------------
     rule <k> Cat . bite ILK URN
@@ -72,12 +128,6 @@ Cat Semantics
          ...</vat-urns>
          <cat-vow> VOWADDR </cat-vow>
       requires (INK *Rat SPOT) <Rat (URNART *Rat RATE)
-
-    syntax CatStep ::= "emitBite" String Address Wad Wad Wad
-    syntax Event ::= Bite(ilk: String, urn: Address, ink: Wad, art: Wad, tab: Wad, flip: Address, id: Int)
- // ------------------------------------------------------------------------------------------------------
-    rule <k> ID:Int ~> emitBite ILK URN INK ART TAB => ID ... </k>
-         <frame-events> _ => ListItem(Bite(ILK, URN, INK, ART, TAB, address(Flip ILK), ID)) </frame-events>
 
     syntax CatAuthStep ::= "cage" [klabel(#CatCage), symbol]
  // --------------------------------------------------------
