@@ -27,9 +27,6 @@ Join Configuration
       </join-state>
 ```
 
-Join Semantics
---------------
-
 ```k
     syntax MCDContract ::= GemJoinContract
     syntax GemJoinContract ::= "GemJoin" String
@@ -38,6 +35,18 @@ Join Semantics
     rule contract(GemJoin GEMID . _) => GemJoin GEMID
     rule [[ address(GemJoin GEMID) => ACCTJOIN ]] <gem-join-gem> GEMID </gem-join-gem> <gem-join-addr> ACCTJOIN </gem-join-addr>
 
+    syntax MCDContract ::= DaiJoinContract
+    syntax DaiJoinContract ::= "DaiJoin"
+    syntax MCDStep ::= DaiJoinContract "." DaiJoinStep [klabel(daiJoinStep)]
+ // ------------------------------------------------------------------------
+    rule contract(DaiJoin . _) => DaiJoin
+    rule [[ address(DaiJoin) => ACCTJOIN ]] <dai-join-addr> ACCTJOIN </dai-join-addr>
+```
+
+Join Semantics
+--------------
+
+```k
     syntax GemJoinStep ::= "join" Address Wad
  // -----------------------------------------
     rule <k> GemJoin GEMID . join USR AMOUNT
@@ -54,13 +63,6 @@ Join Semantics
           ~> call Gem GEMID . transfer USR AMOUNT ... </k>
          <msg-sender> MSGSENDER </msg-sender>
       requires AMOUNT >=Rat 0
-
-    syntax MCDContract ::= DaiJoinContract
-    syntax DaiJoinContract ::= "DaiJoin"
-    syntax MCDStep ::= DaiJoinContract "." DaiJoinStep [klabel(daiJoinStep)]
- // ------------------------------------------------------------------------
-    rule contract(DaiJoin . _) => DaiJoin
-    rule [[ address(DaiJoin) => ACCTJOIN ]] <dai-join-addr> ACCTJOIN </dai-join-addr>
 
     syntax DaiJoinStep ::= "join" Address Wad
  // -----------------------------------------
