@@ -52,31 +52,27 @@ Function Calls
     syntax MCDStep ::= "call" MCDStep
  // ---------------------------------
     rule <k> call AS:AuthStep ~> CONT => contract(AS) . auth ~> AS </k>
-         <msg-sender> MSGSENDER => THIS </msg-sender>
          <this> THIS => address(contract(AS)) </this>
-         <callStack> .List => ListItem(frame(MSGSENDER, EVENTS, CONT)) ... </callStack>
-         <frame-events> EVENTS => ListItem(LogNote(MSGSENDER, AS)) </frame-events>
+         <callStack> .List => ListItem(frame(THIS, EVENTS, CONT)) ... </callStack>
+         <frame-events> EVENTS => ListItem(LogNote(THIS, AS)) </frame-events>
 
     rule <k> call MCD:MCDStep ~> CONT => MCD </k>
-         <msg-sender> MSGSENDER => THIS </msg-sender>
          <this> THIS => address(contract(MCD)) </this>
-         <callStack> .List => ListItem(frame(MSGSENDER, EVENTS, CONT)) ... </callStack>
-         <frame-events> EVENTS => ListItem(LogNote(MSGSENDER, MCD)) </frame-events>
+         <callStack> .List => ListItem(frame(THIS, EVENTS, CONT)) ... </callStack>
+         <frame-events> EVENTS => ListItem(LogNote(THIS, MCD)) </frame-events>
       requires notBool isAuthStep(MCD)
 
     syntax ReturnValue ::= Int | Rat
  // --------------------------------
     rule <k> R:ReturnValue => R ~> CONT </k>
-         <msg-sender> MSGSENDER => PREVSENDER </msg-sender>
-         <this> THIS => MSGSENDER </this>
-         <callStack> ListItem(frame(PREVSENDER, PREVEVENTS, CONT)) => .List ... </callStack>
+         <this> THIS => PREVCALLER </this>
+         <callStack> ListItem(frame(PREVCALLER, PREVEVENTS, CONT)) => .List ... </callStack>
          <events> L => L EVENTS </events>
          <frame-events> EVENTS => PREVEVENTS </frame-events>
 
     rule <k> . => CONT </k>
-         <msg-sender> MSGSENDER => PREVSENDER </msg-sender>
-         <this> THIS => MSGSENDER </this>
-         <callStack> ListItem(frame(PREVSENDER, PREVEVENTS, CONT)) => .List ... </callStack>
+         <this> THIS => PREVCALLER </this>
+         <callStack> ListItem(frame(PREVCALLER, PREVEVENTS, CONT)) => .List ... </callStack>
          <events> L => L EVENTS </events>
          <frame-events> EVENTS => PREVEVENTS </frame-events>
 
