@@ -25,6 +25,35 @@ Vat Configuration
       </vat>
 ```
 
+The `Vat` implements the core accounting for MCD, allowing manipulation of `<vat-gem>`, `<vat-urns>`, `<vat-dai>`, and `<vat-sin>` in pre-specified ways.
+
+-   `<vat-gem>`: Locked collateral which can be used for collateralizing debt.
+-   `<vat-urns>`: Collateralized debt positions (CDPs), marking how much collateral is backing a given piece of debt.
+-   `<vat-dai>`: Stable-coin balances.
+-   `<vat-sin>`: Debt balances (anticoin, "negative Dai").
+
+For convenience, total Dai/Sin are tracked:
+
+-   `<vat-debt>`: Total issued `<vat-dai>`.
+-   `<vat-vice>`: Total issued `<vat-sin>`.
+
+### Vat Steps
+
+**TODO**: Should every `notBool isAuthStep` be subject to `Vat . live`?
+
+```k
+    syntax MCDContract ::= VatContract
+    syntax VatContract ::= "Vat"
+    syntax MCDStep ::= VatContract "." VatStep [klabel(vatStep)]
+ // ------------------------------------------------------------
+    rule contract(Vat . _) => Vat
+    rule [[ address(Vat) => ADDR ]] <vat-addr> ADDR </vat-addr>
+
+    syntax VatStep ::= VatAuthStep
+    syntax AuthStep ::= VatContract "." VatAuthStep [klabel(vatStep)]
+ // -----------------------------------------------------------------
+```
+
 CDP Data
 --------
 
@@ -72,37 +101,40 @@ CDP Data
     rule urnCollateral(ILK, URN) => spot(ILK) *Rat ink(URN)
 ```
 
-Vat Semantics
--------------
+File-able Fields
+----------------
 
-The `Vat` implements the core accounting for MCD, allowing manipulation of `<vat-gem>`, `<vat-urns>`, `<vat-dai>`, and `<vat-sin>` in pre-specified ways.
+The parameters controlled by governance are:
 
--   `<vat-gem>`: Locked collateral which can be used for collateralizing debt.
--   `<vat-urns>`: Collateralized debt positions (CDPs), marking how much collateral is backing a given piece of debt.
--   `<vat-dai>`: Stable-coin balances.
--   `<vat-sin>`: Debt balances (anticoin, "negative Dai").
-
-For convenience, total Dai/Sin are tracked:
-
--   `<vat-debt>`: Total issued `<vat-dai>`.
--   `<vat-vice>`: Total issued `<vat-sin>`.
-
-### Vat Steps
-
-**TODO**: Should every `notBool isAuthStep` be subject to `Vat . live`?
+-   `Line`: Global debt ceiling of the `vat`.
+-   `spot`: Market rate for a given `Ilk`.
+-   `line`: Debt ceiling for a given `Ilk`.
+-   `dust`: Essentially zero amount for a given `Ilk`.
 
 ```k
-    syntax MCDContract ::= VatContract
-    syntax VatContract ::= "Vat"
-    syntax MCDStep ::= VatContract "." VatStep [klabel(vatStep)]
- // ------------------------------------------------------------
-    rule contract(Vat . _) => Vat
-    rule [[ address(Vat) => ADDR ]] <vat-addr> ADDR </vat-addr>
+    syntax VatAuthStep ::= "file" VatFile
+ // -------------------------------------
 
-    syntax VatStep ::= VatAuthStep
-    syntax AuthStep ::= VatContract "." VatAuthStep [klabel(vatStep)]
- // -----------------------------------------------------------------
+    syntax VatFile ::= "Line" Rad
+                     | "spot" String Ray
+                     | "line" String Rad
+                     | "dust" String Rad
+ // ------------------------------------
+    rule <k> Vat . file Line LINE => . ... </k>
+         <vat-Line> _ => LINE </vat-Line>
+
+    rule <k> Vat . file spot ILKID SPOT => . ... </k>
+         <vat-ilks> ... ILKID |-> Ilk ( ... spot: (_ => SPOT) ) ... </vat-ilks>
+
+    rule <k> Vat . file line ILKID LINE => . ... </k>
+         <vat-ilks> ... ILKID |-> Ilk ( ... line: (_ => LINE) ) ... </vat-ilks>
+
+    rule <k> Vat . file dust ILKID DUST => . ... </k>
+         <vat-ilks> ... ILKID |-> Ilk ( ... dust: (_ => DUST) ) ... </vat-ilks>
 ```
+
+Vat Semantics
+-------------
 
 ### Deactivation
 
