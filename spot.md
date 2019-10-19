@@ -13,9 +13,8 @@ Spot Configuration
 ```k
     configuration
       <spot>
-        <spot-addr> 0:Address </spot-addr>
-        <spot-ilks> .Map      </spot-ilks> // mapping (bytes32 => ilk)  String  |-> SpotIlk
-        <spot-par>  0:Ray     </spot-par>
+        <spot-ilks> .Map  </spot-ilks> // mapping (bytes32 => ilk)  String  |-> SpotIlk
+        <spot-par>  0:Ray </spot-par>
       </spot>
 ```
 
@@ -25,7 +24,7 @@ Spot Configuration
     syntax MCDStep ::= SpotContract "." SpotStep [klabel(spotStep)]
  // ---------------------------------------------------------------
     rule contract(Spot . _) => Spot
-    rule [[ address(Spot) => ADDR ]] <spot-addr> ADDR </spot-addr>
+    rule address(Spot) => "SPOT"
 
     syntax SpotAuthStep
     syntax SpotStep ::= SpotAuthStep

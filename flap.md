@@ -15,7 +15,6 @@ Flap Configuration
 ```k
     configuration
       <flap-state>
-        <flap-addr>  0:Address    </flap-addr>
         <flap-bids> .Map          </flap-bids>  // mapping (uint => Bid) Int |-> FlapBid
         <flap-kicks> 0            </flap-kicks>
         <flap-live>  true         </flap-live>
@@ -34,7 +33,7 @@ Flap Semantics
     syntax MCDStep ::= FlapContract "." FlapStep [klabel(flapStep)]
  // ---------------------------------------------------------------
     rule contract(Flap . _) => Flap
-    rule [[ address(Flap) => ADDR ]] <flap-addr> ADDR </flap-addr>
+    rule address(Flap) => "FLAP"
 
     syntax FlapStep ::= FlapAuthStep
     syntax AuthStep ::= FlapContract "." FlapAuthStep [klabel(flapStep)]

@@ -14,12 +14,11 @@ module DAI
     configuration
       <dai>
         <dai-state>
-          <dai-addr>        0:Address </dai-addr>
-          <dai-totalSupply> 0:Wad      </dai-totalSupply>
-          <dai-account-id>  0         </dai-account-id>
-          <dai-balance>     .Map      </dai-balance>     // mapping (address => uint)                      Address |-> Wad
-          <dai-allowance>   .Map      </dai-allowance>   // mapping (address => mapping (address => uint))
-          <dai-nonce>       .Map      </dai-nonce>       // mapping (address => uint)                      Address |-> Wad
+          <dai-totalSupply> 0:Wad </dai-totalSupply>
+          <dai-account-id>  0     </dai-account-id>
+          <dai-balance>     .Map  </dai-balance>     // mapping (address => uint)                      Address |-> Wad
+          <dai-allowance>   .Map  </dai-allowance>   // mapping (address => mapping (address => uint))
+          <dai-nonce>       .Map  </dai-nonce>       // mapping (address => uint)                      Address |-> Wad
         </dai-state>
       </dai>
 ```
@@ -30,7 +29,7 @@ module DAI
     syntax MCDStep ::= DaiContract "." DaiStep [klabel(daiStep)]
  // ------------------------------------------------------------
     rule contract(Dai . _) => Dai
-    rule [[ address(Dai) => ADDR ]] <dai-addr> ADDR </dai-addr>
+    rule address(Dai) => "DAI"
 
     syntax DaiStep ::= DaiAuthStep
     syntax AuthStep ::= DaiContract "." DaiAuthStep [klabel(daiStep)]

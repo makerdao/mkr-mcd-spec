@@ -20,10 +20,8 @@ Join Configuration
         <gem-joins>
           <gem-join multiplicity="*" type="Map">
             <gem-join-gem> "" </gem-join-gem>
-            <gem-join-addr> 0:Address </gem-join-addr>
           </gem-join>
         </gem-joins>
-        <dai-join-addr> 0:Address </dai-join-addr>
       </join-state>
 ```
 
@@ -33,14 +31,14 @@ Join Configuration
     syntax MCDStep ::= GemJoinContract "." GemJoinStep [klabel(gemJoinStep)]
  // ------------------------------------------------------------------------
     rule contract(GemJoin GEMID . _) => GemJoin GEMID
-    rule [[ address(GemJoin GEMID) => ACCTJOIN ]] <gem-join-gem> GEMID </gem-join-gem> <gem-join-addr> ACCTJOIN </gem-join-addr>
+    rule address(GemJoin GEMID) => "GEM-JOIN-" +String GEMID
 
     syntax MCDContract ::= DaiJoinContract
     syntax DaiJoinContract ::= "DaiJoin"
     syntax MCDStep ::= DaiJoinContract "." DaiJoinStep [klabel(daiJoinStep)]
  // ------------------------------------------------------------------------
     rule contract(DaiJoin . _) => DaiJoin
-    rule [[ address(DaiJoin) => ACCTJOIN ]] <dai-join-addr> ACCTJOIN </dai-join-addr>
+    rule address(DaiJoin) => "DAI-JOIN"
 ```
 
 Join Semantics

@@ -13,7 +13,6 @@ Pot Configuration
 ```k
     configuration
       <pot>
-        <pot-addr> 0:Address </pot-addr>
         <pot-pies> .Map      </pot-pies> // mapping (address => uint256) Address |-> Wad
         <pot-pie>  0:Wad     </pot-pie>
         <pot-dsr>  1:Ray     </pot-dsr>
@@ -30,7 +29,7 @@ Pot Configuration
     syntax MCDStep ::= PotContract "." PotStep [klabel(potStep)]
  // ------------------------------------------------------------
     rule contract(Pot . _) => Pot
-    rule [[ address(Pot) => ADDR ]] <pot-addr> ADDR </pot-addr>
+    rule address(Pot) => "POT"
 
     syntax PotStep ::= PotAuthStep
     syntax AuthStep ::= PotContract "." PotAuthStep [klabel(potStep)]

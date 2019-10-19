@@ -15,7 +15,6 @@ Flop Configuration
 ```k
     configuration
       <flop-state>
-        <flop-addr>  0:Address    </flop-addr>
         <flop-bids> .Map          </flop-bids>  // mapping (uint => Bid) Int |-> FlopBid
         <flop-kicks> 0            </flop-kicks>
         <flop-live>  true         </flop-live>
@@ -32,7 +31,7 @@ Flop Configuration
     syntax MCDStep ::= FlopContract "." FlopStep [klabel(flopStep)]
  // ---------------------------------------------------------------
     rule contract(Flop . _) => Flop
-    rule [[ address(Flop) => ADDR ]] <flop-addr> ADDR </flop-addr>
+    rule address(Flop) => "FLOP"
 
     syntax FlopStep ::= FlopAuthStep
     syntax AuthStep ::= FlopContract "." FlopAuthStep [klabel(flopStep)]

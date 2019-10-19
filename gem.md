@@ -13,7 +13,6 @@ Gem Configuration
       <gems>
         <gem multiplicity="*" type="Map">
           <gem-id>       "":String </gem-id>
-          <gem-addr>     0:Address </gem-addr>
           <gem-balances> .Map      </gem-balances> // mapping (address => uint256) Address |-> Wad
         </gem>
       </gems>
@@ -25,7 +24,7 @@ Gem Configuration
     syntax MCDStep ::= GemContract "." GemStep [klabel(gemStep)]
  // ------------------------------------------------------------
     rule contract(Gem GEMID . _) => Gem GEMID
-    rule [[ address(Gem GEMID) => ACCTGEM ]] <gem-id> GEMID </gem-id> <gem-addr> ACCTGEM </gem-addr>
+    rule address(Gem GEMID) => "GEM-" +String GEMID
 
     syntax GemAuthStep
     syntax GemStep ::= GemAuthStep

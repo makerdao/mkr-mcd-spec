@@ -17,16 +17,15 @@ Vow Configuration
 ```k
     configuration
       <vow>
-        <vow-addr> 0:Address </vow-addr>
-        <vow-sins> .Map      </vow-sins> // mapping (uint256 => uint256) Int |-> Rad
-        <vow-sin>  0:Rad     </vow-sin>
-        <vow-ash>  0:Rad     </vow-ash>
-        <vow-wait> 0         </vow-wait>
-        <vow-dump> 0:Wad     </vow-dump>
-        <vow-sump> 0:Rad     </vow-sump>
-        <vow-bump> 0:Rad     </vow-bump>
-        <vow-hump> 0:Rad     </vow-hump>
-        <vow-live> true      </vow-live>
+        <vow-sins> .Map  </vow-sins> // mapping (uint256 => uint256) Int |-> Rad
+        <vow-sin>  0:Rad </vow-sin>
+        <vow-ash>  0:Rad </vow-ash>
+        <vow-wait> 0     </vow-wait>
+        <vow-dump> 0:Wad </vow-dump>
+        <vow-sump> 0:Rad </vow-sump>
+        <vow-bump> 0:Rad </vow-bump>
+        <vow-hump> 0:Rad </vow-hump>
+        <vow-live> true  </vow-live>
       </vow>
 ```
 
@@ -36,7 +35,7 @@ Vow Configuration
     syntax MCDStep ::= VowContract "." VowStep [klabel(vowStep)]
  // ------------------------------------------------------------
     rule contract(Vow . _) => Vow
-    rule [[ address(Vow) => ADDR ]] <vow-addr> ADDR </vow-addr>
+    rule address(Vow) => "VOW"
 
     syntax VowStep ::= VowAuthStep
     syntax AuthStep ::= VowContract "." VowAuthStep [klabel(vowStep)]

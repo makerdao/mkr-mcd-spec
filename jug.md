@@ -13,7 +13,6 @@ Jug Configuration
 ```k
     configuration
       <jug>
-        <jug-addr> 0:Address </jug-addr>
         <jug-ilks> .Map      </jug-ilks> // mapping (bytes32 => JugIlk) String  |-> JugIlk
         <jug-vow>  0:Address </jug-vow>  //                             Address
         <jug-base> 0:Ray     </jug-base> //                             Ray
@@ -26,7 +25,7 @@ Jug Configuration
     syntax MCDStep ::= JugContract "." JugStep [klabel(jugStep)]
  // ------------------------------------------------------------
     rule contract(Jug . _) => Jug
-    rule [[ address(Jug) => ADDR ]] <jug-addr> ADDR </jug-addr>
+    rule address(Jug) => "JUG"
 
     syntax JugStep ::= JugAuthStep
     syntax AuthStep ::= JugContract "." JugAuthStep [klabel(jugStep)]

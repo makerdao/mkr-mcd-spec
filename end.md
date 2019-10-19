@@ -25,17 +25,16 @@ End Configuration
       <end-state>
         <endPhase> false </endPhase>
         <end>
-          <end-addr> 0:Address </end-addr>
-          <end-live> true      </end-live>
-          <end-when> 0         </end-when>
-          <end-wait> 0         </end-wait>
-          <end-debt> 0:Rad      </end-debt>
-          <end-tag>  .Map      </end-tag>  // mapping (bytes32 => uint256)                      String  |-> Ray
-          <end-gap>  .Map      </end-gap>  // mapping (bytes32 => uint256)                      String  |-> Wad
-          <end-art>  .Map      </end-art>  // mapping (bytes32 => uint256)                      String  |-> Wad
-          <end-fix>  .Map      </end-fix>  // mapping (bytes32 => uint256)                      String  |-> Ray
-          <end-bag>  .Map      </end-bag>  // mapping (address => uint256)                      Address |-> Wad
-          <end-out>  .Map      </end-out>  // mapping (bytes32 => mapping (address => uint256)) CDPID   |-> Wad
+          <end-live> true  </end-live>
+          <end-when> 0     </end-when>
+          <end-wait> 0     </end-wait>
+          <end-debt> 0:Rad </end-debt>
+          <end-tag>  .Map  </end-tag>  // mapping (bytes32 => uint256)                      String  |-> Ray
+          <end-gap>  .Map  </end-gap>  // mapping (bytes32 => uint256)                      String  |-> Wad
+          <end-art>  .Map  </end-art>  // mapping (bytes32 => uint256)                      String  |-> Wad
+          <end-fix>  .Map  </end-fix>  // mapping (bytes32 => uint256)                      String  |-> Ray
+          <end-bag>  .Map  </end-bag>  // mapping (address => uint256)                      Address |-> Wad
+          <end-out>  .Map  </end-out>  // mapping (bytes32 => mapping (address => uint256)) CDPID   |-> Wad
         </end>
       </end-state>
 ```
@@ -46,7 +45,7 @@ End Configuration
     syntax MCDStep ::= EndContract "." EndStep [klabel(endStep)]
  // ------------------------------------------------------------
     rule contract(End . _) => End
-    rule [[ address(End) => ADDR ]] <end-addr> ADDR </end-addr>
+    rule address(End) => "END"
 
     syntax EndStep ::= EndAuthStep
     syntax AuthStep ::= EndContract "." EndAuthStep [klabel(endStep)]

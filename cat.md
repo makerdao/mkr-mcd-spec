@@ -17,7 +17,6 @@ Cat Configuration
 ```k
     configuration
       <cat>
-        <cat-addr> 0:Address </cat-addr>
         <cat-ilks> .Map      </cat-ilks>
         <cat-live> true      </cat-live>
         <cat-vow>  0:Address </cat-vow>
@@ -30,7 +29,7 @@ Cat Configuration
     syntax MCDStep ::= CatContract "." CatStep [klabel(catStep)]
  // ------------------------------------------------------------
     rule contract(Cat . _) => Cat
-    rule [[ address(Cat) => ADDR ]] <cat-addr> ADDR </cat-addr>
+    rule address(Cat) => "CAT"
 
     syntax CatStep ::= CatAuthStep
     syntax AuthStep ::= CatContract "." CatAuthStep [klabel(catStep)]
