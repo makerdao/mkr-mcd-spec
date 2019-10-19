@@ -73,8 +73,8 @@ Using `transact` triggers authorization checks (top-level calls should be done w
           Getting stuck is convenient for detecting bugs in tests.
 
 ```k
-    syntax MCDStep ::= "transact" Address MCDStep
- // ---------------------------------------------
+    syntax AdminStep ::= "transact" Address MCDStep
+ // -----------------------------------------------
     rule <k> transact ADDR:Address MCD:MCDStep => pushState ~> call MCD ~> dropState ... </k>
          <this> _ => ADDR </this>
          <msg-sender> _ => ADDR </msg-sender>
@@ -95,8 +95,8 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
     syntax CallFrame ::= frame(prevSender: Address, prevEvents: List, continuation: K)
  // ----------------------------------------------------------------------------------
 
-    syntax MCDStep ::= "call" MCDStep
- // ---------------------------------
+    syntax AdminStep ::= "call" MCDStep
+ // -----------------------------------
     rule <k> call MCD:MCDStep ~> CONT => MCD </k>
          <msg-sender> MSGSENDER => THIS </msg-sender>
          <this> THIS => address(contract(MCD)) </this>
@@ -119,10 +119,9 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
          <events> L => L EVENTS </events>
          <frame-events> EVENTS => PREVEVENTS </frame-events>
 
-    syntax MCDStep ::= MCDExceptionStep
-    syntax MCDExceptionStep ::= "exception" MCDStep
- // -----------------------------------------------
-    rule <k> MCDSTEP:MCDStep => exception MCDSTEP ... </k> requires notBool isMCDExceptionStep(MCDSTEP) [owise]
+    syntax AdminStep ::= "exception" MCDStep
+ // ----------------------------------------
+    rule <k> MCDSTEP:MCDStep => exception MCDSTEP ... </k> requires notBool isAdminStep(MCDSTEP) [owise]
 
     rule <k> exception E ~> _ => exception E ~> CONT </k>
          <msg-sender> MSGSENDER => PREVSENDER </msg-sender>
