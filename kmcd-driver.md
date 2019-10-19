@@ -185,6 +185,11 @@ We model everything with arbitrary precision rationals, but use sort information
 ```k
     syntax Address ::= Int | String
  // -------------------------------
+
+    syntax String ::= Address2String ( Address ) [function]
+ // -------------------------------------------------------
+    rule Address2String ( I:Int    ) => Int2String(I)
+    rule Address2String ( S:String ) => S
 ```
 
 ### Time Increments
