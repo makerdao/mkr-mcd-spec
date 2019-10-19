@@ -55,9 +55,7 @@ These parameters are controlled by governance/oracles:
 
 -   `pip`: next price to give from price feed.
 -   `mat`: liquidation ratio for a given ilk.
--   `par`: **TODO** it's unclear.
-    Wiki page says "relationship between Dai and 1 unit of value in the price. (Similar to TRFM.)", but that would seem to require storing one `par` per ilk.
-    Perhaps this means "actual price of Dai?", as in "how off-stable is Dai"?
+-   `par`: reference number for 1 Dai, used to scale target value of a single Dai (newer version of Target Rate Feedback Mechanism).
 
 ```k
     syntax SpotAuthStep ::= "file" SpotFile
