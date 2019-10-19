@@ -19,6 +19,7 @@ module KMCD-DRIVER
           <k> $PGM:MCDSteps </k>
           <msg-sender> 0:Address </msg-sender>
           <this> 0:Address </this>
+          <authorized-accounts> .Set </authorized-accounts>
           <current-time> 0:Int </current-time>
           <call-stack> .List </call-stack>
           <pre-state> .K </pre-state>
@@ -41,28 +42,44 @@ MCD Simulations
  // ---------------------------------------------------
 ```
 
+Authentiation
+-------------
+
+We have a simplified model of system authentication which bins accounts into:
+
+-   authorized: allowed to initiate transactions to any entry point in KMCD.
+-   non-authorized: only allowed to initiate transactions into non-`auth` entry points in KMCD.
+
+Note that any internal `call` does not need authorization, we assume that any internal `call` is responsible for ensuring a safe calling context.
+
+```k
+    syntax MCDStep ::= AdminStep
+ // ----------------------------
+
+    syntax AdminStep ::= "authorize" Address
+ // ----------------------------------------
+    rule <k> authorize ADDR => . ... </k>
+         <authorized-accounts> ... (.Set => SetItem(ADDR)) </authorized-accounts>
+
+    syntax AuthStep
+    syntax MCDStep ::= AuthStep
+ // ---------------------------
+```
+
 Function Calls
 --------------
 
 ```k
     syntax CallFrame ::= frame(prevSender: Address, prevEvents: List, continuation: K)
+ // ----------------------------------------------------------------------------------
 
-    syntax AuthStep
-    syntax MCDStep ::= AuthStep
     syntax MCDStep ::= "call" MCDStep
  // ---------------------------------
-    rule <k> call AS:AuthStep ~> CONT => contract(AS) . auth ~> AS </k>
-         <msg-sender> MSGSENDER => THIS </msg-sender>
-         <this> THIS => address(contract(AS)) </this>
-         <call-stack> .List => ListItem(frame(MSGSENDER, EVENTS, CONT)) ... </call-stack>
-         <frame-events> EVENTS => ListItem(LogNote(MSGSENDER, AS)) </frame-events>
-
     rule <k> call MCD:MCDStep ~> CONT => MCD </k>
          <msg-sender> MSGSENDER => THIS </msg-sender>
          <this> THIS => address(contract(MCD)) </this>
          <call-stack> .List => ListItem(frame(MSGSENDER, EVENTS, CONT)) ... </call-stack>
          <frame-events> EVENTS => ListItem(LogNote(MSGSENDER, MCD)) </frame-events>
-      requires notBool isAuthStep(MCD)
 
     syntax ReturnValue ::= Int | Rat
  // --------------------------------
@@ -85,6 +102,8 @@ Function Calls
     rule <k> transact ADDR:Address MCD:MCDStep => pushState ~> call MCD ~> dropState ... </k>
          <this> _ => ADDR </this>
          <msg-sender> _ => ADDR </msg-sender>
+         <authorized-accounts> AUTH_ACCOUNTS </authorized-accounts>
+      requires isAuthStep(MCD) impliesBool (ADDR in AUTH_ACCOUNTS)
 
     syntax MCDStep ::= MCDExceptionStep
     syntax MCDExceptionStep ::= "exception" MCDStep
@@ -105,17 +124,6 @@ Function Calls
 
     syntax Event ::= LogNote(Address, MCDStep)
  // ------------------------------------------
-```
-
-Authentiation
--------------
-
-**TODO**: authentication and wards
-
-```k
-    syntax MCDStep ::= MCDContract "." "auth"
- // -----------------------------------------
-    rule <k> MCD:MCDContract . auth => . ... </k>
 ```
 
 Simulations
