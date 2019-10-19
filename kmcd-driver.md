@@ -42,8 +42,8 @@ MCD Simulations
  // ---------------------------------------------------
 ```
 
-Authentiation
--------------
+Transaction Initiation
+----------------------
 
 We have a simplified model of system authentication which bins accounts into:
 
@@ -66,8 +66,30 @@ Note that any internal `call` does not need authorization, we assume that any in
  // ---------------------------
 ```
 
+Using `transact` triggers authorization checks (top-level calls should be done with `transact`).
+`{push|drop|pop}State` are used for state roll-back (and are given semantics once the entire configuration is present).
+
+**TODO**: Add negative semantics for `transact` when non-authorized?
+          Getting stuck is convenient for detecting bugs in tests.
+
+```k
+    syntax MCDStep ::= "transact" Address MCDStep
+ // ---------------------------------------------
+    rule <k> transact ADDR:Address MCD:MCDStep => pushState ~> call MCD ~> dropState ... </k>
+         <this> _ => ADDR </this>
+         <msg-sender> _ => ADDR </msg-sender>
+         <authorized-accounts> AUTH_ACCOUNTS </authorized-accounts>
+      requires isAuthStep(MCD) impliesBool (ADDR in AUTH_ACCOUNTS)
+
+    syntax MCStep ::= "pushState" | "dropState" | "popState"
+ // --------------------------------------------------------
+```
+
 Function Calls
 --------------
+
+Internal function calls utilize the `<call-stack>` to create call-frames and return values to their caller.
+On `exception`, the entire current call is discarded to trigger state roll-back (we assume no error handling on internal `exception`).
 
 ```k
     syntax CallFrame ::= frame(prevSender: Address, prevEvents: List, continuation: K)
@@ -97,14 +119,6 @@ Function Calls
          <events> L => L EVENTS </events>
          <frame-events> EVENTS => PREVEVENTS </frame-events>
 
-    syntax MCDStep ::= "transact" Address MCDStep
- // ---------------------------------------------
-    rule <k> transact ADDR:Address MCD:MCDStep => pushState ~> call MCD ~> dropState ... </k>
-         <this> _ => ADDR </this>
-         <msg-sender> _ => ADDR </msg-sender>
-         <authorized-accounts> AUTH_ACCOUNTS </authorized-accounts>
-      requires isAuthStep(MCD) impliesBool (ADDR in AUTH_ACCOUNTS)
-
     syntax MCDStep ::= MCDExceptionStep
     syntax MCDExceptionStep ::= "exception" MCDStep
  // -----------------------------------------------
@@ -118,10 +132,14 @@ Function Calls
 
     rule <k> exception _ ~> dropState => popState ... </k>
          <call-stack> .List </call-stack>
+```
 
-    syntax MCStep ::= "pushState" | "dropState" | "popState"
- // --------------------------------------------------------
+Log Events
+----------
 
+Most operations add to the log, which stores the address which made the call and the step which is being logged.
+
+```k
     syntax Event ::= LogNote(Address, MCDStep)
  // ------------------------------------------
 ```
@@ -136,8 +154,41 @@ Different contracts use the same names for external functions, so we declare the
  // ------------------------------
 ```
 
-Time Increments
----------------
+Base Data
+---------
+
+### Precision Quantities
+
+We model everything with arbitrary precision rationals, but use sort information to indicate the EVM code precision.
+
+-   `Wad`: basic quantities (e.g. balances). Represented in implementation as 1e18 fixed point.
+-   `Ray`: precise quantities (e.g. ratios). Represented in implementation as 1e27 fixed point.
+-   `Rad`: result of multiplying `Wad` and `Ray` (highest precision). Represented in implementation as 1e45 fixed point.
+
+```k
+    syntax Wad = Rat
+ // ----------------
+
+    syntax Ray = Rat
+ // ----------------
+
+    syntax Rad = Rat
+ // ----------------
+
+    syntax MaybeWad ::= Wad | ".Wad"
+ // --------------------------------
+```
+
+### Account addresses
+
+-   `Address`: unique identifier of an account on the network, an `Int` in real life, but `String` here for readability.
+
+```k
+    syntax Address ::= Int | String
+ // -------------------------------
+```
+
+### Time Increments
 
 Some methods rely on a timestamp. We simulate that here.
 
@@ -169,8 +220,7 @@ Some methods rely on a timestamp. We simulate that here.
     rule N days    => N *Int 86400 seconds [macro]
 ```
 
-Collateral Increments
----------------------
+### Collateral Increments
 
 ```k
     syntax priorities collateralUnit > _+Int_ _-Int_ _*Int_ _/Int_
@@ -179,31 +229,6 @@ Collateral Increments
     syntax Int ::= Int "ether" [collateralUnit]
  // -------------------------------------------
     rule N ether => N *Int 1000000000 [macro]
-```
-
-Base Data
----------
-
--   `Wad`: basic quantities (e.g. balances). Represented in implementation as 1e18 fixed point.
--   `Ray`: precise quantities (e.g. ratios). Represented in implementation as 1e27 fixed point.
--   `Rad`: result of multiplying `Wad` and `Ray` (highest precision). Represented in implementation as 1e45 fixed point.
--   `Address`: unique identifier of an account on the network.
-
-```k
-    syntax Wad = Rat
- // ----------------
-
-    syntax Ray = Rat
- // ----------------
-
-    syntax Rad = Rat
- // ----------------
-
-    syntax Address ::= Int | String
- // -------------------------------
-
-    syntax MaybeWad ::= Wad | ".Wad"
- // --------------------------------
 ```
 
 ```k
