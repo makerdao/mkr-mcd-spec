@@ -115,7 +115,7 @@ Flip Semantics
           ~> KICKS +Int 1 ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
-         <currentTime> NOW </currentTime>
+         <current-time> NOW </current-time>
          <flip-ilk> ILK </flip-ilk>
          <flip-tau> TAU </flip-tau>
          <flip-kicks> KICKS => KICKS +Int 1 </flip-kicks>
@@ -135,7 +135,7 @@ Flip Semantics
     syntax FlipStep ::= "tick" Int
  // ------------------------------
     rule <k> Flip ILK . tick ID => . ... </k>
-         <currentTime> NOW </currentTime>
+         <current-time> NOW </current-time>
          <flip-ilk> ILK </flip-ilk>
          <flip-tau> TAU </flip-tau>
          <flip-bids>...
@@ -150,7 +150,7 @@ Flip Semantics
           => call Vat . move MSGSENDER GUY BID'
           ~> call Vat . move MSGSENDER GAL (BID -Rat BID') ... </k>
          <msg-sender> MSGSENDER </msg-sender>
-         <currentTime> NOW </currentTime>
+         <current-time> NOW </current-time>
          <flip-ilk> ILK </flip-ilk>
          <flip-beg> BEG </flip-beg>
          <flip-ttl> TTL </flip-ttl>
@@ -178,7 +178,7 @@ Flip Semantics
           ~> call Vat.flux ILK THIS USR (LOT' -Rat LOT) ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
-         <currentTime> NOW </currentTime>
+         <current-time> NOW </current-time>
          <flip-ilk> ILK </flip-ilk>
          <flip-beg> BEG </flip-beg>
          <flip-ttl> TTL </flip-ttl>
@@ -203,7 +203,7 @@ Flip Semantics
  // ------------------------------
     rule <k> Flip ILK . deal ID => call Vat . flux ILK THIS GUY LOT ... </k>
          <this> THIS </this>
-         <currentTime> NOW </currentTime>
+         <current-time> NOW </current-time>
          <flip-ilk> ILK </flip-ilk>
          <flip-bids>...
            ID |-> FlipBid(... lot: LOT, guy: GUY, tic: TIC, end: END) => .Map

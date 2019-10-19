@@ -82,7 +82,7 @@ Jug Semantics
     syntax JugAuthStep ::= InitStep
  // -------------------------------
     rule <k> Jug . init ILK => . ... </k>
-         <currentTime> TIME </currentTime>
+         <current-time> TIME </current-time>
          <jug-ilks> ... ILK |-> Ilk ( ... duty: ILKDUTY => 1, rho: _ => TIME ) ... </jug-ilks>
       requires ILKDUTY ==Int 0
 ```
@@ -91,7 +91,7 @@ Jug Semantics
     syntax JugStep ::= "drip" String
  // --------------------------------
     rule <k> Jug . drip ILK => call Vat . fold ILK ADDRESS ( ( (BASE +Rat ILKDUTY) ^Rat (TIME -Int ILKRHO) ) *Rat ILKRATE ) -Rat ILKRATE ... </k>
-         <currentTime> TIME </currentTime>
+         <current-time> TIME </current-time>
          <vat-ilks> ... ILK |-> Ilk ( ... rate: ILKRATE ) ... </vat-ilks>
          <jug-ilks> ... ILK |-> Ilk ( ... duty: ILKDUTY, rho: ILKRHO => TIME ) ... </jug-ilks>
          <jug-vow> ADDRESS </jug-vow>

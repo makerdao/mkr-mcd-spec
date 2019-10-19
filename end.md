@@ -83,7 +83,7 @@ End Semantics
           ~> call Cat . cage
           ~> call Vow . cage
           ~> call Pot . cage ... </k>
-         <currentTime> NOW </currentTime>
+         <current-time> NOW </current-time>
          <end-live> true => false </end-live>
          <end-when> _ => NOW </end-when>
 
@@ -183,7 +183,7 @@ End Semantics
     syntax EndStep ::= "thaw"
  // -------------------------
     rule <k> End . thaw ... </k>
-         <currentTime> NOW </currentTime>
+         <current-time> NOW </current-time>
          <end-live> false </end-live>
          <end-debt> 0 => DEBT </end-debt>
          <end-when> WHEN </end-when>

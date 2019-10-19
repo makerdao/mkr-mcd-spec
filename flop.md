@@ -110,7 +110,7 @@ Flop Semantics
          </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
-         <currentTime> NOW </currentTime>
+         <current-time> NOW </current-time>
          <flop-live> true </flop-live>
          <flop-bids>... .Map =>
            KICKS +Int 1 |-> FlopBid(... bid: BID,
@@ -131,7 +131,7 @@ Flop Semantics
     syntax FlopStep ::= "tick" Int
  // ------------------------------
     rule <k> Flop . tick ID => . ... </k>
-         <currentTime> NOW </currentTime>
+         <current-time> NOW </current-time>
          <flop-bids> ... ID |-> FlopBid(... lot: LOT => LOT *Rat PAD, tic: 0, end: END => NOW +Int TAU ) ... </flop-bids>
          <flop-pad> PAD </flop-pad>
          <flop-tau> TAU </flop-tau>
@@ -149,7 +149,7 @@ Flop Semantics
          ...
          </k>
          <msg-sender> MSGSENDER </msg-sender>
-         <currentTime> NOW </currentTime>
+         <current-time> NOW </current-time>
          <flop-bids>...
            ID |-> FlopBid(... bid: BID',
                               lot: LOT' => LOT,
@@ -177,7 +177,7 @@ Flop Semantics
           => call Gem "MKR" . mint GUY LOT
          ...
          </k>
-         <currentTime> NOW </currentTime>
+         <current-time> NOW </current-time>
          <flop-bids>...
            ID |-> FlopBid(... lot: LOT, guy: GUY, tic: TIC, end: END) => .Map
          ...</flop-bids>

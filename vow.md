@@ -87,7 +87,7 @@ Vow Semantics
     syntax VowAuthStep ::= "fess" Rad
  // ---------------------------------
     rule <k> Vow . fess TAB => . ... </k>
-         <currentTime> NOW </currentTime>
+         <current-time> NOW </current-time>
          <vow-sins>
            ...
            NOW |-> (SIN' => SIN' +Rat TAB)
@@ -98,7 +98,7 @@ Vow Semantics
     syntax VowStep ::= "flog" Int
  // -----------------------------
     rule <k> Vow . flog ERA => . ... </k>
-         <currentTime> NOW </currentTime>
+         <current-time> NOW </current-time>
          <vow-wait> WAIT </vow-wait>
          <vow-sins>... ERA |-> (SIN' => 0) </vow-sins>
          <vow-sin> SIN => SIN -Rat SIN' </vow-sin>

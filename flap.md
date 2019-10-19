@@ -108,7 +108,7 @@ Flap Semantics
          </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
-         <currentTime> NOW </currentTime>
+         <current-time> NOW </current-time>
          <flap-bids>... .Map =>
             KICKS +Int 1 |-> FlapBid(... bid: BID,
                                          lot: LOT,
@@ -129,7 +129,7 @@ Flap Semantics
     syntax FlapStep ::= "tick" Int [klabel(FlapTick),symbol]
  // --------------------------------------------------------
     rule <k> Flap . tick ID => . ... </k>
-         <currentTime> NOW </currentTime>
+         <current-time> NOW </current-time>
          <flap-bids>...
            ID |-> FlapBid(... tic: 0, end: END => NOW +Int TAU)
          ...</flap-bids>
@@ -150,7 +150,7 @@ Flap Semantics
          </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
-         <currentTime> NOW </currentTime>
+         <current-time> NOW </current-time>
          <flap-bids>...
            ID |-> FlapBid(... bid: BID' => BID,
                               lot: LOT',
@@ -180,7 +180,7 @@ Flap Semantics
          ...
          </k>
          <this> THIS </this>
-         <currentTime> NOW </currentTime>
+         <current-time> NOW </current-time>
          <flap-bids>...
            ID |-> FlapBid(... bid: BID, lot: LOT, guy: GUY, tic: TIC, end: END) => .Map
          ...</flap-bids>

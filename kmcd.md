@@ -70,14 +70,14 @@ State Storage/Revert Semantics
 ```k
     rule <k> pushState => . ... </k>
          <kmcd-state> STATE </kmcd-state>
-         <preState> _ => <kmcd-state> STATE </kmcd-state> </preState>
+         <pre-state> _ => <kmcd-state> STATE </kmcd-state> </pre-state>
 
     rule <k> dropState => . ... </k>
-         <preState> _ => .K </preState>
+         <pre-state> _ => .K </pre-state>
 
     rule <k> popState => . ... </k>
          (_:KmcdStateCell => <kmcd-state> STATE </kmcd-state>)
-         <preState> <kmcd-state> STATE </kmcd-state> </preState>
+         <pre-state> <kmcd-state> STATE </kmcd-state> </pre-state>
 ```
 
 ```k

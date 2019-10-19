@@ -69,7 +69,7 @@ Pot Semantics
  // -------------------------
     rule <k> Pot . drip => call Vat . suck VOW THIS ( PIE *Rat CHI *Rat ( DSR ^Rat (NOW -Int RHO) -Rat 1 ) ) ... </k>
          <this> THIS </this>
-         <currentTime> NOW </currentTime>
+         <current-time> NOW </current-time>
          <pot-chi> CHI => CHI *Rat DSR ^Rat (NOW -Int RHO) </pot-chi>
          <pot-rho> RHO => NOW </pot-rho>
          <pot-dsr> DSR </pot-dsr>
@@ -82,7 +82,7 @@ Pot Semantics
  // -----------------------------
     rule <k> Pot . join WAD => call Vat . move MSGSENDER THIS ( CHI *Rat WAD ) ... </k>
          <this> THIS </this>
-         <currentTime> NOW </currentTime>
+         <current-time> NOW </current-time>
          <msg-sender> MSGSENDER </msg-sender>
          <pot-pies> ... MSGSENDER |-> ( MSGSENDER_PIE => MSGSENDER_PIE +Rat WAD ) ... </pot-pies>
          <pot-pie> PIE => PIE +Rat WAD </pot-pie>
