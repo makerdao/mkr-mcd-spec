@@ -11,19 +11,7 @@ module JOIN
     imports VAT
 ```
 
-Join Configuration
-------------------
-
-```k
-    configuration
-      <join-state>
-        <gem-joins>
-          <gem-join multiplicity="*" type="Map">
-            <gem-join-gem> "" </gem-join-gem>
-          </gem-join>
-        </gem-joins>
-      </join-state>
-```
+No extra state is needed for the joiners, since they just register accounts with the relevant `<gem>` and offer some simple functionality.
 
 ```k
     syntax MCDContract ::= GemJoinContract
