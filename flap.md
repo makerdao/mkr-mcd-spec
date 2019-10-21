@@ -9,11 +9,6 @@ module FLAP
     imports VAT
 ```
 
-```k
-    syntax Bid ::= FlapBid ( bid: Wad, lot: Rad, guy: Address, tic: Int, end: Int )
- // -------------------------------------------------------------------------------
-```
-
 Flap Configuration
 ------------------
 
@@ -44,10 +39,61 @@ Flap Semantics
     syntax FlapStep ::= FlapAuthStep
     syntax AuthStep ::= FlapContract "." FlapAuthStep [klabel(flapStep)]
  // --------------------------------------------------------------------
+```
 
+Flap Data
+---------
+
+-   `FlapBid` tracks parameters of each auction:
+
+    -   `bid`: current high bid.
+    -   `lot`: quantity being bid on.
+    -   `guy`: current high bidder.
+    -   `tic`: expiration time of auction (updated on bids).
+    -   `end`: global expiration time of auction (set at start).
+
+```k
+    syntax Bid ::= FlapBid ( bid: Wad, lot: Rad, guy: Address, tic: Int, end: Int )
+ // -------------------------------------------------------------------------------
+```
+
+File-able Fields
+----------------
+
+The parameters controlled by governance are:
+
+-   `beg`: minimum increase in bid size.
+-   `ttl`: time increase for auction duration when receiving new bids.
+-   `tau`: total auction duration length.
+
+```k
+    syntax FlapAuthStep ::= "file" FlapFile
+ // ---------------------------------------
+
+    syntax FlapFile ::= "beg" Ray
+                      | "ttl" Int
+                      | "tau" Int
+ // -----------------------------
+    rule <k> Flap . file beg BEG => . ... </k>
+         <flap-beg> _ => BEG </flap-beg>
+
+    rule <k> Flap . file ttl TTL => . ... </k>
+         <flap-ttl> _ => TTL </flap-ttl>
+
+    rule <k> Flap . file tau TAU => . ... </k>
+         <flap-tau> _ => TAU </flap-tau>
+```
+
+Flap Events
+-----------
+
+```k
     syntax Event ::= FlapKick(Int, Rad, Wad)
  // ----------------------------------------
 ```
+
+Flap Semantics
+--------------
 
 - kick(uint lot, uint bid) returns (uint id)
 - Starts a new surplus auction for a lot amount

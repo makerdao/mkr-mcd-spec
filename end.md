@@ -40,9 +40,6 @@ End Configuration
       </end-state>
 ```
 
-End Semantics
--------------
-
 ```k
     syntax MCDContract ::= EndContract
     syntax EndContract ::= "End"
@@ -54,7 +51,31 @@ End Semantics
     syntax EndStep ::= EndAuthStep
     syntax AuthStep ::= EndContract "." EndAuthStep [klabel(endStep)]
  // -----------------------------------------------------------------
+```
 
+File-able Fields
+----------------
+
+These parameters are controlled by governance:
+
+-   `wait`: time buffer on `thaw` step.
+
+```k
+    syntax EndAuthStep ::= "file" EndFile
+ // -------------------------------------
+
+    syntax EndFile ::= "wait" Int
+ // -----------------------------
+    rule <k> End . file wait WAIT => . ... </k>
+         <end-wait> _ => WAIT </end-wait>
+```
+
+**NOTE**: We have not added `file` steps for `vat`, `cat`, `vow`, `pot`, or `spot` because this model does not deal with swapping out implementations.
+
+End Semantics
+-------------
+
+```k
     syntax EndAuthStep ::= "cage"
  // -----------------------------
     rule <k> End . cage

@@ -5,53 +5,6 @@ module VAT
     imports KMCD-DRIVER
 ```
 
-CDP Data
---------
-
--   `CDPID`: Identifies a given users `ilk` or `urn`.
-
-```k
-    syntax CDPID ::= "{" String "," Address "}"
- // -------------------------------------------
-```
-
--   `VatIlk`: `ART`, `RATE`, `SPOT`, `LINE`, `DUST`.
-
-Vat doesn't care about parameters for auctions, so only has stuff like debt ceiling, penalty, etc.
-Ok to say "this is the VatIlk, this is the CatIlk".
-"Could have one big `Ilk` type with all the parameters, but there are different types to project out relevant parts to those contracts."
-Getters and setters for `Ilk` should be permissioned, and different combinations of Contract + User might have `file` access to different fields (might be non-`file` access methods).
-
-```k
-    syntax VatIlk ::= Ilk ( Art: Wad , rate: Ray , spot: Ray , line: Rad , dust: Rad ) [klabel(#VatIlk), symbol]
- // ------------------------------------------------------------------------------------------------------------
-```
-
--   `VatUrn`: `INK`, `ART`
-
-`Urn` is individual CDP of a certain `Ilk` for a certain address (actual data that comprises a CDP).
-`Urn` has the exact same definition everywhere, so we can get away with a single definition.
-
-```k
-    syntax VatUrn ::= Urn ( ink: Wad , art: Wad ) [klabel(#VatUrn), symbol]
- // -----------------------------------------------------------------------
-```
-
--   `urnBalance` takes an `Urn` and it's corresponding `Ilk` and returns the "balance" of the `Urn` (`collateral - debt`).
--   `urnDebt` calculates the `RATE`-scaled `ART` of an `Urn`.
--   `urnCollateral` calculates the `SPOT`-scaled `INK` of an `Urn`.
-
-```k
-    syntax Rad ::= urnBalance    ( VatIlk , VatUrn ) [function, functional]
-                 | urnDebt       ( VatIlk , VatUrn ) [function, functional]
-                 | urnCollateral ( VatIlk , VatUrn ) [function, functional]
- // -----------------------------------------------------------------------
-    rule urnBalance(ILK, URN) => urnCollateral(ILK, URN) -Rat urnDebt(ILK, URN)
-
-    rule urnDebt      (Ilk(_ , RATE , _    , _ , _), Urn( _   , ART )) => ART *Rat RATE
-    rule urnCollateral(Ilk(_ , _    , SPOT , _ , _), Urn( INK , _   )) => INK *Rat SPOT
-```
-
 Vat Configuration
 -----------------
 
@@ -72,9 +25,6 @@ Vat Configuration
       </vat>
 ```
 
-Vat Semantics
--------------
-
 The `Vat` implements the core accounting for MCD, allowing manipulation of `<vat-gem>`, `<vat-urns>`, `<vat-dai>`, and `<vat-sin>` in pre-specified ways.
 
 -   `<vat-gem>`: Locked collateral which can be used for collateralizing debt.
@@ -88,13 +38,6 @@ For convenience, total Dai/Sin are tracked:
 -   `<vat-vice>`: Total issued `<vat-sin>`.
 
 ### Vat Steps
-
-Updating the `<vat>` happens in phases:
-
--   Save off the current `<vat>`,
--   Check if either (i) this step does not need admin authorization or (ii) we are authorized to take this step,
--   Check that the `Vat.check` holds, and
--   Roll back state on failure.
 
 **TODO**: Should every `notBool isAuthStep` be subject to `Vat . live`?
 
@@ -110,6 +53,88 @@ Updating the `<vat>` happens in phases:
     syntax AuthStep ::= VatContract "." VatAuthStep [klabel(vatStep)]
  // -----------------------------------------------------------------
 ```
+
+CDP Data
+--------
+
+-   `VatIlk` tracks several parameters of a given `Ilk`:
+
+    -   `Art`: Total debt across all `Address` for this `Ilk`.
+    -   `rate`: Debt scaling factor.
+    -   `spot`: Collateral scaling factor.
+    -   `line`: Maximum allowed scaled debt for this `Ilk`.
+    -   `dust`: Effectively zero (minimum) amount of debt allowed in this `Ilk`.
+
+```k
+    syntax VatIlk ::= Ilk ( Art: Wad , rate: Ray , spot: Ray , line: Rad , dust: Rad ) [klabel(#VatIlk), symbol]
+ // ------------------------------------------------------------------------------------------------------------
+```
+
+-   `CDPID`: Identifies a given `Ilk` (collateral type) for a given `Address` (user).
+-   `VatUrn` trackes a given CDP (collateralized-debt position) with parameters:
+
+    -   `ink`: Total amount of collateral supporting the CDP.
+    -   `art`: Total amount of debt against the CDP.
+
+```k
+    syntax CDPID ::= "{" String "," Address "}"
+ // -------------------------------------------
+
+    syntax VatUrn ::= Urn ( ink: Wad , art: Wad ) [klabel(#VatUrn), symbol]
+ // -----------------------------------------------------------------------
+```
+
+### CDP Measurables
+
+-   `urnBalance` takes an `Urn` and it's corresponding `Ilk` and returns the "balance" of the `Urn` (`collateral - debt`).
+-   `urnDebt` calculates the `RATE`-scaled `ART` of an `Urn`.
+-   `urnCollateral` calculates the `SPOT`-scaled `INK` of an `Urn`.
+
+```k
+    syntax Rad ::= urnBalance    ( VatIlk , VatUrn ) [function, functional]
+                 | urnDebt       ( VatIlk , VatUrn ) [function, functional]
+                 | urnCollateral ( VatIlk , VatUrn ) [function, functional]
+ // -----------------------------------------------------------------------
+    rule urnBalance(ILK, URN) => urnCollateral(ILK, URN) -Rat urnDebt(ILK, URN)
+
+    rule urnDebt      (ILK, URN) => rate(ILK) *Rat art(URN)
+    rule urnCollateral(ILK, URN) => spot(ILK) *Rat ink(URN)
+```
+
+File-able Fields
+----------------
+
+The parameters controlled by governance are:
+
+-   `Line`: Global debt ceiling of the `vat`.
+-   `spot`: Market rate for a given `Ilk`.
+-   `line`: Debt ceiling for a given `Ilk`.
+-   `dust`: Essentially zero amount for a given `Ilk`.
+
+```k
+    syntax VatAuthStep ::= "file" VatFile
+ // -------------------------------------
+
+    syntax VatFile ::= "Line" Rad
+                     | "spot" String Ray
+                     | "line" String Rad
+                     | "dust" String Rad
+ // ------------------------------------
+    rule <k> Vat . file Line LINE => . ... </k>
+         <vat-Line> _ => LINE </vat-Line>
+
+    rule <k> Vat . file spot ILKID SPOT => . ... </k>
+         <vat-ilks> ... ILKID |-> Ilk ( ... spot: (_ => SPOT) ) ... </vat-ilks>
+
+    rule <k> Vat . file line ILKID LINE => . ... </k>
+         <vat-ilks> ... ILKID |-> Ilk ( ... line: (_ => LINE) ) ... </vat-ilks>
+
+    rule <k> Vat . file dust ILKID DUST => . ... </k>
+         <vat-ilks> ... ILKID |-> Ilk ( ... dust: (_ => DUST) ) ... </vat-ilks>
+```
+
+Vat Semantics
+-------------
 
 ### Deactivation
 
@@ -162,6 +187,7 @@ This is quite permissive, and would allow the account to drain all your locked c
 ```
 
 -   `Vat.safe` checks that a given `Urn` of a certain `ilk` is not over-leveraged.
+-   `Vat.nondusty` checks that a given `Urn` has the minumum deposit (is effectively non-zero).
 
 ```k
     syntax VatStep ::= "safe" String Address

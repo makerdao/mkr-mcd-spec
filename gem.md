@@ -19,9 +19,6 @@ Gem Configuration
       </gems>
 ```
 
-Gem Semantics
--------------
-
 ```k
     syntax MCDContract ::= GemContract
     syntax GemContract ::= "Gem" String
@@ -34,7 +31,12 @@ Gem Semantics
     syntax GemStep ::= GemAuthStep
     syntax AuthStep ::= GemContract "." GemAuthStep [klabel(gemStep)]
  // -----------------------------------------------------------------
+```
 
+Gem Semantics
+-------------
+
+```k
     syntax GemStep ::= "transferFrom" Address Address Wad
  // -----------------------------------------------------
     rule <k> Gem GEMID . transferFrom ACCTSRC ACCTDST VALUE => . ... </k>

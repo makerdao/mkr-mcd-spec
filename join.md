@@ -17,18 +17,15 @@ Join Configuration
 ```k
     configuration
       <join-state>
-        <gemJoins>
-          <gemJoin multiplicity="*" type="Map">
-            <gemJoin-gem> "" </gemJoin-gem>
-            <gemJoin-addr> 0:Address </gemJoin-addr>
-          </gemJoin>
-        </gemJoins>
-        <daiJoin-addr> 0:Address </daiJoin-addr>
+        <gem-joins>
+          <gem-join multiplicity="*" type="Map">
+            <gem-join-gem> "" </gem-join-gem>
+            <gem-join-addr> 0:Address </gem-join-addr>
+          </gem-join>
+        </gem-joins>
+        <dai-join-addr> 0:Address </dai-join-addr>
       </join-state>
 ```
-
-Join Semantics
---------------
 
 ```k
     syntax MCDContract ::= GemJoinContract
@@ -36,8 +33,20 @@ Join Semantics
     syntax MCDStep ::= GemJoinContract "." GemJoinStep [klabel(gemJoinStep)]
  // ------------------------------------------------------------------------
     rule contract(GemJoin GEMID . _) => GemJoin GEMID
-    rule [[ address(GemJoin GEMID) => ACCTJOIN ]] <gemJoin-gem> GEMID </gemJoin-gem> <gemJoin-addr> ACCTJOIN </gemJoin-addr>
+    rule [[ address(GemJoin GEMID) => ACCTJOIN ]] <gem-join-gem> GEMID </gem-join-gem> <gem-join-addr> ACCTJOIN </gem-join-addr>
 
+    syntax MCDContract ::= DaiJoinContract
+    syntax DaiJoinContract ::= "DaiJoin"
+    syntax MCDStep ::= DaiJoinContract "." DaiJoinStep [klabel(daiJoinStep)]
+ // ------------------------------------------------------------------------
+    rule contract(DaiJoin . _) => DaiJoin
+    rule [[ address(DaiJoin) => ACCTJOIN ]] <dai-join-addr> ACCTJOIN </dai-join-addr>
+```
+
+Join Semantics
+--------------
+
+```k
     syntax GemJoinStep ::= "join" Address Wad
  // -----------------------------------------
     rule <k> GemJoin GEMID . join USR AMOUNT
@@ -54,13 +63,6 @@ Join Semantics
           ~> call Gem GEMID . transfer USR AMOUNT ... </k>
          <msg-sender> MSGSENDER </msg-sender>
       requires AMOUNT >=Rat 0
-
-    syntax MCDContract ::= DaiJoinContract
-    syntax DaiJoinContract ::= "DaiJoin"
-    syntax MCDStep ::= DaiJoinContract "." DaiJoinStep [klabel(daiJoinStep)]
- // ------------------------------------------------------------------------
-    rule contract(DaiJoin . _) => DaiJoin
-    rule [[ address(DaiJoin) => ACCTJOIN ]] <daiJoin-addr> ACCTJOIN </daiJoin-addr>
 
     syntax DaiJoinStep ::= "join" Address Wad
  // -----------------------------------------

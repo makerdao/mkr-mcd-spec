@@ -7,11 +7,6 @@ module FLIP
     imports VAT
 ```
 
-```k
-    syntax Bid ::= FlipBid ( bid: Rad, lot: Wad, guy: Address, tic: Int, end: Int, usr: Address, gal: Address, tab: Rad )
- // ---------------------------------------------------------------------------------------------------------------------
-```
-
 Flip Configuration
 ------------------
 
@@ -30,9 +25,6 @@ Flip Configuration
       </flips>
 ```
 
-Flip Semantics
---------------
-
 ```k
     syntax MCDContract ::= FlipContract
     syntax FlipContract ::= "Flip" String
@@ -44,10 +36,78 @@ Flip Semantics
     syntax FlipStep ::= FlipAuthStep
     syntax AuthStep ::= FlipContract "." FlipAuthStep [klabel(flipStep)]
  // --------------------------------------------------------------------
+```
 
+Flip Data
+---------
+
+-   `FlipBid` tracks parameters of a given Flipper auction:
+
+    -   `bid`: the current bid.
+    -   `lot`: the quantity being auctioned off.
+    -   `guy`: current high bidder.
+    -   `tic`: expiration time of auction (updated on bids).
+    -   `end`: global expiration time of auction (set at start).
+    -   `usr`: receives collateral gems from the auction.
+    -   `gal`: receives Dai from the auction.
+    -   `tab`: total Dai wanted for auction.
+
+```k
+    syntax Bid ::= FlipBid ( bid: Rad, lot: Wad, guy: Address, tic: Int, end: Int, usr: Address, gal: Address, tab: Rad )
+ // ---------------------------------------------------------------------------------------------------------------------
+```
+
+File-able Fields
+----------------
+
+The parameters controlled by governance are:
+
+-   `beg`: minimum increase in bid size.
+-   `ttl`: time increase for auction duration when receiving new bids.
+-   `tau`: total auction duration length.
+
+```k
+    syntax FlipAuthStep ::= "file" FlipFile
+ // ---------------------------------------
+
+    syntax FlipFile ::= "beg" Ray
+                      | "ttl" Int
+                      | "tau" Int
+ // -----------------------------
+    rule <k> Flip ILKID . file beg BEG => . ... </k>
+         <flip>
+           <flip-ilk> ILKID </flip-ilk>
+           <flip-beg> _ => BEG </flip-beg>
+           ...
+         </flip>
+
+    rule <k> Flip ILKID . file ttl TTL => . ... </k>
+         <flip>
+           <flip-ilk> ILKID </flip-ilk>
+           <flip-ttl> _ => TTL </flip-ttl>
+           ...
+         </flip>
+
+    rule <k> Flip ILKID . file tau TAU => . ... </k>
+         <flip>
+           <flip-ilk> ILKID </flip-ilk>
+           <flip-tau> _ => TAU </flip-tau>
+           ...
+         </flip>
+```
+
+Flip Events
+-----------
+
+```k
     syntax Event ::= FlipKick(Int, Wad, Rad, Rad, Address, Address)
  // ---------------------------------------------------------------
+```
 
+Flip Semantics
+--------------
+
+```k
     syntax FlipStep ::= "kick" Address Address Rad Wad Rad
  // ------------------------------------------------------
     rule <k> Flip ILK . kick USR GAL TAB LOT BID

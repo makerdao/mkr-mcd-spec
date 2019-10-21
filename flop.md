@@ -9,11 +9,6 @@ module FLOP
     imports VAT
 ```
 
-```k
-    syntax Bid ::= FlopBid ( bid: Rad, lot: Wad, guy: Address, tic: Int, end: Int )
- // -------------------------------------------------------------------------------
-```
-
 Flop Configuration
 ------------------
 
@@ -31,9 +26,6 @@ Flop Configuration
       </flop-state>
 ```
 
-Flop Semantics
---------------
-
 ```k
     syntax MCDContract ::= FlopContract
     syntax FlopContract ::= "Flop"
@@ -45,10 +37,66 @@ Flop Semantics
     syntax FlopStep ::= FlopAuthStep
     syntax AuthStep ::= FlopContract "." FlopAuthStep [klabel(flopStep)]
  // --------------------------------------------------------------------
+```
 
+Flop Data
+---------
+
+-   `FlopBid` tracks the parameters of an auction:
+
+    -   `bid`: current bid on auction.
+    -   `lot`: quantity being auctioned off.
+    -   `guy`: current high bidder.
+    -   `tic`: expiration date of an auction, extended on new bids.
+    -   `end`: global expiration date of an auction.
+
+```k
+    syntax Bid ::= FlopBid ( bid: Rad, lot: Wad, guy: Address, tic: Int, end: Int )
+ // -------------------------------------------------------------------------------
+```
+
+File-able Fields
+----------------
+
+The parameters controlled by governance are:
+
+-   `beg`: minimum increase in bid size.
+-   `ttl`: time increase for auction duration when receiving new bids.
+-   `tau`: total auction duration length.
+-   `pad`: lot increase factor for each `tick`.
+
+```k
+    syntax FlopAuthStep ::= "file" FlopFile
+ // ---------------------------------------
+
+    syntax FlopFile ::= "beg" Ray
+                      | "ttl" Int
+                      | "tau" Int
+                      | "pad" Ray
+ // -----------------------------
+    rule <k> Flop . file beg BEG => . ... </k>
+         <flop-beg> _ => BEG </flop-beg>
+
+    rule <k> Flop . file ttl TTL => . ... </k>
+         <flop-ttl> _ => TTL </flop-ttl>
+
+    rule <k> Flop . file tau TAU => . ... </k>
+         <flop-tau> _ => TAU </flop-tau>
+
+    rule <k> Flop . file pad PAD => . ... </k>
+         <flop-pad> _ => PAD </flop-pad>
+```
+
+Flop Events
+-----------
+
+```k
     syntax Event ::= FlopKick(Int, Wad, Rad, Address)
  // -------------------------------------------------
 ```
+
+Flop Semantics
+--------------
 
 - kick(address gal, uint lot, uint bid) returns (uint id)
 - Starts an auction
