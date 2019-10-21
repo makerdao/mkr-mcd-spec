@@ -1,0 +1,38 @@
+// Add an authorized account
+authorize "Admin"
+
+// Initialize gold Gem and GemJoin
+transact "Admin" Gem "gold" . init
+transact "Admin" Gem "gold" . initUser "Alice"
+transact "Admin" Gem "gold" . initUser "Bob"
+transact "Admin" Gem "gold" . mint "Alice" 10
+transact "Admin" Gem "gold" . mint "Bob"   10
+transact "Admin" GemJoin "gold" . init
+
+// Initialize Vat, both total Line and gold parameters
+transact "Admin" Vat . file Line 1000 ether
+transact "Admin" Vat . initIlk "gold"
+transact "Admin" Vat . file spot "gold" 3    ether
+transact "Admin" Vat . file line "gold" 1000 ether
+
+// Initialize users Alice and Bob with gold Gem
+transact "Admin" Vat . initUser "Alice"
+transact "Admin" Vat . initUser "Bob"
+transact "Admin" Vat . initCDP "gold" "Alice"
+transact "Admin" Vat . initCDP "gold" "Bob"
+
+// Setup CDPs
+transact "Alice" GemJoin "gold" . join "Alice" 10
+transact "Bob"   GemJoin "gold" . join "Bob"   10
+transact "Alice" Vat . frob "gold" "Alice" "Alice" "Alice" 10 10
+transact "Bob"   Vat . frob "gold" "Bob"   "Bob"   "Bob"   10 10
+
+// Attack sequence
+transact "Admin" End . cage
+transact "Admin" End . cage "gold"
+transact "Admin" End . skim "gold" "Alice"
+transact "Admin" End . skim "gold" "Bob"
+transact "Admin" End . thaw
+transact "Admin" End . flow "gold"
+transact "Alice" Pot . drip
+.MCDSteps
