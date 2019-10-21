@@ -34,7 +34,6 @@ Gem Semantics
     syntax GemStep ::= GemAuthStep
     syntax AuthStep ::= GemContract "." GemAuthStep [klabel(gemStep)]
  // -----------------------------------------------------------------
-    rule <k> Gem _ . _ => exception ... </k> [owise]
 
     syntax GemStep ::= "transferFrom" Address Address Wad
  // -----------------------------------------------------

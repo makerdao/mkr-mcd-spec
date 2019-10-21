@@ -22,6 +22,8 @@ K_BIN     := $(K_RELEASE)/bin
 K_LIB     := $(K_RELEASE)/lib
 export K_RELEASE
 
+K_BUILD_TYPE := FastBuild
+
 PATH:=$(K_BIN):$(PATH)
 export PATH
 
@@ -60,7 +62,7 @@ deps-tangle: $(PANDOC_TANGLE_SUBMODULE)/submodule.timestamp
 	touch $@
 
 $(K_SUBMODULE)/mvn.timestamp: $(K_SUBMODULE)/submodule.timestamp
-	cd $(K_SUBMODULE) && mvn package -DskipTests
+	cd $(K_SUBMODULE) && mvn package -DskipTests -Dproject.build.type=$(K_BUILD_TYPE)
 	touch $(K_SUBMODULE)/mvn.timestamp
 
 # Building
@@ -70,7 +72,7 @@ MAIN_MODULE    := KMCD
 SYNTAX_MODULE  := $(MAIN_MODULE)
 MAIN_DEFN_FILE := kmcd
 
-KOMPILE_OPTS      ?= --emit-json
+KOMPILE_OPTS      :=
 LLVM_KOMPILE_OPTS := $(KOMPILE_OPTS) -ccopt -O2
 
 k_files := $(MAIN_DEFN_FILE).k kmcd.k kmcd-driver.k cat.k dai.k end.k flap.k flip.k flop.k gem.k join.k jug.k pot.k spot.k vat.k vow.k
@@ -117,6 +119,7 @@ $(llvm_kompiled): $(llvm_files)
 	$(K_BIN)/kompile --debug --main-module $(MAIN_MODULE) --backend llvm              \
 	                 --syntax-module $(SYNTAX_MODULE) $(llvm_dir)/$(MAIN_DEFN_FILE).k \
 	                 --directory $(llvm_dir) -I $(llvm_dir)                           \
+	                 --emit-json                                                      \
 	                 $(LLVM_KOMPILE_OPTS)
 
 # Haskell Backend
@@ -124,14 +127,19 @@ $(llvm_kompiled): $(llvm_files)
 $(haskell_kompiled): $(haskell_files)
 	$(K_BIN)/kompile --debug --main-module $(MAIN_MODULE) --backend haskell              \
 	                 --syntax-module $(SYNTAX_MODULE) $(haskell_dir)/$(MAIN_DEFN_FILE).k \
-	                 --directory $(haskell_dir) -I $(haskell_dir)
+	                 --directory $(haskell_dir) -I $(haskell_dir)                        \
+	                 --emit-json                                                         \
+	                 $(KOMPILE_OPTS)
+	./strip-erroneous-labels.sh $(haskell_kompiled)
 
 # Java Backend
 
 $(java_kompiled): $(java_files)
 	$(K_BIN)/kompile --debug --main-module $(MAIN_MODULE) --backend java              \
 	                 --syntax-module $(SYNTAX_MODULE) $(java_dir)/$(MAIN_DEFN_FILE).k \
-	                 --directory $(java_dir) -I $(java_dir)
+	                 --directory $(java_dir) -I $(java_dir)							  \
+	                 --emit-json                                                      \
+	                 $(KOMPILE_OPTS)
 
 # Test
 # ----

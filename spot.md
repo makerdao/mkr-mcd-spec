@@ -43,7 +43,6 @@ Spot Semantics
     syntax SpotStep ::= SpotAuthStep
     syntax AuthStep ::= SpotContract "." SpotAuthStep [klabel(spotStep)]
  // --------------------------------------------------------------------
-    rule <k> Spot . _ => exception ... </k> [owise]
 
     syntax Event ::= Poke(String, Wad, Ray)
  // ---------------------------------------

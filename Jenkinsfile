@@ -20,7 +20,7 @@ pipeline {
     stage('Dependencies') {
       steps {
         sh '''
-          make deps
+          make deps K_BUILD_TYPE=Release
         '''
       }
     }

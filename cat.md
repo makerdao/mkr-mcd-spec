@@ -43,7 +43,6 @@ Cat Semantics
     syntax CatStep ::= CatAuthStep
     syntax AuthStep ::= CatContract "." CatAuthStep [klabel(catStep)]
  // -----------------------------------------------------------------
-    rule <k> Cat . _ => exception ... </k> [owise]
 
     syntax CatStep ::= "bite" String Address
  // ----------------------------------------

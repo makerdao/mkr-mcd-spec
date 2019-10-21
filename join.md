@@ -37,7 +37,6 @@ Join Semantics
  // ------------------------------------------------------------------------
     rule contract(GemJoin GEMID . _) => GemJoin GEMID
     rule [[ address(GemJoin GEMID) => ACCTJOIN ]] <gemJoin-gem> GEMID </gemJoin-gem> <gemJoin-addr> ACCTJOIN </gemJoin-addr>
-    rule <k> GemJoin _ . _ => exception ... </k> [owise]
 
     syntax GemJoinStep ::= "join" Address Wad
  // -----------------------------------------
@@ -62,7 +61,6 @@ Join Semantics
  // ------------------------------------------------------------------------
     rule contract(DaiJoin . _) => DaiJoin
     rule [[ address(DaiJoin) => ACCTJOIN ]] <daiJoin-addr> ACCTJOIN </daiJoin-addr>
-    rule <k> DaiJoin . _ => exception ... </k> [owise]
 
     syntax DaiJoinStep ::= "join" Address Wad
  // -----------------------------------------

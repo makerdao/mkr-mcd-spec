@@ -44,7 +44,6 @@ Flip Semantics
     syntax FlipStep ::= FlipAuthStep
     syntax AuthStep ::= FlipContract "." FlipAuthStep [klabel(flipStep)]
  // --------------------------------------------------------------------
-    rule <k> Flip _ . _ => exception ... </k> [owise]
 
     syntax Event ::= FlipKick(Int, Wad, Rad, Rad, Address, Address)
  // ---------------------------------------------------------------

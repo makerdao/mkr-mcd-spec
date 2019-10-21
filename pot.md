@@ -38,7 +38,6 @@ Pot Semantics
     syntax PotStep ::= PotAuthStep
     syntax AuthStep ::= PotContract "." PotAuthStep [klabel(potStep)]
  // -----------------------------------------------------------------
-    rule <k> Pot . _ => exception ... </k> [owise]
 
     syntax PotStep ::= "drip"
  // -------------------------

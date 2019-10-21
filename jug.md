@@ -41,7 +41,6 @@ Jug Semantics
     syntax JugStep ::= JugAuthStep
     syntax AuthStep ::= JugContract "." JugAuthStep [klabel(jugStep)]
  // -----------------------------------------------------------------
-    rule <k> Jug . _ => exception ... </k> [owise]
 
     syntax JugAuthStep ::= InitStep
  // -------------------------------
