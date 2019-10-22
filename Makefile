@@ -35,11 +35,11 @@ LUA_PATH:=$(PANDOC_TANGLE_SUBMODULE)/?.lua;;
 export TANGLER
 export LUA_PATH
 
-.PHONY: all clean                                 \
-        deps deps-k deps-tangle deps-media        \
-        defn defn-llvm defn-haskell               \
-        build build-llvm build-haskell build-java \
-        test test-python-config test-python-run
+.PHONY: all clean                                              \
+        deps deps-k deps-tangle deps-media                     \
+        defn defn-llvm defn-haskell                            \
+        build build-llvm build-haskell build-java              \
+        test test-python-config test-python-run test-execution
 .SECONDARY:
 
 all: build
@@ -144,7 +144,9 @@ $(java_kompiled): $(java_files)
 # Test
 # ----
 
-test: test-python-config test-python-run
+test: test-python-config test-python-run test-execution
+
+### `pyk` tests
 
 test-python-config:
 	./mcd-pyk.py
@@ -152,3 +154,16 @@ test-python-config:
 test-python-run: tests/sneak-tx.json
 	./mcd-pyk.py $<
 
+### Execution tests
+
+TEST_BACKEND := llvm
+KMCD         := ./kmcd
+CHECK        := git --no-pager diff --no-index
+
+tests/%.mcd.run: tests/%.mcd
+	$(KMCD) run --backend $(TEST_BACKEND) $< > $<.out
+	$(CHECK) $<.expected $<.out
+
+execution_tests := $(wildcard tests/*/*.mcd)
+
+test-execution: $(execution_tests:=.run)
