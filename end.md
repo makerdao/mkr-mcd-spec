@@ -195,7 +195,7 @@ End Semantics
 
     syntax EndStep ::= "thaw"
  // -------------------------
-    rule <k> End . thaw ... </k>
+    rule <k> End . thaw => . ... </k>
          <current-time> NOW </current-time>
          <end-live> false </end-live>
          <end-debt> 0 => DEBT </end-debt>
