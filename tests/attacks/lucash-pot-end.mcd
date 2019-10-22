@@ -15,6 +15,10 @@ transact "Admin" Vat . initIlk "gold"
 transact "Admin" Vat . file spot "gold" 3 ether
 transact "Admin" Vat . file line "gold" 1000 ether
 
+// Initialize "VOW" and "FLAP" addresses for Vat.
+transact "Admin" Vat . initUser "VOW"
+transact "Admin" Vat . initUser "FLAP"
+
 // Initialize users Alice and Bob with gold Gem
 transact "Admin" Vat . initUser "Alice"
 transact "Admin" Vat . initUser "Bobby"
