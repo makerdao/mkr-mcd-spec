@@ -377,7 +377,7 @@ This is quite permissive, and would allow the account to drain all your locked c
          </vat-gem>
          <vat-dai>
            ...
-           USERW |-> ( DAIW => DAIW +Rat (RATE *Rat DART) )
+           ADDRW |-> ( DAIW => DAIW +Rat (RATE *Rat DART) )
            ...
          </vat-dai>
          <vat-Line> LINE </vat-Line>
