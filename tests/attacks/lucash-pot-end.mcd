@@ -9,20 +9,29 @@ transact "Admin" Gem "gold" . mint "Alice" 10
 transact "Admin" Gem "gold" . mint "Bobby" 10
 transact "Admin" GemJoin "gold" . init
 
+// Initialize Spot for gold
+Spot . init     "gold"
+Spot . setPrice "gold" 5
+
 // Initialize Vat, both total Line and gold parameters
 transact "Admin" Vat . file Line 1000 ether
 transact "Admin" Vat . initIlk "gold"
 transact "Admin" Vat . file spot "gold" 3 ether
 transact "Admin" Vat . file line "gold" 1000 ether
 
-// Initialize "VOW" and "FLAP" addresses for Vat.
+// Initialize "VOW", "FLAP", "END" addresses for Vat.
 transact "Admin" Vat . initUser "VOW"
 transact "Admin" Vat . initUser "FLAP"
+transact "Admin" Vat . initUser "END"
+transact "Admin" Vat . initGem "gold" "END"
 
 // Initialize users Alice and Bob with gold Gem
 transact "Admin" Vat . initUser "Alice"
-transact "Admin" Vat . initUser "Bobby"
+transact "Admin" Vat . initGem "gold" "Alice"
 transact "Admin" Vat . initCDP "gold" "Alice"
+
+//transact "Admin" Vat . initUser "Bobby"
+transact "Admin" Vat . initGem "gold" "Bobby"
 transact "Admin" Vat . initCDP "gold" "Bobby"
 
 // Setup CDPs
@@ -34,9 +43,10 @@ transact "Bobby" Vat . frob "gold" "Bobby" "Bobby" "Bobby" 10 10
 // Attack sequence
 transact "Admin" End . cage
 transact "Admin" End . cage "gold"
+transact "Admin" End . initGap "gold"       // injected because no default setting of `gap` to 0
 transact "Admin" End . skim "gold" "Alice"
 transact "Admin" End . skim "gold" "Bobby"
 transact "Admin" End . thaw
-transact "Admin" End . flow "gold"
-transact "Alice" Pot . drip
+//transact "Admin" End . flow "gold"
+//transact "Alice" Pot . drip
 .MCDSteps
