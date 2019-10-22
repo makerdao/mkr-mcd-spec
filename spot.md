@@ -15,7 +15,7 @@ Spot Configuration
       <spot>
         <spot-wards> .Set  </spot-wards>
         <spot-ilks>  .Map  </spot-ilks> // mapping (bytes32 => ilk)  String  |-> SpotIlk
-        <spot-par>   0:Ray </spot-par>
+        <spot-par>   1:Ray </spot-par>
       </spot>
 ```
 
