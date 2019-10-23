@@ -282,16 +282,15 @@ This is quite permissive, and would allow the account to drain all your locked c
 ```k
     syntax VatStep ::= "move" Address Address Wad
  // ---------------------------------------------
-    rule <k> Vat . move ADDRFROM ADDRTO DAI => .
-         ...
-         </k>
+    rule <k> Vat . move ADDRFROM ADDRTO DAI => . ... </k>
          <vat-dai>
            ...
            ADDRFROM |-> (DAIFROM => DAIFROM -Rat DAI)
            ADDRTO   |-> (DAITO   => DAITO   +Rat DAI)
            ...
          </vat-dai>
-      requires wish ADDRFROM
+      requires DAIFROM >=Rat DAI
+       andBool wish ADDRFROM
 ```
 
 ### CDP Manipulation
