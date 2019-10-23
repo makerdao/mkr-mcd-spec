@@ -67,6 +67,10 @@ These parameters are controlled by governance:
  // -------------------------------------
     rule <k> Pot . file dsr DSR => . ... </k>
          <pot-dsr> _ => DSR </pot-dsr>
+         <pot-rho> RHO </pot-rho>
+         <current-time> NOW </current-time>
+         <pot-live> true </pot-live>
+      requires NOW ==Int RHO
 
     rule <k> Pot . file vow-file ADDR => . ... </k>
          <pot-vow> _ => ADDR </pot-vow>
