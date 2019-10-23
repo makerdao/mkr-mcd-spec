@@ -95,7 +95,9 @@ End Semantics
           => call Vat . cage
           ~> call Cat . cage
           ~> call Vow . cage
-          ~> call Pot . cage ... </k>
+          ~> call Pot . cage
+         ...
+         </k>
          <current-time> NOW </current-time>
          <end-live> true => false </end-live>
          <end-when> _ => NOW </end-when>
