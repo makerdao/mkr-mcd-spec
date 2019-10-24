@@ -1,3 +1,18 @@
+// Initial reliances between contracts
+transact ADMIN Vat . rely Pot
+transact ADMIN Vat . rely End
+
+// Initialize Vow, Flap, End addresses for Vat.
+transact ADMIN Vat . initUser Vow
+transact ADMIN Vat . initUser Pot
+transact ADMIN Vat . initUser Flap
+transact ADMIN Vat . initUser End
+
+transact ADMIN Cat  . rely End
+transact ADMIN Vow  . rely End
+transact ADMIN Flap . rely Vow
+transact ADMIN Flop . rely Vow
+
 // Initialize gold Gem and GemJoin
 transact ADMIN Gem "gold" . init
 transact ADMIN Gem "gold" . initUser "Alice"
@@ -6,12 +21,16 @@ transact ADMIN Gem "gold" . mint "Alice" 10
 transact ADMIN Gem "gold" . mint "Bobby" 10
 transact ADMIN GemJoin "gold" . init
 
+// Allow GemJoin "gold" to call into Vat
+transact ADMIN Vat . rely GemJoin "gold"
+transact ADMIN Vat . initGem "gold" End
+
 // Initialize Spot for gold
 transact ADMIN Spot . init     "gold"
 transact ADMIN Spot . setPrice "gold" 1
 
 // Initialize Pot
-transact ADMIN Pot . file vow-file "VOW"
+transact ADMIN Pot . file vow-file Vow
 transact ADMIN Pot . initUser "Alice"
 transact ADMIN Pot . initUser "Bobby"
 
@@ -21,23 +40,16 @@ transact ADMIN Vat . initIlk "gold"
 transact ADMIN Vat . file spot "gold" 3 ether
 transact ADMIN Vat . file line "gold" 1000 ether
 
-// Initialize "VOW", "FLAP", "END" addresses for Vat.
-transact ADMIN Vat . initUser "VOW"
-transact ADMIN Vat . initUser "POT"
-transact ADMIN Vat . initUser "FLAP"
-transact ADMIN Vat . initUser "END"
-transact ADMIN Vat . initGem "gold" "END"
-
 // Initialize users Alice and Bob with gold Gem
 transact ADMIN Vat . initUser "Alice"
 transact ADMIN Vat . initGem "gold" "Alice"
 transact ADMIN Vat . initCDP "gold" "Alice"
-transact "Alice" Vat . hope "POT"
+transact "Alice" Vat . hope Pot
 
 transact ADMIN Vat . initUser "Bobby"
 transact ADMIN Vat . initGem "gold" "Bobby"
 transact ADMIN Vat . initCDP "gold" "Bobby"
-transact "Bobby" Vat . hope "POT"
+transact "Bobby" Vat . hope Pot
 
 // Setup CDPs
 transact "Alice" GemJoin "gold" . join "Alice" 10
