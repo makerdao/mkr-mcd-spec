@@ -348,7 +348,7 @@ This is quite permissive, and would allow the account to drain all your locked c
          </vat-gem>
          <vat-sin>
            ...
-           USERW |-> ( SINW => SINW -Rat (RATE *Rat DART) )
+           ADDRW |-> ( SINW => SINW -Rat (RATE *Rat DART) )
            ...
          </vat-sin>
 
