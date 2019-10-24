@@ -19,7 +19,6 @@ module KMCD-DRIVER
           <k> $PGM:MCDSteps </k>
           <msg-sender> 0:Address </msg-sender>
           <this> 0:Address </this>
-          <authorized-accounts> .Map </authorized-accounts>
           <current-time> 0:Int </current-time>
           <call-stack> .List </call-stack>
           <pre-state> .K </pre-state>
@@ -107,7 +106,6 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
     rule <k> call MCD:MCDStep ~> CONT => MCD </k>
          <msg-sender> MSGSENDER => THIS </msg-sender>
          <this> THIS => address(contract(MCD)) </this>
-         <authorized-accounts> AUTHS </authorized-accounts>
          <call-stack> .List => ListItem(frame(MSGSENDER, EVENTS, CONT)) ... </call-stack>
          <frame-events> EVENTS => ListItem(LogNote(MSGSENDER, MCD)) </frame-events>
       requires isAuthStep(MCD) impliesBool isAuthorized(THIS, contract(MCD))
