@@ -87,7 +87,7 @@ Pot Semantics
     rule <k> Pot . drip => call Vat . suck VOW THIS ( PIE *Rat CHI *Rat ( DSR ^Rat (NOW -Int RHO) -Rat 1 ) ) ... </k>
          <this> THIS </this>
          <current-time> NOW </current-time>
-         <pot-chi> CHI => CHI *Rat DSR ^Rat (NOW -Int RHO) </pot-chi>
+         <pot-chi> CHI => CHI *Rat (DSR ^Rat (NOW -Int RHO)) </pot-chi>
          <pot-rho> RHO => NOW </pot-rho>
          <pot-dsr> DSR </pot-dsr>
          <pot-vow> VOW </pot-vow>
