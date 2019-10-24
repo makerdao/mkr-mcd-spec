@@ -15,8 +15,8 @@ Flap Configuration
 ```k
     configuration
       <flap-state>
-        <flap-addr>  0:Address    </flap-addr>
-        <flap-bids> .Map          </flap-bids>  // mapping (uint => Bid) Int |-> FlapBid
+        <flap-wards> .Set         </flap-wards>
+        <flap-bids>  .Map         </flap-bids>  // mapping (uint => Bid) Int |-> FlapBid
         <flap-kicks> 0            </flap-kicks>
         <flap-live>  true         </flap-live>
         <flap-beg>   105 /Rat 100 </flap-beg>
@@ -34,11 +34,24 @@ Flap Semantics
     syntax MCDStep ::= FlapContract "." FlapStep [klabel(flapStep)]
  // ---------------------------------------------------------------
     rule contract(Flap . _) => Flap
-    rule [[ address(Flap) => ADDR ]] <flap-addr> ADDR </flap-addr>
+```
 
+Flap Authorization
+------------------
+
+```k
     syntax FlapStep ::= FlapAuthStep
     syntax AuthStep ::= FlapContract "." FlapAuthStep [klabel(flapStep)]
  // --------------------------------------------------------------------
+    rule [[ wards(Flap) => WARDS ]] <flap-wards> WARDS </flap-wards>
+
+    syntax FlapAuthStep ::= WardStep
+ // --------------------------------
+    rule <k> Flap . rely ADDR => . ... </k>
+         <flap-wards> ... (.Set => SetItem(ADDR)) </flap-wards>
+
+    rule <k> Flap . deny ADDR => . ... </k>
+         <flap-wards> WARDS => WARDS -Set SetItem(ADDR) </flap-wards>
 ```
 
 Flap Data
@@ -108,7 +121,7 @@ Flap Semantics
          </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
-         <currentTime> NOW </currentTime>
+         <current-time> NOW </current-time>
          <flap-bids>... .Map =>
             KICKS +Int 1 |-> FlapBid(... bid: BID,
                                          lot: LOT,
@@ -129,7 +142,7 @@ Flap Semantics
     syntax FlapStep ::= "tick" Int [klabel(FlapTick),symbol]
  // --------------------------------------------------------
     rule <k> Flap . tick ID => . ... </k>
-         <currentTime> NOW </currentTime>
+         <current-time> NOW </current-time>
          <flap-bids>...
            ID |-> FlapBid(... tic: 0, end: END => NOW +Int TAU)
          ...</flap-bids>
@@ -150,7 +163,7 @@ Flap Semantics
          </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
-         <currentTime> NOW </currentTime>
+         <current-time> NOW </current-time>
          <flap-bids>...
            ID |-> FlapBid(... bid: BID' => BID,
                               lot: LOT',
@@ -180,7 +193,7 @@ Flap Semantics
          ...
          </k>
          <this> THIS </this>
-         <currentTime> NOW </currentTime>
+         <current-time> NOW </current-time>
          <flap-bids>...
            ID |-> FlapBid(... bid: BID, lot: LOT, guy: GUY, tic: TIC, end: END) => .Map
          ...</flap-bids>

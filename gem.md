@@ -13,7 +13,7 @@ Gem Configuration
       <gems>
         <gem multiplicity="*" type="Map">
           <gem-id>       "":String </gem-id>
-          <gem-addr>     0:Address </gem-addr>
+          <gem-wards>    .Set      </gem-wards>
           <gem-balances> .Map      </gem-balances> // mapping (address => uint256) Address |-> Wad
         </gem>
       </gems>
@@ -25,12 +25,32 @@ Gem Configuration
     syntax MCDStep ::= GemContract "." GemStep [klabel(gemStep)]
  // ------------------------------------------------------------
     rule contract(Gem GEMID . _) => Gem GEMID
-    rule [[ address(Gem GEMID) => ACCTGEM ]] <gem-id> GEMID </gem-id> <gem-addr> ACCTGEM </gem-addr>
+```
 
-    syntax GemAuthStep
-    syntax GemStep ::= GemAuthStep
+Gem Authorization
+-----------------
+
+```k
+    syntax GemStep  ::= GemAuthStep
     syntax AuthStep ::= GemContract "." GemAuthStep [klabel(gemStep)]
  // -----------------------------------------------------------------
+    rule [[ wards(Gem GEMID) => WARDS ]] <gem> <gem-id> GEMID </gem-id> <gem-wards> WARDS </gem-wards> ... </gem>
+
+    syntax GemAuthStep ::= WardStep
+ // -------------------------------
+    rule <k> Gem GEMID . rely ADDR => . ... </k>
+         <gem>
+           <gem-id> GEMID </gem-id>
+           <gem-wards> ... (.Set => SetItem(ADDR)) </gem-wards>
+           ...
+         </gem>
+
+    rule <k> Gem GEMID . deny ADDR => . ... </k>
+         <gem>
+           <gem-id> GEMID </gem-id>
+           <gem-wards> WARDS => WARDS -Set SetItem(ADDR) </gem-wards>
+           ...
+         </gem>
 ```
 
 Gem Semantics

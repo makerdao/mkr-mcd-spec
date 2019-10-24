@@ -17,16 +17,16 @@ Vow Configuration
 ```k
     configuration
       <vow>
-        <vow-addr> 0:Address </vow-addr>
-        <vow-sins> .Map      </vow-sins> // mapping (uint256 => uint256) Int |-> Rad
-        <vow-sin>  0:Rad     </vow-sin>
-        <vow-ash>  0:Rad     </vow-ash>
-        <vow-wait> 0         </vow-wait>
-        <vow-dump> 0:Wad     </vow-dump>
-        <vow-sump> 0:Rad     </vow-sump>
-        <vow-bump> 0:Rad     </vow-bump>
-        <vow-hump> 0:Rad     </vow-hump>
-        <vow-live> true      </vow-live>
+        <vow-wards> .Set  </vow-wards>
+        <vow-sins>  .Map  </vow-sins> // mapping (uint256 => uint256) Int |-> Rad
+        <vow-sin>   0:Rad </vow-sin>
+        <vow-ash>   0:Rad </vow-ash>
+        <vow-wait>  0     </vow-wait>
+        <vow-dump>  0:Wad </vow-dump>
+        <vow-sump>  0:Rad </vow-sump>
+        <vow-bump>  0:Rad </vow-bump>
+        <vow-hump>  0:Rad </vow-hump>
+        <vow-live>  true  </vow-live>
       </vow>
 ```
 
@@ -36,11 +36,24 @@ Vow Configuration
     syntax MCDStep ::= VowContract "." VowStep [klabel(vowStep)]
  // ------------------------------------------------------------
     rule contract(Vow . _) => Vow
-    rule [[ address(Vow) => ADDR ]] <vow-addr> ADDR </vow-addr>
+```
 
-    syntax VowStep ::= VowAuthStep
+Vow Authorization
+-----------------
+
+```k
+    syntax VowStep  ::= VowAuthStep
     syntax AuthStep ::= VowContract "." VowAuthStep [klabel(vowStep)]
  // -----------------------------------------------------------------
+    rule [[ wards(Vow) => WARDS ]] <vow-wards> WARDS </vow-wards>
+
+    syntax VowAuthStep ::= WardStep
+ // -------------------------------
+    rule <k> Vow . rely ADDR => . ... </k>
+         <vow-wards> ... (.Set => SetItem(ADDR)) </vow-wards>
+
+    rule <k> Vow . deny ADDR => . ... </k>
+         <vow-wards> WARDS => WARDS -Set SetItem(ADDR) </vow-wards>
 ```
 
 File-able Data
@@ -87,7 +100,7 @@ Vow Semantics
     syntax VowAuthStep ::= "fess" Rad
  // ---------------------------------
     rule <k> Vow . fess TAB => . ... </k>
-         <currentTime> NOW </currentTime>
+         <current-time> NOW </current-time>
          <vow-sins>
            ...
            NOW |-> (SIN' => SIN' +Rat TAB)
@@ -98,7 +111,7 @@ Vow Semantics
     syntax VowStep ::= "flog" Int
  // -----------------------------
     rule <k> Vow . flog ERA => . ... </k>
-         <currentTime> NOW </currentTime>
+         <current-time> NOW </current-time>
          <vow-wait> WAIT </vow-wait>
          <vow-sins>... ERA |-> (SIN' => 0) </vow-sins>
          <vow-sin> SIN => SIN -Rat SIN' </vow-sin>
@@ -199,7 +212,7 @@ Vow Semantics
          <vat-dai>
            ...
            THIS |-> DAI
-           address(Flap) |-> FLAPDAI
+           Flap |-> FLAPDAI
            ...
          </vat-dai>
          <vow-live> _ => false </vow-live>

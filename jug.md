@@ -13,10 +13,10 @@ Jug Configuration
 ```k
     configuration
       <jug>
-        <jug-addr> 0:Address </jug-addr>
-        <jug-ilks> .Map      </jug-ilks> // mapping (bytes32 => JugIlk) String  |-> JugIlk
-        <jug-vow>  0:Address </jug-vow>  //                             Address
-        <jug-base> 0:Ray     </jug-base> //                             Ray
+        <jug-wards> .Set      </jug-wards>
+        <jug-ilks>  .Map      </jug-ilks> // mapping (bytes32 => JugIlk) String  |-> JugIlk
+        <jug-vow>   0:Address </jug-vow>  //                             Address
+        <jug-base>  0:Ray     </jug-base> //                             Ray
       </jug>
 ```
 
@@ -26,11 +26,24 @@ Jug Configuration
     syntax MCDStep ::= JugContract "." JugStep [klabel(jugStep)]
  // ------------------------------------------------------------
     rule contract(Jug . _) => Jug
-    rule [[ address(Jug) => ADDR ]] <jug-addr> ADDR </jug-addr>
+```
 
-    syntax JugStep ::= JugAuthStep
+Jug Authorization
+-----------------
+
+```k
+    syntax JugStep  ::= JugAuthStep
     syntax AuthStep ::= JugContract "." JugAuthStep [klabel(jugStep)]
  // -----------------------------------------------------------------
+    rule [[ wards(Jug) => WARDS ]] <jug-wards> WARDS </jug-wards>
+
+    syntax JugAuthStep ::= WardStep
+ // -------------------------------
+    rule <k> Jug . rely ADDR => . ... </k>
+         <jug-wards> ... (.Set => SetItem(ADDR)) </jug-wards>
+
+    rule <k> Jug . deny ADDR => . ... </k>
+         <jug-wards> WARDS => WARDS -Set SetItem(ADDR) </jug-wards>
 ```
 
 Jug Data
@@ -82,7 +95,7 @@ Jug Semantics
     syntax JugAuthStep ::= InitStep
  // -------------------------------
     rule <k> Jug . init ILK => . ... </k>
-         <currentTime> TIME </currentTime>
+         <current-time> TIME </current-time>
          <jug-ilks> ... ILK |-> Ilk ( ... duty: ILKDUTY => 1, rho: _ => TIME ) ... </jug-ilks>
       requires ILKDUTY ==Int 0
 ```
@@ -91,7 +104,7 @@ Jug Semantics
     syntax JugStep ::= "drip" String
  // --------------------------------
     rule <k> Jug . drip ILK => call Vat . fold ILK ADDRESS ( ( (BASE +Rat ILKDUTY) ^Rat (TIME -Int ILKRHO) ) *Rat ILKRATE ) -Rat ILKRATE ... </k>
-         <currentTime> TIME </currentTime>
+         <current-time> TIME </current-time>
          <vat-ilks> ... ILK |-> Ilk ( ... rate: ILKRATE ) ... </vat-ilks>
          <jug-ilks> ... ILK |-> Ilk ( ... duty: ILKDUTY, rho: ILKRHO => TIME ) ... </jug-ilks>
          <jug-vow> ADDRESS </jug-vow>

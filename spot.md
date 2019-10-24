@@ -13,9 +13,9 @@ Spot Configuration
 ```k
     configuration
       <spot>
-        <spot-addr> 0:Address </spot-addr>
-        <spot-ilks> .Map      </spot-ilks> // mapping (bytes32 => ilk)  String  |-> SpotIlk
-        <spot-par>  0:Ray     </spot-par>
+        <spot-wards> .Set  </spot-wards>
+        <spot-ilks>  .Map  </spot-ilks> // mapping (bytes32 => ilk)  String  |-> SpotIlk
+        <spot-par>   0:Ray </spot-par>
       </spot>
 ```
 
@@ -25,12 +25,24 @@ Spot Configuration
     syntax MCDStep ::= SpotContract "." SpotStep [klabel(spotStep)]
  // ---------------------------------------------------------------
     rule contract(Spot . _) => Spot
-    rule [[ address(Spot) => ADDR ]] <spot-addr> ADDR </spot-addr>
+```
 
-    syntax SpotAuthStep
+Spot Authorization
+------------------
+
+```k
     syntax SpotStep ::= SpotAuthStep
     syntax AuthStep ::= SpotContract "." SpotAuthStep [klabel(spotStep)]
  // --------------------------------------------------------------------
+    rule [[ wards(Spot) => WARDS ]] <spot-wards> WARDS </spot-wards>
+
+    syntax SpotAuthStep ::= WardStep
+ // -------------------------------
+    rule <k> Spot . rely ADDR => . ... </k>
+         <spot-wards> ... (.Set => SetItem(ADDR)) </spot-wards>
+
+    rule <k> Spot . deny ADDR => . ... </k>
+         <spot-wards> WARDS => WARDS -Set SetItem(ADDR) </spot-wards>
 ```
 
 Spot Data
@@ -55,9 +67,7 @@ These parameters are controlled by governance/oracles:
 
 -   `pip`: next price to give from price feed.
 -   `mat`: liquidation ratio for a given ilk.
--   `par`: **TODO** it's unclear.
-    Wiki page says "relationship between Dai and 1 unit of value in the price. (Similar to TRFM.)", but that would seem to require storing one `par` per ilk.
-    Perhaps this means "actual price of Dai?", as in "how off-stable is Dai"?
+-   `par`: reference number for 1 Dai, used to scale target value of a single Dai (newer version of Target Rate Feedback Mechanism).
 
 ```k
     syntax SpotAuthStep ::= "file" SpotFile

@@ -20,10 +20,12 @@ Join Configuration
         <gem-joins>
           <gem-join multiplicity="*" type="Map">
             <gem-join-gem> "" </gem-join-gem>
-            <gem-join-addr> 0:Address </gem-join-addr>
+            <gem-join-wards> .Set </gem-join-wards>
           </gem-join>
         </gem-joins>
-        <dai-join-addr> 0:Address </dai-join-addr>
+        <dai-join>
+          <dai-join-wards> .Set </dai-join-wards>
+        </dai-join>
       </join-state>
 ```
 
@@ -33,14 +35,51 @@ Join Configuration
     syntax MCDStep ::= GemJoinContract "." GemJoinStep [klabel(gemJoinStep)]
  // ------------------------------------------------------------------------
     rule contract(GemJoin GEMID . _) => GemJoin GEMID
-    rule [[ address(GemJoin GEMID) => ACCTJOIN ]] <gem-join-gem> GEMID </gem-join-gem> <gem-join-addr> ACCTJOIN </gem-join-addr>
 
     syntax MCDContract ::= DaiJoinContract
     syntax DaiJoinContract ::= "DaiJoin"
     syntax MCDStep ::= DaiJoinContract "." DaiJoinStep [klabel(daiJoinStep)]
  // ------------------------------------------------------------------------
     rule contract(DaiJoin . _) => DaiJoin
-    rule [[ address(DaiJoin) => ACCTJOIN ]] <dai-join-addr> ACCTJOIN </dai-join-addr>
+```
+
+Join Authorization
+------------------
+
+```k
+    syntax GemJoinStep ::= GemJoinAuthStep
+    syntax AuthStep    ::= GemJoinContract "." GemJoinAuthStep [klabel(gemJoinStep)]
+ // --------------------------------------------------------------------------------
+    rule [[ wards(GemJoin GEMID) => WARDS ]] <gem-join> <gem-join-gem> GEMID </gem-join-gem> <gem-join-wards> WARDS </gem-join-wards> ... </gem-join>
+
+    syntax GemJoinAuthStep ::= WardStep
+ // -----------------------------------
+    rule <k> GemJoin GEMID . rely ADDR => . ... </k>
+         <gem-join>
+           <gem-join-gem> GEMID </gem-join-gem>
+           <gem-join-wards> ... (.Set => SetItem(ADDR)) </gem-join-wards>
+           ...
+         </gem-join>
+
+    rule <k> GemJoin GEMID . deny ADDR => . ... </k>
+         <gem-join>
+           <gem-join-gem> GEMID </gem-join-gem>
+           <gem-join-wards> WARDS => WARDS -Set SetItem(ADDR) </gem-join-wards>
+           ...
+         </gem-join>
+
+    syntax DaiJoinStep ::= DaiJoinAuthStep
+    syntax AuthStep    ::= DaiJoinContract "." DaiJoinAuthStep [klabel(daiJoinStep)]
+ // --------------------------------------------------------------------------------
+    rule [[ wards(DaiJoin) => WARDS ]] <dai-join-wards> WARDS </dai-join-wards>
+
+    syntax DaiJoinAuthStep ::= WardStep
+ // -----------------------------------
+    rule <k> DaiJoin . rely ADDR => . ... </k>
+         <dai-join-wards> ... (.Set => SetItem(ADDR)) </dai-join-wards>
+
+    rule <k> DaiJoin . deny ADDR => . ... </k>
+         <dai-join-wards> WARDS => WARDS -Set SetItem(ADDR) </dai-join-wards>
 ```
 
 Join Semantics

@@ -15,14 +15,14 @@ Flop Configuration
 ```k
     configuration
       <flop-state>
-        <flop-addr>  0:Address    </flop-addr>
-        <flop-bids> .Map          </flop-bids>  // mapping (uint => Bid) Int |-> FlopBid
-        <flop-kicks> 0            </flop-kicks>
-        <flop-live>  true         </flop-live>
-        <flop-beg>   105 /Rat 100 </flop-beg>
-        <flop-pad>   150 /Rat 100 </flop-pad>
-        <flop-ttl>   3 hours      </flop-ttl>
-        <flop-tau>   2 days       </flop-tau>
+        <flop-wards> .Set          </flop-wards>
+        <flop-bids>  .Map          </flop-bids>  // mapping (uint => Bid) Int |-> FlopBid
+        <flop-kicks>  0            </flop-kicks>
+        <flop-live>   true         </flop-live>
+        <flop-beg>    105 /Rat 100 </flop-beg>
+        <flop-pad>    150 /Rat 100 </flop-pad>
+        <flop-ttl>    3 hours      </flop-ttl>
+        <flop-tau>    2 days       </flop-tau>
       </flop-state>
 ```
 
@@ -32,11 +32,24 @@ Flop Configuration
     syntax MCDStep ::= FlopContract "." FlopStep [klabel(flopStep)]
  // ---------------------------------------------------------------
     rule contract(Flop . _) => Flop
-    rule [[ address(Flop) => ADDR ]] <flop-addr> ADDR </flop-addr>
+```
 
+Flop Authorization
+------------------
+
+```k
     syntax FlopStep ::= FlopAuthStep
     syntax AuthStep ::= FlopContract "." FlopAuthStep [klabel(flopStep)]
  // --------------------------------------------------------------------
+    rule [[ wards(Flop) => WARDS ]] <flop-wards> WARDS </flop-wards>
+
+    syntax FlopAuthStep ::= WardStep
+ // -------------------------------
+    rule <k> Flop . rely ADDR => . ... </k>
+         <flop-wards> ... (.Set => SetItem(ADDR)) </flop-wards>
+
+    rule <k> Flop . deny ADDR => . ... </k>
+         <flop-wards> WARDS => WARDS -Set SetItem(ADDR) </flop-wards>
 ```
 
 Flop Data
@@ -110,7 +123,7 @@ Flop Semantics
          </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
-         <currentTime> NOW </currentTime>
+         <current-time> NOW </current-time>
          <flop-live> true </flop-live>
          <flop-bids>... .Map =>
            KICKS +Int 1 |-> FlopBid(... bid: BID,
@@ -131,7 +144,7 @@ Flop Semantics
     syntax FlopStep ::= "tick" Int
  // ------------------------------
     rule <k> Flop . tick ID => . ... </k>
-         <currentTime> NOW </currentTime>
+         <current-time> NOW </current-time>
          <flop-bids> ... ID |-> FlopBid(... lot: LOT => LOT *Rat PAD, tic: 0, end: END => NOW +Int TAU ) ... </flop-bids>
          <flop-pad> PAD </flop-pad>
          <flop-tau> TAU </flop-tau>
@@ -149,7 +162,7 @@ Flop Semantics
          ...
          </k>
          <msg-sender> MSGSENDER </msg-sender>
-         <currentTime> NOW </currentTime>
+         <current-time> NOW </current-time>
          <flop-bids>...
            ID |-> FlopBid(... bid: BID',
                               lot: LOT' => LOT,
@@ -177,7 +190,7 @@ Flop Semantics
           => call Gem "MKR" . mint GUY LOT
          ...
          </k>
-         <currentTime> NOW </currentTime>
+         <current-time> NOW </current-time>
          <flop-bids>...
            ID |-> FlopBid(... lot: LOT, guy: GUY, tic: TIC, end: END) => .Map
          ...</flop-bids>

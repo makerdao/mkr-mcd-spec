@@ -25,17 +25,17 @@ End Configuration
       <end-state>
         <endPhase> false </endPhase>
         <end>
-          <end-addr> 0:Address </end-addr>
-          <end-live> true      </end-live>
-          <end-when> 0         </end-when>
-          <end-wait> 0         </end-wait>
-          <end-debt> 0:Rad      </end-debt>
-          <end-tag>  .Map      </end-tag>  // mapping (bytes32 => uint256)                      String  |-> Ray
-          <end-gap>  .Map      </end-gap>  // mapping (bytes32 => uint256)                      String  |-> Wad
-          <end-art>  .Map      </end-art>  // mapping (bytes32 => uint256)                      String  |-> Wad
-          <end-fix>  .Map      </end-fix>  // mapping (bytes32 => uint256)                      String  |-> Ray
-          <end-bag>  .Map      </end-bag>  // mapping (address => uint256)                      Address |-> Wad
-          <end-out>  .Map      </end-out>  // mapping (bytes32 => mapping (address => uint256)) CDPID   |-> Wad
+          <end-wards> .Set  </end-wards>
+          <end-live>  true  </end-live>
+          <end-when>  0     </end-when>
+          <end-wait>  0     </end-wait>
+          <end-debt>  0:Rad </end-debt>
+          <end-tag>   .Map  </end-tag>  // mapping (bytes32 => uint256)                      String  |-> Ray
+          <end-gap>   .Map  </end-gap>  // mapping (bytes32 => uint256)                      String  |-> Wad
+          <end-art>   .Map  </end-art>  // mapping (bytes32 => uint256)                      String  |-> Wad
+          <end-fix>   .Map  </end-fix>  // mapping (bytes32 => uint256)                      String  |-> Ray
+          <end-bag>   .Map  </end-bag>  // mapping (address => uint256)                      Address |-> Wad
+          <end-out>   .Map  </end-out>  // mapping (bytes32 => mapping (address => uint256)) CDPID   |-> Wad
         </end>
       </end-state>
 ```
@@ -46,11 +46,24 @@ End Configuration
     syntax MCDStep ::= EndContract "." EndStep [klabel(endStep)]
  // ------------------------------------------------------------
     rule contract(End . _) => End
-    rule [[ address(End) => ADDR ]] <end-addr> ADDR </end-addr>
+```
 
-    syntax EndStep ::= EndAuthStep
+End Authorization
+-----------------
+
+```k
+    syntax EndStep  ::= EndAuthStep
     syntax AuthStep ::= EndContract "." EndAuthStep [klabel(endStep)]
  // -----------------------------------------------------------------
+    rule [[ wards(End) => WARDS ]] <end-wards> WARDS </end-wards>
+
+    syntax EndAuthStep ::= WardStep
+ // -------------------------------
+    rule <k> End . rely ADDR => . ... </k>
+         <end-wards> ... (.Set => SetItem(ADDR)) </end-wards>
+
+    rule <k> End . deny ADDR => . ... </k>
+         <end-wards> WARDS => WARDS -Set SetItem(ADDR) </end-wards>
 ```
 
 File-able Fields
@@ -83,7 +96,7 @@ End Semantics
           ~> call Cat . cage
           ~> call Vow . cage
           ~> call Pot . cage ... </k>
-         <currentTime> NOW </currentTime>
+         <current-time> NOW </current-time>
          <end-live> true => false </end-live>
          <end-when> _ => NOW </end-when>
 
@@ -109,11 +122,11 @@ End Semantics
     syntax EndStep ::= "skip" String Int
  // ------------------------------------
     rule <k> End . skip ILK ID
-          => call Vat . suck address(Vow) address(Vow) TAB
-          ~> call Vat . suck address(Vow) THIS BID
-          ~> call Vat . hope address(Flip ILK)
+          => call Vat . suck Vow Vow  TAB
+          ~> call Vat . suck Vow THIS BID
+          ~> call Vat . hope Flip ILK
           ~> call Flip ILK . yank ID
-          ~> call Vat . grab ILK USR THIS address(Vow) LOT (TAB /Rat RATE) ... </k>
+          ~> call Vat . grab ILK USR THIS Vow LOT (TAB /Rat RATE) ... </k>
          <this> THIS </this>
          <end-tag>
           ...
@@ -143,7 +156,7 @@ End Semantics
     syntax EndStep ::= "skim" String Address
  // ----------------------------------------
     rule <k> End . skim ILK URN
-          => call Vat . grab ILK URN THIS address(Vow) (0 -Rat minRat(INK, ART *Rat RATE *Rat TAG)) (0 -Rat ART) ... </k>
+          => call Vat . grab ILK URN THIS Vow (0 -Rat minRat(INK, ART *Rat RATE *Rat TAG)) (0 -Rat ART) ... </k>
          <this> THIS </this>
          <end-tag>
           ...
@@ -170,7 +183,7 @@ End Semantics
     syntax EndStep ::= "free" String
  // --------------------------------
     rule <k> End . free ILK
-          => call Vat . grab ILK MSGSENDER MSGSENDER address(Vow) (0 -Rat INK) 0 ... </k>
+          => call Vat . grab ILK MSGSENDER MSGSENDER Vow (0 -Rat INK) 0 ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <end-live> false </end-live>
          <vat-urns>
@@ -183,14 +196,14 @@ End Semantics
     syntax EndStep ::= "thaw"
  // -------------------------
     rule <k> End . thaw ... </k>
-         <currentTime> NOW </currentTime>
+         <current-time> NOW </current-time>
          <end-live> false </end-live>
          <end-debt> 0 => DEBT </end-debt>
          <end-when> WHEN </end-when>
          <end-wait> WAIT </end-wait>
          <vat-dai>
            ...
-           address(Vow) |-> 0
+           Vow |-> 0
            ...
          </vat-dai>
          <vat-debt> DEBT </vat-debt>
@@ -228,7 +241,7 @@ End Semantics
     syntax EndStep ::= "pack" Wad
  // -----------------------------
     rule <k> End . pack AMOUNT
-          => call Vat . move MSGSENDER address(Vow) AMOUNT ... </k>
+          => call Vat . move MSGSENDER Vow AMOUNT ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <end-debt> DEBT </end-debt>
          <end-bag>

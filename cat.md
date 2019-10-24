@@ -17,10 +17,10 @@ Cat Configuration
 ```k
     configuration
       <cat>
-        <cat-addr> 0:Address </cat-addr>
-        <cat-ilks> .Map      </cat-ilks>
-        <cat-live> true      </cat-live>
-        <cat-vow>  0:Address </cat-vow>
+        <cat-wards> .Set      </cat-wards>
+        <cat-ilks>  .Map      </cat-ilks>
+        <cat-live>  true      </cat-live>
+        <cat-vow>   0:Address </cat-vow>
       </cat>
 ```
 
@@ -30,11 +30,24 @@ Cat Configuration
     syntax MCDStep ::= CatContract "." CatStep [klabel(catStep)]
  // ------------------------------------------------------------
     rule contract(Cat . _) => Cat
-    rule [[ address(Cat) => ADDR ]] <cat-addr> ADDR </cat-addr>
+```
 
-    syntax CatStep ::= CatAuthStep
+Cat Authorization
+-----------------
+
+```k
+    syntax CatStep  ::= CatAuthStep
     syntax AuthStep ::= CatContract "." CatAuthStep [klabel(catStep)]
  // -----------------------------------------------------------------
+    rule [[ wards(Cat) => WARDS ]] <cat-wards> WARDS </cat-wards>
+
+    syntax CatAuthStep ::= WardStep
+ // -------------------------------
+    rule <k> Cat . rely ADDR => . ... </k>
+         <cat-wards> ... (.Set => SetItem(ADDR)) </cat-wards>
+
+    rule <k> Cat . deny ADDR => . ... </k>
+         <cat-wards> WARDS => WARDS -Set SetItem(ADDR) </cat-wards>
 ```
 
 Cat Data
@@ -62,7 +75,7 @@ Cat Events
     syntax CatStep ::= "emitBite" String Address Wad Wad Wad
  // --------------------------------------------------------
     rule <k> ID:Int ~> emitBite ILK URN INK ART TAB => ID ... </k>
-         <frame-events> _ => ListItem(Bite(ILK, URN, INK, ART, TAB, address(Flip ILK), ID)) </frame-events>
+         <frame-events> _ => ListItem(Bite(ILK, URN, INK, ART, TAB, Flip ILK, ID)) </frame-events>
 ```
 
 File-able Fields
