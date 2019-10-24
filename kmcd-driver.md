@@ -61,9 +61,7 @@ By default it's assumed that the special `ADMIN` account is authorized on all ot
 
     syntax Bool ::= isAuthorized ( Address , MCDContract ) [function]
  // -----------------------------------------------------------------
-    rule isAuthorized( _     , _           ) => false                      [owise]
-    rule isAuthorized( ADMIN , _           ) => true
-    rule isAuthorized( ADDR  , MCDCONTRACT ) => ADDR in wards(MCDCONTRACT) requires ADDR =/=K ADMIN
+    rule isAuthorized( ADDR , MCDCONTRACT ) => ADDR ==K ADMIN orBool ADDR in wards(MCDCONTRACT)
 
     syntax AuthStep
     syntax MCDStep ::= AuthStep
