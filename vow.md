@@ -17,15 +17,16 @@ Vow Configuration
 ```k
     configuration
       <vow>
-        <vow-sins> .Map  </vow-sins> // mapping (uint256 => uint256) Int |-> Rad
-        <vow-sin>  0:Rad </vow-sin>
-        <vow-ash>  0:Rad </vow-ash>
-        <vow-wait> 0     </vow-wait>
-        <vow-dump> 0:Wad </vow-dump>
-        <vow-sump> 0:Rad </vow-sump>
-        <vow-bump> 0:Rad </vow-bump>
-        <vow-hump> 0:Rad </vow-hump>
-        <vow-live> true  </vow-live>
+        <vow-wards> .Set  </vow-wards>
+        <vow-sins>  .Map  </vow-sins> // mapping (uint256 => uint256) Int |-> Rad
+        <vow-sin>   0:Rad </vow-sin>
+        <vow-ash>   0:Rad </vow-ash>
+        <vow-wait>  0     </vow-wait>
+        <vow-dump>  0:Wad </vow-dump>
+        <vow-sump>  0:Rad </vow-sump>
+        <vow-bump>  0:Rad </vow-bump>
+        <vow-hump>  0:Rad </vow-hump>
+        <vow-live>  true  </vow-live>
       </vow>
 ```
 
@@ -36,6 +37,7 @@ Vow Configuration
  // ------------------------------------------------------------
     rule contract(Vow . _) => Vow
     rule address(Vow) => "VOW"
+    rule [[ wards(Vow) => WARDS ]] <vow-wards> WARDS </vow-wards>
 
     syntax VowStep ::= VowAuthStep
     syntax AuthStep ::= VowContract "." VowAuthStep [klabel(vowStep)]

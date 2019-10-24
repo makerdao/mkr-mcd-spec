@@ -19,7 +19,7 @@ module KMCD-DRIVER
           <k> $PGM:MCDSteps </k>
           <msg-sender> 0:Address </msg-sender>
           <this> 0:Address </this>
-          <authorized-accounts> .Set </authorized-accounts>
+          <authorized-accounts> .Map </authorized-accounts>
           <current-time> 0:Int </current-time>
           <call-stack> .List </call-stack>
           <pre-state> .K </pre-state>
@@ -42,35 +42,40 @@ MCD Simulations
  // ---------------------------------------------------
 ```
 
-Transaction Initiation
-----------------------
+Authorization Scheme
+--------------------
 
-We have a simplified model of system authentication which bins accounts into:
-
--   authorized: allowed to initiate transactions to any entry point in KMCD.
--   non-authorized: only allowed to initiate transactions into non-`auth` entry points in KMCD.
-
-Note that any internal `call` does not need authorization, we assume that any internal `call` is responsible for ensuring a safe calling context.
+Authorization happens at the `call` boundaries, which includes both transactions and calls between MCD contracts.
+Each contract must defined the `authorized` function, which returns the set of accounts which are authorized for that account.
+By default it's assumed that the special `ADMIN` account is authorized on all other contracts (for running simulations).
 
 ```k
     syntax MCDStep ::= AdminStep
  // ----------------------------
 
-    syntax AdminStep ::= "authorize" Address
- // ----------------------------------------
-    rule <k> authorize ADDR => . ... </k>
-         <authorized-accounts> ... (.Set => SetItem(ADDR)) </authorized-accounts>
+    syntax Set ::= wards ( MCDContract ) [function]
+ // -----------------------------------------------
+    rule wards(_) => .Set [owise]
+
+    syntax Address ::= "ADMIN"
+ // --------------------------
+
+    syntax Bool ::= isAuthorized ( Address , MCDContract ) [function]
+ // -----------------------------------------------------------------
+    rule isAuthorized( _     , _           ) => false                      [owise]
+    rule isAuthorized( ADMIN , _           ) => true
+    rule isAuthorized( ADDR  , MCDCONTRACT ) => ADDR in wards(MCDCONTRACT) requires ADDR =/=K ADMIN
 
     syntax AuthStep
     syntax MCDStep ::= AuthStep
  // ---------------------------
 ```
 
-Using `transact` triggers authorization checks (top-level calls should be done with `transact`).
-`{push|drop|pop}State` are used for state roll-back (and are given semantics once the entire configuration is present).
+Transactions
+------------
 
-**TODO**: Add negative semantics for `transact` when non-authorized?
-          Getting stuck is convenient for detecting bugs in tests.
+`{push|drop|pop}State` are used for state roll-back (and are given semantics once the entire configuration is present).
+Use `transact ...` for initiating top-level calls from a given user.
 
 ```k
     syntax AdminStep ::= "transact" Address MCDStep
@@ -78,8 +83,6 @@ Using `transact` triggers authorization checks (top-level calls should be done w
     rule <k> transact ADDR:Address MCD:MCDStep => pushState ~> call MCD ~> dropState ... </k>
          <this> _ => ADDR </this>
          <msg-sender> _ => ADDR </msg-sender>
-         <authorized-accounts> AUTH_ACCOUNTS </authorized-accounts>
-      requires isAuthStep(MCD) impliesBool (ADDR in AUTH_ACCOUNTS)
 
     syntax MCStep ::= "pushState" | "dropState" | "popState"
  // --------------------------------------------------------
@@ -100,8 +103,10 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
     rule <k> call MCD:MCDStep ~> CONT => MCD </k>
          <msg-sender> MSGSENDER => THIS </msg-sender>
          <this> THIS => address(contract(MCD)) </this>
+         <authorized-accounts> AUTHS </authorized-accounts>
          <call-stack> .List => ListItem(frame(MSGSENDER, EVENTS, CONT)) ... </call-stack>
          <frame-events> EVENTS => ListItem(LogNote(MSGSENDER, MCD)) </frame-events>
+      requires isAuthStep(MCD) impliesBool isAuthorized(THIS, contract(MCD))
 
     syntax ReturnValue ::= Int | Rat
  // --------------------------------
@@ -194,7 +199,8 @@ We model everything with arbitrary precision rationals, but use sort information
 
 ### Time Increments
 
-Some methods rely on a timestamp. We simulate that here.
+Some methods rely on a timestamp.
+We simulate that here.
 
 ```k
     syntax MCDStep ::= "TimeStep"

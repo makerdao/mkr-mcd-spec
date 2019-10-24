@@ -15,13 +15,14 @@ Flop Configuration
 ```k
     configuration
       <flop-state>
-        <flop-bids> .Map          </flop-bids>  // mapping (uint => Bid) Int |-> FlopBid
-        <flop-kicks> 0            </flop-kicks>
-        <flop-live>  true         </flop-live>
-        <flop-beg>   105 /Rat 100 </flop-beg>
-        <flop-pad>   150 /Rat 100 </flop-pad>
-        <flop-ttl>   3 hours      </flop-ttl>
-        <flop-tau>   2 days       </flop-tau>
+        <flop-wards> .Set          </flop-wards>
+        <flop-bids>  .Map          </flop-bids>  // mapping (uint => Bid) Int |-> FlopBid
+        <flop-kicks>  0            </flop-kicks>
+        <flop-live>   true         </flop-live>
+        <flop-beg>    105 /Rat 100 </flop-beg>
+        <flop-pad>    150 /Rat 100 </flop-pad>
+        <flop-ttl>    3 hours      </flop-ttl>
+        <flop-tau>    2 days       </flop-tau>
       </flop-state>
 ```
 
@@ -32,6 +33,7 @@ Flop Configuration
  // ---------------------------------------------------------------
     rule contract(Flop . _) => Flop
     rule address(Flop) => "FLOP"
+    rule [[ wards(Flop) => WARDS ]] <flop-wards> WARDS </flop-wards>
 
     syntax FlopStep ::= FlopAuthStep
     syntax AuthStep ::= FlopContract "." FlopAuthStep [klabel(flopStep)]

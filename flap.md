@@ -15,7 +15,8 @@ Flap Configuration
 ```k
     configuration
       <flap-state>
-        <flap-bids> .Map          </flap-bids>  // mapping (uint => Bid) Int |-> FlapBid
+        <flap-wards> .Set         </flap-wards>
+        <flap-bids>  .Map         </flap-bids>  // mapping (uint => Bid) Int |-> FlapBid
         <flap-kicks> 0            </flap-kicks>
         <flap-live>  true         </flap-live>
         <flap-beg>   105 /Rat 100 </flap-beg>
@@ -34,6 +35,7 @@ Flap Semantics
  // ---------------------------------------------------------------
     rule contract(Flap . _) => Flap
     rule address(Flap) => "FLAP"
+    rule [[ wards(Flap) => WARDS ]] <flap-wards> WARDS </flap-wards>
 
     syntax FlapStep ::= FlapAuthStep
     syntax AuthStep ::= FlapContract "." FlapAuthStep [klabel(flapStep)]

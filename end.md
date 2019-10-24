@@ -25,16 +25,17 @@ End Configuration
       <end-state>
         <endPhase> false </endPhase>
         <end>
-          <end-live> true  </end-live>
-          <end-when> 0     </end-when>
-          <end-wait> 0     </end-wait>
-          <end-debt> 0:Rad </end-debt>
-          <end-tag>  .Map  </end-tag>  // mapping (bytes32 => uint256)                      String  |-> Ray
-          <end-gap>  .Map  </end-gap>  // mapping (bytes32 => uint256)                      String  |-> Wad
-          <end-art>  .Map  </end-art>  // mapping (bytes32 => uint256)                      String  |-> Wad
-          <end-fix>  .Map  </end-fix>  // mapping (bytes32 => uint256)                      String  |-> Ray
-          <end-bag>  .Map  </end-bag>  // mapping (address => uint256)                      Address |-> Wad
-          <end-out>  .Map  </end-out>  // mapping (bytes32 => mapping (address => uint256)) CDPID   |-> Wad
+          <end-wards> .Set  </end-wards>
+          <end-live>  true  </end-live>
+          <end-when>  0     </end-when>
+          <end-wait>  0     </end-wait>
+          <end-debt>  0:Rad </end-debt>
+          <end-tag>   .Map  </end-tag>  // mapping (bytes32 => uint256)                      String  |-> Ray
+          <end-gap>   .Map  </end-gap>  // mapping (bytes32 => uint256)                      String  |-> Wad
+          <end-art>   .Map  </end-art>  // mapping (bytes32 => uint256)                      String  |-> Wad
+          <end-fix>   .Map  </end-fix>  // mapping (bytes32 => uint256)                      String  |-> Ray
+          <end-bag>   .Map  </end-bag>  // mapping (address => uint256)                      Address |-> Wad
+          <end-out>   .Map  </end-out>  // mapping (bytes32 => mapping (address => uint256)) CDPID   |-> Wad
         </end>
       </end-state>
 ```
@@ -46,6 +47,7 @@ End Configuration
  // ------------------------------------------------------------
     rule contract(End . _) => End
     rule address(End) => "END"
+    rule [[ wards(End) => WARDS ]] <end-wards> WARDS </end-wards>
 
     syntax EndStep ::= EndAuthStep
     syntax AuthStep ::= EndContract "." EndAuthStep [klabel(endStep)]

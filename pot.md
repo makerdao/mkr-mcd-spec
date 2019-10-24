@@ -13,13 +13,14 @@ Pot Configuration
 ```k
     configuration
       <pot>
-        <pot-pies> .Map      </pot-pies> // mapping (address => uint256) Address |-> Wad
-        <pot-pie>  0:Wad     </pot-pie>
-        <pot-dsr>  1:Ray     </pot-dsr>
-        <pot-chi>  1:Rat     </pot-chi> // arbitrary precision
-        <pot-vow>  0:Address </pot-vow>
-        <pot-rho>  0         </pot-rho>
-        <pot-live> true      </pot-live>
+        <pot-wards> .Set      </pot-wards>
+        <pot-pies>  .Map      </pot-pies> // mapping (address => uint256) Address |-> Wad
+        <pot-pie>   0:Wad     </pot-pie>
+        <pot-dsr>   1:Ray     </pot-dsr>
+        <pot-chi>   1:Rat     </pot-chi> // arbitrary precision
+        <pot-vow>   0:Address </pot-vow>
+        <pot-rho>   0         </pot-rho>
+        <pot-live>  true      </pot-live>
       </pot>
 ```
 
@@ -30,6 +31,7 @@ Pot Configuration
  // ------------------------------------------------------------
     rule contract(Pot . _) => Pot
     rule address(Pot) => "POT"
+    rule [[ wards(Pot) => WARDS ]] <pot-wards> WARDS </pot-wards>
 
     syntax PotStep ::= PotAuthStep
     syntax AuthStep ::= PotContract "." PotAuthStep [klabel(potStep)]

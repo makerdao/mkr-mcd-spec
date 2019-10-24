@@ -13,6 +13,7 @@ Gem Configuration
       <gems>
         <gem multiplicity="*" type="Map">
           <gem-id>       "":String </gem-id>
+          <gem-wards>    .Set      </gem-wards>
           <gem-balances> .Map      </gem-balances> // mapping (address => uint256) Address |-> Wad
         </gem>
       </gems>
@@ -25,6 +26,7 @@ Gem Configuration
  // ------------------------------------------------------------
     rule contract(Gem GEMID . _) => Gem GEMID
     rule address(Gem GEMID) => "GEM-" +String GEMID
+    rule [[ wards(Gem GEMID) => WARDS ]] <gem> <gem-id> GEMID </gem-id> <gem-wards> WARDS </gem-wards> ... </gem>
 
     syntax GemAuthStep
     syntax GemStep ::= GemAuthStep

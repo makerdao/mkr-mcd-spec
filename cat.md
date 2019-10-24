@@ -17,9 +17,10 @@ Cat Configuration
 ```k
     configuration
       <cat>
-        <cat-ilks> .Map      </cat-ilks>
-        <cat-live> true      </cat-live>
-        <cat-vow>  0:Address </cat-vow>
+        <cat-wards> .Set      </cat-wards>
+        <cat-ilks>  .Map      </cat-ilks>
+        <cat-live>  true      </cat-live>
+        <cat-vow>   0:Address </cat-vow>
       </cat>
 ```
 
@@ -30,6 +31,7 @@ Cat Configuration
  // ------------------------------------------------------------
     rule contract(Cat . _) => Cat
     rule address(Cat) => "CAT"
+    rule [[ wards(Cat) => WARDS ]] <cat-wards> WARDS </cat-wards>
 
     syntax CatStep ::= CatAuthStep
     syntax AuthStep ::= CatContract "." CatAuthStep [klabel(catStep)]

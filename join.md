@@ -20,8 +20,12 @@ Join Configuration
         <gem-joins>
           <gem-join multiplicity="*" type="Map">
             <gem-join-gem> "" </gem-join-gem>
+            <gem-join-wards> .Set </gem-join-wards>
           </gem-join>
         </gem-joins>
+        <dai-join>
+          <dai-join-wards> .Set </dai-join-wards>
+        </dai-join>
       </join-state>
 ```
 
@@ -32,6 +36,7 @@ Join Configuration
  // ------------------------------------------------------------------------
     rule contract(GemJoin GEMID . _) => GemJoin GEMID
     rule address(GemJoin GEMID) => "GEM-JOIN-" +String GEMID
+    rule [[ wards(GemJoin GEMID) => WARDS ]] <gem-join> <gem-join-gem> GEMID </gem-join-gem> <gem-join-wards> WARDS </gem-join-wards> ... </gem-join>
 
     syntax MCDContract ::= DaiJoinContract
     syntax DaiJoinContract ::= "DaiJoin"
@@ -39,6 +44,7 @@ Join Configuration
  // ------------------------------------------------------------------------
     rule contract(DaiJoin . _) => DaiJoin
     rule address(DaiJoin) => "DAI-JOIN"
+    rule [[ wards(DaiJoin) => WARDS ]] <dai-join-wards> WARDS </dai-join-wards>
 ```
 
 Join Semantics

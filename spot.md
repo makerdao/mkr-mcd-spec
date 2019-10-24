@@ -13,8 +13,9 @@ Spot Configuration
 ```k
     configuration
       <spot>
-        <spot-ilks> .Map  </spot-ilks> // mapping (bytes32 => ilk)  String  |-> SpotIlk
-        <spot-par>  0:Ray </spot-par>
+        <spot-wards> .Set  </spot-wards>
+        <spot-ilks>  .Map  </spot-ilks> // mapping (bytes32 => ilk)  String  |-> SpotIlk
+        <spot-par>   0:Ray </spot-par>
       </spot>
 ```
 
@@ -25,6 +26,7 @@ Spot Configuration
  // ---------------------------------------------------------------
     rule contract(Spot . _) => Spot
     rule address(Spot) => "SPOT"
+    rule [[ wards(Spot) => WARDS ]] <spot-wards> WARDS </spot-wards>
 
     syntax SpotAuthStep
     syntax SpotStep ::= SpotAuthStep

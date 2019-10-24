@@ -11,16 +11,17 @@ Vat Configuration
 ```k
     configuration
       <vat>
-        <vat-can>  .Map  </vat-can>  // mapping (address (address => uint))       Address |-> Set
-        <vat-ilks> .Map  </vat-ilks> // mapping (bytes32 => Ilk)                  String  |-> VatIlk
-        <vat-urns> .Map  </vat-urns> // mapping (bytes32 => (address => Urn))     CDPID   |-> VatUrn
-        <vat-gem>  .Map  </vat-gem>  // mapping (bytes32 => (address => uint256)) CDPID   |-> Wad
-        <vat-dai>  .Map  </vat-dai>  // mapping (address => uint256)              Address |-> Rad
-        <vat-sin>  .Map  </vat-sin>  // mapping (address => uint256)              Address |-> Rad
-        <vat-debt> 0:Rad </vat-debt> // Total Dai Issued
-        <vat-vice> 0:Rad </vat-vice> // Total Unbacked Dai
-        <vat-Line> 0:Rad </vat-Line> // Total Debt Ceiling
-        <vat-live> true  </vat-live> // Access Flag
+        <vat-wards> .Set  </vat-wards>
+        <vat-can>   .Map  </vat-can>  // mapping (address (address => uint))       Address |-> Set
+        <vat-ilks>  .Map  </vat-ilks> // mapping (bytes32 => Ilk)                  String  |-> VatIlk
+        <vat-urns>  .Map  </vat-urns> // mapping (bytes32 => (address => Urn))     CDPID   |-> VatUrn
+        <vat-gem>   .Map  </vat-gem>  // mapping (bytes32 => (address => uint256)) CDPID   |-> Wad
+        <vat-dai>   .Map  </vat-dai>  // mapping (address => uint256)              Address |-> Rad
+        <vat-sin>   .Map  </vat-sin>  // mapping (address => uint256)              Address |-> Rad
+        <vat-debt>  0:Rad </vat-debt> // Total Dai Issued
+        <vat-vice>  0:Rad </vat-vice> // Total Unbacked Dai
+        <vat-Line>  0:Rad </vat-Line> // Total Debt Ceiling
+        <vat-live>  true  </vat-live> // Access Flag
       </vat>
 ```
 
@@ -47,6 +48,7 @@ For convenience, total Dai/Sin are tracked:
  // ------------------------------------------------------------
     rule contract(Vat . _) => Vat
     rule address(Vat) => "VAT"
+    rule [[ wards(Vat) => WARDS ]] <vat-wards> WARDS </vat-wards>
 
     syntax VatStep ::= VatAuthStep
     syntax AuthStep ::= VatContract "." VatAuthStep [klabel(vatStep)]

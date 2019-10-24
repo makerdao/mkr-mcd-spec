@@ -15,6 +15,7 @@ Flip Configuration
       <flips>
         <flip multiplicity="*" type="Map">
           <flip-ilk>   ""           </flip-ilk>
+          <flip-wards> .Set         </flip-wards>
           <flip-bids>  .Map         </flip-bids> // mapping (uint => Bid)     Int     |-> FlipBid
           <flip-beg>   105 /Rat 100 </flip-beg>  // Minimum Bid Increase
           <flip-ttl>   3 hours      </flip-ttl>  // Single Bid Lifetime
@@ -29,8 +30,9 @@ Flip Configuration
     syntax FlipContract ::= "Flip" String
     syntax MCDStep ::= FlipContract "." FlipStep [klabel(flipStep)]
  // ---------------------------------------------------------------
-    rule contract(Flip ILK . _) => Flip ILK
-    rule address(Flip ILK) => "FLIP-" +String ILK
+    rule contract(Flip ILKID . _) => Flip ILKID
+    rule address(Flip ILKID) => "FLIP-" +String ILKID
+    rule [[ wards(Flip ILKID) => WARDS ]] <flip> <flip-ilk> ILKID </flip-ilk> <flip-wards> WARDS </flip-wards> ... </flip>
 
     syntax FlipStep ::= FlipAuthStep
     syntax AuthStep ::= FlipContract "." FlipAuthStep [klabel(flipStep)]
