@@ -29,11 +29,24 @@ module DAI
  // ------------------------------------------------------------
     rule contract(Dai . _) => Dai
     rule address(Dai) => "DAI"
-    rule [[ wards(Dai) => WARDS ]] <dai-wards> WARDS </dai-wards>
+```
 
-    syntax DaiStep ::= DaiAuthStep
+Dai Authorization
+-----------------
+
+```k
+    syntax DaiStep  ::= DaiAuthStep
     syntax AuthStep ::= DaiContract "." DaiAuthStep [klabel(daiStep)]
  // -----------------------------------------------------------------
+    rule [[ wards(Dai) => WARDS ]] <dai-wards> WARDS </dai-wards>
+
+    syntax DaiAuthStep ::= WardStep
+ // -------------------------------
+    rule <k> Dai . rely ADDR => . ... </k>
+         <dai-wards> ... (.Set => SetItem(ADDR)) </dai-wards>
+
+    rule <k> Dai . deny ADDR => . ... </k>
+         <dai-wards> WARDS => WARDS -Set SetItem(ADDR) </dai-wards>
 ```
 
 Dai Data

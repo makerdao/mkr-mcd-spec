@@ -47,11 +47,24 @@ End Configuration
  // ------------------------------------------------------------
     rule contract(End . _) => End
     rule address(End) => "END"
-    rule [[ wards(End) => WARDS ]] <end-wards> WARDS </end-wards>
+```
 
-    syntax EndStep ::= EndAuthStep
+End Authorization
+-----------------
+
+```k
+    syntax EndStep  ::= EndAuthStep
     syntax AuthStep ::= EndContract "." EndAuthStep [klabel(endStep)]
  // -----------------------------------------------------------------
+    rule [[ wards(End) => WARDS ]] <end-wards> WARDS </end-wards>
+
+    syntax EndAuthStep ::= WardStep
+ // -------------------------------
+    rule <k> End . rely ADDR => . ... </k>
+         <end-wards> ... (.Set => SetItem(ADDR)) </end-wards>
+
+    rule <k> End . deny ADDR => . ... </k>
+         <end-wards> WARDS => WARDS -Set SetItem(ADDR) </end-wards>
 ```
 
 File-able Fields

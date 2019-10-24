@@ -32,11 +32,32 @@ Flip Configuration
  // ---------------------------------------------------------------
     rule contract(Flip ILKID . _) => Flip ILKID
     rule address(Flip ILKID) => "FLIP-" +String ILKID
-    rule [[ wards(Flip ILKID) => WARDS ]] <flip> <flip-ilk> ILKID </flip-ilk> <flip-wards> WARDS </flip-wards> ... </flip>
+```
 
+Flip Authorization
+------------------
+
+```k
     syntax FlipStep ::= FlipAuthStep
     syntax AuthStep ::= FlipContract "." FlipAuthStep [klabel(flipStep)]
  // --------------------------------------------------------------------
+    rule [[ wards(Flip ILKID) => WARDS ]] <flip> <flip-ilk> ILKID </flip-ilk> <flip-wards> WARDS </flip-wards> ... </flip>
+
+    syntax FlipAuthStep ::= WardStep
+ // --------------------------------
+    rule <k> Flip ILKID . rely ADDR => . ... </k>
+         <flip>
+           <flip-ilk> ILKID </flip-ilk>
+           <flip-wards> ... (.Set => SetItem(ADDR)) </flip-wards>
+           ...
+         </flip>
+
+    rule <k> Flip ILKID . deny ADDR => . ... </k>
+         <flip>
+           <flip-ilk> ILKID </flip-ilk>
+           <flip-wards> WARDS => WARDS -Set SetItem(ADDR) </flip-wards>
+           ...
+         </flip>
 ```
 
 Flip Data

@@ -31,11 +31,24 @@ Pot Configuration
  // ------------------------------------------------------------
     rule contract(Pot . _) => Pot
     rule address(Pot) => "POT"
-    rule [[ wards(Pot) => WARDS ]] <pot-wards> WARDS </pot-wards>
+```
 
-    syntax PotStep ::= PotAuthStep
+Pot Authorization
+-----------------
+
+```k
+    syntax PotStep  ::= PotAuthStep
     syntax AuthStep ::= PotContract "." PotAuthStep [klabel(potStep)]
  // -----------------------------------------------------------------
+    rule [[ wards(Pot) => WARDS ]] <pot-wards> WARDS </pot-wards>
+
+    syntax PotAuthStep ::= WardStep
+ // -------------------------------
+    rule <k> Pot . rely ADDR => . ... </k>
+         <pot-wards> ... (.Set => SetItem(ADDR)) </pot-wards>
+
+    rule <k> Pot . deny ADDR => . ... </k>
+         <pot-wards> WARDS => WARDS -Set SetItem(ADDR) </pot-wards>
 ```
 
 File-able Fields

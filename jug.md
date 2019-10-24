@@ -27,11 +27,24 @@ Jug Configuration
  // ------------------------------------------------------------
     rule contract(Jug . _) => Jug
     rule address(Jug) => "JUG"
-    rule [[ wards(Jug) => WARDS ]] <jug-wards> WARDS </jug-wards>
+```
 
-    syntax JugStep ::= JugAuthStep
+Jug Authorization
+-----------------
+
+```k
+    syntax JugStep  ::= JugAuthStep
     syntax AuthStep ::= JugContract "." JugAuthStep [klabel(jugStep)]
  // -----------------------------------------------------------------
+    rule [[ wards(Jug) => WARDS ]] <jug-wards> WARDS </jug-wards>
+
+    syntax JugAuthStep ::= WardStep
+ // -------------------------------
+    rule <k> Jug . rely ADDR => . ... </k>
+         <jug-wards> ... (.Set => SetItem(ADDR)) </jug-wards>
+
+    rule <k> Jug . deny ADDR => . ... </k>
+         <jug-wards> WARDS => WARDS -Set SetItem(ADDR) </jug-wards>
 ```
 
 Jug Data

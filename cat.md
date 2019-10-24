@@ -31,11 +31,24 @@ Cat Configuration
  // ------------------------------------------------------------
     rule contract(Cat . _) => Cat
     rule address(Cat) => "CAT"
-    rule [[ wards(Cat) => WARDS ]] <cat-wards> WARDS </cat-wards>
+```
 
-    syntax CatStep ::= CatAuthStep
+Cat Authorization
+-----------------
+
+```k
+    syntax CatStep  ::= CatAuthStep
     syntax AuthStep ::= CatContract "." CatAuthStep [klabel(catStep)]
  // -----------------------------------------------------------------
+    rule [[ wards(Cat) => WARDS ]] <cat-wards> WARDS </cat-wards>
+
+    syntax CatAuthStep ::= WardStep
+ // -------------------------------
+    rule <k> Cat . rely ADDR => . ... </k>
+         <cat-wards> ... (.Set => SetItem(ADDR)) </cat-wards>
+
+    rule <k> Cat . deny ADDR => . ... </k>
+         <cat-wards> WARDS => WARDS -Set SetItem(ADDR) </cat-wards>
 ```
 
 Cat Data

@@ -35,11 +35,24 @@ Flap Semantics
  // ---------------------------------------------------------------
     rule contract(Flap . _) => Flap
     rule address(Flap) => "FLAP"
-    rule [[ wards(Flap) => WARDS ]] <flap-wards> WARDS </flap-wards>
+```
 
+Flap Authorization
+------------------
+
+```k
     syntax FlapStep ::= FlapAuthStep
     syntax AuthStep ::= FlapContract "." FlapAuthStep [klabel(flapStep)]
  // --------------------------------------------------------------------
+    rule [[ wards(Flap) => WARDS ]] <flap-wards> WARDS </flap-wards>
+
+    syntax FlapAuthStep ::= WardStep
+ // --------------------------------
+    rule <k> Flap . rely ADDR => . ... </k>
+         <flap-wards> ... (.Set => SetItem(ADDR)) </flap-wards>
+
+    rule <k> Flap . deny ADDR => . ... </k>
+         <flap-wards> WARDS => WARDS -Set SetItem(ADDR) </flap-wards>
 ```
 
 Flap Data

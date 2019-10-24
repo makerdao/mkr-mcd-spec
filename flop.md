@@ -33,11 +33,24 @@ Flop Configuration
  // ---------------------------------------------------------------
     rule contract(Flop . _) => Flop
     rule address(Flop) => "FLOP"
-    rule [[ wards(Flop) => WARDS ]] <flop-wards> WARDS </flop-wards>
+```
 
+Flop Authorization
+------------------
+
+```k
     syntax FlopStep ::= FlopAuthStep
     syntax AuthStep ::= FlopContract "." FlopAuthStep [klabel(flopStep)]
  // --------------------------------------------------------------------
+    rule [[ wards(Flop) => WARDS ]] <flop-wards> WARDS </flop-wards>
+
+    syntax FlopAuthStep ::= WardStep
+ // -------------------------------
+    rule <k> Flop . rely ADDR => . ... </k>
+         <flop-wards> ... (.Set => SetItem(ADDR)) </flop-wards>
+
+    rule <k> Flop . deny ADDR => . ... </k>
+         <flop-wards> WARDS => WARDS -Set SetItem(ADDR) </flop-wards>
 ```
 
 Flop Data

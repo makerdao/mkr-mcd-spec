@@ -48,11 +48,24 @@ For convenience, total Dai/Sin are tracked:
  // ------------------------------------------------------------
     rule contract(Vat . _) => Vat
     rule address(Vat) => "VAT"
-    rule [[ wards(Vat) => WARDS ]] <vat-wards> WARDS </vat-wards>
+```
 
-    syntax VatStep ::= VatAuthStep
+Vat Authorization
+-----------------
+
+```k
+    syntax VatStep  ::= VatAuthStep
     syntax AuthStep ::= VatContract "." VatAuthStep [klabel(vatStep)]
  // -----------------------------------------------------------------
+    rule [[ wards(Vat) => WARDS ]] <vat-wards> WARDS </vat-wards>
+
+    syntax VatAuthStep ::= WardStep
+ // -------------------------------
+    rule <k> Vat . rely ADDR => . ... </k>
+         <vat-wards> ... (.Set => SetItem(ADDR)) </vat-wards>
+
+    rule <k> Vat . deny ADDR => . ... </k>
+         <vat-wards> WARDS => WARDS -Set SetItem(ADDR) </vat-wards>
 ```
 
 CDP Data

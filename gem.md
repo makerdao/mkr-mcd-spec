@@ -26,12 +26,32 @@ Gem Configuration
  // ------------------------------------------------------------
     rule contract(Gem GEMID . _) => Gem GEMID
     rule address(Gem GEMID) => "GEM-" +String GEMID
-    rule [[ wards(Gem GEMID) => WARDS ]] <gem> <gem-id> GEMID </gem-id> <gem-wards> WARDS </gem-wards> ... </gem>
+```
 
-    syntax GemAuthStep
-    syntax GemStep ::= GemAuthStep
+Gem Authorization
+-----------------
+
+```k
+    syntax GemStep  ::= GemAuthStep
     syntax AuthStep ::= GemContract "." GemAuthStep [klabel(gemStep)]
  // -----------------------------------------------------------------
+    rule [[ wards(Gem GEMID) => WARDS ]] <gem> <gem-id> GEMID </gem-id> <gem-wards> WARDS </gem-wards> ... </gem>
+
+    syntax GemAuthStep ::= WardStep
+ // -------------------------------
+    rule <k> Gem GEMID . rely ADDR => . ... </k>
+         <gem>
+           <gem-id> GEMID </gem-id>
+           <gem-wards> ... (.Set => SetItem(ADDR)) </gem-wards>
+           ...
+         </gem>
+
+    rule <k> Gem GEMID . deny ADDR => . ... </k>
+         <gem>
+           <gem-id> GEMID </gem-id>
+           <gem-wards> WARDS => WARDS -Set SetItem(ADDR) </gem-wards>
+           ...
+         </gem>
 ```
 
 Gem Semantics

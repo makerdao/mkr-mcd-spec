@@ -37,11 +37,24 @@ Vow Configuration
  // ------------------------------------------------------------
     rule contract(Vow . _) => Vow
     rule address(Vow) => "VOW"
-    rule [[ wards(Vow) => WARDS ]] <vow-wards> WARDS </vow-wards>
+```
 
-    syntax VowStep ::= VowAuthStep
+Vow Authorization
+-----------------
+
+```k
+    syntax VowStep  ::= VowAuthStep
     syntax AuthStep ::= VowContract "." VowAuthStep [klabel(vowStep)]
  // -----------------------------------------------------------------
+    rule [[ wards(Vow) => WARDS ]] <vow-wards> WARDS </vow-wards>
+
+    syntax VowAuthStep ::= WardStep
+ // -------------------------------
+    rule <k> Vow . rely ADDR => . ... </k>
+         <vow-wards> ... (.Set => SetItem(ADDR)) </vow-wards>
+
+    rule <k> Vow . deny ADDR => . ... </k>
+         <vow-wards> WARDS => WARDS -Set SetItem(ADDR) </vow-wards>
 ```
 
 File-able Data

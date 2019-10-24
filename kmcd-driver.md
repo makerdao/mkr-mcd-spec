@@ -69,6 +69,10 @@ By default it's assumed that the special `ADMIN` account is authorized on all ot
     syntax AuthStep
     syntax MCDStep ::= AuthStep
  // ---------------------------
+
+    syntax WardStep ::= "rely" Address
+                      | "deny" Address
+ // ----------------------------------
 ```
 
 Transactions

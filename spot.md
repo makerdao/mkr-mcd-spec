@@ -26,12 +26,24 @@ Spot Configuration
  // ---------------------------------------------------------------
     rule contract(Spot . _) => Spot
     rule address(Spot) => "SPOT"
-    rule [[ wards(Spot) => WARDS ]] <spot-wards> WARDS </spot-wards>
+```
 
-    syntax SpotAuthStep
+Spot Authorization
+------------------
+
+```k
     syntax SpotStep ::= SpotAuthStep
     syntax AuthStep ::= SpotContract "." SpotAuthStep [klabel(spotStep)]
  // --------------------------------------------------------------------
+    rule [[ wards(Spot) => WARDS ]] <spot-wards> WARDS </spot-wards>
+
+    syntax SpotAuthStep ::= WardStep
+ // -------------------------------
+    rule <k> Spot . rely ADDR => . ... </k>
+         <spot-wards> ... (.Set => SetItem(ADDR)) </spot-wards>
+
+    rule <k> Spot . deny ADDR => . ... </k>
+         <spot-wards> WARDS => WARDS -Set SetItem(ADDR) </spot-wards>
 ```
 
 Spot Data

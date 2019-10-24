@@ -36,7 +36,6 @@ Join Configuration
  // ------------------------------------------------------------------------
     rule contract(GemJoin GEMID . _) => GemJoin GEMID
     rule address(GemJoin GEMID) => "GEM-JOIN-" +String GEMID
-    rule [[ wards(GemJoin GEMID) => WARDS ]] <gem-join> <gem-join-gem> GEMID </gem-join-gem> <gem-join-wards> WARDS </gem-join-wards> ... </gem-join>
 
     syntax MCDContract ::= DaiJoinContract
     syntax DaiJoinContract ::= "DaiJoin"
@@ -44,7 +43,45 @@ Join Configuration
  // ------------------------------------------------------------------------
     rule contract(DaiJoin . _) => DaiJoin
     rule address(DaiJoin) => "DAI-JOIN"
+```
+
+Join Authorization
+------------------
+
+```k
+    syntax GemJoinStep ::= GemJoinAuthStep
+    syntax AuthStep    ::= GemJoinContract "." GemJoinAuthStep [klabel(gemJoinStep)]
+ // --------------------------------------------------------------------------------
+    rule [[ wards(GemJoin GEMID) => WARDS ]] <gem-join> <gem-join-gem> GEMID </gem-join-gem> <gem-join-wards> WARDS </gem-join-wards> ... </gem-join>
+
+    syntax GemJoinAuthStep ::= WardStep
+ // -----------------------------------
+    rule <k> GemJoin GEMID . rely ADDR => . ... </k>
+         <gem-join>
+           <gem-join-gem> GEMID </gem-join-gem>
+           <gem-join-wards> ... (.Set => SetItem(ADDR)) </gem-join-wards>
+           ...
+         </gem-join>
+
+    rule <k> GemJoin GEMID . deny ADDR => . ... </k>
+         <gem-join>
+           <gem-join-gem> GEMID </gem-join-gem>
+           <gem-join-wards> WARDS => WARDS -Set SetItem(ADDR) </gem-join-wards>
+           ...
+         </gem-join>
+
+    syntax DaiJoinStep ::= DaiJoinAuthStep
+    syntax AuthStep    ::= DaiJoinContract "." DaiJoinAuthStep [klabel(daiJoinStep)]
+ // --------------------------------------------------------------------------------
     rule [[ wards(DaiJoin) => WARDS ]] <dai-join-wards> WARDS </dai-join-wards>
+
+    syntax DaiJoinAuthStep ::= WardStep
+ // -----------------------------------
+    rule <k> DaiJoin . rely ADDR => . ... </k>
+         <dai-join-wards> ... (.Set => SetItem(ADDR)) </dai-join-wards>
+
+    rule <k> DaiJoin . deny ADDR => . ... </k>
+         <dai-join-wards> WARDS => WARDS -Set SetItem(ADDR) </dai-join-wards>
 ```
 
 Join Semantics
