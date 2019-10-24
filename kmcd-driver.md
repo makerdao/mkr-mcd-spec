@@ -37,12 +37,20 @@ MCD Simulations
     rule <k> MCD:MCDStep MCDS:MCDSteps => MCD ~> MCDS ... </k>
 
     syntax MCDContract ::= contract(MCDStep) [function]
-    syntax Address ::= address(MCDContract) [function]
  // ---------------------------------------------------
 ```
 
 Authorization Scheme
 --------------------
+
+`Address` is a unique identifier of an account on the network.
+They can be either an `Int` or a `String` (for readability).
+In addition, each `MCDContract` is automatically an `Address`, under the assumption that there is a unique live instance of each one at a time.
+
+```k
+    syntax Address ::= Int | String | MCDContract
+ // ---------------------------------------------
+```
 
 Authorization happens at the `call` boundaries, which includes both transactions and calls between MCD contracts.
 Each contract must defined the `authorized` function, which returns the set of accounts which are authorized for that account.
@@ -103,7 +111,7 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
  // -----------------------------------
     rule <k> call MCD:MCDStep ~> CONT => MCD </k>
          <msg-sender> MSGSENDER => THIS </msg-sender>
-         <this> THIS => address(contract(MCD)) </this>
+         <this> THIS => contract(MCD) </this>
          <call-stack> .List => ListItem(frame(MSGSENDER, EVENTS, CONT)) ... </call-stack>
          <frame-events> EVENTS => ListItem(LogNote(MSGSENDER, MCD)) </frame-events>
       requires isAuthStep(MCD) impliesBool isAuthorized(THIS, contract(MCD))
@@ -181,20 +189,6 @@ We model everything with arbitrary precision rationals, but use sort information
 
     syntax MaybeWad ::= Wad | ".Wad"
  // --------------------------------
-```
-
-### Account addresses
-
--   `Address`: unique identifier of an account on the network, an `Int` in real life, but `String` here for readability.
-
-```k
-    syntax Address ::= Int | String
- // -------------------------------
-
-    syntax String ::= Address2String ( Address ) [function]
- // -------------------------------------------------------
-    rule Address2String ( I:Int    ) => Int2String(I)
-    rule Address2String ( S:String ) => S
 ```
 
 ### Time Increments

@@ -30,7 +30,6 @@ Pot Configuration
     syntax MCDStep ::= PotContract "." PotStep [klabel(potStep)]
  // ------------------------------------------------------------
     rule contract(Pot . _) => Pot
-    rule address(Pot) => "POT"
 ```
 
 Pot Authorization

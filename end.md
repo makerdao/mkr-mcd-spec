@@ -46,7 +46,6 @@ End Configuration
     syntax MCDStep ::= EndContract "." EndStep [klabel(endStep)]
  // ------------------------------------------------------------
     rule contract(End . _) => End
-    rule address(End) => "END"
 ```
 
 End Authorization
@@ -123,11 +122,11 @@ End Semantics
     syntax EndStep ::= "skip" String Int
  // ------------------------------------
     rule <k> End . skip ILK ID
-          => call Vat . suck address(Vow) address(Vow) TAB
-          ~> call Vat . suck address(Vow) THIS BID
-          ~> call Vat . hope address(Flip ILK)
+          => call Vat . suck Vow Vow  TAB
+          ~> call Vat . suck Vow THIS BID
+          ~> call Vat . hope Flip ILK
           ~> call Flip ILK . yank ID
-          ~> call Vat . grab ILK USR THIS address(Vow) LOT (TAB /Rat RATE) ... </k>
+          ~> call Vat . grab ILK USR THIS Vow LOT (TAB /Rat RATE) ... </k>
          <this> THIS </this>
          <end-tag>
           ...
@@ -157,7 +156,7 @@ End Semantics
     syntax EndStep ::= "skim" String Address
  // ----------------------------------------
     rule <k> End . skim ILK URN
-          => call Vat . grab ILK URN THIS address(Vow) (0 -Rat minRat(INK, ART *Rat RATE *Rat TAG)) (0 -Rat ART) ... </k>
+          => call Vat . grab ILK URN THIS Vow (0 -Rat minRat(INK, ART *Rat RATE *Rat TAG)) (0 -Rat ART) ... </k>
          <this> THIS </this>
          <end-tag>
           ...
@@ -184,7 +183,7 @@ End Semantics
     syntax EndStep ::= "free" String
  // --------------------------------
     rule <k> End . free ILK
-          => call Vat . grab ILK MSGSENDER MSGSENDER address(Vow) (0 -Rat INK) 0 ... </k>
+          => call Vat . grab ILK MSGSENDER MSGSENDER Vow (0 -Rat INK) 0 ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <end-live> false </end-live>
          <vat-urns>
@@ -204,7 +203,7 @@ End Semantics
          <end-wait> WAIT </end-wait>
          <vat-dai>
            ...
-           address(Vow) |-> 0
+           Vow |-> 0
            ...
          </vat-dai>
          <vat-debt> DEBT </vat-debt>
@@ -242,7 +241,7 @@ End Semantics
     syntax EndStep ::= "pack" Wad
  // -----------------------------
     rule <k> End . pack AMOUNT
-          => call Vat . move MSGSENDER address(Vow) AMOUNT ... </k>
+          => call Vat . move MSGSENDER Vow AMOUNT ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <end-debt> DEBT </end-debt>
          <end-bag>

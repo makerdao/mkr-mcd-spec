@@ -36,7 +36,6 @@ Vow Configuration
     syntax MCDStep ::= VowContract "." VowStep [klabel(vowStep)]
  // ------------------------------------------------------------
     rule contract(Vow . _) => Vow
-    rule address(Vow) => "VOW"
 ```
 
 Vow Authorization
@@ -213,7 +212,7 @@ Vow Semantics
          <vat-dai>
            ...
            THIS |-> DAI
-           address(Flap) |-> FLAPDAI
+           Flap |-> FLAPDAI
            ...
          </vat-dai>
          <vow-live> _ => false </vow-live>

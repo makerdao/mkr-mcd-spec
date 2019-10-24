@@ -35,14 +35,12 @@ Join Configuration
     syntax MCDStep ::= GemJoinContract "." GemJoinStep [klabel(gemJoinStep)]
  // ------------------------------------------------------------------------
     rule contract(GemJoin GEMID . _) => GemJoin GEMID
-    rule address(GemJoin GEMID) => "GEM-JOIN-" +String GEMID
 
     syntax MCDContract ::= DaiJoinContract
     syntax DaiJoinContract ::= "DaiJoin"
     syntax MCDStep ::= DaiJoinContract "." DaiJoinStep [klabel(daiJoinStep)]
  // ------------------------------------------------------------------------
     rule contract(DaiJoin . _) => DaiJoin
-    rule address(DaiJoin) => "DAI-JOIN"
 ```
 
 Join Authorization

@@ -47,7 +47,6 @@ For convenience, total Dai/Sin are tracked:
     syntax MCDStep ::= VatContract "." VatStep [klabel(vatStep)]
  // ------------------------------------------------------------
     rule contract(Vat . _) => Vat
-    rule address(Vat) => "VAT"
 ```
 
 Vat Authorization

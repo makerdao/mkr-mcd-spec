@@ -31,7 +31,6 @@ Flip Configuration
     syntax MCDStep ::= FlipContract "." FlipStep [klabel(flipStep)]
  // ---------------------------------------------------------------
     rule contract(Flip ILKID . _) => Flip ILKID
-    rule address(Flip ILKID) => "FLIP-" +String ILKID
 ```
 
 Flip Authorization

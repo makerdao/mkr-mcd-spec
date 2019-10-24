@@ -34,7 +34,6 @@ Flap Semantics
     syntax MCDStep ::= FlapContract "." FlapStep [klabel(flapStep)]
  // ---------------------------------------------------------------
     rule contract(Flap . _) => Flap
-    rule address(Flap) => "FLAP"
 ```
 
 Flap Authorization

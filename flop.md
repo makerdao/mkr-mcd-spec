@@ -32,7 +32,6 @@ Flop Configuration
     syntax MCDStep ::= FlopContract "." FlopStep [klabel(flopStep)]
  // ---------------------------------------------------------------
     rule contract(Flop . _) => Flop
-    rule address(Flop) => "FLOP"
 ```
 
 Flop Authorization

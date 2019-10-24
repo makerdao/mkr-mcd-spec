@@ -25,7 +25,6 @@ Spot Configuration
     syntax MCDStep ::= SpotContract "." SpotStep [klabel(spotStep)]
  // ---------------------------------------------------------------
     rule contract(Spot . _) => Spot
-    rule address(Spot) => "SPOT"
 ```
 
 Spot Authorization

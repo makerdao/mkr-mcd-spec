@@ -30,7 +30,6 @@ Cat Configuration
     syntax MCDStep ::= CatContract "." CatStep [klabel(catStep)]
  // ------------------------------------------------------------
     rule contract(Cat . _) => Cat
-    rule address(Cat) => "CAT"
 ```
 
 Cat Authorization
@@ -76,7 +75,7 @@ Cat Events
     syntax CatStep ::= "emitBite" String Address Wad Wad Wad
  // --------------------------------------------------------
     rule <k> ID:Int ~> emitBite ILK URN INK ART TAB => ID ... </k>
-         <frame-events> _ => ListItem(Bite(ILK, URN, INK, ART, TAB, address(Flip ILK), ID)) </frame-events>
+         <frame-events> _ => ListItem(Bite(ILK, URN, INK, ART, TAB, Flip ILK, ID)) </frame-events>
 ```
 
 File-able Fields

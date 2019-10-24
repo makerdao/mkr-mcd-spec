@@ -26,7 +26,6 @@ Jug Configuration
     syntax MCDStep ::= JugContract "." JugStep [klabel(jugStep)]
  // ------------------------------------------------------------
     rule contract(Jug . _) => Jug
-    rule address(Jug) => "JUG"
 ```
 
 Jug Authorization

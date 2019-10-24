@@ -25,7 +25,6 @@ Gem Configuration
     syntax MCDStep ::= GemContract "." GemStep [klabel(gemStep)]
  // ------------------------------------------------------------
     rule contract(Gem GEMID . _) => Gem GEMID
-    rule address(Gem GEMID) => "GEM-" +String GEMID
 ```
 
 Gem Authorization
