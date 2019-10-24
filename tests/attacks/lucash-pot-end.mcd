@@ -10,8 +10,13 @@ transact "Admin" Gem "gold" . mint "Bobby" 10
 transact "Admin" GemJoin "gold" . init
 
 // Initialize Spot for gold
-Spot . init     "gold"
-Spot . setPrice "gold" 5
+transact "Admin" Spot . init     "gold"
+transact "Admin" Spot . setPrice "gold" 1
+
+// Initialize Pot
+transact "Admin" Pot . file vow-file "VOW"
+transact "Admin" Pot . initUser "Alice"
+transact "Admin" Pot . initUser "Bobby"
 
 // Initialize Vat, both total Line and gold parameters
 transact "Admin" Vat . file Line 1000 ether
@@ -21,6 +26,7 @@ transact "Admin" Vat . file line "gold" 1000 ether
 
 // Initialize "VOW", "FLAP", "END" addresses for Vat.
 transact "Admin" Vat . initUser "VOW"
+transact "Admin" Vat . initUser "POT"
 transact "Admin" Vat . initUser "FLAP"
 transact "Admin" Vat . initUser "END"
 transact "Admin" Vat . initGem "gold" "END"
@@ -29,10 +35,12 @@ transact "Admin" Vat . initGem "gold" "END"
 transact "Admin" Vat . initUser "Alice"
 transact "Admin" Vat . initGem "gold" "Alice"
 transact "Admin" Vat . initCDP "gold" "Alice"
+transact "Alice" Vat . hope "POT"
 
-//transact "Admin" Vat . initUser "Bobby"
+transact "Admin" Vat . initUser "Bobby"
 transact "Admin" Vat . initGem "gold" "Bobby"
 transact "Admin" Vat . initCDP "gold" "Bobby"
+transact "Bobby" Vat . hope "POT"
 
 // Setup CDPs
 transact "Alice" GemJoin "gold" . join "Alice" 10
@@ -47,6 +55,10 @@ transact "Admin" End . initGap "gold"       // injected because no default setti
 transact "Admin" End . skim "gold" "Alice"
 transact "Admin" End . skim "gold" "Bobby"
 transact "Admin" End . thaw
-//transact "Admin" End . flow "gold"
-//transact "Alice" Pot . drip
+transact "Admin" End . flow "gold"
+transact "Alice" Pot . join 10
+transact "Admin" Pot . file dsr 2
+TimeStep 1 second
+transact "Alice" Pot . drip
+transact "Alice" Pot . exit 10
 .MCDSteps
