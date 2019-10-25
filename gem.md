@@ -53,6 +53,30 @@ Gem Authorization
          </gem>
 ```
 
+Gem Initialization
+------------------
+
+Because data isn't explicitely initialized to 0 in KMCD, we need explicit initializers for various pieces of data.
+
+-   `init`: Creates the blank contract data for a new gem of a given ilk.
+-   `initUser`: Creates a new account for a given user in a given ilk.
+
+```k
+    syntax GemAuthStep ::= "init"
+                         | "initUser" Address
+ // -----------------------------------------
+    rule <k> Gem GEMID . init => . ... </k>
+         <gems> ... ( .Bag => <gem> <gem-id> GEMID </gem-id> ... </gem> ) ... </gems>
+
+    rule <k> Gem GEMID . initUser ADDR => . ... </k>
+         <gem>
+            <gem-id> GEMID </gem-id>
+            <gem-balances> BALS => BALS [ ADDR <- 0 ] </gem-balances>
+            ...
+         </gem>
+      requires notBool ADDR in_keys(BALS)
+```
+
 Gem Semantics
 -------------
 
