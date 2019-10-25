@@ -85,6 +85,22 @@ These parameters are controlled by governance:
 
 **NOTE**: We have not added `file` steps for `vat`, `cat`, `vow`, `pot`, or `spot` because this model does not deal with swapping out implementations.
 
+End Initialization
+------------------
+
+Because data isn't explicitely initialized to 0 in KMCD, we need explicit initializers for various pieces of data.
+
+-   `initGap`: Initialize the gap for a given ilk to 0.
+    **TODO**: Should `End . initGap ILKID` happen directly when `End . cage ILKID` happens?
+
+```k
+    syntax EndAuthStep ::= "initGap" String
+ // ---------------------------------------
+    rule <k> End . initGap ILKID => . ... </k>
+         <end-gap> GAPS => GAPS [ ILKID <- 0 ] </end-gap>
+      requires notBool ILKID in_keys(GAPS)
+```
+
 End Semantics
 -------------
 
