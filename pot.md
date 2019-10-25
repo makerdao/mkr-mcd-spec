@@ -78,6 +78,21 @@ These parameters are controlled by governance:
 
 **TODO**: Need to use `vow-file` as name to avoid conflict with `<vow>` cell.
 
+Pot Initialization
+------------------
+
+Because data isn't explicitely initialized to 0 in KMCD, we need explicit initializers for various pieces of data.
+
+-   `initUser`: Add the given users accounts to the pies.
+
+```k
+    syntax PotAuthStep ::= "initUser" Address
+ // -----------------------------------------
+    rule <k> Pot . initUser ADDR => . ... </k>
+         <pot-pies> PIES => PIES [ ADDR <- 0 ] </pot-pies>
+      requires notBool ADDR in_keys(PIES)
+```
+
 Pot Semantics
 -------------
 
