@@ -204,6 +204,7 @@ We simulate that here.
 
     rule <k> TimeStep N => . ... </k>
          <current-time> TIME => TIME +Int N </current-time>
+      requires N >Int 0
 
     syntax priorities timeUnit > _+Int_ _-Int_ _*Int_ _/Int_
  // --------------------------------------------------------
