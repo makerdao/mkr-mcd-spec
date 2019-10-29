@@ -15,7 +15,7 @@ Spot Configuration
       <spot>
         <spot-wards> .Set  </spot-wards>
         <spot-ilks>  .Map  </spot-ilks> // mapping (bytes32 => ilk)  String  |-> SpotIlk
-        <spot-par>   0:Ray </spot-par>
+        <spot-par>   1:Ray </spot-par>
       </spot>
 ```
 
@@ -95,6 +95,26 @@ Spot Events
 ```k
     syntax Event ::= Poke(String, Wad, Ray)
  // ---------------------------------------
+```
+
+Spot Initialization
+-------------------
+
+Because data isn't explicitely initialized to 0 in KMCD, we need explicit initializers for various pieces of data.
+
+-   `init`: Initialize the spotter for a given ilk.
+-   `setPrice`: Manually inject a value for the price feed of a given ilk.
+
+```k
+    syntax SpotAuthStep ::= "init"     String
+                          | "setPrice" String Wad
+ // ---------------------------------------------
+    rule <k> Spot . init ILKID => . ... </k>
+         <spot-ilks> ILKS => ILKS [ ILKID <- SpotIlk( ... pip: .Wad , mat: 1 ) ] </spot-ilks>
+      requires notBool ILKID in_keys(ILKS)
+
+    rule <k> Spot . setPrice ILKID PRICE => . ... </k>
+         <spot-ilks> ... ILKID |-> SpotIlk( ... pip: (_ => PRICE) ) ... </spot-ilks>
 ```
 
 Spot Semantics

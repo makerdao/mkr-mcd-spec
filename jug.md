@@ -77,7 +77,9 @@ These parameters are controlled by governance:
                      | "vow-file" Address
  // -------------------------------------
     rule <k> Jug . file duty ILKID DUTY => . ... </k>
-         <jug-ilks> ... ILK |-> Ilk ( ... duty: (_ => DUTY) ) ... </jug-ilks>
+         <jug-ilks> ... ILK |-> Ilk ( ... duty: (_ => DUTY) , rho: RHO ) ... </jug-ilks>
+         <current-time> NOW </current-time>
+      requires NOW ==Int RHO
 
     rule <k> Jug . file base BASE => . ... </k>
          <jug-base> _ => BASE </jug-base>

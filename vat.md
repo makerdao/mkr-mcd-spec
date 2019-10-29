@@ -146,6 +146,43 @@ The parameters controlled by governance are:
          <vat-ilks> ... ILKID |-> Ilk ( ... dust: (_ => DUST) ) ... </vat-ilks>
 ```
 
+Vat Initialization
+------------------
+
+Because data isn't explicitely initialized to 0 in KMCD, we need explicit initializers for various pieces of data.
+
+-   `initIlk`: Create a new `VatIlk` which starts with `rate == 1` and all other fields `0`.
+-   `initUser`: Creates `can`, `dai`, and `sin` accounts for a given user in the vat.
+-   `initGem`: Create a new gem of a given ilk for a given address.
+-   `initCDP`: Create an empty CDP of a given ilk for a given user.
+
+```k
+    syntax VatAuthStep ::= "initIlk" String
+                         | "initUser" Address
+                         | "initGem" String Address
+                         | "initCDP" String Address
+ // -----------------------------------------------
+    rule <k> Vat . initIlk ILKID => . ... </k>
+         <vat-ilks> ILKS => ILKS [ ILKID <- Ilk ( ... Art: 0 , rate: 1 , spot: 0 , line: 0 , dust: 0 ) ] </vat-ilks>
+      requires notBool ILKID in_keys(ILKS)
+
+    rule <k> Vat . initUser ADDR => . ... </k>
+         <vat-can> CAN => CAN [ ADDR <- .Set ] </vat-can>
+         <vat-dai> DAI => DAI [ ADDR <- 0    ] </vat-dai>
+         <vat-sin> SIN => SIN [ ADDR <- 0    ] </vat-sin>
+      requires notBool ADDR in_keys(CAN)
+       andBool notBool ADDR in_keys(DAI)
+       andBool notBool ADDR in_keys(SIN)
+
+    rule <k> Vat . initGem ILKID ADDR => . ... </k>
+         <vat-gem> GEMS => GEMS [ { ILKID , ADDR } <- 0 ] </vat-gem>
+      requires notBool { ILKID , ADDR } in_keys(GEMS)
+
+    rule <k> Vat . initCDP ILKID ADDR => . ... </k>
+         <vat-urns> URNS => URNS [ { ILKID , ADDR } <- Urn( ... ink: 0 , art: 0 ) ] </vat-urns>
+      requires notBool { ILKID , ADDR } in_keys(URNS)
+```
+
 Vat Semantics
 -------------
 
@@ -282,16 +319,15 @@ This is quite permissive, and would allow the account to drain all your locked c
 ```k
     syntax VatStep ::= "move" Address Address Wad
  // ---------------------------------------------
-    rule <k> Vat . move ADDRFROM ADDRTO DAI => .
-         ...
-         </k>
+    rule <k> Vat . move ADDRFROM ADDRTO DAI => . ... </k>
          <vat-dai>
            ...
            ADDRFROM |-> (DAIFROM => DAIFROM -Rat DAI)
            ADDRTO   |-> (DAITO   => DAITO   +Rat DAI)
            ...
          </vat-dai>
-      requires wish ADDRFROM
+      requires DAIFROM >=Rat DAI
+       andBool wish ADDRFROM
 ```
 
 ### CDP Manipulation
@@ -349,7 +385,7 @@ This is quite permissive, and would allow the account to drain all your locked c
          </vat-gem>
          <vat-sin>
            ...
-           USERW |-> ( SINW => SINW -Rat (RATE *Rat DART) )
+           ADDRW |-> ( SINW => SINW -Rat (RATE *Rat DART) )
            ...
          </vat-sin>
 
@@ -377,7 +413,7 @@ This is quite permissive, and would allow the account to drain all your locked c
          </vat-gem>
          <vat-dai>
            ...
-           USERW |-> ( DAIW => DAIW +Rat (RATE *Rat DART) )
+           ADDRW |-> ( DAIW => DAIW +Rat (RATE *Rat DART) )
            ...
          </vat-dai>
          <vat-Line> LINE </vat-Line>

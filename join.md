@@ -82,6 +82,19 @@ Join Authorization
          <dai-join-wards> WARDS => WARDS -Set SetItem(ADDR) </dai-join-wards>
 ```
 
+Join Initialization
+-------------------
+
+Because data isn't explicitely initialized to 0 in KMCD, we need explicit initializers for various pieces of data.
+
+-   `init`: Creates the joins account in the given gem for users to join their collateral to.
+
+```k
+    syntax GemJoinAuthStep ::= "init"
+ // ---------------------------------
+    rule <k> GemJoin GEMID . init => Gem GEMID . initUser GemJoin GEMID ... </k>
+```
+
 Join Semantics
 --------------
 

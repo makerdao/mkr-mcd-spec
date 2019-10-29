@@ -198,9 +198,13 @@ We simulate that here.
 
 ```k
     syntax MCDStep ::= "TimeStep"
- // -----------------------------
-    rule <k> TimeStep => . ... </k>
-         <current-time> TIME => TIME +Int 1 second </current-time>
+                     | "TimeStep" Int
+ // ---------------------------------
+    rule <k> TimeStep => TimeStep 1 ... </k>
+
+    rule <k> TimeStep N => . ... </k>
+         <current-time> TIME => TIME +Int N </current-time>
+      requires N >Int 0
 
     syntax priorities timeUnit > _+Int_ _-Int_ _*Int_ _/Int_
  // --------------------------------------------------------

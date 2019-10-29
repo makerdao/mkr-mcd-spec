@@ -47,6 +47,13 @@ pipeline {
             '''
           }
         }
+        stage('Run Simulation Tests') {
+          steps {
+            sh '''
+              make test-execution -j8
+            '''
+          }
+        }
       }
     }
     stage('Deploy') {

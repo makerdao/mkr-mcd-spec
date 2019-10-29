@@ -67,12 +67,31 @@ These parameters are controlled by governance:
  // -------------------------------------
     rule <k> Pot . file dsr DSR => . ... </k>
          <pot-dsr> _ => DSR </pot-dsr>
+         <pot-rho> RHO </pot-rho>
+         <current-time> NOW </current-time>
+         <pot-live> true </pot-live>
+      requires NOW ==Int RHO
 
     rule <k> Pot . file vow-file ADDR => . ... </k>
          <pot-vow> _ => ADDR </pot-vow>
 ```
 
 **TODO**: Need to use `vow-file` as name to avoid conflict with `<vow>` cell.
+
+Pot Initialization
+------------------
+
+Because data isn't explicitely initialized to 0 in KMCD, we need explicit initializers for various pieces of data.
+
+-   `initUser`: Add the given user's account to the pies.
+
+```k
+    syntax PotAuthStep ::= "initUser" Address
+ // -----------------------------------------
+    rule <k> Pot . initUser ADDR => . ... </k>
+         <pot-pies> PIES => PIES [ ADDR <- 0 ] </pot-pies>
+      requires notBool ADDR in_keys(PIES)
+```
 
 Pot Semantics
 -------------
@@ -83,7 +102,7 @@ Pot Semantics
     rule <k> Pot . drip => call Vat . suck VOW THIS ( PIE *Rat CHI *Rat ( DSR ^Rat (NOW -Int RHO) -Rat 1 ) ) ... </k>
          <this> THIS </this>
          <current-time> NOW </current-time>
-         <pot-chi> CHI => CHI *Rat DSR ^Rat (NOW -Int RHO) </pot-chi>
+         <pot-chi> CHI => CHI *Rat (DSR ^Rat (NOW -Int RHO)) </pot-chi>
          <pot-rho> RHO => NOW </pot-rho>
          <pot-dsr> DSR </pot-dsr>
          <pot-vow> VOW </pot-vow>
