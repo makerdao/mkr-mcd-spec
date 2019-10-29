@@ -83,7 +83,7 @@ Pot Initialization
 
 Because data isn't explicitely initialized to 0 in KMCD, we need explicit initializers for various pieces of data.
 
--   `initUser`: Add the given users accounts to the pies.
+-   `initUser`: Add the given user's account to the pies.
 
 ```k
     syntax PotAuthStep ::= "initUser" Address
