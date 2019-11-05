@@ -1,24 +1,11 @@
 // MCD Internal Contract Setup
 // ---------------------------
 
-// Auhthorize Pot/End for Vat
+// Auhthorize Pot for Vat
 transact ADMIN Vat . rely Pot
-transact ADMIN Vat . rely End
 
-// Authorize End for Cat/Vow/Pot
-transact ADMIN Cat . rely End
-transact ADMIN Vow . rely End
-transact ADMIN Pot . rely End
-
-// Authorize Vow for Flap/Flop
-transact ADMIN Flap . rely Vow
-transact ADMIN Flop . rely Vow
-
-// Initialize Vat accounts for Vow/Pot/Flap/End
-transact ADMIN Vat . initUser Vow
+// Initialize Vat accounts for Pot
 transact ADMIN Vat . initUser Pot
-transact ADMIN Vat . initUser Flap
-transact ADMIN Vat . initUser End
 
 // File Vow contract for Pot (since Pot doesn't depend on Vow?)
 transact ADMIN Pot . file vow-file Vow
@@ -41,7 +28,7 @@ transact ADMIN Spot . setPrice "gold" 1
 // Initialize Vat, both total Line and gold parameters
 transact ADMIN Vat . file Line 1000 ether
 transact ADMIN Vat . initIlk "gold"
-transact ADMIN Vat . file spot "gold" 3 ether
+transact ADMIN Vat . file spot "gold" 1 ether
 transact ADMIN Vat . file line "gold" 1000 ether
 
 // User Setup
@@ -69,9 +56,9 @@ transact "Alice" Vat . frob "gold" "Alice" "Alice" "Alice" 10 10
 
 // Earn Interest
 transact "Alice" Pot . join 10
+transact ADMIN Pot . file dsr 5			// accumulate interest at 5%
+TimeStep 1 day							// for a day
 transact "Alice" Pot . drip
-transact ADMIN Pot . file dsr 2			// accumulate interest
-TimeStep 1 second						//
 transact "Alice" Pot . exit 10
 
 // Get ETH Back
