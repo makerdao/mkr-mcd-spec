@@ -156,16 +156,6 @@ Most operations add to the log, which stores the address which made the call and
  // ------------------------------------------
 ```
 
-Simulations
------------
-
-Different contracts use the same names for external functions, so we declare them here.
-
-```k
-    syntax InitStep ::= "init" Int
- // ------------------------------
-```
-
 Base Data
 ---------
 
