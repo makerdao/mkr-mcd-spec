@@ -51,6 +51,7 @@ Vow Authorization
  // -------------------------------
     rule <k> Vow . rely ADDR => . ... </k>
          <vow-wards> ... (.Set => SetItem(ADDR)) </vow-wards>
+         <vow-live> true </vow-live>
 
     rule <k> Vow . deny ADDR => . ... </k>
          <vow-wards> WARDS => WARDS -Set SetItem(ADDR) </vow-wards>
