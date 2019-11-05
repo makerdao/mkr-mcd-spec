@@ -271,11 +271,14 @@ This is quite permissive, and would allow the account to drain all your locked c
 **TODO**: Should be `note`.
 
 ```k
-    syntax VatAuthStep ::= InitStep
- // -------------------------------
+    syntax VatAuthStep ::= "init" String
+ // ------------------------------------
     rule <k> Vat . init ILKID => . ... </k>
-         <vat-ilks> ILKS => ILKS [ ILKID <- 1 ] </vat-ilks>
-      requires notBool ILKID in_keys(ILKS)
+         <vat-ilks>
+           ...
+           ILKID |-> Ilk(... rate: 0 => 1)
+           ...
+         </vat-ilks>
 ```
 
 ### Collateral manipulation (`<vat-gem>`)
