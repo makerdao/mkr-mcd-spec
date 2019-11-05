@@ -129,8 +129,8 @@ Flip Semantics
 --------------
 
 ```k
-    syntax FlipStep ::= "kick" Address Address Rad Wad Rad
- // ------------------------------------------------------
+    syntax FlipAuthStep ::= "kick" Address Address Rad Wad Rad
+ // ----------------------------------------------------------
     rule <k> Flip ILK . kick USR GAL TAB LOT BID
           => call Vat . flux ILK MSGSENDER THIS LOT
           ~> KICKS +Int 1 ... </k>
