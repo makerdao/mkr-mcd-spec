@@ -85,6 +85,7 @@
       ListItem ( LogNote ( ADMIN , End . flow "gold" ) )
       ListItem ( LogNote ( "Alice" , Vat . move "Alice" Pot 10 ) )
       ListItem ( LogNote ( "Alice" , Pot . join 10 ) )
+      ListItem ( TimeStep 1 )
       ListItem ( LogNote ( "Alice" , Vat . suck Vow Pot 0 ) )
       ListItem ( LogNote ( "Alice" , Pot . drip ) )
       ListItem ( LogNote ( "Alice" , Vat . move Pot "Alice" 10 ) )
