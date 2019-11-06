@@ -120,8 +120,7 @@ Vow Semantics
 
     syntax VowStep ::= "heal" Rad
  // -----------------------------
-    rule <k> Vow . heal AMOUNT
-          => call Vat . heal AMOUNT ... </k>
+    rule <k> Vow . heal AMOUNT => call Vat . heal AMOUNT ... </k>
          <this> THIS </this>
          <vat-dai>
            ...
@@ -141,8 +140,7 @@ Vow Semantics
 
     syntax VowStep ::= "kiss" Rad
  // -----------------------------
-    rule <k> Vow . kiss AMOUNT
-          => call Vat . heal AMOUNT ... </k>
+    rule <k> Vow . kiss AMOUNT => call Vat . heal AMOUNT ... </k>
          <this> THIS </this>
          <vat-dai>
            ...
@@ -155,8 +153,7 @@ Vow Semantics
 
     syntax VowStep ::= "flop"
  // -------------------------
-    rule <k> Vow . flop
-          => call Flop . kick THIS DUMP SUMP ... </k>
+    rule <k> Vow . flop => call Flop . kick THIS DUMP SUMP ... </k>
          <this> THIS </this>
          <vat-sin>
            ...
@@ -178,8 +175,7 @@ Vow Semantics
 
     syntax VowStep ::= "flap"
  // -------------------------
-    rule <k> Vow . flap
-          => call Flap . kick BUMP 0 ... </k>
+    rule <k> Vow . flap => call Flap . kick BUMP 0 ... </k>
          <this> THIS </this>
          <vat-sin>
            ...
@@ -203,7 +199,9 @@ Vow Semantics
     rule <k> Vow . cage
           => call Flap . cage FLAPDAI
           ~> call Flop . cage
-          ~> call Vat . heal minRat(DAI, VATSIN) ... </k>
+          ~> call Vat . heal minRat(DAI, VATSIN)
+         ...
+         </k>
          <this> THIS </this>
          <vat-sin>
            ...
