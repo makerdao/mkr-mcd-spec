@@ -112,7 +112,7 @@ Join Semantics
            <gem-join-gem> GEMID </gem-join-gem>
            <gem-join-live> true </gem-join-live>
            ...
-         </gem-join>	
+         </gem-join>
       requires AMOUNT >=Rat 0
 
     syntax GemJoinStep ::= "exit" Address Wad
