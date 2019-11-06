@@ -124,8 +124,8 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
          <this> THIS </this>
       requires notBool isAuthorized(THIS, contract(MCD))
 
-    syntax ReturnValue ::= Int | Rat
- // --------------------------------
+    syntax ReturnValue ::= Rat
+ // --------------------------
     rule <k> R:ReturnValue => . ... </k>
          <return-value> _ => R </return-value>
 
