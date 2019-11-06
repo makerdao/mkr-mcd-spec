@@ -161,7 +161,7 @@ Join Deactivation
          <gem-join-live> _ => false </gem-join-live>
 
     syntax DaiJoinAuthStep ::= "cage" [klabel(#DaiJoinCage), symbol]
- // --------------------------------------------------------
+ // ----------------------------------------------------------------
     rule <k> DaiJoin . cage => . ... </k>
          <dai-join-live> _ => false </dai-join-live>
 ```
