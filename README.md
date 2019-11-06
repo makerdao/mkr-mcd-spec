@@ -48,6 +48,35 @@ The semantics is broken into several sub-modules.
 
 -   [end](end.md) - close out all CDPs and auctions, attempt to re-distribute gems fairly according to internal accounting.
 
+Building
+--------
+
+After installing all the dependencies needed for [K Framework](https://github.com/kframework/k), you can run:
+
+```sh
+make deps
+make build -j4
+```
+
+If you are on Arch Linux, add `K_BUILD_TYPE=Release` to `make deps`, as the `Debug` and `FastBuild` versions do not work.
+
+Running Attack Tests
+--------------------
+
+In directory `tests/attacks`, we have some example attacks on the system which should not go through.
+In the fixed version of the system, they do not go through.
+You can run an attack sequence with:
+
+```sh
+./kmcd run --backend llvm tests/attacks/lucash-flip-end.mcd
+```
+
+If you want to run all the attack tests (and check their output), run:
+
+```sh
+make test-execution -j4
+```
+
 Potential Properties
 --------------------
 
@@ -62,32 +91,3 @@ One of the architecture decisions made was to make `*Like` interfaces for actual
 For example, `Cat` has `Urn` defined just to have access to the getters/setters from other contracts.
 
 For inverting storage of `vat` so that we have some implicit account (`msg.sender`), we should inspect `frob` as a test-case, because it access `wish` on three different passed in addresses.
-
-Order to Model
---------------
-
--   vat.sol
--   lib.sol
-
-Second layer:
-
--   jug.sol
--   pot.sol
--   spot.sol
-
-Collateral:
-
--   dai.sol
--   join.sol
-
-Auctions:
-
--   vow.sol
--   cat.sol
--   flop.sol
--   flip.sol
--   flap.sol
-
-Global:
-
--   end.sol
