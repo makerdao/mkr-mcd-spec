@@ -69,7 +69,6 @@ transact "Alice" Pot . exit 10
 transact "Alice" Vat . frob "gold" "Alice" "Alice" "Alice" -10 -10
 // transact "Alice" GemJoin "gold" . exit "Alice" 10
 
-// Expected: vat balance of user is zero (no interest earned)
-// Attack: vat balance of user is positive (interest was earned)
+// Attack: vat dai balance of Alice is positive (interest was earned)
 
 .MCDSteps
