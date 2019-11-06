@@ -50,6 +50,7 @@ Vow Authorization
     syntax VowAuthStep ::= WardStep
  // -------------------------------
     rule <k> Vow . rely ADDR => . ... </k>
+         <vow-live> true </vow-live>
          <vow-wards> ... (.Set => SetItem(ADDR)) </vow-wards>
 
     rule <k> Vow . deny ADDR => . ... </k>
