@@ -18,14 +18,35 @@ Structure
 
 The semantics is broken into several sub-modules.
 
+### Utility Files
+
 -   [kmcd-driver](kmcd-driver.md) - common functionality in all modules.
 -   [kmcd](kmcd.md) - union all sub-modules.
 
--   [cdp-core](cdp-core.md) - core accounting system for MCD.
--   [collateral](collateral.md) - collateral linking.
--   [dai](dai.md) - ERC20 fungible collateral version of Dai.
--   [rates](rates.md) - rate adjustments and price feeds
--   [stabilize](stabilize.md) - forcible stabilization of risky CDPs.
+### Accounting System
+
+-   [vat](vat.md) - tracks deposited collateral, open CDPs, and borrowed Dai.
+-   [pot](pot.md) - interest accumulation for saved Dai.
+-   [jug](jug.md) - stability fee collection.
+
+### Collateral
+
+-   [dai](dai.md) - Dai ERC20 token standard.
+-   [spot](spot.md) - price feed for collateral.
+-   [gem](gem.md) - abstract implementation of collateral.
+-   [join](join.md) - plug collateral into MCD system.
+
+### Liquidation/Auction Houses
+
+-   [cat](cat.md) - forcible liquidation of an over-leveraged CDP.
+-   [vow](vow.md) - manage and trigger liquidations.
+-   [flap](flap.md) - surplus auctions (Vat Dai for sale, bid increasing Gem MKR).
+-   [flop](flop.md) - deficit auctions (Gem MKR for sale, lot decreasing Vat Dai).
+-   [flip](flip.md) - general auction (Vat Gem for sale, bid increasing Vat Dai, lot decreasing Vat Dai).
+
+### Global Settlement
+
+-   [end](end.md) - close out all CDPs and auctions, attempt to re-distribute gems fairly according to internal accounting.
 
 Potential Properties
 --------------------
