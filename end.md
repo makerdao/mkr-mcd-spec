@@ -95,10 +95,20 @@ Because data isn't explicitely initialized to 0 in KMCD, we need explicit initia
 
 ```k
     syntax EndAuthStep ::= "initGap" String
- // ---------------------------------------
+                         | "initBag" Address
+                         | "initOut" String Address
+ // -----------------------------------------------
     rule <k> End . initGap ILKID => . ... </k>
          <end-gap> GAPS => GAPS [ ILKID <- 0 ] </end-gap>
       requires notBool ILKID in_keys(GAPS)
+
+    rule <k> End . initBag ADDR => . ... </k>
+         <end-bag> BAGS => BAGS [ ADDR <- 0 ] </end-bag>
+      requires notBool ADDR in_keys(BAGS)
+
+    rule <k> End . initOut ILKID ADDR => . ... </k>
+         <end-out> OUTS => OUTS [ { ILKID , ADDR } <- 0 ] </end-out>
+      requires notBool { ILKID , ADDR } in_keys(OUTS)
 ```
 
 End Semantics
