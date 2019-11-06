@@ -3,6 +3,9 @@
     <k>
       .
     </k>
+    <return-value>
+      .
+    </return-value>
     <msg-sender>
       "Alice"
     </msg-sender>
