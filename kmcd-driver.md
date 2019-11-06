@@ -93,8 +93,8 @@ Use `transact ...` for initiating top-level calls from a given user.
          <this> _ => ADDR </this>
          <msg-sender> _ => ADDR </msg-sender>
 
-    syntax MCStep ::= "pushState" | "dropState" | "popState"
- // --------------------------------------------------------
+    syntax MCDStep ::= "pushState" | "dropState" | "popState"
+ // ---------------------------------------------------------
 ```
 
 Function Calls
