@@ -235,12 +235,25 @@
     </gems>
     <join-state>
       <gem-joins>
-        .GemJoinCellMap
+        <gem-join>
+          <gem-join-gem>
+            "gold"
+          </gem-join-gem>
+          <gem-join-wards>
+            .Set
+          </gem-join-wards>
+          <gem-join-live>
+            true
+          </gem-join-live>
+        </gem-join>
       </gem-joins>
       <dai-join>
         <dai-join-wards>
           .Set
         </dai-join-wards>
+        <dai-join-live>
+          true
+        </dai-join-live>
       </dai-join>
     </join-state>
     <jug>
@@ -294,6 +307,9 @@
       <spot-par>
         1
       </spot-par>
+      <spot-live>
+        true
+      </spot-live>
     </spot>
     <vat>
       <vat-wards>
