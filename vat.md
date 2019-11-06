@@ -136,15 +136,19 @@ The parameters controlled by governance are:
                      | "dust" String Rad
  // ------------------------------------
     rule <k> Vat . file Line LINE => . ... </k>
+         <vat-live> true </vat-live>
          <vat-Line> _ => LINE </vat-Line>
 
     rule <k> Vat . file spot ILKID SPOT => . ... </k>
+         <vat-live> true </vat-live>
          <vat-ilks> ... ILKID |-> Ilk ( ... spot: (_ => SPOT) ) ... </vat-ilks>
 
     rule <k> Vat . file line ILKID LINE => . ... </k>
+         <vat-live> true </vat-live>
          <vat-ilks> ... ILKID |-> Ilk ( ... line: (_ => LINE) ) ... </vat-ilks>
 
     rule <k> Vat . file dust ILKID DUST => . ... </k>
+         <vat-live> true </vat-live>
          <vat-ilks> ... ILKID |-> Ilk ( ... dust: (_ => DUST) ) ... </vat-ilks>
 ```
 

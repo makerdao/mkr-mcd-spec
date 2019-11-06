@@ -16,6 +16,7 @@ Spot Configuration
         <spot-wards> .Set  </spot-wards>
         <spot-ilks>  .Map  </spot-ilks> // mapping (bytes32 => ilk)  String  |-> SpotIlk
         <spot-par>   1:Ray </spot-par>
+        <spot-live>  true  </spot-live>
       </spot>
 ```
 
@@ -78,12 +79,15 @@ These parameters are controlled by governance/oracles:
                       | "par" Ray
  // -----------------------------
     rule <k> Spot . file pip ILKID PIP => . ... </k>
+         <spot-live> true </spot-live>
          <spot-ilks> ... ILKID |-> SpotIlk ( ... pip: (_ => PIP) ) ... </spot-ilks>
 
     rule <k> Spot . file mat ILKID MAT => . ... </k>
+         <spot-live> true </spot-live>
          <spot-ilks> ... ILKID |-> SpotIlk ( ... mat: (_ => MAT) ) ... </spot-ilks>
 
     rule <k> Spot . file par PAR => . ... </k>
+         <spot-live> true </spot-live>
          <spot-par> _ => PAR </spot-par>
 ```
 
@@ -137,6 +141,19 @@ Spot Semantics
     rule <k> Spot . poke ILK => . ... </k>
          <spot-ilks> ... ILK |-> SpotIlk (... pip: .Wad) ... </spot-ilks>
          <frame-events> _ => .List </frame-events>
+```
+Spot Deactivation
+-----------------
+
+-   `Spot.cage` disables access to this instance of Spot.
+
+**TODO**: Should be `note`.
+
+```k
+    syntax SpotAuthStep ::= "cage" [klabel(#SpotCage), symbol]
+ // --------------------------------------------------------
+    rule <k> Spot . cage => . ... </k>
+         <spot-live> _ => false </spot-live>
 ```
 
 ```k

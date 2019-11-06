@@ -80,6 +80,7 @@ These parameters are controlled by governance:
     syntax EndFile ::= "wait" Int
  // -----------------------------
     rule <k> End . file wait WAIT => . ... </k>
+         <end-live> true </end-live>
          <end-wait> _ => WAIT </end-wait>
 ```
 
