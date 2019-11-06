@@ -7,13 +7,13 @@
       .
     </return-value>
     <msg-sender>
-      "Alice"
+      "Bobby"
     </msg-sender>
     <this>
-      "Alice"
+      "Bobby"
     </this>
     <current-time>
-      1
+      3600
     </current-time>
     <call-stack>
       .List
@@ -40,14 +40,21 @@
       ListItem ( LogNote ( ADMIN , Vat . initGem "gold" End ) )
       ListItem ( LogNote ( ADMIN , Spot . init "gold" ) )
       ListItem ( LogNote ( ADMIN , Spot . setPrice "gold" 1 ) )
+      ListItem ( LogNote ( ADMIN , Flip "gold" . init ) )
+      ListItem ( LogNote ( ADMIN , Flip "gold" . rely End ) )
       ListItem ( LogNote ( ADMIN , Vat . file Line 1000000000000 ) )
       ListItem ( LogNote ( ADMIN , Vat . initIlk "gold" ) )
       ListItem ( LogNote ( ADMIN , Vat . file spot "gold" 3000000000 ) )
       ListItem ( LogNote ( ADMIN , Vat . file line "gold" 1000000000000 ) )
+      ListItem ( LogNote ( ADMIN , Vat . initGem "gold" Flip "gold" ) )
+      ListItem ( LogNote ( ADMIN , Vat . initCDP "gold" End ) )
+      ListItem ( LogNote ( ADMIN , End . initGap "gold" ) )
+      ListItem ( LogNote ( ADMIN , End . initBag "Bobby" ) )
+      ListItem ( LogNote ( ADMIN , End . initOut "gold" "Bobby" ) )
       ListItem ( LogNote ( ADMIN , Gem "gold" . initUser "Alice" ) )
       ListItem ( LogNote ( ADMIN , Gem "gold" . initUser "Bobby" ) )
-      ListItem ( LogNote ( ADMIN , Gem "gold" . mint "Alice" 10 ) )
-      ListItem ( LogNote ( ADMIN , Gem "gold" . mint "Bobby" 10 ) )
+      ListItem ( LogNote ( ADMIN , Gem "gold" . mint "Alice" 20 ) )
+      ListItem ( LogNote ( ADMIN , Gem "gold" . mint "Bobby" 20 ) )
       ListItem ( LogNote ( ADMIN , Pot . initUser "Alice" ) )
       ListItem ( LogNote ( ADMIN , Pot . initUser "Bobby" ) )
       ListItem ( LogNote ( ADMIN , Vat . initUser "Alice" ) )
@@ -58,6 +65,8 @@
       ListItem ( LogNote ( ADMIN , Vat . initGem "gold" "Bobby" ) )
       ListItem ( LogNote ( ADMIN , Vat . initCDP "gold" "Bobby" ) )
       ListItem ( LogNote ( "Bobby" , Vat . hope Pot ) )
+      ListItem ( LogNote ( "Bobby" , Vat . hope Flip "gold" ) )
+      ListItem ( LogNote ( "Bobby" , Vat . hope End ) )
       ListItem ( LogNote ( "Alice" , Vat . slip "gold" "Alice" 10 ) )
       ListItem ( LogNote ( "Alice" , Gem "gold" . transferFrom "Alice" GemJoin "gold" 10 ) )
       ListItem ( LogNote ( "Alice" , GemJoin "gold" . join "Alice" 10 ) )
@@ -66,6 +75,9 @@
       ListItem ( LogNote ( "Bobby" , GemJoin "gold" . join "Bobby" 10 ) )
       ListItem ( LogNote ( "Alice" , Vat . frob "gold" "Alice" "Alice" "Alice" 10 10 ) )
       ListItem ( LogNote ( "Bobby" , Vat . frob "gold" "Bobby" "Bobby" "Bobby" 10 10 ) )
+      ListItem ( LogNote ( "Bobby" , Vat . slip "gold" "Bobby" 1 ) )
+      ListItem ( LogNote ( "Bobby" , Gem "gold" . transferFrom "Bobby" GemJoin "gold" 1 ) )
+      ListItem ( LogNote ( "Bobby" , GemJoin "gold" . join "Bobby" 1 ) )
       ListItem ( LogNote ( ADMIN , Vat . cage ) )
       ListItem ( LogNote ( ADMIN , Cat . cage ) )
       ListItem ( LogNote ( Vow , Vat . move Flap Vow 0 ) )
@@ -76,19 +88,8 @@
       ListItem ( LogNote ( ADMIN , Pot . cage ) )
       ListItem ( LogNote ( ADMIN , End . cage ) )
       ListItem ( LogNote ( ADMIN , End . cage "gold" ) )
-      ListItem ( LogNote ( ADMIN , End . initGap "gold" ) )
-      ListItem ( LogNote ( ADMIN , Vat . grab "gold" "Alice" End Vow -10 -10 ) )
-      ListItem ( LogNote ( ADMIN , End . skim "gold" "Alice" ) )
-      ListItem ( LogNote ( ADMIN , Vat . grab "gold" "Bobby" End Vow -10 -10 ) )
-      ListItem ( LogNote ( ADMIN , End . skim "gold" "Bobby" ) )
       ListItem ( LogNote ( ADMIN , End . thaw ) )
       ListItem ( LogNote ( ADMIN , End . flow "gold" ) )
-      ListItem ( LogNote ( "Alice" , Vat . move "Alice" Pot 10 ) )
-      ListItem ( LogNote ( "Alice" , Pot . join 10 ) )
-      ListItem ( LogNote ( "Alice" , Vat . suck Vow Pot 0 ) )
-      ListItem ( LogNote ( "Alice" , Pot . drip ) )
-      ListItem ( LogNote ( "Alice" , Vat . move Pot "Alice" 10 ) )
-      ListItem ( LogNote ( "Alice" , Pot . exit 10 ) )
     </events>
     <frame-events>
       .List
@@ -162,10 +163,10 @@
           "gold" |-> 1
         </end-fix>
         <end-bag>
-          .Map
+          "Bobby" |-> 0
         </end-bag>
         <end-out>
-          .Map
+          { "gold" , "Bobby" } |-> 0
         </end-out>
       </end>
     </end-state>
@@ -193,7 +194,29 @@
       </flap-tau>
     </flap-state>
     <flips>
-      .FlipCellMap
+      <flip>
+        <flip-ilk>
+          "gold"
+        </flip-ilk>
+        <flip-wards>
+          SetItem ( End )
+        </flip-wards>
+        <flip-bids>
+          .Map
+        </flip-bids>
+        <flip-beg>
+          21 /Rat 20
+        </flip-beg>
+        <flip-ttl>
+          10800
+        </flip-ttl>
+        <flip-tau>
+          172800
+        </flip-tau>
+        <flip-kicks>
+          0
+        </flip-kicks>
+      </flip>
     </flips>
     <flop-state>
       <flop-wards>
@@ -230,9 +253,9 @@
           .Set
         </gem-wards>
         <gem-balances>
-          "Alice" |-> 0
-          "Bobby" |-> 0
-          GemJoin "gold" |-> 20
+          "Alice" |-> 10
+          "Bobby" |-> 9
+          GemJoin "gold" |-> 21
         </gem-balances>
       </gem>
     </gems>
@@ -294,7 +317,7 @@
         Vow
       </pot-vow>
       <pot-rho>
-        1
+        0
       </pot-rho>
       <pot-live>
         false
@@ -322,23 +345,27 @@
       </vat-wards>
       <vat-can>
         "Alice" |-> SetItem ( Pot )
-        "Bobby" |-> SetItem ( Pot )
+        "Bobby" |-> SetItem ( End )
+        SetItem ( Flip "gold" )
+        SetItem ( Pot )
         End |-> .Set
         Flap |-> .Set
         Pot |-> .Set
         Vow |-> .Set
       </vat-can>
       <vat-ilks>
-        "gold" |-> Ilk ( 0 , 1 , 3000000000 , 1000000000000 , 0 )
+        "gold" |-> Ilk ( 20 , 1 , 3000000000 , 1000000000000 , 0 )
       </vat-ilks>
       <vat-urns>
-        { "gold" , "Alice" } |-> Urn ( 0 , 0 )
-        { "gold" , "Bobby" } |-> Urn ( 0 , 0 )
+        { "gold" , "Alice" } |-> Urn ( 10 , 10 )
+        { "gold" , "Bobby" } |-> Urn ( 10 , 10 )
+        { "gold" , End } |-> Urn ( 0 , 0 )
       </vat-urns>
       <vat-gem>
         { "gold" , "Alice" } |-> 0
-        { "gold" , "Bobby" } |-> 0
-        { "gold" , End } |-> 20
+        { "gold" , "Bobby" } |-> 1
+        { "gold" , End } |-> 0
+        { "gold" , Flip "gold" } |-> 0
       </vat-gem>
       <vat-dai>
         "Alice" |-> 10
@@ -354,13 +381,13 @@
         End |-> 0
         Flap |-> 0
         Pot |-> 0
-        Vow |-> 20
+        Vow |-> 0
       </vat-sin>
       <vat-debt>
         20
       </vat-debt>
       <vat-vice>
-        20
+        0
       </vat-vice>
       <vat-Line>
         1000000000000

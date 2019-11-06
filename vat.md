@@ -62,9 +62,11 @@ Vat Authorization
  // -------------------------------
     rule <k> Vat . rely ADDR => . ... </k>
          <vat-wards> ... (.Set => SetItem(ADDR)) </vat-wards>
+         <vat-live> true </vat-live>
 
     rule <k> Vat . deny ADDR => . ... </k>
          <vat-wards> WARDS => WARDS -Set SetItem(ADDR) </vat-wards>
+         <vat-live> true </vat-live>
 ```
 
 CDP Data
@@ -134,15 +136,19 @@ The parameters controlled by governance are:
                      | "dust" String Rad
  // ------------------------------------
     rule <k> Vat . file Line LINE => . ... </k>
+         <vat-live> true </vat-live>
          <vat-Line> _ => LINE </vat-Line>
 
     rule <k> Vat . file spot ILKID SPOT => . ... </k>
+         <vat-live> true </vat-live>
          <vat-ilks> ... ILKID |-> Ilk ( ... spot: (_ => SPOT) ) ... </vat-ilks>
 
     rule <k> Vat . file line ILKID LINE => . ... </k>
+         <vat-live> true </vat-live>
          <vat-ilks> ... ILKID |-> Ilk ( ... line: (_ => LINE) ) ... </vat-ilks>
 
     rule <k> Vat . file dust ILKID DUST => . ... </k>
+         <vat-live> true </vat-live>
          <vat-ilks> ... ILKID |-> Ilk ( ... dust: (_ => DUST) ) ... </vat-ilks>
 ```
 
@@ -269,11 +275,14 @@ This is quite permissive, and would allow the account to drain all your locked c
 **TODO**: Should be `note`.
 
 ```k
-    syntax VatAuthStep ::= InitStep
- // -------------------------------
+    syntax VatAuthStep ::= "init" String
+ // ------------------------------------
     rule <k> Vat . init ILKID => . ... </k>
-         <vat-ilks> ILKS => ILKS [ ILKID <- 1 ] </vat-ilks>
-      requires notBool ILKID in_keys(ILKS)
+         <vat-ilks>
+           ...
+           ILKID |-> Ilk(... rate: 0 => 1)
+           ...
+         </vat-ilks>
 ```
 
 ### Collateral manipulation (`<vat-gem>`)

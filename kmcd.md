@@ -77,7 +77,7 @@ State Storage/Revert Semantics
 
     rule <k> popState => . ... </k>
          (_:KmcdStateCell => <kmcd-state> STATE </kmcd-state>)
-         <pre-state> <kmcd-state> STATE </kmcd-state> </pre-state>
+         <pre-state> <kmcd-state> STATE </kmcd-state> => .K </pre-state>
 ```
 
 ```k

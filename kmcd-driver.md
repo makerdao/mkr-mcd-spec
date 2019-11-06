@@ -17,6 +17,7 @@ module KMCD-DRIVER
     configuration
         <kmcd-driver>
           <k> $PGM:MCDSteps </k>
+          <return-value> .K </return-value>
           <msg-sender> 0:Address </msg-sender>
           <this> 0:Address </this>
           <current-time> 0:Int </current-time>
@@ -92,9 +93,13 @@ Use `transact ...` for initiating top-level calls from a given user.
     rule <k> transact ADDR:Address MCD:MCDStep => pushState ~> call MCD ~> dropState ... </k>
          <this> _ => ADDR </this>
          <msg-sender> _ => ADDR </msg-sender>
+         <call-stack> _ => .List </call-stack>
+         <pre-state> _ => .K </pre-state>
+         <frame-events> _ => .List </frame-events>
+         <return-value> _ => .K </return-value>
 
-    syntax MCStep ::= "pushState" | "dropState" | "popState"
- // --------------------------------------------------------
+    syntax AdminStep ::= "pushState" | "dropState" | "popState"
+ // -----------------------------------------------------------
 ```
 
 Function Calls
@@ -116,14 +121,12 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
          <frame-events> EVENTS => ListItem(LogNote(MSGSENDER, MCD)) </frame-events>
       requires isAuthStep(MCD) impliesBool isAuthorized(THIS, contract(MCD))
 
-    syntax ReturnValue ::= Int | Rat
- // --------------------------------
-    rule <k> R:ReturnValue => R ~> CONT </k>
-         <msg-sender> MSGSENDER => PREVSENDER </msg-sender>
-         <this> THIS => MSGSENDER </this>
-         <call-stack> ListItem(frame(PREVSENDER, PREVEVENTS, CONT)) => .List ... </call-stack>
-         <events> L => L EVENTS </events>
-         <frame-events> EVENTS => PREVEVENTS </frame-events>
+    rule <k> call MCD => exception MCD ... </k> [owise]
+
+    syntax ReturnValue ::= Rat
+ // --------------------------
+    rule <k> R:ReturnValue => . ... </k>
+         <return-value> _ => R </return-value>
 
     rule <k> . => CONT </k>
          <msg-sender> MSGSENDER => PREVSENDER </msg-sender>
@@ -154,16 +157,6 @@ Most operations add to the log, which stores the address which made the call and
 ```k
     syntax Event ::= LogNote(Address, MCDStep)
  // ------------------------------------------
-```
-
-Simulations
------------
-
-Different contracts use the same names for external functions, so we declare them here.
-
-```k
-    syntax InitStep ::= "init" Int
- // ------------------------------
 ```
 
 Base Data

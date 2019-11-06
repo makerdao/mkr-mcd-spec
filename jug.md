@@ -94,12 +94,11 @@ Jug Semantics
 -------------
 
 ```k
-    syntax JugAuthStep ::= InitStep
- // -------------------------------
+    syntax JugAuthStep ::= "init" String
+ // ------------------------------------
     rule <k> Jug . init ILK => . ... </k>
-         <current-time> TIME </current-time>
-         <jug-ilks> ... ILK |-> Ilk ( ... duty: ILKDUTY => 1, rho: _ => TIME ) ... </jug-ilks>
-      requires ILKDUTY ==Int 0
+         <current-time> NOW </current-time>
+         <jug-ilks> ... ILK |-> Ilk ( ... duty: 0 => 1, rho: _ => NOW ) ... </jug-ilks>
 ```
 
 ```k
