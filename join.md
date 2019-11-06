@@ -101,6 +101,13 @@ Join Semantics
 --------------
 
 ```k
+    syntax Bool ::= isLiveGemJoin(GEMID:String) [function, functional]
+ // -------------------------------
+    rule [[ isLiveGemJoin(GEMID) => B ]]
+         <gem-join-gem> GEMID </gem-join-gem>
+         <gem-join-live> B </gem-join-live>
+
+
     syntax GemJoinStep ::= "join" Address Wad
  // -----------------------------------------
     rule <k> GemJoin GEMID . join USR AMOUNT
@@ -108,8 +115,7 @@ Join Semantics
           ~> call Gem GEMID . transferFrom MSGSENDER THIS AMOUNT ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
-         <gem-join-live> true </gem-join-live>
-      requires AMOUNT >=Rat 0
+      requires isLiveGemJoin(GEMID) andBool AMOUNT >=Rat 0
 
     syntax GemJoinStep ::= "exit" Address Wad
  // -----------------------------------------
@@ -150,7 +156,8 @@ Join Deactivation
 ```k
     syntax GemJoinAuthStep ::= "cage" [klabel(#GemJoinCage), symbol]
  // --------------------------------------------------------
-    rule <k> GemJoin . cage => . ... </k>
+    rule <k> GemJoin GEMID . cage => . ... </k>
+         <gem-join-gem> GEMID </gem-join-gem>
          <gem-join-live> _ => false </gem-join-live>
 
     syntax DaiJoinAuthStep ::= "cage" [klabel(#DaiJoinCage), symbol]
