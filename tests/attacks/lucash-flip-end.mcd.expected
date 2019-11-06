@@ -4,7 +4,7 @@
       .
     </k>
     <return-value>
-      1
+      .
     </return-value>
     <msg-sender>
       "Bobby"
@@ -90,20 +90,6 @@
       ListItem ( LogNote ( ADMIN , End . cage "gold" ) )
       ListItem ( LogNote ( ADMIN , End . thaw ) )
       ListItem ( LogNote ( ADMIN , End . flow "gold" ) )
-      ListItem ( LogNote ( "Bobby" , Vat . flux "gold" "Bobby" Flip "gold" 1 ) )
-      ListItem ( FlipKick ( 1 , 1 , 1000000000000 , 1001000000000 , End , "Bobby" ) )
-      ListItem ( LogNote ( "Bobby" , Vat . suck Vow Vow 1001000000000 ) )
-      ListItem ( LogNote ( "Bobby" , Vat . suck Vow End 1000000000000 ) )
-      ListItem ( LogNote ( "Bobby" , Vat . hope Flip "gold" ) )
-      ListItem ( LogNote ( End , Vat . flux "gold" Flip "gold" End 1 ) )
-      ListItem ( LogNote ( End , Vat . move End "Bobby" 1000000000000 ) )
-      ListItem ( LogNote ( "Bobby" , Flip "gold" . yank 1 ) )
-      ListItem ( LogNote ( "Bobby" , Vat . grab "gold" End End Vow 1 1001000000000 ) )
-      ListItem ( LogNote ( "Bobby" , End . skip "gold" 1 ) )
-      ListItem ( LogNote ( "Bobby" , Vat . move "Bobby" Vow 1000000000010 ) )
-      ListItem ( LogNote ( "Bobby" , End . pack 1000000000010 ) )
-      ListItem ( LogNote ( "Bobby" , Vat . flux "gold" End "Bobby" 1000000000010 ) )
-      ListItem ( LogNote ( "Bobby" , End . cash "gold" 1000000000010 ) )
     </events>
     <frame-events>
       .List
@@ -171,16 +157,16 @@
           "gold" |-> 0
         </end-gap>
         <end-art>
-          "gold" |-> 1001000000020
+          "gold" |-> 20
         </end-art>
         <end-fix>
           "gold" |-> 1
         </end-fix>
         <end-bag>
-          "Bobby" |-> 1000000000010
+          "Bobby" |-> 0
         </end-bag>
         <end-out>
-          { "gold" , "Bobby" } |-> 1000000000010
+          { "gold" , "Bobby" } |-> 0
         </end-out>
       </end>
     </end-state>
@@ -228,7 +214,7 @@
           172800
         </flip-tau>
         <flip-kicks>
-          1
+          0
         </flip-kicks>
       </flip>
     </flips>
@@ -346,32 +332,32 @@
         "Bobby" |-> SetItem ( End )
         SetItem ( Flip "gold" )
         SetItem ( Pot )
-        End |-> SetItem ( Flip "gold" )
+        End |-> .Set
         Flap |-> .Set
         Pot |-> .Set
         Vow |-> .Set
       </vat-can>
       <vat-ilks>
-        "gold" |-> Ilk ( 1001000000020 , 1 , 3000000000 , 1000000000000 , 0 )
+        "gold" |-> Ilk ( 20 , 1 , 3000000000 , 1000000000000 , 0 )
       </vat-ilks>
       <vat-urns>
         { "gold" , "Alice" } |-> Urn ( 10 , 10 )
         { "gold" , "Bobby" } |-> Urn ( 10 , 10 )
-        { "gold" , End } |-> Urn ( 1 , 1001000000000 )
+        { "gold" , End } |-> Urn ( 0 , 0 )
       </vat-urns>
       <vat-gem>
         { "gold" , "Alice" } |-> 0
-        { "gold" , "Bobby" } |-> 1000000000010
-        { "gold" , End } |-> -1000000000010
+        { "gold" , "Bobby" } |-> 1
+        { "gold" , End } |-> 0
         { "gold" , Flip "gold" } |-> 0
       </vat-gem>
       <vat-dai>
         "Alice" |-> 10
-        "Bobby" |-> 0
+        "Bobby" |-> 10
         End |-> 0
         Flap |-> 0
         Pot |-> 0
-        Vow |-> 2001000000010
+        Vow |-> 0
       </vat-dai>
       <vat-sin>
         "Alice" |-> 0
@@ -379,13 +365,13 @@
         End |-> 0
         Flap |-> 0
         Pot |-> 0
-        Vow |-> 1000000000000
+        Vow |-> 0
       </vat-sin>
       <vat-debt>
-        2001000000020
+        20
       </vat-debt>
       <vat-vice>
-        1000000000000
+        0
       </vat-vice>
       <vat-Line>
         1000000000000
