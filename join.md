@@ -109,10 +109,10 @@ Join Semantics
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
          <gem-join>
-	   <gem-join-gem> GEMID </gem-join-gem>
+           <gem-join-gem> GEMID </gem-join-gem>
            <gem-join-live> true </gem-join-live>
-	   ...
-	 </gem-join>	
+           ...
+         </gem-join>	
       requires AMOUNT >=Rat 0
 
     syntax GemJoinStep ::= "exit" Address Wad
@@ -156,10 +156,10 @@ Join Deactivation
  // ----------------------------------------------------------------
     rule <k> GemJoin GEMID . cage => . ... </k>
          <gem-join>
-	   <gem-join-gem> GEMID </gem-join-gem>
+           <gem-join-gem> GEMID </gem-join-gem>
            <gem-join-live> _ => false </gem-join-live>
-	   ...
-	 </gem-join>  
+           ...
+         </gem-join>
 
     syntax DaiJoinAuthStep ::= "cage" [klabel(#DaiJoinCage), symbol]
  // ----------------------------------------------------------------
