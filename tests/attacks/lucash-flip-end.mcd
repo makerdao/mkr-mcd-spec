@@ -99,6 +99,7 @@ TimeStep 1 hour
 transact ADMIN End . thaw
 transact ADMIN End . flow "gold"
 
+// Every call after this reverts in fixed version
 //transact "Bobby" End . skip "gold" (call "Bobby" Flip "gold" . kick End "Bobby" 1001 ether 1 1000 ether)
 transact "Bobby" Flip "gold" . kick End "Bobby" 1001 ether 1 1000 ether
 transact "Bobby" End . skip "gold" 1
