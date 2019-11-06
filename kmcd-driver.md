@@ -96,6 +96,7 @@ Use `transact ...` for initiating top-level calls from a given user.
          <call-stack> _ => .List </call-stack>
          <pre-state> _ => .K </pre-state>
          <frame-events> _ => .List </frame-events>
+         <return-value> _ => .K </return-value>
 
     syntax AdminStep ::= "pushState" | "dropState" | "popState"
  // -----------------------------------------------------------
