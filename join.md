@@ -131,7 +131,7 @@ Join Semantics
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
          <dai-join-live> true </dai-join-live>
-        requires AMOUNT >=Rat 0
+      requires AMOUNT >=Rat 0
 
     syntax DaiJoinStep ::= "exit" Address Wad
  // -----------------------------------------
