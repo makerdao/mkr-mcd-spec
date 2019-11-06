@@ -93,6 +93,9 @@ Use `transact ...` for initiating top-level calls from a given user.
     rule <k> transact ADDR:Address MCD:MCDStep => pushState ~> call MCD ~> dropState ... </k>
          <this> _ => ADDR </this>
          <msg-sender> _ => ADDR </msg-sender>
+         <call-stack> _ => .List </call-stack>
+         <pre-state> _ => .K </pre-state>
+         <frame-events> _ => .List </frame-events>
 
     syntax AdminStep ::= "pushState" | "dropState" | "popState"
  // -----------------------------------------------------------
