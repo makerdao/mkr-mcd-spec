@@ -4,8 +4,12 @@
 // Auhthorize Pot for Vat
 transact ADMIN Vat . rely Pot
 
-// Initialize Vat accounts for Pot
+// Auhthorize Pot for Vow
+transact ADMIN Vow . rely Pot
+
+// Initialize Vat accounts for Pot and Vow
 transact ADMIN Vat . initUser Pot
+transact ADMIN Vat . initUser Vow
 
 // File Vow contract for Pot (since Pot doesn't depend on Vow?)
 transact ADMIN Pot . file vow-file Vow
@@ -55,15 +59,15 @@ transact "Alice" GemJoin "gold" . join "Alice" 10
 transact "Alice" Vat . frob "gold" "Alice" "Alice" "Alice" 10 10
 
 // Earn Interest
+transact ADMIN Pot . file dsr 5            // set interest rate
 transact "Alice" Pot . join 10
-transact ADMIN Pot . file dsr 5			// accumulate interest at 5%
-TimeStep 1 day							// for a day
+TimeStep 1 second                             // earn interest for a second 
 transact "Alice" Pot . drip
 transact "Alice" Pot . exit 10
 
 // Get ETH Back
 transact "Alice" Vat . frob "gold" "Alice" "Alice" "Alice" -10 -10
-transact "Alice" GemJoin "gold" . exit "Alice" 10
+// transact "Alice" GemJoin "gold" . exit "Alice" 10
 
 // Expected: vat balance of user is zero (no interest earned)
 // Attack: vat balance of user is positive (interest was earned)
