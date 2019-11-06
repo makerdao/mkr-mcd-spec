@@ -101,13 +101,6 @@ Join Semantics
 --------------
 
 ```k
-    syntax Bool ::= isLiveGemJoin(String) [function, functonal]
- // -------------------------------
-    rule [[ isLiveGemJoin(GEMID) => B ]]
-         <gem-join-gem> GEMID </gem-join-gem>
-         <gem-join-live> B </gem-join-live>
-
-
     syntax GemJoinStep ::= "join" Address Wad
  // -----------------------------------------
     rule <k> GemJoin GEMID . join USR AMOUNT
@@ -115,7 +108,12 @@ Join Semantics
           ~> call Gem GEMID . transferFrom MSGSENDER THIS AMOUNT ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
-      requires isLiveGemJoin(GEMID) andBool AMOUNT >=Rat 0
+         <gem-join>
+	   <gem-join-gem> GEMID </gem-join-gem>
+           <gem-join-live> true </gem-join-live>
+	   ...
+	 </gem-join>	
+      requires AMOUNT >=Rat 0
 
     syntax GemJoinStep ::= "exit" Address Wad
  // -----------------------------------------
@@ -155,13 +153,16 @@ Join Deactivation
 
 ```k
     syntax GemJoinAuthStep ::= "cage" [klabel(#GemJoinCage), symbol]
- // --------------------------------------------------------
+ // ----------------------------------------------------------------
     rule <k> GemJoin GEMID . cage => . ... </k>
-         <gem-join-gem> GEMID </gem-join-gem>
-         <gem-join-live> _ => false </gem-join-live>
+         <gem-join>
+	   <gem-join-gem> GEMID </gem-join-gem>
+           <gem-join-live> _ => false </gem-join-live>
+	   ...
+	 </gem-join>  
 
     syntax DaiJoinAuthStep ::= "cage" [klabel(#DaiJoinCage), symbol]
- // --------------------------------------------------------
+ // ----------------------------------------------------------------
     rule <k> DaiJoin . cage => . ... </k>
          <dai-join-live> _ => false </dai-join-live>
 ```
