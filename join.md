@@ -21,10 +21,12 @@ Join Configuration
           <gem-join multiplicity="*" type="Map">
             <gem-join-gem> "" </gem-join-gem>
             <gem-join-wards> .Set </gem-join-wards>
+            <gem-join-live> true </gem-join-live>
           </gem-join>
         </gem-joins>
         <dai-join>
           <dai-join-wards> .Set </dai-join-wards>
+          <dai-join-live> true </dai-join-live>
         </dai-join>
       </join-state>
 ```
@@ -106,6 +108,7 @@ Join Semantics
           ~> call Gem GEMID . transferFrom MSGSENDER THIS AMOUNT ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
+         <gem-join-live> true </gem-join-live>
       requires AMOUNT >=Rat 0
 
     syntax GemJoinStep ::= "exit" Address Wad
@@ -123,7 +126,8 @@ Join Semantics
           ~> call Dai . burn MSGSENDER AMOUNT ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
-      requires AMOUNT >=Rat 0
+         <dai-join-live> true </dai-join-live>
+        requires AMOUNT >=Rat 0
 
     syntax DaiJoinStep ::= "exit" Address Wad
  // -----------------------------------------
@@ -133,6 +137,26 @@ Join Semantics
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
       requires AMOUNT >=Rat 0
+```
+
+Join Deactivation
+-----------------
+
+-   `GemJoin.cage` disables access to this instance of GemJoin.
+-   `DaiJoin.cage` disables access to this instance of DaiJoin.
+
+**TODO**: Should be `note`.
+
+```k
+    syntax GemJoinAuthStep ::= "cage" [klabel(#GemJoinCage), symbol]
+ // --------------------------------------------------------
+    rule <k> GemJoin . cage => . ... </k>
+         <gem-join-live> _ => false </gem-join-live>
+
+    syntax DaiJoinAuthStep ::= "cage" [klabel(#DaiJoinCage), symbol]
+ // --------------------------------------------------------
+    rule <k> DaiJoin . cage => . ... </k>
+         <dai-join-live> _ => false </dai-join-live>
 ```
 
 ```k
