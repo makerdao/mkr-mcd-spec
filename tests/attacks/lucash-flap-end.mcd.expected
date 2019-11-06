@@ -78,19 +78,15 @@
       ListItem ( LogNote ( "Bobby" , Gem "gold" . transferFrom "Bobby" GemJoin "gold" 1 ) )
       ListItem ( LogNote ( "Bobby" , GemJoin "gold" . join "Bobby" 1 ) )
       ListItem ( LogNote ( "Alice" , Vat . hope Flap ) )
-      ListItem ( LogNote ( "Alice" , Vat . move "Alice" Flap 1 ) )
-      ListItem ( FlapKick ( 1 , 1 , 2 ) )
       ListItem ( LogNote ( ADMIN , Vat . cage ) )
       ListItem ( LogNote ( ADMIN , Cat . cage ) )
-      ListItem ( LogNote ( Vow , Vat . move Flap Vow 1 ) )
-      ListItem ( LogNote ( End , Flap . cage 1 ) )
+      ListItem ( LogNote ( Vow , Vat . move Flap Vow 0 ) )
+      ListItem ( LogNote ( End , Flap . cage 0 ) )
       ListItem ( LogNote ( End , Flop . cage ) )
       ListItem ( LogNote ( End , Vat . heal 0 ) )
       ListItem ( LogNote ( ADMIN , Vow . cage ) )
       ListItem ( LogNote ( ADMIN , Pot . cage ) )
       ListItem ( LogNote ( ADMIN , End . cage ) )
-      ListItem ( LogNote ( "Alice" , Gem "MKR" . move Flap "Alice" 2 ) )
-      ListItem ( LogNote ( "Alice" , Flap . yank 1 ) )
     </events>
     <frame-events>
       .List
@@ -179,7 +175,7 @@
         .Map
       </flap-bids>
       <flap-kicks>
-        1
+        0
       </flap-kicks>
       <flap-live>
         false
@@ -232,9 +228,9 @@
           .Set
         </gem-wards>
         <gem-balances>
-          "Alice" |-> 2
+          "Alice" |-> 0
           "Bobby" |-> 0
-          Flap |-> 3
+          Flap |-> 5
           GemJoin "MKR" |-> 0
         </gem-balances>
       </gem> <gem>
@@ -367,12 +363,12 @@
         { "gold" , End } |-> 0
       </vat-gem>
       <vat-dai>
-        "Alice" |-> 8
+        "Alice" |-> 9
         "Bobby" |-> 10
         End |-> 0
         Flap |-> 0
         Pot |-> 0
-        Vow |-> 2
+        Vow |-> 1
       </vat-dai>
       <vat-sin>
         "Alice" |-> 0
