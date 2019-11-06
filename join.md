@@ -95,6 +95,7 @@ Because data isn't explicitely initialized to 0 in KMCD, we need explicit initia
     syntax GemJoinAuthStep ::= "init"
  // ---------------------------------
     rule <k> GemJoin GEMID . init => Gem GEMID . initUser GemJoin GEMID ... </k>
+         <gem-joins> ... ( .Bag => <gem-join> <gem-join-gem> GEMID </gem-join-gem> ... </gem-join> ) ... </gem-joins>
 ```
 
 Join Semantics
