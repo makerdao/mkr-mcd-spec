@@ -62,9 +62,11 @@ Vat Authorization
  // -------------------------------
     rule <k> Vat . rely ADDR => . ... </k>
          <vat-wards> ... (.Set => SetItem(ADDR)) </vat-wards>
+         <vat-live> true </vat-live>
 
     rule <k> Vat . deny ADDR => . ... </k>
          <vat-wards> WARDS => WARDS -Set SetItem(ADDR) </vat-wards>
+         <vat-live> true </vat-live>
 ```
 
 CDP Data
