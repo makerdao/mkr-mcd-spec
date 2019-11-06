@@ -101,7 +101,7 @@ Join Semantics
 --------------
 
 ```k
-    syntax Bool ::= isLiveGemJoin(GEMID:String) [function, functional]
+    syntax Bool ::= isLiveGemJoin(String) [function, functonal]
  // -------------------------------
     rule [[ isLiveGemJoin(GEMID) => B ]]
          <gem-join-gem> GEMID </gem-join-gem>
