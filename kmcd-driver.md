@@ -120,9 +120,7 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
          <frame-events> EVENTS => ListItem(LogNote(MSGSENDER, MCD)) </frame-events>
       requires isAuthStep(MCD) impliesBool isAuthorized(THIS, contract(MCD))
 
-    rule <k> call MCD:AuthStep => exception MCD ... </k>
-         <this> THIS </this>
-      requires notBool isAuthorized(THIS, contract(MCD))
+    rule <k> call MCD => exception MCD ... </k> [owise]
 
     syntax ReturnValue ::= Rat
  // --------------------------
