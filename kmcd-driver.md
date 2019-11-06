@@ -190,6 +190,9 @@ Some methods rely on a timestamp.
 We simulate that here.
 
 ```k
+    syntax Event ::= TimeStep ( Int )
+ // ---------------------------------
+
     syntax MCDStep ::= "TimeStep"
                      | "TimeStep" Int
  // ---------------------------------
@@ -197,6 +200,7 @@ We simulate that here.
 
     rule <k> TimeStep N => . ... </k>
          <current-time> TIME => TIME +Int N </current-time>
+         <events> ... (.List => ListItem(TimeStep(N))) </events>
       requires N >Int 0
 
     syntax priorities timeUnit > _+Int_ _-Int_ _*Int_ _/Int_
