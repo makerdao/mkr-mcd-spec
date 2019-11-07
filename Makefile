@@ -30,7 +30,8 @@ export LUA_PATH
         deps deps-k deps-tangle deps-media                     \
         defn defn-llvm defn-haskell                            \
         build build-llvm build-haskell build-java              \
-        test test-python-config test-python-run test-execution
+        test test-python-config test-python-run test-execution \
+        update-test-execution
 .SECONDARY:
 
 all: build
@@ -150,11 +151,18 @@ test-python-run: tests/sneak-tx.json
 TEST_BACKEND := llvm
 KMCD         := ./kmcd
 CHECK        := git --no-pager diff --no-index
+UPDATE       := cp
 
-tests/%.mcd.run: tests/%.mcd
+tests/%.mcd.out: tests/%.mcd
 	$(KMCD) run --backend $(TEST_BACKEND) $< > $<.out
-	$(CHECK) $<.expected $<.out
+
+tests/%.mcd.run: tests/%.mcd.out
+	$(CHECK) tests/$*.mcd.expected tests/$*.mcd.out
+
+tests/%.mcd.update: tests/%.mcd.out
+	$(UPDATE) tests/$*.mcd.out tests/$*.mcd.expected
 
 execution_tests := $(wildcard tests/*/*.mcd)
 
 test-execution: $(execution_tests:=.run)
+update-test-execution: $(execution_tests:=.update)
