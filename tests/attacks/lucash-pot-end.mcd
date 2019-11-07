@@ -1,18 +1,28 @@
-// MCD Internal Contract Setup
-// ---------------------------
+// Contract Authorizations
+// -----------------------
 
 // Auhthorize Pot/End for Vat
 transact ADMIN Vat . rely Pot
 transact ADMIN Vat . rely End
 
-// Authorize End for Cat/Vow/Pot
-transact ADMIN Cat . rely End
-transact ADMIN Vow . rely End
+// Authorize End for Pot
 transact ADMIN Pot . rely End
 
-// Authorize Vow for Flap/Flop
+// Auhthorize Pot/End for Vow
+transact ADMIN Vow . rely Pot
+transact ADMIN Vow . rely End
+
+// Authorize End for Cat/Pot
+transact ADMIN Cat . rely End
+
+// Authorize Vow for Flap
 transact ADMIN Flap . rely Vow
+
+// Authorize Vow for Flop
 transact ADMIN Flop . rely Vow
+
+// Account Initializations
+// -----------------------
 
 // Initialize Vat accounts for Vow/Pot/Flap/End
 transact ADMIN Vat . initUser Vow
