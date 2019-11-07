@@ -60,14 +60,14 @@ $(K_SUBMODULE)/mvn.timestamp: $(K_SUBMODULE)/submodule.timestamp
 # Building
 # --------
 
-MAIN_MODULE    := KMCD
+MAIN_MODULE    := KMCD-PRELUDE
 SYNTAX_MODULE  := $(MAIN_MODULE)
-MAIN_DEFN_FILE := kmcd
+MAIN_DEFN_FILE := kmcd-prelude
 
 KOMPILE_OPTS      :=
 LLVM_KOMPILE_OPTS := $(KOMPILE_OPTS) -ccopt -O2
 
-k_files := $(MAIN_DEFN_FILE).k kmcd.k kmcd-driver.k cat.k dai.k end.k flap.k flip.k flop.k gem.k join.k jug.k pot.k spot.k vat.k vow.k
+k_files := $(MAIN_DEFN_FILE).k kmcd-prelude.k kmcd.k kmcd-driver.k cat.k dai.k end.k flap.k flip.k flop.k gem.k join.k jug.k pot.k spot.k vat.k vow.k
 
 llvm_dir    := $(DEFN_DIR)/llvm
 haskell_dir := $(DEFN_DIR)/haskell
