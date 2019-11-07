@@ -99,11 +99,15 @@ transact ADMIN Pot . initUser "Bobby"
 transact ADMIN Vat . initUser "Alice"
 transact ADMIN Vat . initGem "gold" "Alice"
 transact ADMIN Vat . initCDP "gold" "Alice"
-transact "Alice" Vat . hope Pot
 
 transact ADMIN Vat . initUser "Bobby"
 transact ADMIN Vat . initGem "gold" "Bobby"
 transact ADMIN Vat . initCDP "gold" "Bobby"
+
+transact "Alice" Vat . hope Pot
+transact "Alice" Vat . hope Flip "gold"
+transact "Alice" Vat . hope End
+
 transact "Bobby" Vat . hope Pot
 transact "Bobby" Vat . hope Flip "gold"
 transact "Bobby" Vat . hope End
