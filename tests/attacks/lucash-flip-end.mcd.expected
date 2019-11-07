@@ -88,6 +88,7 @@
       ListItem ( LogNote ( ADMIN , Pot . cage ) )
       ListItem ( LogNote ( ADMIN , End . cage ) )
       ListItem ( LogNote ( ADMIN , End . cage "gold" ) )
+      ListItem ( TimeStep ( 3600 , 3600 ) )
       ListItem ( LogNote ( ADMIN , End . thaw ) )
       ListItem ( LogNote ( ADMIN , End . flow "gold" ) )
     </events>
