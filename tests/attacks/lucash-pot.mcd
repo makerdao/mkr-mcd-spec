@@ -60,8 +60,8 @@ transact "Alice" Vat . frob "gold" "Alice" "Alice" "Alice" 10 10
 
 // Earn Interest
 transact ADMIN Pot . file dsr 5            // set interest rate
+TimeStep 1 second                          // earn interest for a second 
 transact "Alice" Pot . join 10
-TimeStep 1 second                             // earn interest for a second 
 transact "Alice" Pot . drip
 transact "Alice" Pot . exit 10
 
