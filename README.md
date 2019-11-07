@@ -18,14 +18,64 @@ Structure
 
 The semantics is broken into several sub-modules.
 
+### Utility Files
+
 -   [kmcd-driver](kmcd-driver.md) - common functionality in all modules.
 -   [kmcd](kmcd.md) - union all sub-modules.
 
--   [cdp-core](cdp-core.md) - core accounting system for MCD.
--   [collateral](collateral.md) - collateral linking.
--   [dai](dai.md) - ERC20 fungible collateral version of Dai.
--   [rates](rates.md) - rate adjustments and price feeds
--   [stabilize](stabilize.md) - forcible stabilization of risky CDPs.
+### Accounting System
+
+-   [vat](vat.md) - tracks deposited collateral, open CDPs, and borrowed Dai.
+-   [pot](pot.md) - interest accumulation for saved Dai.
+-   [jug](jug.md) - stability fee collection.
+
+### Collateral
+
+-   [dai](dai.md) - Dai ERC20 token standard.
+-   [spot](spot.md) - price feed for collateral.
+-   [gem](gem.md) - abstract implementation of collateral.
+-   [join](join.md) - plug collateral into MCD system.
+
+### Liquidation/Auction Houses
+
+-   [cat](cat.md) - forcible liquidation of an over-leveraged CDP.
+-   [vow](vow.md) - manage and trigger liquidations.
+-   [flap](flap.md) - surplus auctions (Vat Dai for sale, bid increasing Gem MKR).
+-   [flop](flop.md) - deficit auctions (Gem MKR for sale, lot decreasing Vat Dai).
+-   [flip](flip.md) - general auction (Vat Gem for sale, bid increasing Vat Dai, lot decreasing Vat Dai).
+
+### Global Settlement
+
+-   [end](end.md) - close out all CDPs and auctions, attempt to re-distribute gems fairly according to internal accounting.
+
+Building
+--------
+
+After installing all the dependencies needed for [K Framework](https://github.com/kframework/k), you can run:
+
+```sh
+make deps
+make build -j4
+```
+
+If you are on Arch Linux, add `K_BUILD_TYPE=Release` to `make deps`, as the `Debug` and `FastBuild` versions do not work.
+
+Running Attack Tests
+--------------------
+
+In directory `tests/attacks`, we have some example attacks on the system which should not go through.
+In the fixed version of the system, they do not go through.
+You can run an attack sequence with:
+
+```sh
+./kmcd run --backend llvm tests/attacks/lucash-flip-end.mcd
+```
+
+If you want to run all the attack tests (and check their output), run:
+
+```sh
+make test-execution -j4
+```
 
 Potential Properties
 --------------------
@@ -41,32 +91,3 @@ One of the architecture decisions made was to make `*Like` interfaces for actual
 For example, `Cat` has `Urn` defined just to have access to the getters/setters from other contracts.
 
 For inverting storage of `vat` so that we have some implicit account (`msg.sender`), we should inspect `frob` as a test-case, because it access `wish` on three different passed in addresses.
-
-Order to Model
---------------
-
--   vat.sol
--   lib.sol
-
-Second layer:
-
--   jug.sol
--   pot.sol
--   spot.sol
-
-Collateral:
-
--   dai.sol
--   join.sol
-
-Auctions:
-
--   vow.sol
--   cat.sol
--   flop.sol
--   flip.sol
--   flap.sol
-
-Global:
-
--   end.sol
