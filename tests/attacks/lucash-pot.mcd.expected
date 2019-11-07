@@ -87,6 +87,7 @@
       ListItem ( LogNote ( ADMIN , End . initOut "gold" "Alice" ) )
       ListItem ( LogNote ( ADMIN , End . initOut "gold" "Bobby" ) )
       ListItem ( LogNote ( ADMIN , Pot . file dsr 5 ) )
+      ListItem ( TimeStep ( 1 , 1 ) )
       ListItem ( LogNote ( "Alice" , Vat . suck Vow Pot 0 ) )
       ListItem ( LogNote ( "Alice" , Pot . drip ) )
       ListItem ( LogNote ( "Alice" , Vat . frob "gold" "Alice" "Alice" "Alice" -10 -10 ) )
