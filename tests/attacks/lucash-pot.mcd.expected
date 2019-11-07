@@ -49,12 +49,8 @@
       ListItem ( LogNote ( "Alice" , GemJoin "gold" . join "Alice" 10 ) )
       ListItem ( LogNote ( "Alice" , Vat . frob "gold" "Alice" "Alice" "Alice" 10 10 ) )
       ListItem ( LogNote ( ADMIN , Pot . file dsr 5 ) )
-      ListItem ( LogNote ( "Alice" , Vat . move "Alice" Pot 10 ) )
-      ListItem ( LogNote ( "Alice" , Pot . join 10 ) )
-      ListItem ( LogNote ( "Alice" , Vat . suck Vow Pot 40 ) )
+      ListItem ( LogNote ( "Alice" , Vat . suck Vow Pot 0 ) )
       ListItem ( LogNote ( "Alice" , Pot . drip ) )
-      ListItem ( LogNote ( "Alice" , Vat . move Pot "Alice" 50 ) )
-      ListItem ( LogNote ( "Alice" , Pot . exit 10 ) )
       ListItem ( LogNote ( "Alice" , Vat . frob "gold" "Alice" "Alice" "Alice" -10 -10 ) )
     </events>
     <frame-events>
@@ -300,20 +296,20 @@
         { "gold" , End } |-> 0
       </vat-gem>
       <vat-dai>
-        "Alice" |-> 40
+        "Alice" |-> 0
         Pot |-> 0
         Vow |-> 0
       </vat-dai>
       <vat-sin>
         "Alice" |-> 0
         Pot |-> 0
-        Vow |-> 40
+        Vow |-> 0
       </vat-sin>
       <vat-debt>
-        40
+        0
       </vat-debt>
       <vat-vice>
-        40
+        0
       </vat-vice>
       <vat-Line>
         1000000000000
