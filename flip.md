@@ -145,7 +145,9 @@ Flip Semantics
  // ----------------------------------------------------------
     rule <k> Flip ILK . kick USR GAL TAB LOT BID
           => call Vat . flux ILK MSGSENDER THIS LOT
-          ~> KICKS +Int 1 ... </k>
+          ~> KICKS +Int 1
+         ...
+         </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
          <current-time> NOW </current-time>
@@ -183,7 +185,9 @@ Flip Semantics
  // --------------------------------------
     rule <k> Flip ILK . tend ID LOT BID
           => call Vat . move MSGSENDER GUY BID'
-          ~> call Vat . move MSGSENDER GAL (BID -Rat BID') ... </k>
+          ~> call Vat . move MSGSENDER GAL (BID -Rat BID')
+         ...
+         </k>
          <msg-sender> MSGSENDER </msg-sender>
          <current-time> NOW </current-time>
          <flip>
@@ -209,7 +213,9 @@ Flip Semantics
  // --------------------------------------
     rule <k> Flip ILK . dent ID LOT BID
           => call Vat.move MSGSENDER GUY BID
-          ~> call Vat.flux ILK THIS USR (LOT' -Rat LOT) ... </k>
+          ~> call Vat.flux ILK THIS USR (LOT' -Rat LOT)
+         ...
+         </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
          <current-time> NOW </current-time>
@@ -253,7 +259,9 @@ Flip Semantics
  // ----------------------------------
     rule <k> Flip ILK . yank ID
           => call Vat . flux ILK THIS MSGSENDER LOT
-          ~> call Vat . move MSGSENDER GUY BID ... </k>
+          ~> call Vat . move MSGSENDER GUY BID
+         ...
+         </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
          <flip>

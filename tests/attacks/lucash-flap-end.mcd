@@ -1,0 +1,111 @@
+// MCD Internal Contract Setup
+// ---------------------------
+
+// Auhthorize Pot/End for Vat
+transact ADMIN Vat . rely Pot
+transact ADMIN Vat . rely End
+
+// Authorize End for Cat/Vow/Pot
+transact ADMIN Cat . rely End
+transact ADMIN Vow . rely End
+transact ADMIN Pot . rely End
+
+// Authorize Vow for Flap/Flop
+transact ADMIN Flap . rely Vow
+transact ADMIN Flop . rely Vow
+
+// Initialize Vat accounts for Vow/Pot/Flap/End
+transact ADMIN Vat . initUser Vow
+transact ADMIN Vat . initUser Pot
+transact ADMIN Vat . initUser Flap
+transact ADMIN Vat . initUser End
+
+// File Vow contract for Pot (since Pot doesn't depend on Vow?)
+transact ADMIN Pot . file vow-file Vow
+
+// Collateral Setup
+// ----------------
+
+// "gold" collateral and joiner
+transact ADMIN Gem "gold" . init
+transact ADMIN GemJoin "gold" . init
+
+// Allow GemJoin "gold" to call into Vat
+transact ADMIN Vat . rely GemJoin "gold"
+transact ADMIN Vat . initGem "gold" End
+
+// Initialize Spot for gold
+transact ADMIN Spot . init     "gold"
+transact ADMIN Spot . setPrice "gold" 1
+
+// Initialize Vat, both total Line and gold parameters
+transact ADMIN Vat . file Line 1000 ether
+transact ADMIN Vat . initIlk "gold"
+transact ADMIN Vat . file spot "gold" 3 ether
+transact ADMIN Vat . file line "gold" 1000 ether
+
+// MKR Collateral Setup
+// --------------------
+
+// "MKR" collateral and joiner
+transact ADMIN Gem "MKR" . init
+transact ADMIN GemJoin "MKR" . init
+
+// Setup Flap account on MKR
+transact ADMIN Gem "MKR" . initUser Flap
+
+// User Setup
+// ----------
+
+// Initialize gold Gem and GemJoin
+transact ADMIN Gem "gold" . initUser "Alice"
+transact ADMIN Gem "gold" . initUser "Bobby"
+transact ADMIN Gem "gold" . mint "Alice" 20
+transact ADMIN Gem "gold" . mint "Bobby" 20
+
+transact ADMIN Gem "MKR" . initUser "Alice"
+transact ADMIN Gem "MKR" . initUser "Bobby"
+
+// Initialize Pot
+transact ADMIN Pot . initUser "Alice"
+transact ADMIN Pot . initUser "Bobby"
+
+// Initialize users Alice and Bob with gold Gem
+transact ADMIN Vat . initUser "Alice"
+transact ADMIN Vat . initGem "gold" "Alice"
+transact ADMIN Vat . initCDP "gold" "Alice"
+transact "Alice" Vat . hope Pot
+
+transact ADMIN Vat . initUser "Bobby"
+transact ADMIN Vat . initGem "gold" "Bobby"
+transact ADMIN Vat . initCDP "gold" "Bobby"
+transact "Bobby" Vat . hope Pot
+
+// Setup CDPs
+transact "Alice" GemJoin "gold" . join "Alice" 10
+transact "Bobby" GemJoin "gold" . join "Bobby" 10
+transact "Alice" Vat . frob "gold" "Alice" "Alice" "Alice" 10 10
+transact "Bobby" Vat . frob "gold" "Bobby" "Bobby" "Bobby" 10 10
+
+transact ADMIN Vow . file bump 1 ether
+
+// Attack Sequence
+// ---------------
+
+// Mint the flap contract some MKR that "Alice" can steal
+// Alternative way to get MKR into account (maybe more realistic) is through other legitimate unfinished Flap auctions.
+transact ADMIN Gem "MKR" . mint Flap 5
+
+transact "Alice" Vat . move "Alice" Vow 1
+transact "Bobby" GemJoin "gold" . join "Bobby" 1
+
+transact "Alice" Vat . hope Flap
+transact "Alice" Flap . kick 1 2 // step that shouldn't go through
+
+transact ADMIN End . cage
+transact "Alice" Flap . yank 1
+
+// If the `End . cage` doesn't go through, Alice could still create dummy auctions to just burn MKR for low collateral amount.
+// This would DoS the remaining auctions because they wouldn't have the MKR to pay out on finishing.
+
+.MCDSteps

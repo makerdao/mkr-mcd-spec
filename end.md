@@ -155,7 +155,9 @@ End Semantics
           ~> call Vat . suck Vow THIS BID
           ~> call Vat . hope Flip ILK
           ~> call Flip ILK . yank ID
-          ~> call Vat . grab ILK USR THIS Vow LOT (TAB /Rat RATE) ... </k>
+          ~> call Vat . grab ILK USR THIS Vow LOT (TAB /Rat RATE)
+         ...
+         </k>
          <this> THIS </this>
          <end-tag>
           ...
@@ -185,7 +187,9 @@ End Semantics
     syntax EndStep ::= "skim" String Address
  // ----------------------------------------
     rule <k> End . skim ILK URN
-          => call Vat . grab ILK URN THIS Vow (0 -Rat minRat(INK, ART *Rat RATE *Rat TAG)) (0 -Rat ART) ... </k>
+          => call Vat . grab ILK URN THIS Vow (0 -Rat minRat(INK, ART *Rat RATE *Rat TAG)) (0 -Rat ART)
+         ...
+         </k>
          <this> THIS </this>
          <end-tag>
           ...
@@ -212,7 +216,9 @@ End Semantics
     syntax EndStep ::= "free" String
  // --------------------------------
     rule <k> End . free ILK
-          => call Vat . grab ILK MSGSENDER MSGSENDER Vow (0 -Rat INK) 0 ... </k>
+          => call Vat . grab ILK MSGSENDER MSGSENDER Vow (0 -Rat INK) 0
+         ...
+         </k>
          <msg-sender> MSGSENDER </msg-sender>
          <end-live> false </end-live>
          <vat-urns>
@@ -270,7 +276,9 @@ End Semantics
     syntax EndStep ::= "pack" Wad
  // -----------------------------
     rule <k> End . pack AMOUNT
-          => call Vat . move MSGSENDER Vow AMOUNT ... </k>
+          => call Vat . move MSGSENDER Vow AMOUNT
+         ...
+         </k>
          <msg-sender> MSGSENDER </msg-sender>
          <end-debt> DEBT </end-debt>
          <end-bag>
@@ -283,7 +291,9 @@ End Semantics
     syntax EndStep ::= "cash" String Wad
  // ------------------------------------
     rule <k> End . cash ILK AMOUNT
-          => call Vat . flux ILK THIS MSGSENDER (AMOUNT *Rat FIX) ... </k>
+          => call Vat . flux ILK THIS MSGSENDER (AMOUNT *Rat FIX)
+         ...
+         </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
          <end-fix>
