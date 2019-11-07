@@ -33,7 +33,6 @@ transact ADMIN Vat . initUser End
 // File Vow contract for Pot (since Pot doesn't depend on Vow?)
 transact ADMIN Pot . file vow-file Vow
 
-
 // Collateral Setup
 // ----------------
 
