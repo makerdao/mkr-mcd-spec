@@ -24,9 +24,10 @@
     <events>
       ListItem ( LogNote ( ADMIN , Vat . rely Pot ) )
       ListItem ( LogNote ( ADMIN , Vat . rely End ) )
-      ListItem ( LogNote ( ADMIN , Cat . rely End ) )
-      ListItem ( LogNote ( ADMIN , Vow . rely End ) )
       ListItem ( LogNote ( ADMIN , Pot . rely End ) )
+      ListItem ( LogNote ( ADMIN , Vow . rely Pot ) )
+      ListItem ( LogNote ( ADMIN , Vow . rely End ) )
+      ListItem ( LogNote ( ADMIN , Cat . rely End ) )
       ListItem ( LogNote ( ADMIN , Flap . rely Vow ) )
       ListItem ( LogNote ( ADMIN , Flop . rely Vow ) )
       ListItem ( LogNote ( ADMIN , Vat . initUser Vow ) )
@@ -399,6 +400,7 @@
     <vow>
       <vow-wards>
         SetItem ( End )
+        SetItem ( Pot )
       </vow-wards>
       <vow-sins>
         .Map
