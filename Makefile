@@ -153,7 +153,15 @@ KMCD         := ./kmcd
 CHECK        := git --no-pager diff --no-index
 UPDATE       := cp
 
-tests/%.mcd.out: tests/%.mcd
+TEST_KOMPILED := $(llvm_kompiled)
+ifeq ($(TEST_BACKEND), java)
+    TEST_KOMPILED := $(java_kompiled)
+endif
+ifeq ($(TEST_BACKEND), haskell)
+    TEST_KOMPILED := $(haskell_kompiled)
+endif
+
+tests/%.mcd.out: tests/%.mcd $(TEST_KOMPILED)
 	$(KMCD) run --backend $(TEST_BACKEND) $< > $<.out
 
 tests/%.mcd.run: tests/%.mcd.out
