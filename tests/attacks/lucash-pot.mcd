@@ -1,0 +1,74 @@
+// MCD Internal Contract Setup
+// ---------------------------
+
+// Auhthorize Pot for Vat
+transact ADMIN Vat . rely Pot
+
+// Auhthorize Pot for Vow
+transact ADMIN Vow . rely Pot
+
+// Initialize Vat accounts for Pot and Vow
+transact ADMIN Vat . initUser Pot
+transact ADMIN Vat . initUser Vow
+
+// File Vow contract for Pot (since Pot doesn't depend on Vow?)
+transact ADMIN Pot . file vow-file Vow
+
+// Collateral Setup
+// ----------------
+
+// "gold" collateral and joiner
+transact ADMIN Gem "gold" . init
+transact ADMIN GemJoin "gold" . init
+
+// Allow GemJoin "gold" to call into Vat
+transact ADMIN Vat . rely GemJoin "gold"
+transact ADMIN Vat . initGem "gold" End
+
+// Initialize Spot for gold
+transact ADMIN Spot . init     "gold"
+transact ADMIN Spot . setPrice "gold" 1
+
+// Initialize Vat, both total Line and gold parameters
+transact ADMIN Vat . file Line 1000 ether
+transact ADMIN Vat . initIlk "gold"
+transact ADMIN Vat . file spot "gold" 1 ether
+transact ADMIN Vat . file line "gold" 1000 ether
+
+// User Setup
+// ----------
+
+// Initialize gold Gem and GemJoin
+transact ADMIN Gem "gold" . initUser "Alice"
+transact ADMIN Gem "gold" . mint "Alice" 10
+
+// Initialize Pot
+transact ADMIN Pot . initUser "Alice"
+
+// Initialize user Alice with gold Gem
+transact ADMIN Vat . initUser "Alice"
+transact ADMIN Vat . initGem "gold" "Alice"
+transact ADMIN Vat . initCDP "gold" "Alice"
+transact "Alice" Vat . hope Pot
+
+// Attack Sequence
+// ---------------
+
+// Create DAI from ETH
+transact "Alice" GemJoin "gold" . join "Alice" 10
+transact "Alice" Vat . frob "gold" "Alice" "Alice" "Alice" 10 10
+
+// Earn Interest
+transact ADMIN Pot . file dsr 5            // set interest rate
+TimeStep 1 second                          // earn interest for a second 
+transact "Alice" Pot . join 10
+transact "Alice" Pot . drip
+transact "Alice" Pot . exit 10
+
+// Get ETH Back
+transact "Alice" Vat . frob "gold" "Alice" "Alice" "Alice" -10 -10
+// transact "Alice" GemJoin "gold" . exit "Alice" 10
+
+// Attack: vat dai balance of Alice is positive (interest was earned)
+
+.MCDSteps
