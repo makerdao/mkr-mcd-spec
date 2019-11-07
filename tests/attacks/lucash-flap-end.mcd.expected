@@ -24,9 +24,10 @@
     <events>
       ListItem ( LogNote ( ADMIN , Vat . rely Pot ) )
       ListItem ( LogNote ( ADMIN , Vat . rely End ) )
-      ListItem ( LogNote ( ADMIN , Cat . rely End ) )
-      ListItem ( LogNote ( ADMIN , Vow . rely End ) )
       ListItem ( LogNote ( ADMIN , Pot . rely End ) )
+      ListItem ( LogNote ( ADMIN , Vow . rely Pot ) )
+      ListItem ( LogNote ( ADMIN , Vow . rely End ) )
+      ListItem ( LogNote ( ADMIN , Cat . rely End ) )
       ListItem ( LogNote ( ADMIN , Flap . rely Vow ) )
       ListItem ( LogNote ( ADMIN , Flop . rely Vow ) )
       ListItem ( LogNote ( ADMIN , Vat . initUser Vow ) )
@@ -38,15 +39,21 @@
       ListItem ( LogNote ( ADMIN , GemJoin "gold" . init ) )
       ListItem ( LogNote ( ADMIN , Vat . rely GemJoin "gold" ) )
       ListItem ( LogNote ( ADMIN , Vat . initGem "gold" End ) )
+      ListItem ( LogNote ( ADMIN , Vat . initGem "gold" Flip "gold" ) )
+      ListItem ( LogNote ( ADMIN , Vat . initCDP "gold" End ) )
       ListItem ( LogNote ( ADMIN , Spot . init "gold" ) )
       ListItem ( LogNote ( ADMIN , Spot . setPrice "gold" 1 ) )
+      ListItem ( LogNote ( ADMIN , Flip "gold" . init ) )
+      ListItem ( LogNote ( ADMIN , Flip "gold" . rely End ) )
+      ListItem ( LogNote ( ADMIN , End . initGap "gold" ) )
+      ListItem ( LogNote ( ADMIN , Gem "MKR" . init ) )
+      ListItem ( LogNote ( ADMIN , GemJoin "MKR" . init ) )
+      ListItem ( LogNote ( ADMIN , Gem "MKR" . initUser Flap ) )
       ListItem ( LogNote ( ADMIN , Vat . file Line 1000000000000 ) )
       ListItem ( LogNote ( ADMIN , Vat . initIlk "gold" ) )
       ListItem ( LogNote ( ADMIN , Vat . file spot "gold" 3000000000 ) )
       ListItem ( LogNote ( ADMIN , Vat . file line "gold" 1000000000000 ) )
-      ListItem ( LogNote ( ADMIN , Gem "MKR" . init ) )
-      ListItem ( LogNote ( ADMIN , GemJoin "MKR" . init ) )
-      ListItem ( LogNote ( ADMIN , Gem "MKR" . initUser Flap ) )
+      ListItem ( LogNote ( ADMIN , Vow . file bump 1000000000 ) )
       ListItem ( LogNote ( ADMIN , Gem "gold" . initUser "Alice" ) )
       ListItem ( LogNote ( ADMIN , Gem "gold" . initUser "Bobby" ) )
       ListItem ( LogNote ( ADMIN , Gem "gold" . mint "Alice" 20 ) )
@@ -63,6 +70,8 @@
       ListItem ( LogNote ( ADMIN , Vat . initGem "gold" "Bobby" ) )
       ListItem ( LogNote ( ADMIN , Vat . initCDP "gold" "Bobby" ) )
       ListItem ( LogNote ( "Bobby" , Vat . hope Pot ) )
+      ListItem ( LogNote ( "Bobby" , Vat . hope Flip "gold" ) )
+      ListItem ( LogNote ( "Bobby" , Vat . hope End ) )
       ListItem ( LogNote ( "Alice" , Vat . slip "gold" "Alice" 10 ) )
       ListItem ( LogNote ( "Alice" , Gem "gold" . transferFrom "Alice" GemJoin "gold" 10 ) )
       ListItem ( LogNote ( "Alice" , GemJoin "gold" . join "Alice" 10 ) )
@@ -71,7 +80,10 @@
       ListItem ( LogNote ( "Bobby" , GemJoin "gold" . join "Bobby" 10 ) )
       ListItem ( LogNote ( "Alice" , Vat . frob "gold" "Alice" "Alice" "Alice" 10 10 ) )
       ListItem ( LogNote ( "Bobby" , Vat . frob "gold" "Bobby" "Bobby" "Bobby" 10 10 ) )
-      ListItem ( LogNote ( ADMIN , Vow . file bump 1000000000 ) )
+      ListItem ( LogNote ( ADMIN , End . initBag "Alice" ) )
+      ListItem ( LogNote ( ADMIN , End . initBag "Bobby" ) )
+      ListItem ( LogNote ( ADMIN , End . initOut "gold" "Alice" ) )
+      ListItem ( LogNote ( ADMIN , End . initOut "gold" "Bobby" ) )
       ListItem ( LogNote ( ADMIN , Gem "MKR" . mint Flap 5 ) )
       ListItem ( LogNote ( "Alice" , Vat . move "Alice" Vow 1 ) )
       ListItem ( LogNote ( "Bobby" , Vat . slip "gold" "Bobby" 1 ) )
@@ -151,7 +163,7 @@
           .Map
         </end-tag>
         <end-gap>
-          .Map
+          "gold" |-> 0
         </end-gap>
         <end-art>
           .Map
@@ -160,10 +172,12 @@
           .Map
         </end-fix>
         <end-bag>
-          .Map
+          "Alice" |-> 0
+          "Bobby" |-> 0
         </end-bag>
         <end-out>
-          .Map
+          { "gold" , "Alice" } |-> 0
+          { "gold" , "Bobby" } |-> 0
         </end-out>
       </end>
     </end-state>
@@ -191,7 +205,29 @@
       </flap-tau>
     </flap-state>
     <flips>
-      .FlipCellMap
+      <flip>
+        <flip-ilk>
+          "gold"
+        </flip-ilk>
+        <flip-wards>
+          SetItem ( End )
+        </flip-wards>
+        <flip-bids>
+          .Map
+        </flip-bids>
+        <flip-beg>
+          21 /Rat 20
+        </flip-beg>
+        <flip-ttl>
+          10800
+        </flip-ttl>
+        <flip-tau>
+          172800
+        </flip-tau>
+        <flip-kicks>
+          0
+        </flip-kicks>
+      </flip>
     </flips>
     <flop-state>
       <flop-wards>
@@ -344,7 +380,9 @@
       <vat-can>
         "Alice" |-> SetItem ( Flap )
         SetItem ( Pot )
-        "Bobby" |-> SetItem ( Pot )
+        "Bobby" |-> SetItem ( End )
+        SetItem ( Flip "gold" )
+        SetItem ( Pot )
         End |-> .Set
         Flap |-> .Set
         Pot |-> .Set
@@ -356,11 +394,13 @@
       <vat-urns>
         { "gold" , "Alice" } |-> Urn ( 10 , 10 )
         { "gold" , "Bobby" } |-> Urn ( 10 , 10 )
+        { "gold" , End } |-> Urn ( 0 , 0 )
       </vat-urns>
       <vat-gem>
         { "gold" , "Alice" } |-> 0
         { "gold" , "Bobby" } |-> 1
         { "gold" , End } |-> 0
+        { "gold" , Flip "gold" } |-> 0
       </vat-gem>
       <vat-dai>
         "Alice" |-> 9
@@ -394,6 +434,7 @@
     <vow>
       <vow-wards>
         SetItem ( End )
+        SetItem ( Pot )
       </vow-wards>
       <vow-sins>
         .Map
