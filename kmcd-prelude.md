@@ -176,9 +176,15 @@ module KMCD-GEN
     rule decrement(.DepthBound) => .DepthBound
     rule decrement(N)           => N -Int 1
 
-    syntax Rat ::= randRat ( Int , Int , Rat ) [function]
- // -----------------------------------------------------
-    rule randRat(I, RAND, BOUND) => BOUND *Rat ((RAND modInt I) /Rat I)
+    syntax Int ::= randIntBounded ( Int , Int ) [function]
+ // ------------------------------------------------------
+    rule randIntBounded(RAND, 0)     => 0
+    rule randIntBounded(RAND, BOUND) => RAND modInt BOUND requires BOUND =/=Int 0
+
+    syntax Rat ::= randRatBounded ( Int , Int , Rat ) [function]
+ // ------------------------------------------------------------
+    rule randRatBounded(0     , RAND, BOUND) => randRatBounded(1, RAND, BOUND)
+    rule randRatBounded(RAND1, RAND2, BOUND) => BOUND *Rat ((RAND2 modInt RAND1) /Rat RAND1) requires RAND1 =/=Int 0
 
     syntax Int     ::= chooseInt     ( Int , List ) [function]
     syntax String  ::= chooseString  ( Int , List ) [function]
@@ -283,29 +289,35 @@ module KMCD-GEN
     rule <k> GenEndCageIlk => transact ANYONE End . cage chooseString(I, keys_list(ILKS)) ... </k>
          <random> I => randInt(I) </random>
          <vat-ilks> ILKS </vat-ilks>
+      requires size(ILKS) >Int 0
 
     rule <k> GenEndFlow => transact ANYONE End . flow chooseString(I, keys_list(ILKS)) ... </k>
          <random> I => randInt(I) </random>
          <vat-ilks> ILKS </vat-ilks>
+      requires size(ILKS) >Int 0
 
     rule <k> GenEndSkip => transact ANYONE End . skip chooseString(I, keys_list(ILKS)) chooseInt(randInt(I), keys_list(FLIP_BIDS)) ... </k>
          <random> I => randInt(randInt(I)) </random>
          <vat-ilks> ILKS </vat-ilks>
          <flip-bids> FLIP_BIDS </flip-bids>
+      requires size(ILKS)      >Int 0
+       andBool size(FLIP_BIDS) >Int 0
 
     rule <k> GenEndPack => GenEndPack chooseAddress(I, keys_list(END_BAGS)) ... </k>
          <random> I => randInt(I) </random>
          <end-bag> END_BAGS </end-bag>
+      requires size(END_BAGS) >Int 0
 
-    rule <k> GenEndPack ADDRESS => transact ADDRESS End . pack (I modInt VAT_DAI) ... </k>
+    rule <k> GenEndPack ADDRESS => transact ADDRESS End . pack randIntBounded(I, VAT_DAI) ... </k>
          <random> I => randInt(I) </random>
          <vat-dai> ... ADDRESS |-> VAT_DAI ... </vat-dai>
 
     rule <k> GenEndCash => GenEndCash chooseCDPID(I, keys_list(END_OUTS)) ... </k>
          <random> I => randInt(I) </random>
          <end-out> END_OUTS </end-out>
+      requires size(END_OUTS) >Int 0
 
-    rule <k> GenEndCash { ILKID , ADDRESS } => transact ADDRESS End . cash ILKID randRat(I, randInt(I), BAG -Rat OUT) ... </k>
+    rule <k> GenEndCash { ILKID , ADDRESS } => transact ADDRESS End . cash ILKID randRatBounded(I, randInt(I), BAG -Rat OUT) ... </k>
          <random> I => randInt(randInt(I)) </random>
          <end-out> ... { ILKID , ADDRESS } |-> OUT ... </end-out>
          <end-bag> ... ADDRESS |-> BAG ... </end-bag>
