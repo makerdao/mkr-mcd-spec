@@ -136,6 +136,9 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
          <events> L => L EVENTS </events>
          <frame-events> EVENTS => PREVEVENTS </frame-events>
 
+    syntax Event ::= Exception ( MCDStep )
+ // --------------------------------------
+
     syntax AdminStep ::= "exception" MCDStep
  // ----------------------------------------
     rule <k> MCDSTEP:MCDStep => exception MCDSTEP ... </k> requires notBool isAdminStep(MCDSTEP) [owise]
@@ -146,8 +149,9 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
          <call-stack> ListItem(frame(PREVSENDER, PREVEVENTS, CONT)) => .List ...</call-stack>
          <frame-events> _ => PREVEVENTS </frame-events>
 
-    rule <k> exception _ ~> dropState => popState ... </k>
+    rule <k> exception MCDSTEP ~> dropState => popState ... </k>
          <call-stack> .List </call-stack>
+         <events> ... (.List => ListItem(Exception(MCDSTEP))) </events>
 ```
 
 Log Events

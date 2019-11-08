@@ -102,6 +102,10 @@
       ListItem ( TimeStep ( 3600 , 3600 ) )
       ListItem ( LogNote ( ADMIN , End . thaw ) )
       ListItem ( LogNote ( ADMIN , End . flow "gold" ) )
+      ListItem ( Exception ( Flip "gold" . kick End "Bobby" 1001000000000 1 1000000000000 ) )
+      ListItem ( Exception ( End . skip "gold" 1 ) )
+      ListItem ( Exception ( Vat . move "Bobby" Vow 1000000000010 ) )
+      ListItem ( Exception ( End . cash "gold" 1000000000010 ) )
     </events>
     <frame-events>
       .List
