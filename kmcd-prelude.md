@@ -174,9 +174,15 @@ module KMCD-GEN
     rule decrement(.DepthBound) => .DepthBound
     rule decrement(N)           => N -Int 1
 
-    syntax Rat ::= randRat ( Int , Int , Rat ) [function]
- // -----------------------------------------------------
-    rule randRat(I, RAND, BOUND) => BOUND *Rat ((RAND modInt I) /Rat I)
+    syntax Int ::= randIntBounded ( Int , Int ) [function]
+ // ------------------------------------------------------
+    rule randIntBounded(RAND, 0)     => 0
+    rule randIntBounded(RAND, BOUND) => RAND modInt BOUND requires BOUND =/=Int 0
+
+    syntax Rat ::= randRatBounded ( Int , Int , Rat ) [function]
+ // ------------------------------------------------------------
+    rule randRatBounded(0     , RAND, BOUND) => randRatBounded(1, RAND, BOUND)
+    rule randRatBounded(RAND1, RAND2, BOUND) => BOUND *Rat ((RAND2 modInt RAND1) /Rat RAND1) requires RAND1 =/=Int 0
 
     syntax Int     ::= chooseInt     ( Int , List ) [function]
     syntax String  ::= chooseString  ( Int , List ) [function]
