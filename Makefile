@@ -60,7 +60,7 @@ $(K_SUBMODULE)/mvn.timestamp: $(K_SUBMODULE)/submodule.timestamp
 # Building
 # --------
 
-MAIN_MODULE    := KMCD-PRELUDE
+MAIN_MODULE    := KMCD-GEN
 SYNTAX_MODULE  := $(MAIN_MODULE)
 MAIN_DEFN_FILE := kmcd-prelude
 
