@@ -56,6 +56,7 @@ In addition, each `MCDContract` is automatically an `Address`, under the assumpt
 Authorization happens at the `call` boundaries, which includes both transactions and calls between MCD contracts.
 Each contract must defined the `authorized` function, which returns the set of accounts which are authorized for that account.
 By default it's assumed that the special `ADMIN` account is authorized on all other contracts (for running simulations).
+The special account `ANYONE` is not authorized to do anything, so represents any actor in the system.
 
 ```k
     syntax MCDStep ::= AdminStep
@@ -65,8 +66,8 @@ By default it's assumed that the special `ADMIN` account is authorized on all ot
  // -----------------------------------------------
     rule wards(_) => .Set [owise]
 
-    syntax Address ::= "ADMIN"
- // --------------------------
+    syntax Address ::= "ADMIN" | "ANYONE"
+ // -------------------------------------
 
     syntax Bool ::= isAuthorized ( Address , MCDContract ) [function]
  // -----------------------------------------------------------------
