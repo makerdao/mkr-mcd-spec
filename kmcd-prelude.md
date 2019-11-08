@@ -250,7 +250,7 @@ module KMCD-GEN
     rule <k> derive(_, .GenSteps | GSS => GSS) ... </k> [priority(49)]
     rule <k> derive(_, GSS | .GenSteps => GSS) ... </k> [priority(49)]
 
-    rule <k> derive(_, GSS * => GSS | .GenSteps) ... </k>
+    rule <k> derive(_, GSS * => (GSS ; (GSS *)) | .GenSteps) ... </k>
 
     rule <k> derive(I, GSS ; GSS') => derive(I, GSS) ... </k>
          <generator>
@@ -258,18 +258,13 @@ module KMCD-GEN
            <generator-steps> GSS'' => GSS' ; GSS'' </generator-steps>
          </generator>
 
-    rule <k> derive(I, GSS | GSS') => derive(I, GSS) ... </k>
+    rule <k> derive(I, GSS | GSS') => #if R modInt 2 ==K 0 #then derive(I, GSS) #else derive(I, GSS') #fi ... </k>
          <random> R => randInt(R) </random>
-      requires R modInt 2 ==K 0
-
-    rule <k> derive(I, GSS | GSS') => derive(I, GSS') ... </k>
-         <random> R => randInt(R) </random>
-      requires R modInt 2 ==K 1
 
     syntax GenStep ::= GenTimeStep
     syntax GenTimeStep ::= "GenTimeStep"
  // ------------------------------------
-    rule <k> GenTimeStep => TimeStep (I modInt 4) ... </k>
+    rule <k> GenTimeStep => TimeStep (I modInt 2) ... </k>
          <random> I => randInt(I) </random>
 
     syntax GenStep ::= GenEndStep
