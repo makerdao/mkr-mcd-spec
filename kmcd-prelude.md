@@ -156,8 +156,8 @@ module KMCD-GEN
         <kmcd/>
         <violation> false </violation>
         <kmcd-gen>
-          <step-counter> $GENDEPTH:Int </step-counter>
           <random> $RANDOMSEED:Int </random>
+          <generator-depth-bound> $GENDEPTH:DepthBound </generator-depth-bound>
           <generator-next> 0 </generator-next>
           <generators>
             <generator multiplicity="*" type="Map">
@@ -168,6 +168,13 @@ module KMCD-GEN
           <end-gen> .GenSteps </end-gen>
         </kmcd-gen>
       </kmcd-random>
+
+    syntax DepthBound ::= Int
+                        | ".DepthBound"
+                        | decrement ( DepthBound ) [function]
+ // ---------------------------------------------------------
+    rule decrement(.DepthBound) => .DepthBound
+    rule decrement(N)           => N -Int 1
 
     syntax Rat ::= randRat ( Int , Int , Rat ) [function]
  // -----------------------------------------------------
@@ -199,14 +206,19 @@ module KMCD-GEN
          </generators>
 
     syntax AdminStep ::= "GenStep"
+                       | "GenSteps"
                        | next ( Int )
  // ---------------------------------
+    rule <k> GenSteps => . ... </k> [owise]
+
+    rule <k> (. => GenStep) ~> GenSteps ... </k>
+         <generator-depth-bound> GENDEPTH => decrement(GENDEPTH) </generator-depth-bound>
+      requires GENDEPTH =/=K 0
+
     rule <k> GenStep => next(I modInt N) ... </k>
          <random> I => randInt(I) </random>
          <generator-next> N </generator-next>
-         <step-counter> GENDEPTH => GENDEPTH -Int 1 </step-counter>
          <violation> false </violation>
-      requires GENDEPTH >Int 0
 
     rule <k> next(I) => derive(I, GSS) ... </k>
          <generator>
