@@ -468,12 +468,12 @@
     </violation>
   </kmcd-properties>
   <kmcd-gen>
-    <step-counter>
-      20
-    </step-counter>
     <random>
       0
     </random>
+    <generator-depth-bound>
+      20
+    </generator-depth-bound>
     <generator-next>
       0
     </generator-next>
