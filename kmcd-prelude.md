@@ -247,5 +247,55 @@ module KMCD-GEN
     rule <k> derive(I, GSS | GSS') => derive(I, GSS') ... </k>
          <random> R => randInt(R) </random>
       requires R modInt 2 ==K 1
+
+    syntax GenStep ::= GenTimeStep
+    syntax GenTimeStep ::= "GenTimeStep"
+ // ------------------------------------
+    rule <k> GenTimeStep => TimeStep (I modInt 4) ... </k>
+         <random> I => randInt(I) </random>
+
+    syntax GenStep ::= GenEndStep
+    syntax GenEndStep ::= "GenEndCage"
+                        | "GenEndCageIlk"
+                        | "GenEndThaw"
+                        | "GenEndFlow"
+                        | "GenEndSkip"
+                        | "GenEndPack"
+                        | "GenEndPack" Address
+                        | "GenEndCash"
+                        | "GenEndCash" CDPID
+ // ----------------------------------------
+    rule <k> GenEndCage => transact ADMIN  End . cage ... </k>
+    rule <k> GenEndThaw => transact ANYONE End . thaw ... </k>
+
+    rule <k> GenEndCageIlk => transact ANYONE End . cage chooseString(I, keys_list(ILKS)) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-ilks> ILKS </vat-ilks>
+
+    rule <k> GenEndFlow => transact ANYONE End . flow chooseString(I, keys_list(ILKS)) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-ilks> ILKS </vat-ilks>
+
+    rule <k> GenEndSkip => transact ANYONE End . skip chooseString(I, keys_list(ILKS)) chooseInt(randInt(I), keys_list(FLIP_BIDS)) ... </k>
+         <random> I => randInt(randInt(I)) </random>
+         <vat-ilks> ILKS </vat-ilks>
+         <flip-bids> FLIP_BIDS </flip-bids>
+
+    rule <k> GenEndPack => GenEndPack chooseAddress(I, keys_list(END_BAGS)) ... </k>
+         <random> I => randInt(I) </random>
+         <end-bag> END_BAGS </end-bag>
+
+    rule <k> GenEndPack ADDRESS => transact ADDRESS End . pack (I modInt VAT_DAI) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-dai> ... ADDRESS |-> VAT_DAI ... </vat-dai>
+
+    rule <k> GenEndCash => GenEndCash chooseCDPID(I, keys_list(END_OUTS)) ... </k>
+         <random> I => randInt(I) </random>
+         <end-out> END_OUTS </end-out>
+
+    rule <k> GenEndCash { ILKID , ADDRESS } => transact ADDRESS End . cash ILKID randRat(I, randInt(I), BAG -Rat OUT) ... </k>
+         <random> I => randInt(randInt(I)) </random>
+         <end-out> ... { ILKID , ADDRESS } |-> OUT ... </end-out>
+         <end-bag> ... ADDRESS |-> BAG ... </end-bag>
 endmodule
 ```
