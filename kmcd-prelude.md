@@ -149,5 +149,102 @@ endmodule
 ```k
 module KMCD-GEN
     imports KMCD-PRELUDE
+
+    configuration
+      <kmcd-random>
+        <kmcd-properties/>
+        <kmcd-gen>
+          <step-counter> $GENDEPTH:Int </step-counter>
+          <random> $RANDOMSEED:Int </random>
+          <generator-next> 0 </generator-next>
+          <generators>
+            <generator multiplicity="*" type="Map">
+              <generator-id> 0 </generator-id>
+              <generator-steps> .GenSteps </generator-steps>
+            </generator>
+          </generators>
+          <end-gen> .GenSteps </end-gen>
+        </kmcd-gen>
+      </kmcd-random>
+
+    syntax Rat ::= randRat ( Int , Int , Rat ) [function]
+ // -----------------------------------------------------
+    rule randRat(I, RAND, BOUND) => BOUND *Rat ((RAND modInt I) /Rat I)
+
+    syntax Int     ::= chooseInt     ( Int , List ) [function]
+    syntax String  ::= chooseString  ( Int , List ) [function]
+    syntax Address ::= chooseAddress ( Int , List ) [function]
+    syntax CDPID   ::= chooseCDPID   ( Int , List ) [function]
+ // ----------------------------------------------------------
+    rule chooseInt    (I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>Int
+    rule chooseString (I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>String
+    rule chooseAddress(I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>Address
+    rule chooseCDPID  (I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>CDPID
+
+    syntax AdminStep ::= AddGenerator ( GenSteps )
+ // ----------------------------------------------
+    rule <k> AddGenerator ( GSS ) => . ... </k>
+         <generator-next> I => I +Int 1 </generator-next>
+         <generators>
+           ...
+           ( .Bag
+          => <generator>
+               <generator-id> I </generator-id>
+               <generator-steps> GSS </generator-steps>
+             </generator>
+           )
+           ...
+         </generators>
+
+    syntax AdminStep ::= "GenStep"
+                       | next ( Int )
+ // ---------------------------------
+    rule <k> GenStep => next(I modInt N) ... </k>
+         <random> I => randInt(I) </random>
+         <generator-next> N </generator-next>
+         <step-counter> GENDEPTH => GENDEPTH -Int 1 </step-counter>
+         <violation> false </violation>
+      requires GENDEPTH >Int 0
+
+    rule <k> next(I) => derive(I, GSS) ... </k>
+         <generator>
+           <generator-id> I </generator-id>
+           <generator-steps> GSS => .GenSteps </generator-steps>
+         </generator>
+
+    syntax GenStep
+    syntax GenSteps ::= GenStep
+                      | ".GenSteps"
+                      | GenSteps ";" GenSteps
+                      | GenSteps "|" GenSteps
+                      | GenSteps "*"
+ // --------------------------------
+
+    syntax AdminStep ::= derive ( Int , GenSteps )
+ // ----------------------------------------------
+    rule <k> derive(_, GS:GenStep) => GS ... </k>
+
+    rule <k> derive(_, .GenSteps) => . ... </k>
+
+    rule <k> derive(_, .GenSteps ; GSS => GSS) ... </k> [priority(49)]
+    rule <k> derive(_, GSS ; .GenSteps => GSS) ... </k> [priority(49)]
+    rule <k> derive(_, .GenSteps | GSS => GSS) ... </k> [priority(49)]
+    rule <k> derive(_, GSS | .GenSteps => GSS) ... </k> [priority(49)]
+
+    rule <k> derive(_, GSS * => GSS | .GenSteps) ... </k>
+
+    rule <k> derive(I, GSS ; GSS') => derive(I, GSS) ... </k>
+         <generator>
+           <generator-id> I </generator-id>
+           <generator-steps> GSS'' => GSS' ; GSS'' </generator-steps>
+         </generator>
+
+    rule <k> derive(I, GSS | GSS') => derive(I, GSS) ... </k>
+         <random> R => randInt(R) </random>
+      requires R modInt 2 ==K 0
+
+    rule <k> derive(I, GSS | GSS') => derive(I, GSS') ... </k>
+         <random> R => randInt(R) </random>
+      requires R modInt 2 ==K 1
 endmodule
 ```

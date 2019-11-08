@@ -8,10 +8,10 @@ module KMCD-PROPS
     imports KMCD
 
     configuration
-        <kmcd-random-gen>
+        <kmcd-properties>
           <kmcd/>
           <violation> false </violation>
-        </kmcd-random-gen>
+        </kmcd-properties>
 ```
 
 Properties
