@@ -13,19 +13,40 @@ from pyk import KApply, KConstant, KSequence, KVariable, KToken, _notif, _warnin
 def printerr(msg):
     sys.stderr.write(msg + '\n')
 
-def kast(inputFile, *kastArgs):
-    return pyk.kast('.build/defn/llvm', inputFile, kastArgs = list(kastArgs))
+MCD_main_file_name = 'kmcd-prelude'
 
-def krun(inputFile, *krunArgs):
-    return pyk.krun('.build/defn/llvm', inputFile, krunArgs = list(krunArgs))
+MCD_definition_llvm_dir    = '.build/defn/llvm'
+MCD_definition_haskell_dir = '.build/defn/haskell'
 
-def kastJSON(inputJSON, *kastArgs):
-    return pyk.kastJSON('.build/defn/llvm', inputJSON, kastArgs = list(kastArgs))
+MCD_definition_llvm_kompiled    = MCD_definition_llvm_dir    + '/' + MCD_main_file_name + '-kompiled/compiled.json'
+MCD_definition_haskell_kompiled = MCD_definition_haskell_dir + '/' + MCD_main_file_name + '-kompiled/compiled.json'
 
-def krunJSON(inputJSON, *krunArgs):
-    return pyk.krunJSON('.build/defn/llvm', inputJSON, krunArgs = list(krunArgs))
+def kast_llvm(inputFile, *kastArgs):
+    return pyk.kast(MCD_definition_llvm_dir, inputFile, kastArgs = list(kastArgs))
 
-MCD_definition_llvm = pyk.readKastTerm('.build/defn/llvm/kmcd-kompiled/compiled.json')
+def kast_haskell(inputFile, *kastArgs):
+    return pyk.kast(MCD_definition_haskell_dir, inputFile, kastArgs = list(kastArgs))
+
+def krun_llvm(inputFile, *krunArgs):
+    return pyk.krun(MCD_definition_llvm_dir, inputFile, krunArgs = list(krunArgs))
+
+def krun_haskell(inputFile, *krunArgs):
+    return pyk.krun(MCD_definition_haskell_dir, inputFile, krunArgs = list(krunArgs))
+
+def kastJSON_llvm(inputJSON, *kastArgs):
+    return pyk.kastJSON(MCD_definition_llvm_dir, inputJSON, kastArgs = list(kastArgs))
+
+def kastJSON_haskell(inputJSON, *kastArgs):
+    return pyk.kastJSON(MCD_definition_haskell_dir, inputJSON, kastArgs = list(kastArgs))
+
+def krunJSON_llvm(inputJSON, *krunArgs):
+    return pyk.krunJSON(MCD_definition_llvm_dir, inputJSON, krunArgs = list(krunArgs))
+
+def krunJSON_haskell(inputJSON, *krunArgs):
+    return pyk.krunJSON(MCD_definition_haskell_dir, inputJSON, krunArgs = list(krunArgs))
+
+MCD_definition_llvm    = pyk.readKastTerm(MCD_definition_llvm_kompiled)
+MCD_definition_haskell = pyk.readKastTerm(MCD_definition_haskell_kompiled)
 
 intToken     = lambda x: KToken(str(x), 'Int')
 boolToken    = lambda x: KToken(str(x).lower(), 'Bool')
@@ -55,13 +76,15 @@ def buildStep(inputCall):
     function_klabel = function_name + '_'.join(['' for i in arguments]) + '_MKR-MCD_'
     return KApply(contract_name + 'Step', [KApply(function_klabel, arguments)])
 
-MCD_symbols = pyk.buildSymbolTable(MCD_definition_llvm)
+MCD_definition_llvm_symbols    = pyk.buildSymbolTable(MCD_definition_llvm)
+MCD_definition_haskell_symbols = pyk.buildSymbolTable(MCD_definition_haskell)
 
-MCD_symbols [ '<_,_>Rat_RAT-COMMON_Rat_Int_Int' ] = pyk.underbarUnparsing('_/Rat_')
+MCD_definition_llvm_symbols    [ '<_,_>Rat_RAT-COMMON_Rat_Int_Int' ] = pyk.underbarUnparsing('_/Rat_')
+MCD_definition_haskell_symbols [ '<_,_>Rat_RAT-COMMON_Rat_Int_Int' ] = pyk.underbarUnparsing('_/Rat_')
 
 def get_init_config():
     kast_json = { 'format': 'KAST', 'version': 1, 'term': KConstant('.MCDSteps_KMCD-DRIVER_MCDSteps') }
-    (_, init_config, _) = krunJSON(kast_json)
+    (_, init_config, _) = krunJSON_llvm(kast_json)
     return pyk.splitConfigFrom(init_config)
 
 (symbolic_configuration, init_cells) = get_init_config()
@@ -73,12 +96,12 @@ if __name__ == '__main__':
             kast_json = { 'format': 'KAST', 'version': 1, 'term': initial_configuration }
             json.dump(kast_json, tempf)
             tempf.flush()
-            (returnCode, kastPrinted, _) = kast(tempf.name, '--input', 'json', '--output', 'pretty')
+            (returnCode, kastPrinted, _) = kast_llvm(tempf.name, '--input', 'json', '--output', 'pretty')
             if returnCode != 0:
                 _fatal('kast returned non-zero exit code reading/printing the initial configuration')
                 sys.exit(returnCode)
 
-        fastPrinted = pyk.prettyPrintKast(initial_configuration['args'][0], MCD_symbols)
+        fastPrinted = pyk.prettyPrintKast(initial_configuration['args'][0], MCD_definition_llvm_symbols)
         _notif('fastPrinted output')
         print(fastPrinted)
 
@@ -108,7 +131,7 @@ if __name__ == '__main__':
             sys.stdout.flush()
 
         for tx in txs:
-            print([ pyk.prettyPrintKast(buildStep(call), MCD_symbols) for call in tx['calls'] ])
+            print([ pyk.prettyPrintKast(buildStep(call), MCD_definition_llvm_symbols) for call in tx['calls'] ])
             _notif("state diff")
             print(tx['state_diffs'])
             sys.stdout.flush()

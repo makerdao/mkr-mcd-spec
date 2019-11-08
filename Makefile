@@ -60,14 +60,14 @@ $(K_SUBMODULE)/mvn.timestamp: $(K_SUBMODULE)/submodule.timestamp
 # Building
 # --------
 
-MAIN_MODULE    := KMCD
+MAIN_MODULE    := KMCD-PRELUDE
 SYNTAX_MODULE  := $(MAIN_MODULE)
-MAIN_DEFN_FILE := kmcd
+MAIN_DEFN_FILE := kmcd-prelude
 
 KOMPILE_OPTS      :=
 LLVM_KOMPILE_OPTS := $(KOMPILE_OPTS) -ccopt -O2
 
-k_files := $(MAIN_DEFN_FILE).k kmcd.k kmcd-driver.k cat.k dai.k end.k flap.k flip.k flop.k gem.k join.k jug.k pot.k spot.k vat.k vow.k
+k_files := $(MAIN_DEFN_FILE).k kmcd-prelude.k kmcd.k kmcd-driver.k cat.k dai.k end.k flap.k flip.k flop.k gem.k join.k jug.k pot.k spot.k vat.k vow.k
 
 llvm_dir    := $(DEFN_DIR)/llvm
 haskell_dir := $(DEFN_DIR)/haskell
@@ -153,7 +153,15 @@ KMCD         := ./kmcd
 CHECK        := git --no-pager diff --no-index
 UPDATE       := cp
 
-tests/%.mcd.out: tests/%.mcd
+TEST_KOMPILED := $(llvm_kompiled)
+ifeq ($(TEST_BACKEND), java)
+    TEST_KOMPILED := $(java_kompiled)
+endif
+ifeq ($(TEST_BACKEND), haskell)
+    TEST_KOMPILED := $(haskell_kompiled)
+endif
+
+tests/%.mcd.out: tests/%.mcd $(TEST_KOMPILED)
 	$(KMCD) run --backend $(TEST_BACKEND) $< > $<.out
 
 tests/%.mcd.run: tests/%.mcd.out
