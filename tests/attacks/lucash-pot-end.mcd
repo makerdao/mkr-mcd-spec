@@ -5,7 +5,6 @@ STEPS ( ATTACK-PRELUDE )
 
 transact ADMIN End . cage
 transact ADMIN End . cage "gold"
-transact ADMIN End . initGap "gold"       // injected because no default setting of `gap` to 0
 transact ADMIN End . skim "gold" "Alice"
 transact ADMIN End . skim "gold" "Bobby"
 transact ADMIN End . thaw
