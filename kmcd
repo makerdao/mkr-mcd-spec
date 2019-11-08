@@ -37,7 +37,7 @@ pretty_diff() {
 
 run_krun() {
     export K_OPTS=-Xss500m
-    krun --directory "$backend_dir" "$run_file" "$@"
+    krun --directory "$backend_dir" "$run_file" "$@" -cRANDOMSEED=$cRANDOMSEED -cGENDEPTH=$cGENDEPTH
 }
 
 run_kast() {
@@ -147,6 +147,9 @@ if [[ "$run_file" == '-' ]]; then
     run_file="$tmp_input"
 fi
 [[ -f "$run_file" ]] || fatal "File does not exist: $run_file"
+
+cRANDOMSEED="${RANDOMSEED:-0}"
+cGENDEPTH="${GENDEPTH:-.DepthBound}"
 
 case "$run_command-$backend" in
 
