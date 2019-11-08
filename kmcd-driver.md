@@ -25,6 +25,7 @@ module KMCD-DRIVER
           <pre-state> .K </pre-state>
           <events> .List </events>
           <frame-events> .List </frame-events>
+          <violation> false </violation>
         </kmcd-driver>
 ```
 
