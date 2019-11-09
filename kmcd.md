@@ -85,8 +85,21 @@ Properties
 
 State predicates that capture undesirable states in the system (representing violations of certain invariants).
 
-### Earning interest from a pot in zero time
+### Kicking off a fake `flip` auction (inspired by lucash-flip)
 
+The property checks if `flip . kick` is ever called by an unauthorized user (alternatively, the property can check whether a `flip` auction is kicked off with a zero bid?).
+
+### Kicking off a fake `flap` auction (inspired by lucash-flap)
+
+The property checks if `flap . kick` is ever called by an unauthorized user (alternatively, the property can check whether a `flap` auction is kicked off with a zero bid?).
+
+### Earning interest from a pot after End is deactivated (inspired by the lucash-pot-end attack)
+
+The property checks if an `End . cage` is eventually followed by a successful `Pot . join`and `Pot . exit` before `End` is reactivated.
+
+### Earning interest from a pot in zero time (inspired by the lucash-pot attack)
+
+The property checks if a sequence of `Pot . join`, `Pot . drip` and `Pot . exit` is executed in zero time.
 ```k
 
     syntax Bool ::= zeroTimePotInterest(List) [function, functional]
