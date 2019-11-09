@@ -80,6 +80,79 @@ State Storage/Revert Semantics
          <pre-state> <kmcd-state> STATE </kmcd-state> => .K </pre-state>
 ```
 
+Properties
+----------
+
+State predicates that capture undesirable states in the system (representing violations of certain invariants).
+
+### Earning interest from a pot in zero time
+
+```k
+
+    syntax Bool ::= zeroTimePotInterest(List) [function, functional]
+ // ----------------------------------------------------
+    rule zeroTimePotInterest(
+           ListItem(LogNote( ADDR, Pot . join WAD1 ))
+           EVENTS:List
+         )
+         => zeroTimePotInterestBegin(EVENTS, ADDR)
+
+    rule zeroTimePotInterest( ListItem(_) EVENTS:List )
+         => zeroTimePotInterest(EVENTS) [owise]
+
+    rule zeroTimePotInterest(.List) => false
+
+    syntax Bool ::= zeroTimePotInterestBegin(List, String) [function, functional]
+ // -----------------------------------------------------------------
+    rule zeroTimePotInterestBegin(
+           ListItem(LogNote( ADDR, Pot . drip ))
+           EVENTS:List, ADDR
+         )
+         => zeroTimePotInterestEnd(EVENTS, ADDR)
+
+    rule zeroTimePotInterestBegin(
+           ListItem( TimeStep(N,_) )
+           EVENTS:List, ADDR
+         )
+         => zeroTimePotInterest(EVENTS)
+      requires N >Int 0
+
+    rule zeroTimePotInterestBegin( ListItem(_) EVENTS:List, ADDR )
+         => zeroTimePotInterestBegin(EVENTS, ADDR) [owise]
+
+    rule zeroTimePotInterestBegin(.List, _) => false
+
+    syntax Bool ::= zeroTimePotInterestEnd(List, String) [function, functional]
+ // -----------------------------------------------------------------
+    rule zeroTimePotInterestEnd(
+           ListItem(LogNote( ADDR, Pot . exit WAD ))
+           EVENTS:List, ADDR
+         )
+         => true
+
+    rule zeroTimePotInterestEnd(
+           ListItem( TimeStep(N,_) )
+           EVENTS:List, ADDR
+         )
+         => zeroTimePotInterest(EVENTS)
+      requires N >Int 0
+
+    rule zeroTimePotInterestEnd( ListItem(_) EVENTS:List, ADDR )
+         => zeroTimePotInterestEnd(EVENTS, ADDR) [owise]
+
+    rule zeroTimePotInterestEnd(.List, _) => false
+```
+
+Violations
+----------
+
+A violation occurs if any of the properties above holds.
+
+```k
+    rule violated(EVENTS) => true
+      requires zeroTimePotInterest(EVENTS)
+```
+
 ```k
 endmodule
 ```
