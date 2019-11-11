@@ -74,7 +74,8 @@ Cat Events
 
     syntax CatStep ::= "emitBite" String Address Wad Wad Wad
  // --------------------------------------------------------
-    rule <k> ID:Int ~> emitBite ILK URN INK ART TAB => ID ... </k>
+    rule <k> emitBite ILK URN INK ART TAB => ID ... </k>
+         <return-value> ID:Int </return-value>
          <frame-events> _ => ListItem(Bite(ILK, URN, INK, ART, TAB, Flip ILK, ID)) </frame-events>
 ```
 
