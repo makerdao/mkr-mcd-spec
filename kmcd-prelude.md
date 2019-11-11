@@ -217,8 +217,6 @@ module KMCD-GEN
                      | "GenStepLoad"
                      | "GenStepReplace"
  // -----------------------------------
-    rule <k> GenStep => . ... </k> [owise]
-
     rule <k> GenStep => GenStepLoad ~> GenStepReplace ... </k>
          <random> I => randInt(I) </random>
          <generator-next> N </generator-next>
