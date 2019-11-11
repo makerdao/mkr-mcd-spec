@@ -34,15 +34,7 @@ module KMCD
     imports SPOT
     imports VAT
     imports VOW
-```
 
-**TODO**: This is a HACK to get us past unparsing issues with `mcd-pyk.py`.
-
-```k
-    imports K-TERM
-```
-
-```k
     configuration
       <kmcd>
         <kmcd-driver/>
