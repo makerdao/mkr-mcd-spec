@@ -168,11 +168,11 @@ module KMCD-GEN
       </kmcd-random>
 
     syntax DepthBound ::= Int
-                        | ".DepthBound"
+                        | "*"
                         | decrement ( DepthBound ) [function]
  // ---------------------------------------------------------
-    rule decrement(.DepthBound) => .DepthBound
-    rule decrement(N)           => N -Int 1
+    rule decrement(*) => *
+    rule decrement(N) => N -Int 1
 
     syntax Int ::= randIntBounded ( Int , Int ) [function]
  // ------------------------------------------------------
@@ -239,10 +239,10 @@ module KMCD-GEN
     syntax GenStep
     syntax GenSteps ::= GenStep
                       | ".GenSteps"
-                      | GenSteps ";" GenSteps
-                      | GenSteps "|" GenSteps
-                      | GenSteps "*"
- // --------------------------------
+                      | GenSteps ";" GenSteps [left]
+                      | GenSteps "|" GenSteps [left]
+                      | GenSteps DepthBound
+ // ---------------------------------------
 
     syntax AdminStep ::= derive ( Int , GenSteps )
  // ----------------------------------------------
@@ -255,7 +255,9 @@ module KMCD-GEN
     rule <k> derive(_, .GenSteps | GSS => GSS) ... </k> [priority(49)]
     rule <k> derive(_, GSS | .GenSteps => GSS) ... </k> [priority(49)]
 
-    rule <k> derive(_, GSS * => (GSS ; (GSS *)) | .GenSteps) ... </k>
+    rule <k> derive(_, GSS 0) => . ... </k>
+    rule <k> derive(_, GSS DB:DepthBound => (GSS ; (GSS decrement(DB))) | .GenSteps) ... </k>
+      requires DB =/=K 0
 
     rule <k> derive(I, GSS ; GSS') => derive(I, GSS) ... </k>
          <generator>
