@@ -286,6 +286,7 @@ module KMCD-GEN
                         | "GenEndThaw"
                         | "GenEndFlow"
                         | "GenEndSkip"
+                        | "GenEndSkip" String
                         | "GenEndPack"
                         | "GenEndPack" Address
                         | "GenEndCash"
@@ -304,12 +305,20 @@ module KMCD-GEN
          <vat-ilks> ILKS </vat-ilks>
       requires size(ILKS) >Int 0
 
-    rule <k> GenEndSkip => LogGen ( transact ANYONE End . skip chooseString(I, keys_list(ILKS)) chooseInt(randInt(I), keys_list(FLIP_BIDS)) ) ... </k>
-         <random> I => randInt(randInt(I)) </random>
+    // **TODO**: Would be better to pick an ILKID from <flips>
+    rule <k> GenEndSkip => GenEndSkip chooseString(I, keys_list(ILKS)) ... </k>
+         <random> I => randInt(I) </random>
          <vat-ilks> ILKS </vat-ilks>
-         <flip-bids> FLIP_BIDS </flip-bids>
-      requires size(ILKS)      >Int 0
-       andBool size(FLIP_BIDS) >Int 0
+      requires size(ILKS) >Int 0
+
+    rule <k> GenEndSkip ILKID => LogGen ( transact ANYONE End . skip ILKID chooseInt(I, keys_list(FLIP_BIDS)) ) ... </k>
+         <random> I => randInt(I) </random>
+         <flip>
+           <flip-ilk> ILKID </flip-ilk>
+           <flip-bids> FLIP_BIDS </flip-bids>
+           ...
+         </flip>
+      requires size(FLIP_BIDS) >Int 0
 
     rule <k> GenEndPack => GenEndPack chooseAddress(I, keys_list(END_BAGS)) ... </k>
          <random> I => randInt(I) </random>
