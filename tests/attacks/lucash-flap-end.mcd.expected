@@ -488,11 +488,17 @@
     <generator-next>
       0
     </generator-next>
+    <generator-current>
+      0
+    </generator-current>
+    <generator-remainder>
+      .GenStep
+    </generator-remainder>
     <generators>
       .GeneratorCellMap
     </generators>
     <end-gen>
-      .GenSteps
+      .GenStep
     </end-gen>
   </kmcd-gen>
 </kmcd-random>
