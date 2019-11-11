@@ -92,25 +92,10 @@ initial_configuration = pyk.substitute(symbolic_configuration, init_cells)
 
 if __name__ == '__main__':
     if len(sys.argv) <= 1:
-        with tempfile.NamedTemporaryFile(mode = 'w') as tempf:
-            kast_json = { 'format': 'KAST', 'version': 1, 'term': initial_configuration }
-            json.dump(kast_json, tempf)
-            tempf.flush()
-            (returnCode, kastPrinted, _) = kast_llvm(tempf.name, '--input', 'json', '--output', 'pretty')
-            if returnCode != 0:
-                _fatal('kast returned non-zero exit code reading/printing the initial configuration')
-                sys.exit(returnCode)
-
         fastPrinted = pyk.prettyPrintKast(initial_configuration['args'][0], MCD_definition_llvm_symbols)
         _notif('fastPrinted output')
         print(fastPrinted)
-
-        kastPrinted = kastPrinted.strip()
-        if fastPrinted != kastPrinted:
-            _warning('kastPrinted and fastPrinted differ!')
-            for line in difflib.unified_diff(kastPrinted.split('\n'), fastPrinted.split('\n'), fromfile='kast', tofile='fast', lineterm='\n'):
-                sys.stderr.write(line + '\n')
-            sys.stderr.flush()
+        sys.stdout.flush()
 
     elif len(sys.argv) > 1:
         input_scrape = sys.argv[1]
