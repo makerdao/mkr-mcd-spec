@@ -159,18 +159,19 @@ module KMCD-GEN
           <random> $RANDOMSEED:Int </random>
           <generator-depth-bound> $GENDEPTH:DepthBound </generator-depth-bound>
           <generator-next> 0 </generator-next>
+          <generator-current> 0 </generator-current>
+          <generator-remainder> .GenStep </generator-remainder>
           <generators>
             <generator multiplicity="*" type="Map">
               <generator-id> 0 </generator-id>
-              <generator-steps> .GenSteps </generator-steps>
+              <generator-steps> .GenStep </generator-steps>
             </generator>
           </generators>
-          <end-gen> .GenSteps </end-gen>
+          <end-gen> .GenStep </end-gen>
         </kmcd-gen>
       </kmcd-random>
 
-    syntax DepthBound ::= Int
-                        | "*"
+    syntax DepthBound ::= Int | "*"
                         | decrement ( DepthBound ) [function]
  // ---------------------------------------------------------
     rule decrement(*) => *
@@ -196,8 +197,8 @@ module KMCD-GEN
     rule chooseAddress(I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>Address
     rule chooseCDPID  (I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>CDPID
 
-    syntax AdminStep ::= AddGenerator ( GenSteps )
- // ----------------------------------------------
+    syntax AdminStep ::= AddGenerator ( GenStep )
+ // ---------------------------------------------
     rule <k> AddGenerator ( GSS ) => . ... </k>
          <generator-next> I => I +Int 1 </generator-next>
          <generators>
@@ -211,25 +212,35 @@ module KMCD-GEN
            ...
          </generators>
 
-    syntax AdminStep ::= "GenStep"
-                       | "GenSteps"
-                       | next ( Int )
- // ---------------------------------
-    rule <k> GenSteps => . ... </k> [owise]
+    syntax AdminStep ::= GenStep
+    syntax GenStep ::= "GenStep"
+                     | "GenStepLoad"
+                     | "GenStepReplace"
+ // -----------------------------------
+    rule <k> GenStep => . ... </k> [owise]
 
-    rule <k> (. => GenStep) ~> GenSteps ... </k>
-         <generator-depth-bound> GENDEPTH => decrement(GENDEPTH) </generator-depth-bound>
-      requires GENDEPTH =/=K 0
-
-    rule <k> GenStep => next(I modInt N) ... </k>
+    rule <k> GenStep => GenStepLoad ~> GenStepReplace ... </k>
          <random> I => randInt(I) </random>
          <generator-next> N </generator-next>
+         <generator-current> _ => I modInt N </generator-current>
+         <generator-remainder> GSS => .GenStep </generator-remainder>
+         <generator-depth-bound> DB => decrement(DB) </generator-depth-bound>
          <violation> false </violation>
+      requires DB =/=K 0
 
-    rule <k> next(I) => derive(I, GSS) ... </k>
+    rule <k> GenStepLoad => GSS ... </k>
+         <generator-current> I </generator-current>
          <generator>
            <generator-id> I </generator-id>
-           <generator-steps> GSS => .GenSteps </generator-steps>
+           <generator-steps> GSS => .GenStep </generator-steps>
+         </generator>
+
+    rule <k> GenStepReplace => . ... </k>
+         <generator-remainder> GSS => .GenStep </generator-remainder>
+         <generator-current> I </generator-current>
+         <generator>
+           <generator-id> I </generator-id>
+           <generator-steps> _ => GSS </generator-steps>
          </generator>
 
     syntax AdminStep ::= LogGen ( MCDStep )
@@ -238,35 +249,24 @@ module KMCD-GEN
     rule <k> LogGen(MCDSTEP) => MCDSTEP ... </k>
          <events> ... (.List => ListItem(GenStep(MCDSTEP))) </events>
 
-    syntax GenSteps ::= GenStep
-                      | ".GenSteps"
-                      | GenSteps ";" GenSteps [left]
-                      | GenSteps "|" GenSteps [left]
-                      | GenSteps DepthBound
- // ---------------------------------------
+    syntax GenStep ::= ".GenStep"
+                     | GenStep DepthBound
+                     > GenStep "|" GenStep [left]
+                     > GenStep ";" GenStep [left]
+ // ---------------------------------------------
+    rule <k> .GenStep => . ... </k>
 
-    syntax AdminStep ::= derive ( Int , GenSteps )
- // ----------------------------------------------
-    rule <k> derive(_, GS:GenStep) => GS ... </k>
+    rule <k> .GenStep ; GSS => GSS ... </k> [priority(49)]
+    rule <k> GSS ; .GenStep => GSS ... </k> [priority(49)]
+    rule <k> .GenStep | GSS => GSS ... </k> [priority(49)]
+    rule <k> GSS | .GenStep => GSS ... </k> [priority(49)]
 
-    rule <k> derive(_, .GenSteps) => . ... </k>
+    rule <k> GSS DB:DepthBound => #if DB ==K 0 #then . #else (GSS ; (GSS decrement(DB))) | .GenStep #fi ... </k>
 
-    rule <k> derive(_, .GenSteps ; GSS => GSS) ... </k> [priority(49)]
-    rule <k> derive(_, GSS ; .GenSteps => GSS) ... </k> [priority(49)]
-    rule <k> derive(_, .GenSteps | GSS => GSS) ... </k> [priority(49)]
-    rule <k> derive(_, GSS | .GenSteps => GSS) ... </k> [priority(49)]
+    rule <k> GSS ; GSS' => GSS ... </k>
+         <generator-remainder> GSS'' => GSS' ; GSS'' </generator-remainder>
 
-    rule <k> derive(_, GSS 0) => . ... </k>
-    rule <k> derive(_, GSS DB:DepthBound => (GSS ; (GSS decrement(DB))) | .GenSteps) ... </k>
-      requires DB =/=K 0
-
-    rule <k> derive(I, GSS ; GSS') => derive(I, GSS) ... </k>
-         <generator>
-           <generator-id> I </generator-id>
-           <generator-steps> GSS'' => GSS' ; GSS'' </generator-steps>
-         </generator>
-
-    rule <k> derive(I, GSS | GSS') => #if R modInt 2 ==K 0 #then derive(I, GSS) #else derive(I, GSS') #fi ... </k>
+    rule <k> GSS | GSS' => #if R modInt 2 ==K 0 #then GSS #else GSS' #fi ... </k>
          <random> R => randInt(R) </random>
 
     syntax GenStep ::= GenTimeStep
