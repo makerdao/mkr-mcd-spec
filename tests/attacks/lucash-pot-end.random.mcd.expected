@@ -95,6 +95,7 @@
         ListItem ( LogNote ( End , Flop . cage ) )
         ListItem ( LogNote ( End , Vat . heal 0 ) )
         ListItem ( LogNote ( ADMIN , Vow . cage ) )
+        ListItem ( LogNote ( ADMIN , Pot . cage ) )
         ListItem ( LogNote ( ADMIN , End . cage ) )
         ListItem ( GenStep ( transact ANYONE End . cage "gold" ) )
         ListItem ( LogNote ( ANYONE , End . cage "gold" ) )
@@ -112,14 +113,14 @@
         ListItem ( LogNote ( "Alice" , Vat . move "Alice" Pot 49 /Rat 10 ) )
         ListItem ( LogNote ( "Alice" , Pot . join 49 /Rat 10 ) )
         ListItem ( GenStep ( transact ADMIN Pot . file dsr 128 /Rat 125 ) )
-        ListItem ( LogNote ( ADMIN , Pot . file dsr 128 /Rat 125 ) )
+        ListItem ( Exception ( Pot . file dsr 128 /Rat 125 ) )
         ListItem ( GenStep ( TimeStep 1 ) )
         ListItem ( TimeStep ( 1 , 1 ) )
         ListItem ( GenStep ( transact ANYONE Pot . drip ) )
-        ListItem ( LogNote ( ANYONE , Vat . suck Vow Pot 147 /Rat 1250 ) )
+        ListItem ( LogNote ( ANYONE , Vat . suck Vow Pot 0 ) )
         ListItem ( LogNote ( ANYONE , Pot . drip ) )
         ListItem ( GenStep ( transact "Alice" Pot . exit 49 /Rat 10 ) )
-        ListItem ( LogNote ( "Alice" , Vat . move Pot "Alice" 3136 /Rat 625 ) )
+        ListItem ( LogNote ( "Alice" , Vat . move Pot "Alice" 49 /Rat 10 ) )
         ListItem ( LogNote ( "Alice" , Pot . exit 49 /Rat 10 ) )
       </events>
       <frame-events>
@@ -364,10 +365,10 @@
           0
         </pot-pie>
         <pot-dsr>
-          128 /Rat 125
+          1
         </pot-dsr>
         <pot-chi>
-          128 /Rat 125
+          1
         </pot-chi>
         <pot-vow>
           Vow
@@ -376,7 +377,7 @@
           1
         </pot-rho>
         <pot-live>
-          true
+          false
         </pot-live>
       </pot>
       <spot>
@@ -426,7 +427,7 @@
           { "gold" , Flip "gold" } |-> 0
         </vat-gem>
         <vat-dai>
-          "Alice" |-> 12647 /Rat 1250
+          "Alice" |-> 10
           "Bobby" |-> 10
           End |-> 0
           Flap |-> 0
@@ -439,13 +440,13 @@
           End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 25147 /Rat 1250
+          Vow |-> 20
         </vat-sin>
         <vat-debt>
-          25147 /Rat 1250
+          20
         </vat-debt>
         <vat-vice>
-          25147 /Rat 1250
+          20
         </vat-vice>
         <vat-Line>
           1000000000000
