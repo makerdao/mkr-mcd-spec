@@ -92,6 +92,7 @@
       ListItem ( LogNote ( "Bobby" , Gem "gold" . transferFrom "Bobby" GemJoin "gold" 1 ) )
       ListItem ( LogNote ( "Bobby" , GemJoin "gold" . join "Bobby" 1 ) )
       ListItem ( LogNote ( "Alice" , Vat . hope Flap ) )
+      ListItem ( Exception ( Flap . kick 1 2 ) )
       ListItem ( LogNote ( ADMIN , Vat . cage ) )
       ListItem ( LogNote ( ADMIN , Cat . cage ) )
       ListItem ( LogNote ( Vow , Vat . move Flap Vow 0 ) )
@@ -101,6 +102,7 @@
       ListItem ( LogNote ( ADMIN , Vow . cage ) )
       ListItem ( LogNote ( ADMIN , Pot . cage ) )
       ListItem ( LogNote ( ADMIN , End . cage ) )
+      ListItem ( Exception ( Flap . yank 1 ) )
     </events>
     <frame-events>
       .List
