@@ -299,7 +299,7 @@ module KMCD-GEN
          <random> I => randInt(randInt(I)) </random>
          <vat-dai> ... ADDRESS |-> VAT_DAI ... </vat-dai>
 
-    rule <k> GenPotFileDSR => LogGen ( transact ADMIN Pot . file dsr randRatBounded(I, randInt(I), 2) ) ... </k>
+    rule <k> GenPotFileDSR => LogGen ( transact ADMIN Pot . file dsr (randRatBounded(I, randInt(I), 20 /Rat 100) +Rat (90 /Rat 100)) ) ... </k>
          <random> I => randInt(randInt(I)) </random>
 
     rule <k> GenPotExit => GenPotExit chooseAddress(I, keys_list(POT_PIES)) ... </k>
