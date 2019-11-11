@@ -315,6 +315,8 @@ module KMCD-GEN
     syntax GenStep ::= GenEndStep
     syntax GenEndStep ::= "GenEndCage"
                         | "GenEndCageIlk"
+                        | "GenEndSkim"
+                        | "GenEndSkim" CDPID
                         | "GenEndThaw"
                         | "GenEndFlow"
                         | "GenEndSkip"
@@ -331,6 +333,14 @@ module KMCD-GEN
          <random> I => randInt(I) </random>
          <vat-ilks> ILKS </vat-ilks>
       requires size(ILKS) >Int 0
+
+    // **TODO**: Would be better to choose from an ILK with <end-tag> and <end-gap> too
+    rule <k> GenEndSkim => GenEndSkim chooseCDPID(I, keys_list(VAT_URNS)) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-urns> VAT_URNS </vat-urns>
+      requires size(VAT_URNS) >Int 0
+
+    rule <k> GenEndSkim { ILKID , ADDRESS } => LogGen ( transact ANYONE End . skim ILKID ADDRESS ) ... </k>
 
     rule <k> GenEndFlow => LogGen ( transact ANYONE End . flow chooseString(I, keys_list(ILKS)) ) ... </k>
          <random> I => randInt(I) </random>
