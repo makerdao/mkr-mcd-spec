@@ -1,0 +1,16 @@
+STEPS ( ATTACK-PRELUDE )
+
+AddGenerator ( GenPotFileDSR
+             ; GenTimeStep
+             ; GenPotJoin "Alice"
+             ; GenPotDrip
+             ; GenPotExit "Alice"
+             )
+
+GenStep
+GenStep
+GenStep
+GenStep
+GenStep
+
+.MCDSteps
