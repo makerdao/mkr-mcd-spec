@@ -152,6 +152,9 @@ KMCD         := ./kmcd
 CHECK        := git --no-pager diff --no-index
 UPDATE       := cp
 
+KMCD_GENDEPTH   := 20
+KMCD_RANDOMSEED := 0
+
 TEST_KOMPILED := $(llvm_kompiled)
 ifeq ($(TEST_BACKEND), java)
     TEST_KOMPILED := $(java_kompiled)
@@ -161,7 +164,7 @@ ifeq ($(TEST_BACKEND), haskell)
 endif
 
 tests/%.mcd.out: tests/%.mcd $(TEST_KOMPILED)
-	$(KMCD) run --backend $(TEST_BACKEND) $< > $<.out
+	GENDEPTH=$(KMCD_GENDEPTH) RANDOMSEED=$(KMCD_RANDOMSEED) $(KMCD) run --backend $(TEST_BACKEND) $< > $<.out
 
 tests/%.mcd.run: tests/%.mcd.out
 	$(CHECK) tests/$*.mcd.expected tests/$*.mcd.out
