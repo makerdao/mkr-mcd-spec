@@ -278,6 +278,40 @@ module KMCD-GEN
     rule <k> GenTimeStep => LogGen ( TimeStep ((I modInt 2) +Int 1) ) ... </k>
          <random> I => randInt(I) </random>
 
+    syntax GenStep ::= GenPotStep
+    syntax GenPotStep ::= "GenPotJoin"
+                        | "GenPotJoin" Address
+                        | "GenPotFileDSR"
+                        | "GenPotDrip"
+                        | "GenPotExit"
+                        | "GenPotExit" Address
+                        | "GenPotCage"
+ // ----------------------------------
+    rule <k> GenPotCage => LogGen ( transact ADMIN  Pot . cage ) ... </k>
+    rule <k> GenPotDrip => LogGen ( transact ANYONE Pot . drip ) ... </k>
+
+    rule <k> GenPotJoin => GenPotJoin chooseAddress(I, keys_list(POT_PIES)) ... </k>
+         <random> I => randInt(I) </random>
+         <pot-pies> POT_PIES </pot-pies>
+      requires size(POT_PIES) >Int 0
+
+    rule <k> GenPotJoin ADDRESS => LogGen ( transact ADDRESS Pot . join randRatBounded(I, randInt(I), VAT_DAI) ) ... </k>
+         <random> I => randInt(randInt(I)) </random>
+         <vat-dai> ... ADDRESS |-> VAT_DAI ... </vat-dai>
+
+    rule <k> GenPotFileDSR => LogGen ( transact ADMIN Pot . file dsr randRatBounded(I, randInt(I), 2) ) ... </k>
+         <random> I => randInt(randInt(I)) </random>
+
+    rule <k> GenPotExit => GenPotExit chooseAddress(I, keys_list(POT_PIES)) ... </k>
+         <random> I => randInt(I) </random>
+         <pot-pies> POT_PIES </pot-pies>
+      requires size(POT_PIES) >Int 0
+
+    rule <k> GenPotExit ADDRESS => LogGen ( transact ADDRESS Pot . exit randRatBounded(I, randInt(I), VAT_DAI /Rat CHI) ) ... </k>
+         <random> I => randInt(randInt(I)) </random>
+         <vat-dai> ... Pot |-> VAT_DAI ... </vat-dai>
+         <pot-chi> CHI </pot-chi>
+
     syntax GenStep ::= GenEndStep
     syntax GenEndStep ::= "GenEndCage"
                         | "GenEndCageIlk"
