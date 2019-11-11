@@ -121,8 +121,8 @@ Flip Events
 -----------
 
 ```k
-    syntax Event ::= FlipKick(Int, Wad, Rad, Rad, Address, Address)
- // ---------------------------------------------------------------
+    syntax Event ::= FlipKick(Address, String, Int, Wad, Rad, Rad, Address, Address)
+ // --------------------------------------------------------------------------------
 ```
 
 Flip Initialization
@@ -162,7 +162,7 @@ Flip Semantics
            </flip-bids>
            ...
          </flip>
-         <frame-events> _ => ListItem(FlipKick(KICKS +Int 1, LOT, BID, TAB, USR, GAL)) </frame-events>
+         <frame-events> _ => ListItem(FlipKick(MSGSENDER, ILK, KICKS +Int 1, LOT, BID, TAB, USR, GAL)) </frame-events>
 
     syntax FlipStep ::= "tick" Int
  // ------------------------------

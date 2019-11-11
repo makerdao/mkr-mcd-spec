@@ -101,8 +101,8 @@ Flap Events
 -----------
 
 ```k
-    syntax Event ::= FlapKick(String, Int, Rad, Wad)
- // ----------------------------------------
+    syntax Event ::= FlapKick(Address, Int, Rad, Wad)
+ // -------------------------------------------------
 ```
 
 Flap Semantics

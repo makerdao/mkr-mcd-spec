@@ -163,23 +163,23 @@ Most operations add to the log, which stores the address which made the call and
 Violations
 ----------
 
-A violation of an invariant (defined as a state predicate) can be checked using the Admin step `assert`. If a violation is detected, 
+A violation of an invariant (defined as a state predicate) can be checked using the Admin step `assert`. If a violation is detected,
 it is recorded in the state and execution is immediately terminated.
 
 ```k
     syntax Bool ::= violated(List) [function, functional]
- // -------------------------------------------------
- 
-    syntax AdminStep ::= "assert"  
+ // -----------------------------------------------------
+
+    syntax AdminStep ::= "assert"
  // -----------------------------
     rule <k> (assert => .) ... </k>
          <events> EVENTS </events>
       requires notBool violated(EVENTS)
-    
+
     rule <k> assert ~> _ => . </k>
          <events> EVENTS </events>
          <violation> false => true </violation>
-      requires violated(EVENTS) 
+      requires violated(EVENTS)
 ```
 
 Base Data

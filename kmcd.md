@@ -89,9 +89,39 @@ State predicates that capture undesirable states in the system (representing vio
 
 The property checks if `flip . kick` is ever called by an unauthorized user (alternatively, the property can check whether a `flip` auction is kicked off with a zero bid?).
 
+```k
+    syntax Bool ::= unAuthFlipKick(List) [function, functional]
+ // ----------------------------------------------------
+    rule unAuthFlipKick(
+           ListItem(FlipKick(ADDR, ILK, _, _, _, _, _, _))
+           EVENTS:List
+         )
+         => #if isAuthorized(ADDR, Flip ILK) #then unAuthFlipKick(EVENTS) #else true #fi
+
+    rule unAuthFlipKick( ListItem(_) EVENTS:List )
+         => unAuthFlipKick(EVENTS) [owise]
+
+    rule unAuthFlipKick(.List) => false
+```
+
 ### Kicking off a fake `flap` auction (inspired by lucash-flap)
 
 The property checks if `flap . kick` is ever called by an unauthorized user (alternatively, the property can check whether a `flap` auction is kicked off with a zero bid?).
+
+```k
+    syntax Bool ::= unAuthFlapKick(List) [function, functional]
+ // ----------------------------------------------------
+    rule unAuthFlapKick(
+          ListItem(FlapKick(ADDR, _, _, _))
+           EVENTS:List
+         )
+         => #if isAuthorized(ADDR, Flap) #then unAuthFlapKick(EVENTS) #else true #fi
+
+    rule unAuthFlapKick( ListItem(_) EVENTS:List )
+         => unAuthFlapKick(EVENTS) [owise]
+
+    rule unAuthFlapKick(.List) => false
+```
 
 ### Earning interest from a pot after End is deactivated (inspired by the lucash-pot-end attack)
 
@@ -162,8 +192,9 @@ Violations
 A violation occurs if any of the properties above holds.
 
 ```k
-    rule violated(EVENTS) => true
-      requires zeroTimePotInterest(EVENTS)
+    rule violated(EVENTS) => zeroTimePotInterest(EVENTS)
+//                      orBool unAuthFlipKick(EVENTS)
+//                      orBool unAuthFlapKick(EVENTS)
 ```
 
 ```k
