@@ -285,7 +285,13 @@ module KMCD-GEN
     syntax GenVatStep ::= "GenVatFrob"
                         | "GenVatFrob" CDPID
                         | "GenVatFrob" CDPID Wad [prefer]
- // -----------------------------------------------------
+                        | "GenVatMove"
+                        | "GenVatMove" Address
+                        | "GenVatMove" Address Address
+                        | "GenVatHope"
+                        | "GenVatHope" Address
+                        | "GenVatHope" Address Address
+ // --------------------------------------------------
     rule <k> GenVatFrob => GenVatFrob chooseCDPID(I, keys_list(VAT_URNS)) ... </k>
          <random> I => randInt(I) </random>
          <vat-urns> VAT_URNS </vat-urns>
@@ -312,6 +318,29 @@ module KMCD-GEN
            { ILKID , ADDRESS } |-> Urn ( ... ink: URNINK, art: URNART )
            ...
          </vat-urns>
+
+    syntax GenStep ::= GenGemStep
+    syntax GenGemStep ::= "GenGemMint"
+                        | "GenGemMint" String
+                        | "GenGemMint" String Address
+ // -------------------------------------------------
+
+    syntax GenStep ::= GenGemJoinStep
+    syntax GenGemJoinStep ::= "GenGemJoin" String
+                            | "GenGemJoin" String Address
+ // -----------------------------------------------------
+
+    syntax GenStep ::= GenFlapStep
+    syntax GenFlapStep ::= "GenFlapKick"
+                         | "GenFlapKick" Address
+                         | "GenFlapYank"
+                         | "GenFlapYank" Int
+ // ----------------------------------------
+
+    syntax GenStep ::= GenFlipStep
+    syntax GenFlipStep ::= "GenFlipKick"
+                         | "GenFlipKick" CDPID
+ // ------------------------------------------
 
     syntax GenStep ::= GenPotStep
     syntax GenPotStep ::= "GenPotJoin"
