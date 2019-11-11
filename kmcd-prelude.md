@@ -310,8 +310,7 @@ module KMCD-GEN
          <pot-pies> POT_PIES </pot-pies>
       requires size(POT_PIES) >Int 0
 
-    rule <k> GenPotExit ADDRESS => LogGen ( transact ADDRESS Pot . exit randRatBounded(I, VAT_DAI /Rat CHI) ) ... </k>
-         <random> I => randInt(I) </random>
+    rule <k> GenPotExit ADDRESS => LogGen ( transact ADDRESS Pot . exit (VAT_DAI /Rat CHI) ) ... </k>
          <vat-dai> ... Pot |-> VAT_DAI ... </vat-dai>
          <pot-chi> CHI </pot-chi>
 
