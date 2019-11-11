@@ -149,7 +149,7 @@ fi
 [[ -f "$run_file" ]] || fatal "File does not exist: $run_file"
 
 cRANDOMSEED="${RANDOMSEED:-0}"
-cGENDEPTH="${GENDEPTH:-.DepthBound}"
+cGENDEPTH="${GENDEPTH:-*}"
 
 case "$run_command-$backend" in
 
