@@ -163,6 +163,8 @@ ifeq ($(TEST_BACKEND), haskell)
     TEST_KOMPILED := $(haskell_kompiled)
 endif
 
+tests/attacks/lucash-pot-end.random.mcd.out: KMCD_RANDOMSEED=481
+
 tests/%.mcd.out: tests/%.mcd $(TEST_KOMPILED)
 	GENDEPTH=$(KMCD_GENDEPTH) RANDOMSEED=$(KMCD_RANDOMSEED) $(KMCD) run --backend $(TEST_BACKEND) $< > $<.out
 
