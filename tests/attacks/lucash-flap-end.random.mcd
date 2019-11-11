@@ -1,0 +1,20 @@
+STEPS ( ATTACK-PRELUDE )
+
+AddGenerator ( GenGemMint "MKR" Flap
+             ; GenVatMove "Alice" Vow
+             ; GenGemJoin "gold" "Bobby"
+             ; GenVatHope "Alice" Flap
+             ; GenFlapKick "Alice"
+             ; GenEndCage
+             ; GenFlapYank
+             )
+
+GenStep
+GenStep
+GenStep
+GenStep
+GenStep
+GenStep
+GenStep
+
+.MCDSteps
