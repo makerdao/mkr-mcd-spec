@@ -92,14 +92,13 @@
         ListItem ( GenStep ( TimeStep 2 ) )
         ListItem ( TimeStep ( 2 , 2 ) )
         ListItem ( GenStep ( transact "Alice" Pot . join 93 /Rat 10 ) )
-        ListItem ( LogNote ( "Alice" , Vat . move "Alice" Pot 93 /Rat 10 ) )
-        ListItem ( LogNote ( "Alice" , Pot . join 93 /Rat 10 ) )
+        ListItem ( Exception ( Pot . join 93 /Rat 10 ) )
         ListItem ( GenStep ( transact ANYONE Pot . drip ) )
-        ListItem ( LogNote ( ANYONE , Vat . suck Vow Pot 3170277 /Rat 2500000 ) )
+        ListItem ( LogNote ( ANYONE , Vat . suck Vow Pot 0 ) )
         ListItem ( LogNote ( ANYONE , Pot . drip ) )
-        ListItem ( GenStep ( transact "Alice" Pot . exit 93 /Rat 10 ) )
-        ListItem ( LogNote ( "Alice" , Vat . move Pot "Alice" 26420277 /Rat 2500000 ) )
-        ListItem ( LogNote ( "Alice" , Pot . exit 93 /Rat 10 ) )
+        ListItem ( GenStep ( transact "Alice" Pot . exit 0 ) )
+        ListItem ( LogNote ( "Alice" , Vat . move Pot "Alice" 0 ) )
+        ListItem ( LogNote ( "Alice" , Pot . exit 0 ) )
       </events>
       <frame-events>
         .List
@@ -405,7 +404,7 @@
           { "gold" , Flip "gold" } |-> 0
         </vat-gem>
         <vat-dai>
-          "Alice" |-> 28170277 /Rat 2500000
+          "Alice" |-> 10
           "Bobby" |-> 10
           End |-> 0
           Flap |-> 0
@@ -418,13 +417,13 @@
           End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 3170277 /Rat 2500000
+          Vow |-> 0
         </vat-sin>
         <vat-debt>
-          53170277 /Rat 2500000
+          20
         </vat-debt>
         <vat-vice>
-          3170277 /Rat 2500000
+          0
         </vat-vice>
         <vat-Line>
           1000000000000
