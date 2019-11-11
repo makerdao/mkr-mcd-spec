@@ -182,10 +182,13 @@ module KMCD-GEN
     rule randIntBounded(RAND, 0)     => 0
     rule randIntBounded(RAND, BOUND) => RAND modInt BOUND requires BOUND =/=Int 0
 
-    syntax Rat ::= randRatBounded ( Int , Int , Rat ) [function]
- // ------------------------------------------------------------
-    rule randRatBounded(0     , RAND, BOUND) => randRatBounded(1, RAND, BOUND)
-    rule randRatBounded(RAND1, RAND2, BOUND) => BOUND *Rat ((RAND2 modInt RAND1) /Rat RAND1) requires RAND1 =/=Int 0
+    syntax Rat ::= randRat ( Int ) [function]
+ // -----------------------------------------
+    rule randRat(I) => (I modInt 100) /Rat 100
+
+    syntax Rat ::= randRatBounded ( Int , Rat ) [function]
+ // ------------------------------------------------------
+    rule randRatBounded(I, BOUND) => BOUND *Rat randRat(I)
 
     syntax Int     ::= chooseInt     ( Int , List ) [function]
     syntax String  ::= chooseString  ( Int , List ) [function]
@@ -295,20 +298,20 @@ module KMCD-GEN
          <pot-pies> POT_PIES </pot-pies>
       requires size(POT_PIES) >Int 0
 
-    rule <k> GenPotJoin ADDRESS => LogGen ( transact ADDRESS Pot . join randRatBounded(I, randInt(I), VAT_DAI) ) ... </k>
-         <random> I => randInt(randInt(I)) </random>
+    rule <k> GenPotJoin ADDRESS => LogGen ( transact ADDRESS Pot . join randRatBounded(I, VAT_DAI) ) ... </k>
+         <random> I => randInt(I) </random>
          <vat-dai> ... ADDRESS |-> VAT_DAI ... </vat-dai>
 
-    rule <k> GenPotFileDSR => LogGen ( transact ADMIN Pot . file dsr (randRatBounded(I, randInt(I), 20 /Rat 100) +Rat (90 /Rat 100)) ) ... </k>
-         <random> I => randInt(randInt(I)) </random>
+    rule <k> GenPotFileDSR => LogGen ( transact ADMIN Pot . file dsr (randRatBounded(I, 20 /Rat 100) +Rat (90 /Rat 100)) ) ... </k>
+         <random> I => randInt(I) </random>
 
     rule <k> GenPotExit => GenPotExit chooseAddress(I, keys_list(POT_PIES)) ... </k>
          <random> I => randInt(I) </random>
          <pot-pies> POT_PIES </pot-pies>
       requires size(POT_PIES) >Int 0
 
-    rule <k> GenPotExit ADDRESS => LogGen ( transact ADDRESS Pot . exit randRatBounded(I, randInt(I), VAT_DAI /Rat CHI) ) ... </k>
-         <random> I => randInt(randInt(I)) </random>
+    rule <k> GenPotExit ADDRESS => LogGen ( transact ADDRESS Pot . exit randRatBounded(I, VAT_DAI /Rat CHI) ) ... </k>
+         <random> I => randInt(I) </random>
          <vat-dai> ... Pot |-> VAT_DAI ... </vat-dai>
          <pot-chi> CHI </pot-chi>
 
@@ -376,8 +379,8 @@ module KMCD-GEN
          <end-out> END_OUTS </end-out>
       requires size(END_OUTS) >Int 0
 
-    rule <k> GenEndCash { ILKID , ADDRESS } => LogGen ( transact ADDRESS End . cash ILKID randRatBounded(I, randInt(I), BAG -Rat OUT) ) ... </k>
-         <random> I => randInt(randInt(I)) </random>
+    rule <k> GenEndCash { ILKID , ADDRESS } => LogGen ( transact ADDRESS End . cash ILKID randRatBounded(I, BAG -Rat OUT) ) ... </k>
+         <random> I => randInt(I) </random>
          <end-out> ... { ILKID , ADDRESS } |-> OUT ... </end-out>
          <end-bag> ... ADDRESS |-> BAG ... </end-bag>
 endmodule
