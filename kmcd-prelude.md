@@ -245,9 +245,14 @@ module KMCD-GEN
 
     syntax AdminStep ::= LogGen ( MCDStep )
     syntax Event ::= GenStep ( MCDStep )
- // ------------------------------------
+                   | GenStepFailed ( GenStep )
+ // ------------------------------------------
     rule <k> LogGen(MCDSTEP) => MCDSTEP ... </k>
          <events> ... (.List => ListItem(GenStep(MCDSTEP))) </events>
+
+    rule <k> GS => . ... </k>
+         <events> ... (.List => ListItem(GenStepFailed(GS))) </events>
+      [owise]
 
     syntax GenStep ::= ".GenStep"
                      | GenStep DepthBound
