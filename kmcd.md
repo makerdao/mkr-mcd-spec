@@ -91,7 +91,7 @@ The property checks if `flip . kick` is ever called by an unauthorized user (alt
 
 ```k
     syntax Bool ::= unAuthFlipKick(List) [function, functional]
- // ----------------------------------------------------
+ // -----------------------------------------------------------
     rule unAuthFlipKick(
            ListItem(FlipKick(ADDR, ILK, _, _, _, _, _, _))
            EVENTS:List
@@ -110,7 +110,7 @@ The property checks if `flap . kick` is ever called by an unauthorized user (alt
 
 ```k
     syntax Bool ::= unAuthFlapKick(List) [function, functional]
- // ----------------------------------------------------
+ // -----------------------------------------------------------
     rule unAuthFlapKick(
           ListItem(FlapKick(ADDR, _, _, _))
            EVENTS:List
@@ -125,15 +125,56 @@ The property checks if `flap . kick` is ever called by an unauthorized user (alt
 
 ### Earning interest from a pot after End is deactivated (inspired by the lucash-pot-end attack)
 
-The property checks if an `End . cage` is eventually followed by a successful `Pot . join`and `Pot . exit` before `End` is reactivated.
+The property checks if an `End . cage` is eventually followed by a successful `Pot . join`and `Pot . exit`.
+
+```k
+    syntax Bool ::= potEndInterest(List) [function, functional]
+ // -----------------------------------------------------------
+    rule potEndInterest(
+           ListItem(LogNote( ADDR, End . cage))
+           EVENTS:List
+         )
+         => potEndInterestBegin(EVENTS)
+
+    rule potEndInterest(ListItem(_) EVENTS:List )
+         => potEndInterest(EVENTS) [owise]
+
+    rule potEndInterest(.List) => false
+
+    syntax Bool ::= potEndInterestBegin(List) [function, functional]
+ // ----------------------------------------------------------------
+    rule potEndInterestBegin(
+           ListItem(LogNote( ADDR, Pot . join WAD ))
+           EVENTS:List
+         )
+         => potEndInterestEnd(EVENTS, ADDR)
+
+    rule potEndInterestBegin( ListItem(_) EVENTS:List )
+         => potEndInterestBegin(EVENTS) [owise]
+
+    rule potEndInterestBegin(.List) => false
+
+    syntax Bool ::= potEndInterestEnd(List, String) [function, functional]
+ // ----------------------------------------------------------------------
+    rule potEndInterestEnd(
+           ListItem(LogNote( ADDR, Pot . exit WAD ))
+           EVENTS:List, ADDR
+         )
+         => true
+
+    rule potEndInterestEnd( ListItem(_) EVENTS:List, ADDR )
+         => potEndInterestEnd(EVENTS, ADDR) [owise]
+
+    rule potEndInterestEnd(.List, _) => false
+```
 
 ### Earning interest from a pot in zero time (inspired by the lucash-pot attack)
 
 The property checks if a sequence of `Pot . join`, `Pot . drip` and `Pot . exit` is executed in zero time.
-```k
 
+```k
     syntax Bool ::= zeroTimePotInterest(List) [function, functional]
- // ----------------------------------------------------
+ // ----------------------------------------------------------------
     rule zeroTimePotInterest(
            ListItem(LogNote( ADDR, Pot . join WAD1 ))
            EVENTS:List
@@ -146,7 +187,7 @@ The property checks if a sequence of `Pot . join`, `Pot . drip` and `Pot . exit`
     rule zeroTimePotInterest(.List) => false
 
     syntax Bool ::= zeroTimePotInterestBegin(List, String) [function, functional]
- // -----------------------------------------------------------------
+ // -----------------------------------------------------------------------------
     rule zeroTimePotInterestBegin(
            ListItem(LogNote( ADDR, Pot . drip ))
            EVENTS:List, ADDR
@@ -166,7 +207,7 @@ The property checks if a sequence of `Pot . join`, `Pot . drip` and `Pot . exit`
     rule zeroTimePotInterestBegin(.List, _) => false
 
     syntax Bool ::= zeroTimePotInterestEnd(List, String) [function, functional]
- // -----------------------------------------------------------------
+ // ---------------------------------------------------------------------------
     rule zeroTimePotInterestEnd(
            ListItem(LogNote( ADDR, Pot . exit WAD ))
            EVENTS:List, ADDR
@@ -195,6 +236,7 @@ A violation occurs if any of the properties above holds.
     rule violated(EVENTS) => zeroTimePotInterest(EVENTS)
 //                      orBool unAuthFlipKick(EVENTS)
 //                      orBool unAuthFlapKick(EVENTS)
+//                      orBool potEndInterest(EVENTS)
 ```
 
 ```k
