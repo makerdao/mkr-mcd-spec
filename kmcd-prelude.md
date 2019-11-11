@@ -282,6 +282,74 @@ module KMCD-GEN
     rule <k> GenTimeStep => LogGen ( TimeStep ((I modInt 2) +Int 1) ) ... </k>
          <random> I => randInt(I) </random>
 
+    syntax GenStep ::= GenVatStep
+    syntax GenVatStep ::= "GenVatFrob"
+                        | "GenVatFrob" CDPID
+                        | "GenVatFrob" CDPID Wad [prefer]
+                        | "GenVatMove"
+                        | "GenVatMove" Address
+                        | "GenVatMove" Address Address
+                        | "GenVatHope"
+                        | "GenVatHope" Address
+                        | "GenVatHope" Address Address
+ // --------------------------------------------------
+    rule <k> GenVatFrob => GenVatFrob chooseCDPID(I, keys_list(VAT_URNS)) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-urns> VAT_URNS </vat-urns>
+      requires size(VAT_URNS) >Int 0
+
+    rule <k> GenVatFrob CDPID => GenVatFrob CDPID ((2 *Rat randRatBounded(I, VAT_GEM)) -Rat VAT_GEM) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-gem> ... CDPID |-> VAT_GEM ... </vat-gem>
+
+    rule <k> GenVatFrob { ILKID , ADDRESS } DINK
+          => #fun( DARTBOUND
+                => LogGen ( transact ADDRESS Vat . frob ILKID ADDRESS ADDRESS ADDRESS DINK ((2 *Rat randRatBounded(I, DARTBOUND)) -Rat DARTBOUND) )
+                 ) (((SPOT *Rat (URNINK +Rat DINK)) /Rat RATE) -Rat URNART)
+         ...
+         </k>
+         <random> I => randInt(I) </random>
+         <vat-ilks>
+           ...
+           ILKID |-> Ilk ( ... rate: RATE, spot: SPOT )
+           ...
+         </vat-ilks>
+         <vat-urns>
+           ...
+           { ILKID , ADDRESS } |-> Urn ( ... ink: URNINK, art: URNART )
+           ...
+         </vat-urns>
+
+    rule <k> GenVatMove => GenVatMove chooseAddress(I, keys_list(VAT_DAIS)) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-dai> VAT_DAIS </vat-dai>
+      requires size(VAT_DAIS) >Int 0
+
+    rule <k> GenVatMove ADDRSRC => GenVatMove ADDRSRC chooseAddress(I, keys_list(VAT_DAIS)) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-dai> VAT_DAIS </vat-dai>
+      requires size(VAT_DAIS) >Int 0
+
+    rule <k> GenVatMove ADDRSRC ADDRDST => LogGen ( transact ADDRSRC Vat . move ADDRSRC ADDRDST randRatBounded(I, VAT_DAI) ) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-dai>
+           ...
+           ADDRSRC |-> VAT_DAI
+           ...
+         </vat-dai>
+
+    rule <k> GenVatHope => GenVatHope chooseAddress(I, keys_list(VAT_DAI)) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-dai> VAT_DAI </vat-dai>
+      requires size(VAT_DAI) >Int 0
+
+    rule <k> GenVatHope ADDRSRC => GenVatHope ADDRSRC chooseAddress(I, keys_list(VAT_DAI)) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-dai> VAT_DAI </vat-dai>
+      requires size(VAT_DAI) >Int 0
+
+    rule <k> GenVatHope ADDRSRC ADDRDST => LogGen ( transact ADDRSRC Vat . hope ADDRDST ) ... </k>
+
     syntax GenStep ::= GenPotStep
     syntax GenPotStep ::= "GenPotJoin"
                         | "GenPotJoin" Address
