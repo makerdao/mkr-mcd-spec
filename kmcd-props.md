@@ -6,6 +6,12 @@ requires "kmcd.k"
 
 module KMCD-PROPS
     imports KMCD
+
+    configuration
+        <kmcd-random-gen>
+          <kmcd/>
+          <violation> false </violation>
+        </kmcd-random-gen>
 ```
 
 Properties
@@ -128,10 +134,28 @@ Violations
 A violation occurs if any of the properties above holds.
 
 ```k
+    syntax Bool ::= violated(List) [function, functional]
+ // -----------------------------------------------------
     rule violated(EVENTS) => zeroTimePotInterest(EVENTS)
                       orBool unAuthFlipKick(EVENTS)
                       orBool unAuthFlapKick(EVENTS)
                       orBool potEndInterest(EVENTS)
+```
+
+A violation can be checked using the Admin step `assert`. If a violation is detected,
+it is recorded in the state and execution is immediately terminated.
+
+```k
+    syntax AdminStep ::= "assert"
+ // -----------------------------
+    rule <k> (assert => .) ... </k>
+         <events> EVENTS </events>
+      requires notBool violated(EVENTS)
+
+    rule <k> assert ~> _ => . </k>
+         <events> EVENTS </events>
+         <violation> false => true </violation>
+      requires violated(EVENTS)
 ```
 
 ```k
