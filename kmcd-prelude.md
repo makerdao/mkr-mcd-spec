@@ -275,5 +275,11 @@ module KMCD-GEN
 
     rule <k> GSS | GSS' => #if R modInt 2 ==K 0 #then GSS #else GSS' #fi ... </k>
          <random> R => randInt(R) </random>
+
+    syntax GenStep ::= GenTimeStep
+    syntax GenTimeStep ::= "GenTimeStep"
+ // ------------------------------------
+    rule <k> GenTimeStep => LogGen ( TimeStep ((I modInt 2) +Int 1) ) ... </k>
+         <random> I => randInt(I) </random>
 endmodule
 ```
