@@ -1,7 +1,6 @@
 STEPS ( ATTACK-PRELUDE )
 
-AddGenerator ( GenGemMint "MKR" Flap
-             ; GenVatMove "Alice" Vow
+AddGenerator ( GenVatMove "Alice" Vow
              ; GenGemJoin "gold" "Bobby"
              ; GenVatHope "Alice" Flap
              ; GenFlapKick "Alice"
