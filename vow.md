@@ -114,7 +114,7 @@ Vow Semantics
     rule <k> Vow . flog ERA => . ... </k>
          <current-time> NOW </current-time>
          <vow-wait> WAIT </vow-wait>
-         <vow-sins>... ERA |-> (SIN' => 0) </vow-sins>
+         <vow-sins> ... ERA |-> (SIN' => 0) ... </vow-sins>
          <vow-sin> SIN => SIN -Rat SIN' </vow-sin>
       requires ERA +Int WAIT <=Int NOW
 
