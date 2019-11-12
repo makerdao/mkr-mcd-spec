@@ -391,6 +391,35 @@ module KMCD-GEN
          <flap-bids> FLAP_BIDS </flap-bids>
       requires size(FLAP_BIDS) >Int 0
 
+    syntax GenStep ::= GenFlipStep
+    syntax GenFlipStep ::= "GenFlipKick"
+                         | "GenFlipKick" CDPID
+                         | "GenFlipKick" CDPID Address
+                         | "GenFlipKick" CDPID Address Address
+ // ----------------------------------------------------------
+    rule <k> GenFlipKick => GenFlipKick chooseCDPID(I, keys_list(VAT_GEMS)) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-gem> VAT_GEMS </vat-gem>
+      requires size(VAT_GEMS) >Int 0
+
+    rule <k> GenFlipKick { ILKID , ADDRESS } => GenFlipKick { ILKID , ADDRESS } chooseAddress(I, keys_list(VAT_DAIS)) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-dai> VAT_DAIS </vat-dai>
+      requires size(VAT_DAIS) >Int 0
+
+    rule <k> GenFlipKick { ILKID , ADDRESS } STORAGE => GenFlipKick { ILKID , ADDRESS } STORAGE chooseAddress(I, keys_list(VAT_DAIS)) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-dai> VAT_DAIS </vat-dai>
+      requires size(VAT_DAIS) >Int 0
+
+    rule <k> GenFlipKick { ILKID , ADDRESS } STORAGE BENIFICIARY => LogGen ( transact ADDRESS Flip ILKID . kick STORAGE BENIFICIARY 1000 randRatBounded(I, VAT_GEM) randRatBounded(randInt(I), 1000) ) ... </k>
+         <random> I => randInt(randInt(I)) </random>
+         <vat-gem>
+           ...
+           { ILKID , ADDRESS } |-> VAT_GEM
+           ...
+         </vat-gem>
+
     syntax GenStep ::= GenPotStep
     syntax GenPotStep ::= "GenPotJoin"
                         | "GenPotJoin" Address
