@@ -101,8 +101,8 @@ Flap Events
 -----------
 
 ```k
-    syntax Event ::= FlapKick(Int, Rad, Wad)
- // ----------------------------------------
+    syntax Event ::= FlapKick(Address, Int, Rad, Wad)
+ // -------------------------------------------------
 ```
 
 Flap Semantics
@@ -130,7 +130,7 @@ Flap Semantics
          <flap-kicks> KICKS => KICKS +Int 1 </flap-kicks>
          <flap-live> true </flap-live>
          <flap-tau> TAU </flap-tau>
-         <frame-events> _ => ListItem(FlapKick(KICKS +Int 1, LOT, BID)) </frame-events>
+         <frame-events> _ => ListItem(FlapKick(MSGSENDER, KICKS +Int 1, LOT, BID)) </frame-events>
 ```
 
 - tick(uint id)

@@ -97,6 +97,9 @@
     <frame-events>
       .List
     </frame-events>
+    <violation>
+      false
+    </violation>
   </kmcd-driver>
   <kmcd-state>
     <cat>
