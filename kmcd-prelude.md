@@ -180,10 +180,13 @@ module KMCD-GEN
     rule randIntBounded(RAND, 0)     => 0
     rule randIntBounded(RAND, BOUND) => RAND modInt BOUND requires BOUND =/=Int 0
 
-    syntax Rat ::= randRatBounded ( Int , Int , Rat ) [function]
- // ------------------------------------------------------------
-    rule randRatBounded(0     , RAND, BOUND) => randRatBounded(1, RAND, BOUND)
-    rule randRatBounded(RAND1, RAND2, BOUND) => BOUND *Rat ((RAND2 modInt RAND1) /Rat RAND1) requires RAND1 =/=Int 0
+    syntax Rat ::= randRat ( Int ) [function]
+ // -----------------------------------------
+    rule randRat(I) => (I modInt 100) /Rat 100
+
+    syntax Rat ::= randRatBounded ( Int , Rat ) [function]
+ // ------------------------------------------------------
+    rule randRatBounded(I, BOUND) => BOUND *Rat randRat(I)
 
     syntax Int     ::= chooseInt     ( Int , List ) [function]
     syntax String  ::= chooseString  ( Int , List ) [function]
