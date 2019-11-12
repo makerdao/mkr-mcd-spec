@@ -155,29 +155,16 @@ The property checks if a successful `Pot . join` is preceded by a `TimeStep` mor
     syntax Bool ::= zeroTimePotInterest(List) [function, functional]
  // ----------------------------------------------------------------
     rule zeroTimePotInterest(
-           ListItem(LogNote( ADDR, Pot . drip ))
-           EVENTS:List
-         )
-         => zeroTimePotInterestBegin(EVENTS)
-
-    rule zeroTimePotInterest( ListItem(_) EVENTS:List )
-         => zeroTimePotInterest(EVENTS) [owise]
-
-    rule zeroTimePotInterest(.List) => false
-
-    syntax Bool ::= zeroTimePotInterestBegin(List) [function, functional]
- // ---------------------------------------------------------------------
-    rule zeroTimePotInterestBegin(
            ListItem( TimeStep(N,_) )
            EVENTS:List
          )
          => zeroTimePotInterestEnd(EVENTS)
       requires N >Int 0
 
-    rule zeroTimePotInterestBegin( ListItem(_) EVENTS:List )
-         => zeroTimePotInterestBegin(EVENTS) [owise]
+    rule zeroTimePotInterest( ListItem(_) EVENTS:List )
+         => zeroTimePotInterest(EVENTS) [owise]
 
-    rule zeroTimePotInterestBegin(.List) => false
+    rule zeroTimePotInterest(.List) => false
 
     syntax Bool ::= zeroTimePotInterestEnd(List) [function, functional]
  // -------------------------------------------------------------------
@@ -191,7 +178,7 @@ The property checks if a successful `Pot . join` is preceded by a `TimeStep` mor
            ListItem(LogNote( _ , Pot . drip ))
            EVENTS:List
          )
-         => zeroTimePotInterestBegin(EVENTS)
+         => zeroTimePotInterest(EVENTS)
 
     rule zeroTimePotInterestEnd( ListItem(_) EVENTS:List )
          => zeroTimePotInterestEnd(EVENTS) [owise]
