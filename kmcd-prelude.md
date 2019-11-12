@@ -350,6 +350,34 @@ module KMCD-GEN
 
     rule <k> GenVatHope ADDRSRC ADDRDST => LogGen ( transact ADDRSRC Vat . hope ADDRDST ) ... </k>
 
+    syntax GenStep ::= GenGemJoinStep
+    syntax GenGemJoinStep ::= "GenGemJoinJoin"
+                            | "GenGemJoinJoin" String
+                            | "GenGemJoinJoin" String Address
+ // ---------------------------------------------------------
+    // **TODO**: Would be better to choose from an ILK with <gem-id>
+    rule <k> GenGemJoinJoin => GenGemJoinJoin chooseString(I, (ListItem("MKR") ListItem("gold"))) ... </k>
+         <random> I => randInt(I) </random>
+//         <gem-joins> GEM_JOINS </gem-joins>
+//      requires size(GEM_JOINS) >Int 0
+
+    rule <k> GenGemJoinJoin GEM_JOIN_ID => GenGemJoinJoin GEM_JOIN_ID chooseAddress(I, keys_list(GEM_BALANCES)) ... </k>
+         <random> I => randInt(I) </random>
+         <gem>
+           <gem-id> GEM_JOIN_ID </gem-id>
+           <gem-balances> GEM_BALANCES </gem-balances>
+           ...
+         </gem>
+      requires size(GEM_BALANCES) >Int 0
+
+    rule <k> GenGemJoinJoin GEM_JOIN_ID ADDRESS => LogGen ( transact ADDRESS GemJoin GEM_JOIN_ID . join ADDRESS randRatBounded(I, GEM_BALANCE) ) ... </k>
+         <random> I => randInt(I) </random>
+         <gem>
+           <gem-id> GEM_JOIN_ID </gem-id>
+           <gem-balances> ... ADDRESS |-> GEM_BALANCE ... </gem-balances>
+           ...
+         </gem>
+
     syntax GenStep ::= GenPotStep
     syntax GenPotStep ::= "GenPotJoin"
                         | "GenPotJoin" Address
