@@ -378,6 +378,19 @@ module KMCD-GEN
            ...
          </gem>
 
+    syntax GenStep ::= GenFlapStep
+    syntax GenFlapStep ::= "GenFlapKick"
+                         | "GenFlapYank"
+ // ------------------------------------
+    rule <k> GenFlapKick => LogGen ( transact Vow Flap . kick randRatBounded(I, VOW_DAI) randRatBounded(randInt(I), 2) ) ... </k>
+         <random> I => randInt(randInt(I)) </random>
+         <vat-dai> ... Vow |-> VOW_DAI ... </vat-dai>
+
+    rule <k> GenFlapYank => LogGen ( transact ANYONE Flap . yank chooseInt(I, keys_list(FLAP_BIDS)) ) ... </k>
+         <random> I => randInt(I) </random>
+         <flap-bids> FLAP_BIDS </flap-bids>
+      requires size(FLAP_BIDS) >Int 0
+
     syntax GenStep ::= GenPotStep
     syntax GenPotStep ::= "GenPotJoin"
                         | "GenPotJoin" Address
