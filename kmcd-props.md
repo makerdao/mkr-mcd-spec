@@ -75,7 +75,7 @@ The property checks if an `End . cage` is eventually followed by a successful `P
            ListItem(LogNote( _ , Pot . file dsr _ ))
            EVENTS:List
          )
-         => true 
+         => true
 
     rule potEndInterestEnd( ListItem(_) EVENTS:List )
          => potEndInterestEnd(EVENTS) [owise]
@@ -85,7 +85,7 @@ The property checks if an `End . cage` is eventually followed by a successful `P
 
 ### Earning interest from a pot in zero time (inspired by the lucash-pot attack)
 
-The property checks if a successful `Pot . join` is preceded by a `TimeStep` more recently than a `Pot . drip'. 
+The property checks if a successful `Pot . join` is preceded by a `TimeStep` more recently than a `Pot . drip'.
 
 ```k
     syntax Bool ::= zeroTimePotInterest(List) [function, functional]
