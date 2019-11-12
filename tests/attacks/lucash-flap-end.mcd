@@ -3,10 +3,6 @@ STEPS ( ATTACK-PRELUDE )
 // Attack Sequence
 // ---------------
 
-// Mint the flap contract some MKR that "Alice" can steal
-// Alternative way to get MKR into account (maybe more realistic) is through other legitimate unfinished Flap auctions.
-transact ADMIN Gem "MKR" . mint Flap 5
-
 transact "Alice" Vat . move "Alice" Vow 1
 transact "Bobby" GemJoin "gold" . join "Bobby" 1
 
