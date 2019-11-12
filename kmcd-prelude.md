@@ -230,6 +230,12 @@ module KMCD-GEN
            <generator-steps> GSS => .GenSteps </generator-steps>
          </generator>
 
+    syntax AdminStep ::= LogGen ( MCDStep )
+    syntax Event ::= GenStep ( MCDStep )
+ // ------------------------------------
+    rule <k> LogGen(MCDSTEP) => MCDSTEP ... </k>
+         <events> ... (.List => ListItem(GenStep(MCDSTEP))) </events>
+
     syntax GenStep
     syntax GenSteps ::= GenStep
                       | ".GenSteps"
