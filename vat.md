@@ -317,7 +317,9 @@ This is quite permissive, and would allow the account to drain all your locked c
            { ILKID , ADDRTO   } |-> ( COLTO   => COLTO   +Rat COL )
            ...
          </vat-gem>
-      requires wish ADDRFROM
+      requires COL     >=Rat 0
+       andBool COLFROM >=Rat COL
+       andBool wish ADDRFROM
 ```
 
 -   `Vat.move` transfers Dai between users.
@@ -335,7 +337,8 @@ This is quite permissive, and would allow the account to drain all your locked c
            ADDRTO   |-> (DAITO   => DAITO   +Rat DAI)
            ...
          </vat-dai>
-      requires DAIFROM >=Rat DAI
+      requires DAI     >=Rat 0
+       andBool DAIFROM >=Rat DAI
        andBool wish ADDRFROM
 ```
 
@@ -361,7 +364,9 @@ This is quite permissive, and would allow the account to drain all your locked c
            { ILKID , ADDRTO   } |-> Urn ( INKTO   => INKTO   +Rat DINK , ARTTO   => ARTFROM +Rat DART )
            ...
          </vat-urns>
-      requires wish ADDRFROM
+      requires INKFROM >=Rat DINK
+       andBool ARTFROM >=Rat DART
+       andBool wish ADDRFROM
        andBool wish ADDRTO
 ```
 
@@ -397,6 +402,9 @@ This is quite permissive, and would allow the account to drain all your locked c
            ADDRW |-> ( SINW => SINW -Rat (RATE *Rat DART) )
            ...
          </vat-sin>
+      requires ILKV >=Rat DINK
+       andBool SINW >=Rat (RATE *Rat DART)
+       andBool VICE >=Rat (RATE *Rat DART)
 
     syntax VatStep ::= "frob" String Address Address Address Wad Wad
  // ----------------------------------------------------------------
@@ -426,7 +434,8 @@ This is quite permissive, and would allow the account to drain all your locked c
            ...
          </vat-dai>
          <vat-Line> LINE </vat-Line>
-      requires      ( DART <=Rat 0
+      requires ILKV >=Rat DINK
+       andBool ( DART <=Rat 0
                orBool ((ILKART +Rat DART) *Rat RATE <=Rat ILKLINE andBool DEBT +Rat (RATE *Rat DART) <=Rat LINE)
                     )
        andBool      ( (DART <=Rat 0 andBool DINK >=Rat 0)
@@ -456,6 +465,11 @@ This is quite permissive, and would allow the account to drain all your locked c
          <vat-vice> VICE => VICE -Rat AMOUNT </vat-vice>
          <vat-sin> ... ADDRFROM |-> (SIN => SIN -Rat AMOUNT) ... </vat-sin>
          <vat-dai> ... ADDRFROM |-> (DAI => DAI -Rat AMOUNT) ... </vat-dai>
+      requires AMOUNT >=Rat 0
+       andBool DEBT >=Rat AMOUNT
+       andBool VICE >=Rat AMOUNT
+       andBool SIN  >=Rat AMOUNT
+       andBool DAI  >=Rat AMOUNT
 
     syntax VatAuthStep ::= "suck" Address Address Rad
  // -------------------------------------------------
@@ -464,6 +478,7 @@ This is quite permissive, and would allow the account to drain all your locked c
          <vat-vice> VICE => VICE +Rat AMOUNT </vat-vice>
          <vat-sin> ... ADDRU |-> (SIN => SIN +Rat AMOUNT) ... </vat-sin>
          <vat-dai> ... ADDRV |-> (DAI => DAI +Rat AMOUNT) ... </vat-dai>
+      requires AMOUNT >=Rat 0
 ```
 
 ### CDP Manipulation

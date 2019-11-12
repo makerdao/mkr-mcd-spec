@@ -19,7 +19,7 @@ Join Configuration
       <join-state>
         <gem-joins>
           <gem-join multiplicity="*" type="Map">
-            <gem-join-gem> "" </gem-join-gem>
+            <gem-join-gem> "":String </gem-join-gem>
             <gem-join-wards> .Set </gem-join-wards>
             <gem-join-live> true </gem-join-live>
           </gem-join>

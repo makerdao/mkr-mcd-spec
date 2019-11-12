@@ -60,6 +60,8 @@
       ListItem ( LogNote ( ADMIN , Gem "gold" . mint "Bobby" 20 ) )
       ListItem ( LogNote ( ADMIN , Gem "MKR" . initUser "Alice" ) )
       ListItem ( LogNote ( ADMIN , Gem "MKR" . initUser "Bobby" ) )
+      ListItem ( Exception ( Gem "MKR" . initUser Flap ) )
+      ListItem ( LogNote ( ADMIN , Gem "MKR" . mint Flap 20 ) )
       ListItem ( LogNote ( ADMIN , Pot . initUser "Alice" ) )
       ListItem ( LogNote ( ADMIN , Pot . initUser "Bobby" ) )
       ListItem ( LogNote ( ADMIN , Vat . initUser "Alice" ) )
@@ -276,7 +278,7 @@
         <gem-balances>
           "Alice" |-> 0
           "Bobby" |-> 0
-          Flap |-> 0
+          Flap |-> 20
           GemJoin "MKR" |-> 0
         </gem-balances>
       </gem> <gem>

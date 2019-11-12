@@ -107,6 +107,8 @@ module KMCD-PRELUDE
 
          transact ADMIN Gem "MKR" . initUser "Alice"
          transact ADMIN Gem "MKR" . initUser "Bobby"
+         transact ADMIN Gem "MKR" . initUser Flap
+         transact ADMIN Gem "MKR" . mint Flap 20
 
          // Initialize Pot
          transact ADMIN Pot . initUser "Alice"

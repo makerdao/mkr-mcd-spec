@@ -186,8 +186,8 @@ End Semantics
 
     syntax EndStep ::= "skim" String Address
  // ----------------------------------------
-    rule <k> End . skim ILK URN
-          => call Vat . grab ILK URN THIS Vow (0 -Rat minRat(INK, ART *Rat RATE *Rat TAG)) (0 -Rat ART)
+    rule <k> End . skim ILK ADDR
+          => call Vat . grab ILK ADDR THIS Vow (0 -Rat minRat(INK, ART *Rat RATE *Rat TAG)) (0 -Rat ART)
          ...
          </k>
          <this> THIS </this>
@@ -208,7 +208,7 @@ End Semantics
          </vat-ilks>
          <vat-urns>
            ...
-           {ILK, URN} |-> Urn(... ink: INK, art: ART)
+           {ILK, ADDR} |-> Urn(... ink: INK, art: ART)
            ...
          </vat-urns>
       requires TAG =/=Rat 0
