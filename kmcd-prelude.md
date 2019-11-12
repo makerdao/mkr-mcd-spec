@@ -281,5 +281,74 @@ module KMCD-GEN
  // ------------------------------------
     rule <k> GenTimeStep => LogGen ( TimeStep ((I modInt 2) +Int 1) ) ... </k>
          <random> I => randInt(I) </random>
+
+    syntax GenStep ::= GenEndStep
+    syntax GenEndStep ::= "GenEndCage"
+                        | "GenEndCageIlk"
+                        | "GenEndSkim"
+                        | "GenEndSkim" CDPID
+                        | "GenEndThaw"
+                        | "GenEndFlow"
+                        | "GenEndSkip"
+                        | "GenEndSkip" String
+                        | "GenEndPack"
+                        | "GenEndPack" Address
+                        | "GenEndCash"
+                        | "GenEndCash" CDPID
+ // ----------------------------------------
+    rule <k> GenEndCage => LogGen ( transact ADMIN  End . cage ) ... </k>
+    rule <k> GenEndThaw => LogGen ( transact ANYONE End . thaw ) ... </k>
+
+    rule <k> GenEndCageIlk => LogGen ( transact ANYONE End . cage chooseString(I, keys_list(ILKS)) ) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-ilks> ILKS </vat-ilks>
+      requires size(ILKS) >Int 0
+
+    // **TODO**: Would be better to choose from an ILK with <end-tag> and <end-gap> too
+    rule <k> GenEndSkim => GenEndSkim chooseCDPID(I, keys_list(VAT_URNS)) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-urns> VAT_URNS </vat-urns>
+      requires size(VAT_URNS) >Int 0
+
+    rule <k> GenEndSkim { ILKID , ADDRESS } => LogGen ( transact ANYONE End . skim ILKID ADDRESS ) ... </k>
+
+    rule <k> GenEndFlow => LogGen ( transact ANYONE End . flow chooseString(I, keys_list(ILKS)) ) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-ilks> ILKS </vat-ilks>
+      requires size(ILKS) >Int 0
+
+    // **TODO**: Would be better to pick an ILKID from <flips>
+    rule <k> GenEndSkip => GenEndSkip chooseString(I, keys_list(ILKS)) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-ilks> ILKS </vat-ilks>
+      requires size(ILKS) >Int 0
+
+    rule <k> GenEndSkip ILKID => LogGen ( transact ANYONE End . skip ILKID chooseInt(I, keys_list(FLIP_BIDS)) ) ... </k>
+         <random> I => randInt(I) </random>
+         <flip>
+           <flip-ilk> ILKID </flip-ilk>
+           <flip-bids> FLIP_BIDS </flip-bids>
+           ...
+         </flip>
+      requires size(FLIP_BIDS) >Int 0
+
+    rule <k> GenEndPack => GenEndPack chooseAddress(I, keys_list(END_BAGS)) ... </k>
+         <random> I => randInt(I) </random>
+         <end-bag> END_BAGS </end-bag>
+      requires size(END_BAGS) >Int 0
+
+    rule <k> GenEndPack ADDRESS => LogGen ( transact ADDRESS End . pack randIntBounded(I, VAT_DAI) ) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-dai> ... ADDRESS |-> VAT_DAI ... </vat-dai>
+
+    rule <k> GenEndCash => GenEndCash chooseCDPID(I, keys_list(END_OUTS)) ... </k>
+         <random> I => randInt(I) </random>
+         <end-out> END_OUTS </end-out>
+      requires size(END_OUTS) >Int 0
+
+    rule <k> GenEndCash { ILKID , ADDRESS } => LogGen ( transact ADDRESS End . cash ILKID randRatBounded(I, BAG -Rat OUT) ) ... </k>
+         <random> I => randInt(I) </random>
+         <end-out> ... { ILKID , ADDRESS } |-> OUT ... </end-out>
+         <end-bag> ... ADDRESS |-> BAG ... </end-bag>
 endmodule
 ```
