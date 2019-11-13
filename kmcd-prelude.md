@@ -170,10 +170,11 @@ module KMCD-GEN
       </kmcd-random>
 
     syntax DepthBound ::= Int | "*"
-                        | decrement ( DepthBound ) [function]
- // ---------------------------------------------------------
+                        | decrement ( DepthBound ) [function, functional]
+ // ---------------------------------------------------------------------
     rule decrement(*) => *
-    rule decrement(N) => N -Int 1
+    rule decrement(N) => N -Int 1 requires N  >Int 0
+    rule decrement(N) => 0        requires N <=Int 0
 
     syntax Int ::= randIntBounded ( Int , Int ) [function]
  // ------------------------------------------------------
