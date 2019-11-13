@@ -2,10 +2,10 @@ KMCD Attack Prelude
 ===================
 
 ```k
-requires "kmcd.k"
+requires "kmcd-props.k"
 
 module KMCD-PRELUDE
-    imports KMCD
+    imports KMCD-PROPS
 
     syntax MCDStep ::= STEPS ( MCDSteps )
  // -------------------------------------

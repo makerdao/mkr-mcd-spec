@@ -25,7 +25,6 @@ module KMCD-DRIVER
           <pre-state> .K </pre-state>
           <events> .List </events>
           <frame-events> .List </frame-events>
-          <violation> false </violation>
         </kmcd-driver>
 ```
 
@@ -163,28 +162,6 @@ Most operations add to the log, which stores the address which made the call and
 ```k
     syntax Event ::= LogNote(Address, MCDStep)
  // ------------------------------------------
-```
-
-Violations
-----------
-
-A violation of an invariant (defined as a state predicate) can be checked using the Admin step `assert`. If a violation is detected,
-it is recorded in the state and execution is immediately terminated.
-
-```k
-    syntax Bool ::= violated(List) [function, functional]
- // -----------------------------------------------------
-
-    syntax AdminStep ::= "assert"
- // -----------------------------
-    rule <k> (assert => .) ... </k>
-         <events> EVENTS </events>
-      requires notBool violated(EVENTS)
-
-    rule <k> assert ~> _ => . </k>
-         <events> EVENTS </events>
-         <violation> false => true </violation>
-      requires violated(EVENTS)
 ```
 
 Base Data
