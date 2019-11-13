@@ -135,15 +135,18 @@ $(java_kompiled): $(java_files)
 # Test
 # ----
 
+KMCD_GENDEPTH   := 20
+KMCD_RANDOMSEED := 0
+
 test: test-python-config test-python-run test-execution
 
 ### `pyk` tests
 
 test-python-config:
-	./mcd-pyk.py
+	GENDEPTH=$(KMCD_GENDEPTH) RANDOMSEED=$(KMCD_RANDOMSEED) ./mcd-pyk.py
 
 test-python-run: tests/sneak-tx.json
-	./mcd-pyk.py $<
+	GENDEPTH=$(KMCD_GENDEPTH) RANDOMSEED=$(KMCD_RANDOMSEED) ./mcd-pyk.py $<
 
 ### Execution tests
 
@@ -151,9 +154,6 @@ TEST_BACKEND := llvm
 KMCD         := ./kmcd
 CHECK        := git --no-pager diff --no-index
 UPDATE       := cp
-
-KMCD_GENDEPTH   := 20
-KMCD_RANDOMSEED := 0
 
 TEST_KOMPILED := $(llvm_kompiled)
 ifeq ($(TEST_BACKEND), java)
