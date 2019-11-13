@@ -60,7 +60,7 @@ $(K_SUBMODULE)/mvn.timestamp: $(K_SUBMODULE)/submodule.timestamp
 # Building
 # --------
 
-MAIN_MODULE    := KMCD-PRELUDE
+MAIN_MODULE    := KMCD-GEN
 SYNTAX_MODULE  := $(MAIN_MODULE)
 MAIN_DEFN_FILE := kmcd-prelude
 
@@ -135,15 +135,18 @@ $(java_kompiled): $(java_files)
 # Test
 # ----
 
+KMCD_GENDEPTH   := 20
+KMCD_RANDOMSEED := 0
+
 test: test-python-config test-python-run test-execution
 
 ### `pyk` tests
 
 test-python-config:
-	./mcd-pyk.py
+	GENDEPTH=$(KMCD_GENDEPTH) RANDOMSEED=$(KMCD_RANDOMSEED) ./mcd-pyk.py
 
 test-python-run: tests/sneak-tx.json
-	./mcd-pyk.py $<
+	GENDEPTH=$(KMCD_GENDEPTH) RANDOMSEED=$(KMCD_RANDOMSEED) ./mcd-pyk.py $<
 
 ### Execution tests
 
@@ -161,7 +164,7 @@ ifeq ($(TEST_BACKEND), haskell)
 endif
 
 tests/%.mcd.out: tests/%.mcd $(TEST_KOMPILED)
-	$(KMCD) run --backend $(TEST_BACKEND) $< > $<.out
+	GENDEPTH=$(KMCD_GENDEPTH) RANDOMSEED=$(KMCD_RANDOMSEED) $(KMCD) run --backend $(TEST_BACKEND) $< > $<.out
 
 tests/%.mcd.run: tests/%.mcd.out
 	$(CHECK) tests/$*.mcd.expected tests/$*.mcd.out

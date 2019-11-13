@@ -83,6 +83,7 @@ module KMCD-PRELUDE
 
          // Setup Flap account on MKR
          transact ADMIN Gem "MKR" . initUser Flap
+         transact ADMIN Gem "MKR" . mint Flap 20
 
          // File Parameters
          // ---------------
@@ -107,8 +108,6 @@ module KMCD-PRELUDE
 
          transact ADMIN Gem "MKR" . initUser "Alice"
          transact ADMIN Gem "MKR" . initUser "Bobby"
-         transact ADMIN Gem "MKR" . initUser Flap
-         transact ADMIN Gem "MKR" . mint Flap 20
 
          // Initialize Pot
          transact ADMIN Pot . initUser "Alice"
@@ -144,6 +143,134 @@ module KMCD-PRELUDE
          transact ADMIN End . initOut "gold" "Bobby"
          .MCDSteps
       [macro]
+endmodule
+```
 
+```k
+module KMCD-GEN
+    imports KMCD-PRELUDE
+
+    configuration
+      <kmcd-random>
+        <kmcd-properties/>
+        <kmcd-gen>
+          <random> $RANDOMSEED:Int </random>
+          <generator-depth-bound> $GENDEPTH:DepthBound </generator-depth-bound>
+          <generator-next> 0 </generator-next>
+          <generator-current> 0 </generator-current>
+          <generator-remainder> .GenStep </generator-remainder>
+          <generators>
+            <generator multiplicity="*" type="Map">
+              <generator-id> 0 </generator-id>
+              <generator-steps> .GenStep </generator-steps>
+            </generator>
+          </generators>
+          <end-gen> .GenStep </end-gen>
+        </kmcd-gen>
+      </kmcd-random>
+
+    syntax DepthBound ::= Int | "*"
+                        | decrement ( DepthBound ) [function]
+ // ---------------------------------------------------------
+    rule decrement(*) => *
+    rule decrement(N) => N -Int 1
+
+    syntax Int ::= randIntBounded ( Int , Int ) [function]
+ // ------------------------------------------------------
+    rule randIntBounded(RAND, 0)     => 0
+    rule randIntBounded(RAND, BOUND) => RAND modInt BOUND requires BOUND =/=Int 0
+
+    syntax Rat ::= randRat ( Int ) [function]
+ // -----------------------------------------
+    rule randRat(I) => (I modInt 100) /Rat 100
+
+    syntax Rat ::= randRatBounded ( Int , Rat ) [function]
+ // ------------------------------------------------------
+    rule randRatBounded(I, BOUND) => BOUND *Rat randRat(I)
+
+    syntax Int     ::= chooseInt     ( Int , List ) [function]
+    syntax String  ::= chooseString  ( Int , List ) [function]
+    syntax Address ::= chooseAddress ( Int , List ) [function]
+    syntax CDPID   ::= chooseCDPID   ( Int , List ) [function]
+ // ----------------------------------------------------------
+    rule chooseInt    (I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>Int
+    rule chooseString (I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>String
+    rule chooseAddress(I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>Address
+    rule chooseCDPID  (I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>CDPID
+
+    syntax AdminStep ::= AddGenerator ( GenStep )
+ // ---------------------------------------------
+    rule <k> AddGenerator ( GSS ) => . ... </k>
+         <generator-next> I => I +Int 1 </generator-next>
+         <generators>
+           ...
+           ( .Bag
+          => <generator>
+               <generator-id> I </generator-id>
+               <generator-steps> GSS </generator-steps>
+             </generator>
+           )
+           ...
+         </generators>
+
+    syntax AdminStep ::= GenStep
+    syntax GenStep ::= "GenStep"
+                     | "GenStepLoad"
+                     | "GenStepReplace"
+ // -----------------------------------
+    rule <k> GenStep => GenStepLoad ~> GenStepReplace ... </k>
+         <random> I => randInt(I) </random>
+         <generator-next> N </generator-next>
+         <generator-current> _ => I modInt N </generator-current>
+         <generator-remainder> GSS => .GenStep </generator-remainder>
+         <generator-depth-bound> DB => decrement(DB) </generator-depth-bound>
+         <violation> false </violation>
+      requires DB =/=K 0
+
+    rule <k> GenStepLoad => GSS ... </k>
+         <generator-current> I </generator-current>
+         <generator>
+           <generator-id> I </generator-id>
+           <generator-steps> GSS => .GenStep </generator-steps>
+         </generator>
+
+    rule <k> GenStepReplace => . ... </k>
+         <generator-remainder> GSS => .GenStep </generator-remainder>
+         <generator-current> I </generator-current>
+         <generator>
+           <generator-id> I </generator-id>
+           <generator-steps> _ => GSS </generator-steps>
+         </generator>
+
+    syntax AdminStep ::= LogGen ( MCDStep )
+    syntax Event ::= GenStep ( MCDStep )
+                   | GenStepFailed ( GenStep )
+ // ------------------------------------------
+    rule <k> LogGen(MCDSTEP) => MCDSTEP ... </k>
+         <events> ... (.List => ListItem(GenStep(MCDSTEP))) </events>
+
+    rule <k> GS => . ... </k>
+         <events> ... (.List => ListItem(GenStepFailed(GS))) </events>
+      [owise]
+
+    syntax GenStep ::= ".GenStep"
+                     | GenStep DepthBound
+                     > GenStep "|" GenStep [left]
+                     > GenStep ";" GenStep [left]
+ // ---------------------------------------------
+    rule <k> .GenStep => . ... </k>
+
+    rule <k> .GenStep ; GSS => GSS ... </k> [priority(49)]
+    rule <k> GSS ; .GenStep => GSS ... </k> [priority(49)]
+    rule <k> .GenStep | GSS => GSS ... </k> [priority(49)]
+    rule <k> GSS | .GenStep => GSS ... </k> [priority(49)]
+
+    rule <k> GSS DB:DepthBound => #if DB ==K 0 #then . #else (GSS ; (GSS decrement(DB))) | .GenStep #fi ... </k>
+
+    rule <k> GSS ; GSS' => GSS ... </k>
+         <generator-remainder> GSS'' => GSS' ; GSS'' </generator-remainder>
+
+    rule <k> GSS | GSS' => #if R modInt 2 ==K 0 #then GSS #else GSS' #fi ... </k>
+         <random> R => randInt(R) </random>
 endmodule
 ```
