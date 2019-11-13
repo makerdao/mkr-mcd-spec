@@ -266,6 +266,8 @@ module KMCD-GEN
     rule <k> .GenStep | GSS => GSS ... </k> [priority(49)]
     rule <k> GSS | .GenStep => GSS ... </k> [priority(49)]
 
+    rule <k> .GenStep DB:DepthBound => . ... </k> [priority(49)]
+
     rule <k> GSS DB:DepthBound => #if DB ==K 0 #then . #else (GSS ; (GSS decrement(DB))) | .GenStep #fi ... </k>
 
     rule <k> GSS ; GSS' => GSS ... </k>
