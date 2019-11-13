@@ -4,6 +4,7 @@ import difflib
 import json
 import sys
 import tempfile
+import os
 
 from functools import reduce
 
@@ -22,28 +23,28 @@ MCD_definition_llvm_kompiled    = MCD_definition_llvm_dir    + '/' + MCD_main_fi
 MCD_definition_haskell_kompiled = MCD_definition_haskell_dir + '/' + MCD_main_file_name + '-kompiled/compiled.json'
 
 def kast_llvm(inputFile, *kastArgs):
-    return pyk.kast(MCD_definition_llvm_dir, inputFile, kastArgs = list(kastArgs))
+    return pyk.kast(MCD_definition_llvm_dir, inputFile, kastArgs = list(kastArgs) + [ '-cGENDEPTH=' + os.environ['GENDEPTH'] , '-cRANDOMSEED=' + os.environ['RANDOMSEED'] ])
 
 def kast_haskell(inputFile, *kastArgs):
-    return pyk.kast(MCD_definition_haskell_dir, inputFile, kastArgs = list(kastArgs))
+    return pyk.kast(MCD_definition_haskell_dir, inputFile, kastArgs = list(kastArgs) + [ '-cGENDEPTH=' + os.environ['GENDEPTH'] , '-cRANDOMSEED=' + os.environ['RANDOMSEED'] ])
 
 def krun_llvm(inputFile, *krunArgs):
-    return pyk.krun(MCD_definition_llvm_dir, inputFile, krunArgs = list(krunArgs))
+    return pyk.krun(MCD_definition_llvm_dir, inputFile, krunArgs = list(krunArgs) + [ '-cGENDEPTH=' + os.environ['GENDEPTH'] , '-cRANDOMSEED=' + os.environ['RANDOMSEED'] ])
 
 def krun_haskell(inputFile, *krunArgs):
-    return pyk.krun(MCD_definition_haskell_dir, inputFile, krunArgs = list(krunArgs))
+    return pyk.krun(MCD_definition_haskell_dir, inputFile, krunArgs = list(krunArgs) + [ '-cGENDEPTH=' + os.environ['GENDEPTH'] , '-cRANDOMSEED=' + os.environ['RANDOMSEED'] ])
 
 def kastJSON_llvm(inputJSON, *kastArgs):
-    return pyk.kastJSON(MCD_definition_llvm_dir, inputJSON, kastArgs = list(kastArgs))
+    return pyk.kastJSON(MCD_definition_llvm_dir, inputJSON, kastArgs = list(kastArgs) + [ '-cGENDEPTH=' + os.environ['GENDEPTH'] , '-cRANDOMSEED=' + os.environ['RANDOMSEED'] ])
 
 def kastJSON_haskell(inputJSON, *kastArgs):
-    return pyk.kastJSON(MCD_definition_haskell_dir, inputJSON, kastArgs = list(kastArgs))
+    return pyk.kastJSON(MCD_definition_haskell_dir, inputJSON, kastArgs = list(kastArgs) + [ '-cGENDEPTH=' + os.environ['GENDEPTH'] , '-cRANDOMSEED=' + os.environ['RANDOMSEED'] ])
 
 def krunJSON_llvm(inputJSON, *krunArgs):
-    return pyk.krunJSON(MCD_definition_llvm_dir, inputJSON, krunArgs = list(krunArgs))
+    return pyk.krunJSON(MCD_definition_llvm_dir, inputJSON, krunArgs = list(krunArgs) + [ '-cGENDEPTH=' + os.environ['GENDEPTH'] , '-cRANDOMSEED=' + os.environ['RANDOMSEED'] ])
 
 def krunJSON_haskell(inputJSON, *krunArgs):
-    return pyk.krunJSON(MCD_definition_haskell_dir, inputJSON, krunArgs = list(krunArgs))
+    return pyk.krunJSON(MCD_definition_haskell_dir, inputJSON, krunArgs = list(krunArgs) + [ '-cGENDEPTH=' + os.environ['GENDEPTH'] , '-cRANDOMSEED=' + os.environ['RANDOMSEED'] ])
 
 MCD_definition_llvm    = pyk.readKastTerm(MCD_definition_llvm_kompiled)
 MCD_definition_haskell = pyk.readKastTerm(MCD_definition_haskell_kompiled)
