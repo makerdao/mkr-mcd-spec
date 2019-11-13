@@ -11,10 +11,4 @@ transact "Alice" Pot . join 10
 transact "Alice" Pot . drip
 transact "Alice" Pot . exit 10
 
-// Get ETH Back
-transact "Alice" Vat . frob "gold" "Alice" "Alice" "Alice" -10 -10
-// transact "Alice" GemJoin "gold" . exit "Alice" 10
-
-// Attack: vat dai balance of Alice is positive (interest was earned)
-
 .MCDSteps

@@ -60,6 +60,8 @@
       ListItem ( LogNote ( ADMIN , Gem "gold" . mint "Bobby" 20 ) )
       ListItem ( LogNote ( ADMIN , Gem "MKR" . initUser "Alice" ) )
       ListItem ( LogNote ( ADMIN , Gem "MKR" . initUser "Bobby" ) )
+      ListItem ( Exception ( Gem "MKR" . initUser Flap ) )
+      ListItem ( LogNote ( ADMIN , Gem "MKR" . mint Flap 20 ) )
       ListItem ( LogNote ( ADMIN , Pot . initUser "Alice" ) )
       ListItem ( LogNote ( ADMIN , Pot . initUser "Bobby" ) )
       ListItem ( LogNote ( ADMIN , Vat . initUser "Alice" ) )
@@ -92,7 +94,6 @@
       ListItem ( LogNote ( "Alice" , Vat . suck Vow Pot 0 ) )
       ListItem ( LogNote ( "Alice" , Pot . drip ) )
       ListItem ( Exception ( Vat . move Pot "Alice" 50 ) )
-      ListItem ( LogNote ( "Alice" , Vat . frob "gold" "Alice" "Alice" "Alice" -10 -10 ) )
     </events>
     <frame-events>
       .List
@@ -263,7 +264,7 @@
         <gem-balances>
           "Alice" |-> 0
           "Bobby" |-> 0
-          Flap |-> 0
+          Flap |-> 20
           GemJoin "MKR" |-> 0
         </gem-balances>
       </gem> <gem>
@@ -387,21 +388,21 @@
         Vow |-> .Set
       </vat-can>
       <vat-ilks>
-        "gold" |-> Ilk ( 10 , 1 , 3000000000 , 1000000000000 , 0 )
+        "gold" |-> Ilk ( 20 , 1 , 3000000000 , 1000000000000 , 0 )
       </vat-ilks>
       <vat-urns>
-        { "gold" , "Alice" } |-> Urn ( 0 , 0 )
+        { "gold" , "Alice" } |-> Urn ( 10 , 10 )
         { "gold" , "Bobby" } |-> Urn ( 10 , 10 )
         { "gold" , End } |-> Urn ( 0 , 0 )
       </vat-urns>
       <vat-gem>
-        { "gold" , "Alice" } |-> 10
+        { "gold" , "Alice" } |-> 0
         { "gold" , "Bobby" } |-> 0
         { "gold" , End } |-> 0
         { "gold" , Flip "gold" } |-> 0
       </vat-gem>
       <vat-dai>
-        "Alice" |-> 0
+        "Alice" |-> 10
         "Bobby" |-> 10
         End |-> 0
         Flap |-> 0
@@ -417,7 +418,7 @@
         Vow |-> 0
       </vat-sin>
       <vat-debt>
-        10
+        20
       </vat-debt>
       <vat-vice>
         0

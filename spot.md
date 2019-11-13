@@ -128,12 +128,16 @@ Spot Semantics
     syntax SpotStep ::= "poke" String
  // ---------------------------------
     rule <k> Spot . poke ILK => . ... </k>
-         <vat-ilks>...
+         <vat-ilks>
+           ...
            ILK |-> Ilk (... spot: _ => (VALUE /Rat PAR) /Rat MAT )
-         ...</vat-ilks>
-         <spot-ilks>...
+           ...
+         </vat-ilks>
+         <spot-ilks>
+           ...
            ILK |-> SpotIlk (... pip: VALUE, mat: MAT )
-         ...</spot-ilks>
+           ...
+         </spot-ilks>
          <spot-par> PAR </spot-par>
          <frame-events> _ => ListItem(Poke(ILK, VALUE, VALUE /Rat PAR /Rat MAT)) </frame-events>
       requires VALUE =/=K .Wad
