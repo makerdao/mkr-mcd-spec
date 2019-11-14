@@ -202,12 +202,9 @@ Flap Semantics
 - Part of Global Settlement. Refunds the highest bidder's bid.
 
 ```k
-    syntax FlapStep ::= "yank" Int [klabel(FlapYank),symbol]
- // --------------------------------------------------------
-    rule <k> Flap . yank ID
-          => call Gem "MKR" . move THIS GUY BID
-         ...
-         </k>
+    syntax FlapStep ::= "yank" Int [klabel(FlapYank), symbol]
+ // ---------------------------------------------------------
+    rule <k> Flap . yank ID => call Gem "MKR" . move THIS GUY BID ... </k>
          <this> THIS </this>
          <flap-bids> ... ID |-> FlapBid(... bid: BID, guy: GUY) => .Map ... </flap-bids>
          <flap-live> false </flap-live>
