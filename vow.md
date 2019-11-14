@@ -217,6 +217,7 @@ Vow Semantics
          <vow-live> _ => false </vow-live>
          <vow-sin> _ => 0 </vow-sin>
          <vow-ash> _ => 0 </vow-ash>
+      requires THIS =/=K Flap
 ```
 
 ```k
