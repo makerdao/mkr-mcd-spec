@@ -16,7 +16,7 @@ Flip Configuration
         <flip multiplicity="*" type="Map">
           <flip-ilk>   ""           </flip-ilk>
           <flip-wards> .Set         </flip-wards>
-          <flip-bids>  .Map         </flip-bids> // mapping (uint => Bid)     Int     |-> FlipBid
+          <flip-bids>  .Map         </flip-bids> // mapping (uint => Bid) Int |-> FlipBid
           <flip-beg>   105 /Rat 100 </flip-beg>  // Minimum Bid Increase
           <flip-ttl>   3 hours      </flip-ttl>  // Single Bid Lifetime
           <flip-tau>   2 days       </flip-tau>  // Total Auction Length
@@ -155,11 +155,7 @@ Flip Semantics
            <flip-ilk> ILK </flip-ilk>
            <flip-tau> TAU </flip-tau>
            <flip-kicks> KICKS => KICKS +Int 1 </flip-kicks>
-           <flip-bids>
-             ...
-             .Map => KICKS +Int 1 |-> FlipBid( ... bid: BID, lot: LOT, guy: MSGSENDER, tic: 0, end: NOW +Int TAU, usr: USR, gal: GAL, tab: TAB )
-             ...
-           </flip-bids>
+           <flip-bids> ... .Map => KICKS +Int 1 |-> FlipBid( ... bid: BID, lot: LOT, guy: MSGSENDER, tic: 0, end: NOW +Int TAU, usr: USR, gal: GAL, tab: TAB ) ... </flip-bids>
            ...
          </flip>
          <frame-events> _ => ListItem(FlipKick(MSGSENDER, ILK, KICKS +Int 1, LOT, BID, TAB, USR, GAL)) </frame-events>
@@ -171,11 +167,7 @@ Flip Semantics
          <flip>
            <flip-ilk> ILK </flip-ilk>
            <flip-tau> TAU </flip-tau>
-           <flip-bids>
-             ...
-             ID |-> FlipBid(... tic: TIC, end: END => NOW +Int TAU)
-             ...
-           </flip-bids>
+           <flip-bids> ... ID |-> FlipBid(... tic: TIC, end: END => NOW +Int TAU) ... </flip-bids>
            ...
          </flip>
       requires END  <Int NOW
@@ -194,11 +186,7 @@ Flip Semantics
            <flip-ilk> ILK </flip-ilk>
            <flip-beg> BEG </flip-beg>
            <flip-ttl> TTL </flip-ttl>
-           <flip-bids>
-             ...
-             ID |-> FlipBid(... bid: BID' => BID, lot: LOT', guy: GUY => MSGSENDER, tic: TIC => NOW +Int TTL, end: END, gal: GAL, tab: TAB)
-             ...
-           </flip-bids>
+           <flip-bids> ... ID |-> FlipBid(... bid: BID' => BID, lot: LOT', guy: GUY => MSGSENDER, tic: TIC => NOW +Int TTL, end: END, gal: GAL, tab: TAB) ... </flip-bids>
            ...
          </flip>
       requires GUY =/=K 0
@@ -223,11 +211,7 @@ Flip Semantics
            <flip-ilk> ILK </flip-ilk>
            <flip-beg> BEG </flip-beg>
            <flip-ttl> TTL </flip-ttl>
-           <flip-bids>
-             ...
-             ID |-> FlipBid(... bid: BID', lot: LOT' => LOT, guy: GUY => MSGSENDER, tic: TIC => NOW +Int TTL, end: END, usr: USR, tab: TAB)
-             ...
-           </flip-bids>
+           <flip-bids> ... ID |-> FlipBid(... bid: BID', lot: LOT' => LOT, guy: GUY => MSGSENDER, tic: TIC => NOW +Int TTL, end: END, usr: USR, tab: TAB) ... </flip-bids>
            ...
          </flip>
       requires GUY =/=K 0
@@ -245,11 +229,7 @@ Flip Semantics
          <current-time> NOW </current-time>
          <flip>
            <flip-ilk> ILK </flip-ilk>
-           <flip-bids>
-             ...
-             ID |-> FlipBid(... lot: LOT, guy: GUY, tic: TIC, end: END) => .Map
-             ...
-           </flip-bids>
+           <flip-bids> ... ID |-> FlipBid(... lot: LOT, guy: GUY, tic: TIC, end: END) => .Map ... </flip-bids>
            ...
          </flip>
       requires TIC =/=Int 0
@@ -266,11 +246,7 @@ Flip Semantics
          <this> THIS </this>
          <flip>
            <flip-ilk> ILK </flip-ilk>
-           <flip-bids>
-             ...
-             ID |-> FlipBid(... bid: BID, lot: LOT, guy: GUY, tab: TAB) => .Map
-             ...
-           </flip-bids>
+           <flip-bids> ... ID |-> FlipBid(... bid: BID, lot: LOT, guy: GUY, tab: TAB) => .Map ... </flip-bids>
            ...
          </flip>
       requires GUY =/=K 0 andBool BID <Rat TAB

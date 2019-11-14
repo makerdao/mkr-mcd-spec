@@ -102,11 +102,7 @@ Vow Semantics
  // ---------------------------------
     rule <k> Vow . fess TAB => . ... </k>
          <current-time> NOW </current-time>
-         <vow-sins>
-           ...
-           NOW |-> (SIN' => SIN' +Rat TAB)
-           ...
-         </vow-sins>
+         <vow-sins> ... NOW |-> (SIN' => SIN' +Rat TAB) ... </vow-sins>
          <vow-sin> SIN => SIN +Rat TAB </vow-sin>
 
     syntax VowStep ::= "flog" Int
@@ -122,16 +118,8 @@ Vow Semantics
  // -----------------------------
     rule <k> Vow . heal AMOUNT => call Vat . heal AMOUNT ... </k>
          <this> THIS </this>
-         <vat-dai>
-           ...
-           THIS |-> DAI
-           ...
-         </vat-dai>
-         <vat-sin>
-           ...
-           THIS |-> VATSIN
-           ...
-         </vat-sin>
+         <vat-dai> ... THIS |-> DAI ... </vat-dai>
+         <vat-sin> ... THIS |-> VATSIN ... </vat-sin>
          <vow-sin> SIN </vow-sin>
          <vow-ash> ASH </vow-ash>
       requires AMOUNT <=Rat DAI
@@ -142,11 +130,7 @@ Vow Semantics
  // -----------------------------
     rule <k> Vow . kiss AMOUNT => call Vat . heal AMOUNT ... </k>
          <this> THIS </this>
-         <vat-dai>
-           ...
-           THIS |-> DAI
-           ...
-         </vat-dai>
+         <vat-dai> ... THIS |-> DAI ... </vat-dai>
          <vow-ash> ASH => ASH -Rat AMOUNT </vow-ash>
        requires AMOUNT <=Rat ASH
         andBool AMOUNT <=Rat DAI
@@ -155,16 +139,8 @@ Vow Semantics
  // -------------------------
     rule <k> Vow . flop => call Flop . kick THIS DUMP SUMP ... </k>
          <this> THIS </this>
-         <vat-sin>
-           ...
-           THIS |-> VATSIN
-           ...
-         </vat-sin>
-         <vat-dai>
-           ...
-           THIS |-> DAI
-           ...
-         </vat-dai>
+         <vat-sin> ... THIS |-> VATSIN ... </vat-sin>
+         <vat-dai> ... THIS |-> DAI ... </vat-dai>
          <vow-sin> SIN </vow-sin>
          <vow-ash> ASH => ASH +Rat SUMP </vow-ash>
          <vow-sump> SUMP </vow-sump>
@@ -177,16 +153,8 @@ Vow Semantics
  // -------------------------
     rule <k> Vow . flap => call Flap . kick BUMP 0 ... </k>
          <this> THIS </this>
-         <vat-sin>
-           ...
-           THIS |-> VATSIN
-           ...
-         </vat-sin>
-         <vat-dai>
-           ...
-           THIS |-> DAI
-           ...
-         </vat-dai>
+         <vat-sin> ... THIS |-> VATSIN ... </vat-sin>
+         <vat-dai> ... THIS |-> DAI ... </vat-dai>
          <vow-sin> SIN </vow-sin>
          <vow-ash> ASH </vow-ash>
          <vow-bump> BUMP </vow-bump>
@@ -203,11 +171,7 @@ Vow Semantics
          ...
          </k>
          <this> THIS </this>
-         <vat-sin>
-           ...
-           THIS |-> VATSIN
-           ...
-         </vat-sin>
+         <vat-sin> ... THIS |-> VATSIN ... </vat-sin>
          <vat-dai>
            ...
            THIS |-> DAI

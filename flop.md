@@ -125,11 +125,7 @@ Flop Semantics
          <this> THIS </this>
          <current-time> NOW </current-time>
          <flop-live> true </flop-live>
-         <flop-bids>
-           ...
-           .Map => KICKS +Int 1 |-> FlopBid(... bid: BID, lot: LOT, guy: GAL, tic: 0, end: NOW +Int TAU)
-           ...
-         </flop-bids>
+         <flop-bids> ... .Map => KICKS +Int 1 |-> FlopBid(... bid: BID, lot: LOT, guy: GAL, tic: 0, end: NOW +Int TAU) ... </flop-bids>
          <flop-kicks> KICKS => KICKS +Int 1 </flop-kicks>
          <flop-tau> TAU </flop-tau>
          <frame-events> _ => ListItem(FlopKick(KICKS +Int 1, LOT, BID, GAL)) </frame-events>
@@ -143,11 +139,7 @@ Flop Semantics
  // ------------------------------
     rule <k> Flop . tick ID => . ... </k>
          <current-time> NOW </current-time>
-         <flop-bids>
-           ...
-           ID |-> FlopBid(... lot: LOT => LOT *Rat PAD, tic: 0, end: END => NOW +Int TAU )
-           ...
-         </flop-bids>
+         <flop-bids> ... ID |-> FlopBid(... lot: LOT => LOT *Rat PAD, tic: 0, end: END => NOW +Int TAU ) ... </flop-bids>
          <flop-pad> PAD </flop-pad>
          <flop-tau> TAU </flop-tau>
       requires END <Int NOW
@@ -165,11 +157,7 @@ Flop Semantics
          </k>
          <msg-sender> MSGSENDER </msg-sender>
          <current-time> NOW </current-time>
-         <flop-bids>
-           ...
-           ID |-> FlopBid(... bid: BID', lot: LOT' => LOT, guy: GUY => MSGSENDER, tic: TIC => TIC +Int TTL, end: END)
-           ...
-         </flop-bids>
+         <flop-bids> ... ID |-> FlopBid(... bid: BID', lot: LOT' => LOT, guy: GUY => MSGSENDER, tic: TIC => TIC +Int TTL, end: END) ... </flop-bids>
          <flop-live> true </flop-live>
          <flop-beg> BEG </flop-beg>
          <flop-ttl> TTL </flop-ttl>
@@ -191,11 +179,7 @@ Flop Semantics
          ...
          </k>
          <current-time> NOW </current-time>
-         <flop-bids>
-           ...
-           ID |-> FlopBid(... lot: LOT, guy: GUY, tic: TIC, end: END) => .Map
-           ...
-         </flop-bids>
+         <flop-bids> ... ID |-> FlopBid(... lot: LOT, guy: GUY, tic: TIC, end: END) => .Map ... </flop-bids>
          <flop-live> true </flop-live>
       requires TIC =/=Int 0
        andBool (TIC <Int NOW orBool END <Int NOW)
@@ -222,11 +206,7 @@ Flop Semantics
          ...
          </k>
          <this> THIS </this>
-         <flop-bids>
-           ...
-           ID |-> FlopBid(... bid: BID, guy: GUY) => .Map
-           ...
-         </flop-bids>
+         <flop-bids> ... ID |-> FlopBid(... bid: BID, guy: GUY) => .Map ... </flop-bids>
          <flop-live> false </flop-live>
 ```
 
