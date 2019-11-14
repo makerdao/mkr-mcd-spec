@@ -94,7 +94,7 @@
           ListItem ( LogNote ( "Bobby" , Gem "gold" . transferFrom "Bobby" GemJoin "gold" 1 ) )
           ListItem ( LogNote ( "Bobby" , GemJoin "gold" . join "Bobby" 1 ) )
           ListItem ( LogNote ( "Alice" , Vat . hope Flap ) )
-          ListItem ( Exception ( Flap . kick 1 2 ) )
+          ListItem ( Exception ( Flap . kick 1 20 ) )
           ListItem ( LogNote ( ADMIN , Vat . cage ) )
           ListItem ( LogNote ( ADMIN , Cat . cage ) )
           ListItem ( LogNote ( Vow , Vat . move Flap Vow 0 ) )
