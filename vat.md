@@ -308,13 +308,21 @@ This is quite permissive, and would allow the account to drain all your locked c
 
     syntax VatStep ::= "flux" String Address Address Wad
  // ----------------------------------------------------
-    rule <k> Vat . flux ILKID ADDRFROM ADDRTO COL => .
-         ...
-         </k>
+    rule <k> Vat . flux ILKID ADDRFROM ADDRTO COL => . ... </k>
          <vat-gem>
            ...
            { ILKID , ADDRFROM } |-> ( COLFROM => COLFROM -Rat COL )
            { ILKID , ADDRTO   } |-> ( COLTO   => COLTO   +Rat COL )
+           ...
+         </vat-gem>
+      requires COL     >=Rat 0
+       andBool COLFROM >=Rat COL
+       andBool wish ADDRFROM
+
+    rule <k> Vat . flux ILKID ADDRFROM ADDRFROM COL => . ... </k>
+         <vat-gem>
+           ...
+           { ILKID , ADDRFROM } |-> COLFROM
            ...
          </vat-gem>
       requires COL     >=Rat 0
@@ -335,6 +343,16 @@ This is quite permissive, and would allow the account to drain all your locked c
            ...
            ADDRFROM |-> (DAIFROM => DAIFROM -Rat DAI)
            ADDRTO   |-> (DAITO   => DAITO   +Rat DAI)
+           ...
+         </vat-dai>
+      requires DAI     >=Rat 0
+       andBool DAIFROM >=Rat DAI
+       andBool wish ADDRFROM
+
+    rule <k> Vat . move ADDRFROM ADDRFROM DAI => . ... </k>
+         <vat-dai>
+           ...
+           ADDRFROM |-> DAIFROM
            ...
          </vat-dai>
       requires DAI     >=Rat 0
@@ -368,6 +386,20 @@ This is quite permissive, and would allow the account to drain all your locked c
        andBool ARTFROM >=Rat DART
        andBool wish ADDRFROM
        andBool wish ADDRTO
+
+    rule <k> Vat . fork ILKID ADDRFROM ADDRFROM DINK DART
+          => Vat . safe     ILKID ADDRFROM ~> Vat . safe     ILKID ADDRFROM
+          ~> Vat . nondusty ILKID ADDRFROM ~> Vat . nondusty ILKID ADDRFROM
+         ...
+         </k>
+         <vat-urns>
+           ...
+           { ILKID , ADDRFROM } |-> Urn ( INKFROM , ARTFROM )
+           ...
+         </vat-urns>
+      requires INKFROM >=Rat DINK
+       andBool ARTFROM >=Rat DART
+       andBool wish ADDRFROM
 ```
 
 -   `Vat.grab` uses collateral from user `V` to burn `<vat-sin>` for user `W` via one of `U`s CDPs.
