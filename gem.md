@@ -94,7 +94,8 @@ Gem Semantics
            </gem-balances>
            ...
          </gem>
-      requires VALUE >=Rat 0
+      requires ACCTSRC =/=K ACCTDST
+       andBool VALUE >=Rat 0
        andBool BALANCE_SRC >=Rat VALUE
 
     rule <k> Gem GEMID . transferFrom ACCTSRC ACCTSRC VALUE => . ... </k>
@@ -144,6 +145,7 @@ Gem Semantics
            ...
          </gem>
       requires VALUE >=Rat 0
+       andBool BALANCE_SRC >=Rat VALUE
 ```
 
 ```k
