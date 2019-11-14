@@ -11,14 +11,9 @@ transact ADMIN End . thaw
 transact ADMIN End . flow "gold"
 
 // Every call after this reverts in fixed version
-//transact "Bobby" End . skip "gold" (call "Bobby" Flip "gold" . kick End "Bobby" 1001 ether 1 1000 ether)
 transact "Bobby" Flip "gold" . kick End "Bobby" 1001 ether 1 1000 ether
 transact "Bobby" End . skip "gold" 1
 
-// transact "Bobby" End . pack (call "Bobby" Vat . dai)
-transact "Bobby" End . pack 1000000000010
-
-//transact "Bobby" End . cash "gold" (call "Bobby" End . bag)
-transact "Bobby" End . cash "gold" 1000000000010
+// Now Bobby has more dai than he should.
 
 .MCDSteps
