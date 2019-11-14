@@ -306,11 +306,7 @@ This is quite permissive, and would allow the account to drain all your locked c
        andBool wish ADDRFROM
 
     rule <k> Vat . flux ILKID ADDRFROM ADDRFROM COL => . ... </k>
-         <vat-gem>
-           ...
-           { ILKID , ADDRFROM } |-> COLFROM
-           ...
-         </vat-gem>
+         <vat-gem> ... { ILKID , ADDRFROM } |-> COLFROM ... </vat-gem>
       requires COL     >=Rat 0
        andBool COLFROM >=Rat COL
        andBool wish ADDRFROM
@@ -336,11 +332,7 @@ This is quite permissive, and would allow the account to drain all your locked c
        andBool wish ADDRFROM
 
     rule <k> Vat . move ADDRFROM ADDRFROM DAI => . ... </k>
-         <vat-dai>
-           ...
-           ADDRFROM |-> DAIFROM
-           ...
-         </vat-dai>
+         <vat-dai> ... ADDRFROM |-> DAIFROM ... </vat-dai>
       requires DAI     >=Rat 0
        andBool DAIFROM >=Rat DAI
        andBool wish ADDRFROM
@@ -378,11 +370,7 @@ This is quite permissive, and would allow the account to drain all your locked c
           ~> Vat . nondusty ILKID ADDRFROM ~> Vat . nondusty ILKID ADDRFROM
          ...
          </k>
-         <vat-urns>
-           ...
-           { ILKID , ADDRFROM } |-> Urn ( INKFROM , ARTFROM )
-           ...
-         </vat-urns>
+         <vat-urns> ... { ILKID , ADDRFROM } |-> Urn ( INKFROM , ARTFROM ) ... </vat-urns>
       requires INKFROM >=Rat DINK
        andBool ARTFROM >=Rat DART
        andBool wish ADDRFROM
