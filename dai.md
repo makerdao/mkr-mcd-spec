@@ -77,11 +77,7 @@ The Dai token is a mintable/burnable ERC20 token.
  // -----------------------------------------
     rule <k> Dai . transfer ACCOUNT_SRC AMOUNT => . ... </k>
          <msg-sender> ACCOUNT_SRC </msg-sender>
-         <dai-balance>
-           ...
-           ACCOUNT_SRC |-> BALANCE_SRC
-           ...
-         </dai-balance>
+         <dai-balance> ... ACCOUNT_SRC |-> BALANCE_SRC ... </dai-balance>
          <frame-events> _ => ListItem(Transfer(ACCOUNT_SRC, ACCOUNT_SRC, AMOUNT)) </frame-events>
       requires BALANCE_SRC >=Rat AMOUNT
 
@@ -100,43 +96,31 @@ The Dai token is a mintable/burnable ERC20 token.
     syntax DaiStep ::= "transferFrom" Address Address Wad
  // -----------------------------------------------------
     rule <k> Dai . transferFrom ACCOUNT_SRC ACCOUNT_SRC AMOUNT => . ... </k>
-         <dai-balance>
-           ...
-           ACCOUNT_SRC |-> BALANCE_SRC
-           ...
-         </dai-balance>
+         <dai-balance> ... ACCOUNT_SRC |-> BALANCE_SRC ... </dai-balance>
          <frame-events> _ => ListItem(Transfer(ACCOUNT_SRC, ACCOUNT_SRC, AMOUNT)) </frame-events>
       requires BALANCE_SRC >=Rat AMOUNT
 
     rule <k> Dai . transferFrom ACCOUNT_SRC ACCOUNT_DST AMOUNT => . ... </k>
+         <dai-allowance> ... { ACCOUNT_SRC -> ACCOUNT_DST } |-> (ALLOWANCE_SRC_DST => ALLOWANCE_SRC_DST -Rat AMOUNT) ... </dai-allowance>
          <dai-balance>
            ...
            ACCOUNT_SRC |-> (BALANCE_SRC => BALANCE_SRC -Rat AMOUNT)
            ACCOUNT_DST |-> (BALANCE_DST => BALANCE_DST +Rat AMOUNT)
            ...
          </dai-balance>
-         <dai-allowance>
-           ...
-           { ACCOUNT_SRC -> ACCOUNT_DST } |-> (ALLOWANCE_SRC_DST => ALLOWANCE_SRC_DST -Rat AMOUNT)
-           ...
-         </dai-allowance>
          <frame-events> _ => ListItem(Transfer(ACCOUNT_SRC, ACCOUNT_DST, AMOUNT)) </frame-events>
       requires ACCOUNT_SRC =/=K ACCOUNT_DST
        andBool BALANCE_SRC >=Rat AMOUNT
        andBool ALLOWANCE_SRC_DST >=Rat AMOUNT
 
     rule <k> Dai . transferFrom ACCOUNT_SRC ACCOUNT_DST AMOUNT => . ... </k>
+         <dai-allowance> ... { ACCOUNT_SRC -> ACCOUNT_DST } |-> -1 ... </dai-allowance>
          <dai-balance>
            ...
            ACCOUNT_SRC |-> (BALANCE_SRC => BALANCE_SRC -Rat AMOUNT)
            ACCOUNT_DST |-> (BALANCE_DST => BALANCE_DST +Rat AMOUNT)
            ...
          </dai-balance>
-         <dai-allowance>
-           ...
-           { ACCOUNT_SRC -> ACCOUNT_DST } |-> -1
-           ...
-         </dai-allowance>
          <frame-events> _ => ListItem(Transfer(ACCOUNT_SRC, ACCOUNT_DST, AMOUNT)) </frame-events>
       requires ACCOUNT_SRC =/=K ACCOUNT_DST
        andBool BALANCE_SRC >=Rat AMOUNT
@@ -145,33 +129,21 @@ The Dai token is a mintable/burnable ERC20 token.
  // -----------------------------------------
     rule <k> Dai . mint ACCOUNT_DST AMOUNT => . ... </k>
          <dai-totalSupply> DAI_SUPPLY => DAI_SUPPLY +Rat AMOUNT </dai-totalSupply>
-         <dai-balance>
-           ...
-           ACCOUNT_DST |-> (BALANCE_DST => BALANCE_DST +Rat AMOUNT)
-           ...
-         </dai-balance>
+         <dai-balance> ... ACCOUNT_DST |-> (BALANCE_DST => BALANCE_DST +Rat AMOUNT) ... </dai-balance>
          <frame-events> _ => ListItem(Transfer(0, ACCOUNT_DST, AMOUNT)) </frame-events>
 
     syntax DaiStep ::= "burn" Address Wad
  // -------------------------------------
     rule <k> Dai . burn ACCOUNT_SRC AMOUNT => . ... </k>
          <dai-totalSupply> DAI_SUPPLY => DAI_SUPPLY -Rat AMOUNT </dai-totalSupply>
-         <dai-balance>
-           ...
-           ACCOUNT_SRC |-> (AMOUNT_SRC => AMOUNT_SRC -Rat AMOUNT)
-           ...
-         </dai-balance>
+         <dai-balance> ... ACCOUNT_SRC |-> (AMOUNT_SRC => AMOUNT_SRC -Rat AMOUNT) ... </dai-balance>
          <frame-events> _ => ListItem(Transfer(ACCOUNT_SRC, 0, AMOUNT)) </frame-events>
 
     syntax DaiStep ::= "approve" Address Wad
  // ----------------------------------------
     rule <k> Dai . approve ACCOUNT_DST AMOUNT => . ... </k>
          <msg-sender> ACCOUNT_SRC </msg-sender>
-         <dai-allowance>
-           ...
-           { ACCOUNT_SRC -> ACCOUNT_DST } |-> (_ => AMOUNT)
-           ...
-         </dai-allowance>
+         <dai-allowance> ... { ACCOUNT_SRC -> ACCOUNT_DST } |-> (_ => AMOUNT) ... </dai-allowance>
          <frame-events> _ => ListItem(Approval(ACCOUNT_SRC, ACCOUNT_DST, AMOUNT)) </frame-events>
 
     syntax DaiStep ::= "push" Address Wad

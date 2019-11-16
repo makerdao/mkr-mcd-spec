@@ -122,11 +122,7 @@ Flap Semantics
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
          <current-time> NOW </current-time>
-         <flap-bids>
-           ...
-           .Map => KICKS +Int 1 |-> FlapBid(... bid: BID, lot: LOT, guy: MSGSENDER, tic: 0, end: NOW +Int TAU)
-           ...
-         </flap-bids>
+         <flap-bids> ... .Map => KICKS +Int 1 |-> FlapBid(... bid: BID, lot: LOT, guy: MSGSENDER, tic: 0, end: NOW +Int TAU) ... </flap-bids>
          <flap-kicks> KICKS => KICKS +Int 1 </flap-kicks>
          <flap-live> true </flap-live>
          <flap-tau> TAU </flap-tau>
@@ -141,11 +137,7 @@ Flap Semantics
  // --------------------------------------------------------
     rule <k> Flap . tick ID => . ... </k>
          <current-time> NOW </current-time>
-         <flap-bids>
-           ...
-           ID |-> FlapBid(... tic: 0, end: END => NOW +Int TAU)
-           ...
-         </flap-bids>
+         <flap-bids> ... ID |-> FlapBid(... tic: 0, end: END => NOW +Int TAU) ... </flap-bids>
          <flap-tau> TAU </flap-tau>
       requires END <Int NOW
 ```
@@ -164,11 +156,7 @@ Flap Semantics
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
          <current-time> NOW </current-time>
-         <flap-bids>
-           ...
-           ID |-> FlapBid(... bid: BID' => BID, lot: LOT', guy: GUY => MSGSENDER, tic: TIC => TIC +Int TTL, end: END)
-           ...
-         </flap-bids>
+         <flap-bids> ... ID |-> FlapBid(... bid: BID' => BID, lot: LOT', guy: GUY => MSGSENDER, tic: TIC => TIC +Int TTL, end: END) ... </flap-bids>
          <flap-live> true </flap-live>
          <flap-ttl> TTL </flap-ttl>
          <flap-beg> BEG </flap-beg>
@@ -192,11 +180,7 @@ Flap Semantics
          </k>
          <this> THIS </this>
          <current-time> NOW </current-time>
-         <flap-bids>
-           ...
-           ID |-> FlapBid(... bid: BID, lot: LOT, guy: GUY, tic: TIC, end: END) => .Map
-           ...
-         </flap-bids>
+         <flap-bids> ... ID |-> FlapBid(... bid: BID, lot: LOT, guy: GUY, tic: TIC, end: END) => .Map ... </flap-bids>
          <flap-live> true </flap-live>
       requires TIC =/=Int 0
        andBool (TIC <Int NOW orBool END <Int NOW)
@@ -225,11 +209,7 @@ Flap Semantics
          ...
          </k>
          <this> THIS </this>
-         <flap-bids>
-           ...
-           ID |-> FlapBid(... bid: BID, guy: GUY) => .Map
-           ...
-         </flap-bids>
+         <flap-bids> ... ID |-> FlapBid(... bid: BID, guy: GUY) => .Map ... </flap-bids>
          <flap-live> false </flap-live>
 ```
 

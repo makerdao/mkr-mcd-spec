@@ -131,21 +131,9 @@ Cat Semantics
          </k>
          <this> THIS </this>
          <cat-live> true </cat-live>
-         <cat-ilks>
-           ...
-           ILK |-> Ilk(... chop: CHOP, lump: LUMP)
-           ...
-         </cat-ilks>
-         <vat-ilks>
-           ...
-           ILK |-> Ilk(... rate: RATE, spot: SPOT)
-           ...
-         </vat-ilks>
-         <vat-urns>
-           ...
-           { ILK, URN } |-> Urn( INK, URNART )
-           ...
-         </vat-urns>
+         <cat-ilks> ... ILK |-> Ilk(... chop: CHOP, lump: LUMP) ... </cat-ilks>
+         <vat-ilks> ... ILK |-> Ilk(... rate: RATE, spot: SPOT) ... </vat-ilks>
+         <vat-urns> ... { ILK, URN } |-> Urn( INK, URNART ) ... </vat-urns>
          <cat-vow> VOWADDR </cat-vow>
       requires (INK *Rat SPOT) <Rat (URNART *Rat RATE)
 
