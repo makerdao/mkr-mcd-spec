@@ -112,8 +112,8 @@
           ListItem ( LogNote ( ANYONE , End . thaw ) )
           ListItem ( GenStep ( transact ANYONE End . flow "gold" ) )
           ListItem ( LogNote ( ANYONE , End . flow "gold" ) )
-          ListItem ( GenStep ( transact "Bobby" Flip "gold" . kick "Bobby" "Alice" 1000 747 /Rat 100 590 ) )
-          ListItem ( Exception ( Flip "gold" . kick "Bobby" "Alice" 1000 747 /Rat 100 590 ) )
+          ListItem ( GenStep ( transact "Bobby" Flip "gold" . kick Flap "Bobby" 1000 747 /Rat 100 590 ) )
+          ListItem ( Exception ( Flip "gold" . kick Flap "Bobby" 1000 747 /Rat 100 590 ) )
           ListItem ( GenStepFailed ( GenEndSkip "gold" ) )
         </events>
         <frame-events>
