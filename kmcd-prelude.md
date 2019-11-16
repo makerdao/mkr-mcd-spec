@@ -381,15 +381,21 @@ module KMCD-GEN
 
     syntax GenStep ::= GenFlapStep
     syntax GenFlapStep ::= "GenFlapKick"
-                         | "GenFlapKick" Rad
-                         | "GenFlapKick" Rad Wad
+                         | "GenFlapKick" Address
+                         | "GenFlapKick" Address Rad
+                         | "GenFlapKick" Address Rad Wad
                          | "GenFlapYank"
  // ------------------------------------
-    rule <k> GenFlapKick => GenFlapKick randRatBounded(I, VOW_DAI) ... </k>
+    rule <k> GenFlapKick => GenFlapKick chooseAddress(I, keys_list(VAT_DAIS)) ... </k>
          <random> I => randInt(I) </random>
-         <vat-dai> ... Vow |-> VOW_DAI ... </vat-dai>
+         <vat-dai> VAT_DAIS </vat-dai>
+      requires size(VAT_DAIS) >Int 0
 
-    rule <k> GenFlapKick LOT => GenFlapKick LOT randRatBounded(I, FLAP_MKR) ... </k>
+    rule <k> GenFlapKick ADDRESS => GenFlapKick ADDRESS randRatBounded(I, VOW_DAI) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-dai> ... ADDRESS |-> VOW_DAI ... </vat-dai>
+
+    rule <k> GenFlapKick ADDRESS LOT => GenFlapKick ADDRESS LOT randRatBounded(I, FLAP_MKR) ... </k>
          <random> I => randInt(I) </random>
          <gem>
            <gem-id> "MKR" </gem-id>
@@ -397,7 +403,7 @@ module KMCD-GEN
            ...
          </gem>
 
-    rule <k> GenFlapKick LOT BID => LogGen ( transact Vow Flap . kick LOT BID ) ... </k>
+    rule <k> GenFlapKick ADDRESS LOT BID => LogGen ( transact ADDRESS Flap . kick LOT BID ) ... </k>
 
     rule <k> GenFlapYank => LogGen ( transact ANYONE Flap . yank chooseInt(I, keys_list(FLAP_BIDS)) ) ... </k>
          <random> I => randInt(I) </random>
