@@ -98,7 +98,7 @@
           ListItem ( LogNote ( "Bobby" , GemJoin "gold" . join "Bobby" 77 /Rat 10 ) )
           ListItem ( GenStep ( transact "Alice" Vat . hope Flap ) )
           ListItem ( LogNote ( "Alice" , Vat . hope Flap ) )
-          ListItem ( GenStep ( transact Vow Flap . kick 581 /Rat 200 258 ) )
+          ListItem ( GenStep ( transact Vow Flap . kick 581 /Rat 200 86 /Rat 5 ) )
           ListItem ( Exception ( Vat . move Vow Flap 581 /Rat 200 ) )
           ListItem ( GenStep ( transact ADMIN End . cage ) )
           ListItem ( LogNote ( ADMIN , Vat . cage ) )

@@ -389,8 +389,13 @@ module KMCD-GEN
          <random> I => randInt(I) </random>
          <vat-dai> ... Vow |-> VOW_DAI ... </vat-dai>
 
-    rule <k> GenFlapKick LOT => GenFlapKick LOT randRatBounded(I, 300) ... </k>
+    rule <k> GenFlapKick LOT => GenFlapKick LOT randRatBounded(I, FLAP_MKR) ... </k>
          <random> I => randInt(I) </random>
+         <gem>
+           <gem-id> "MKR" </gem-id>
+           <gem-balances> ... Flap |-> FLAP_MKR ... </gem-balances>
+           ...
+         </gem>
 
     rule <k> GenFlapKick LOT BID => LogGen ( transact Vow Flap . kick LOT BID ) ... </k>
 
