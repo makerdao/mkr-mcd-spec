@@ -94,6 +94,16 @@ Gem Semantics
            </gem-balances>
            ...
          </gem>
+      requires ACCTSRC =/=K ACCTDST
+       andBool VALUE >=Rat 0
+       andBool BALANCE_SRC >=Rat VALUE
+
+    rule <k> Gem GEMID . transferFrom ACCTSRC ACCTSRC VALUE => . ... </k>
+         <gem>
+           <gem-id> GEMID </gem-id>
+           <gem-balances> ... ACCTSRC |-> BALANCE_SRC ... </gem-balances>
+           ...
+         </gem>
       requires VALUE >=Rat 0
        andBool BALANCE_SRC >=Rat VALUE
 
@@ -121,11 +131,7 @@ Gem Semantics
     rule <k> Gem GEMID . mint ACCTDST VALUE => . ... </k>
          <gem>
            <gem-id> GEMID </gem-id>
-           <gem-balances>
-             ...
-             ACCTDST |-> ( BALANCE_DST => BALANCE_DST +Rat VALUE )
-             ...
-           </gem-balances>
+           <gem-balances> ... ACCTDST |-> ( BALANCE_DST => BALANCE_DST +Rat VALUE ) ... </gem-balances>
            ...
          </gem>
       requires VALUE >=Rat 0
@@ -135,14 +141,11 @@ Gem Semantics
     rule <k> Gem GEMID . burn ACCTSRC VALUE => . ... </k>
          <gem>
            <gem-id> GEMID </gem-id>
-           <gem-balances>
-             ...
-             ACCTSRC |-> ( BALANCE_SRC => BALANCE_SRC -Rat VALUE )
-             ...
-           </gem-balances>
+           <gem-balances> ... ACCTSRC |-> ( BALANCE_SRC => BALANCE_SRC -Rat VALUE ) ... </gem-balances>
            ...
          </gem>
       requires VALUE >=Rat 0
+       andBool BALANCE_SRC >=Rat VALUE
 ```
 
 ```k

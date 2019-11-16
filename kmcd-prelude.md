@@ -170,10 +170,11 @@ module KMCD-GEN
       </kmcd-random>
 
     syntax DepthBound ::= Int | "*"
-                        | decrement ( DepthBound ) [function]
- // ---------------------------------------------------------
+                        | decrement ( DepthBound ) [function, functional]
+ // ---------------------------------------------------------------------
     rule decrement(*) => *
-    rule decrement(N) => N -Int 1
+    rule decrement(N) => N -Int 1 requires N  >Int 0
+    rule decrement(N) => 0        requires N <=Int 0
 
     syntax Int ::= randIntBounded ( Int , Int ) [function]
  // ------------------------------------------------------
@@ -264,6 +265,8 @@ module KMCD-GEN
     rule <k> GSS ; .GenStep => GSS ... </k> [priority(49)]
     rule <k> .GenStep | GSS => GSS ... </k> [priority(49)]
     rule <k> GSS | .GenStep => GSS ... </k> [priority(49)]
+
+    rule <k> .GenStep DB:DepthBound => . ... </k> [priority(49)]
 
     rule <k> GSS DB:DepthBound => #if DB ==K 0 #then . #else (GSS ; (GSS decrement(DB))) | .GenStep #fi ... </k>
 

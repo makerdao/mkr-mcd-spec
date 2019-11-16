@@ -136,16 +136,8 @@ End Semantics
          <end-tag> TAGS => TAGS [ ILK <- PAR /Rat PIP ] </end-tag>
          <end-art> ARTS => ARTS [ ILK <- ART ] </end-art>
          <spot-par> PAR </spot-par>
-         <spot-ilks>
-           ...
-           ILK |-> SpotIlk(... pip: PIP)
-           ...
-         </spot-ilks>
-         <vat-ilks>
-           ...
-           ILK |-> Ilk(... Art: ART)::VatIlk
-           ...
-         </vat-ilks>
+         <spot-ilks> ... ILK |-> SpotIlk(... pip: PIP) ... </spot-ilks>
+         <vat-ilks> ... ILK |-> Ilk(... Art: ART)::VatIlk ... </vat-ilks>
        requires notBool ILK in_keys(TAGS)
 
     syntax EndStep ::= "skip" String Int
@@ -159,27 +151,14 @@ End Semantics
          ...
          </k>
          <this> THIS </this>
-         <end-tag>
-          ...
-          ILK |-> TAG
-          ...
-         </end-tag>
-         <end-art>
+         <end-tag> ... ILK |-> TAG ... </end-tag>
+         <end-art> ... ILK |-> (ART => ART +Rat (TAB /Rat RATE)) ... </end-art>
+         <vat-ilks> ... ILK |-> Ilk(... rate: RATE)::VatIlk ... </vat-ilks>
+         <flip>
+           <flip-ilk> ILK </flip-ilk>
+           <flip-bids> ... ID |-> FlipBid(... bid: BID, lot: LOT, usr: USR, tab: TAB) ... </flip-bids>
            ...
-           ILK |-> (ART => ART +Rat (TAB /Rat RATE))
-           ...
-         </end-art>
-         <vat-ilks>
-           ...
-           ILK |-> Ilk(... rate: RATE)::VatIlk
-           ...
-         </vat-ilks>
-         <flip-ilk> ILK </flip-ilk>
-         <flip-bids>
-           ...
-           ID |-> FlipBid(... bid: BID, lot: LOT, usr: USR, tab: TAB)
-           ...
-         </flip-bids>
+         </flip>
       requires TAG =/=Rat 0
        andBool LOT >=Rat 0
        andBool TAB /Rat RATE >=Rat 0
@@ -191,26 +170,10 @@ End Semantics
          ...
          </k>
          <this> THIS </this>
-         <end-tag>
-          ...
-          ILK |-> TAG
-          ...
-         </end-tag>
-         <end-gap>
-          ...
-          ILK |-> (GAP => GAP +Rat ((ART *Rat RATE *Rat TAG) -Rat minRat(INK, (ART *Rat RATE *Rat TAG))))
-          ...
-         </end-gap>
-         <vat-ilks>
-           ...
-           ILK |-> Ilk(... rate: RATE)::VatIlk
-           ...
-         </vat-ilks>
-         <vat-urns>
-           ...
-           {ILK, ADDR} |-> Urn(... ink: INK, art: ART)
-           ...
-         </vat-urns>
+         <end-tag> ... ILK |-> TAG ... </end-tag>
+         <end-gap> ... ILK |-> (GAP => GAP +Rat ((ART *Rat RATE *Rat TAG) -Rat minRat(INK, (ART *Rat RATE *Rat TAG)))) ... </end-gap>
+         <vat-ilks> ... ILK |-> Ilk(... rate: RATE)::VatIlk ... </vat-ilks>
+         <vat-urns> ... {ILK, ADDR} |-> Urn(... ink: INK, art: ART) ... </vat-urns>
       requires TAG =/=Rat 0
 
     syntax EndStep ::= "free" String
@@ -221,11 +184,7 @@ End Semantics
          </k>
          <msg-sender> MSGSENDER </msg-sender>
          <end-live> false </end-live>
-         <vat-urns>
-           ...
-           {ILK, MSGSENDER} |-> Urn(... ink: INK, art: ART)
-           ...
-         </vat-urns>
+         <vat-urns> ... {ILK, MSGSENDER} |-> Urn(... ink: INK, art: ART) ... </vat-urns>
       requires ART ==Int 0
 
     syntax EndStep ::= "thaw"
@@ -236,11 +195,7 @@ End Semantics
          <end-debt> 0 => DEBT </end-debt>
          <end-when> WHEN </end-when>
          <end-wait> WAIT </end-wait>
-         <vat-dai>
-           ...
-           Vow |-> 0
-           ...
-         </vat-dai>
+         <vat-dai> ... Vow |-> 0 ... </vat-dai>
          <vat-debt> DEBT </vat-debt>
       requires NOW >=Int WHEN +Int WAIT
 
@@ -249,26 +204,10 @@ End Semantics
     rule <k> End . flow ILK => . ... </k>
          <end-debt> DEBT </end-debt>
          <end-fix> FIX => FIX [ ILK <- (ART *Rat RATE *Rat TAG -Rat GAP) /Rat DEBT ] </end-fix>
-         <end-tag>
-          ...
-          ILK |-> TAG
-          ...
-         </end-tag>
-         <end-gap>
-           ...
-           ILK |-> GAP
-           ...
-         </end-gap>
-         <end-art>
-           ...
-           ILK |-> ART
-           ...
-         </end-art>
-         <vat-ilks>
-           ...
-           ILK |-> Ilk(... rate: RATE)::VatIlk
-           ...
-         </vat-ilks>
+         <end-tag> ... ILK |-> TAG ... </end-tag>
+         <end-gap> ... ILK |-> GAP ... </end-gap>
+         <end-art> ... ILK |-> ART ... </end-art>
+         <vat-ilks> ... ILK |-> Ilk(... rate: RATE)::VatIlk ... </vat-ilks>
       requires DEBT =/=Rat 0
        andBool ART *Rat RATE *Rat TAG >=Rat GAP
        andBool notBool ILK in_keys(FIX)
@@ -281,11 +220,7 @@ End Semantics
          </k>
          <msg-sender> MSGSENDER </msg-sender>
          <end-debt> DEBT </end-debt>
-         <end-bag>
-           ...
-           MSGSENDER |-> (BAG => BAG +Rat AMOUNT)
-           ...
-         </end-bag>
+         <end-bag> ... MSGSENDER |-> (BAG => BAG +Rat AMOUNT) ... </end-bag>
       requires DEBT =/=Rat 0
 
     syntax EndStep ::= "cash" String Wad
@@ -296,21 +231,9 @@ End Semantics
          </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
-         <end-fix>
-           ...
-           ILK |-> FIX
-           ...
-         </end-fix>
-         <end-out>
-          ...
-          {ILK, MSGSENDER} |-> (OUT => OUT +Rat AMOUNT)
-          ...
-         </end-out>
-         <end-bag>
-           ...
-           MSGSENDER |-> BAG
-           ...
-         </end-bag>
+         <end-fix> ... ILK |-> FIX ... </end-fix>
+         <end-out> ... {ILK, MSGSENDER} |-> (OUT => OUT +Rat AMOUNT) ... </end-out>
+         <end-bag> ... MSGSENDER |-> BAG ... </end-bag>
       requires FIX =/=Rat 0
        andBool OUT +Rat AMOUNT <=Rat BAG
 ```
