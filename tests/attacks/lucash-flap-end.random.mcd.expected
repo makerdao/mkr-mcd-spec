@@ -50,6 +50,7 @@
           ListItem ( LogNote ( ADMIN , End . initGap "gold" ) )
           ListItem ( LogNote ( ADMIN , Gem "MKR" . init ) )
           ListItem ( LogNote ( ADMIN , GemJoin "MKR" . init ) )
+          ListItem ( LogNote ( ADMIN , Gem "MKR" . initUser Vow ) )
           ListItem ( LogNote ( ADMIN , Gem "MKR" . initUser Flap ) )
           ListItem ( LogNote ( ADMIN , Gem "MKR" . mint Flap 20 ) )
           ListItem ( LogNote ( ADMIN , Vat . file Line 1000000000000 ) )
@@ -279,6 +280,7 @@
               "Bobby" |-> 0
               Flap |-> 20
               GemJoin "MKR" |-> 0
+              Vow |-> 0
             </gem-balances>
           </gem> <gem>
             <gem-id>

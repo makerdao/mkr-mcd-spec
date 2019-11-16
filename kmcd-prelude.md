@@ -82,6 +82,7 @@ module KMCD-PRELUDE
          transact ADMIN GemJoin "MKR" . init
 
          // Setup Flap account on MKR
+         transact ADMIN Gem "MKR" . initUser Vow
          transact ADMIN Gem "MKR" . initUser Flap
          transact ADMIN Gem "MKR" . mint Flap 20
 
