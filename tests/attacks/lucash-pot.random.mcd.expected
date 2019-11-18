@@ -9,13 +9,13 @@
           .
         </return-value>
         <msg-sender>
-          "Alice"
+          ADMIN
         </msg-sender>
         <this>
-          "Alice"
+          ADMIN
         </this>
         <current-time>
-          2
+          0
         </current-time>
         <call-stack>
           .List
@@ -90,18 +90,11 @@
           ListItem ( LogNote ( ADMIN , End . initBag "Bobby" ) )
           ListItem ( LogNote ( ADMIN , End . initOut "gold" "Alice" ) )
           ListItem ( LogNote ( ADMIN , End . initOut "gold" "Bobby" ) )
-          ListItem ( GenStep ( transact ADMIN Pot . file dsr 133 /Rat 125 ) )
-          ListItem ( LogNote ( ADMIN , Pot . file dsr 133 /Rat 125 ) )
-          ListItem ( GenStep ( TimeStep 2 ) )
-          ListItem ( TimeStep ( 2 , 2 ) )
-          ListItem ( GenStep ( transact "Alice" Pot . join 26 /Rat 5 ) )
-          ListItem ( Exception ( Pot . join 26 /Rat 5 ) )
-          ListItem ( GenStep ( transact ANYONE Pot . drip ) )
-          ListItem ( LogNote ( ANYONE , Vat . suck Vow Pot 0 ) )
-          ListItem ( LogNote ( ANYONE , Pot . drip ) )
-          ListItem ( GenStep ( transact "Alice" Pot . exit 0 ) )
-          ListItem ( LogNote ( "Alice" , Vat . move Pot "Alice" 0 ) )
-          ListItem ( LogNote ( "Alice" , Pot . exit 0 ) )
+          ListItem ( GenStepFailed ( GenStep ) )
+          ListItem ( GenStepFailed ( GenStep ) )
+          ListItem ( GenStepFailed ( GenStep ) )
+          ListItem ( GenStepFailed ( GenStep ) )
+          ListItem ( GenStepFailed ( GenStep ) )
         </events>
         <frame-events>
           .List
@@ -346,16 +339,16 @@
             0
           </pot-pie>
           <pot-dsr>
-            133 /Rat 125
+            1
           </pot-dsr>
           <pot-chi>
-            17689 /Rat 15625
+            1
           </pot-chi>
           <pot-vow>
             Vow
           </pot-vow>
           <pot-rho>
-            2
+            0
           </pot-rho>
           <pot-live>
             true
@@ -477,10 +470,10 @@
   </kmcd-properties>
   <kmcd-gen>
     <random>
-      1649760492
+      b""
     </random>
     <generator-depth-bound>
-      15
+      20
     </generator-depth-bound>
     <generator-next>
       1
@@ -497,7 +490,7 @@
           0
         </generator-id>
         <generator-steps>
-          .GenStep
+          GenPotFileDSR ; GenTimeStep ; GenPotJoin "Alice" ; GenPotDrip ; GenPotExit "Alice"
         </generator-steps>
       </generator>
     </generators>

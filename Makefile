@@ -136,7 +136,7 @@ $(java_kompiled): $(java_files)
 # ----
 
 KMCD_GENDEPTH   := 20
-KMCD_RANDOMSEED := 0
+KMCD_RANDOMSEED := ""
 
 test: test-python-config test-python-run test-execution
 
@@ -163,10 +163,10 @@ ifeq ($(TEST_BACKEND), haskell)
     TEST_KOMPILED := $(haskell_kompiled)
 endif
 
-tests/attacks/lucash-pot-end.random.mcd.out:  KMCD_RANDOMSEED=481
-tests/attacks/lucash-pot.random.mcd.out:      KMCD_RANDOMSEED=481
-tests/attacks/lucash-flap-end.random.mcd.out: KMCD_RANDOMSEED=481
-tests/attacks/lucash-flip-end.random.mcd.out: KMCD_RANDOMSEED=481
+tests/attacks/lucash-pot-end.random.mcd.out:  KMCD_RANDOMSEED=""
+tests/attacks/lucash-pot.random.mcd.out:      KMCD_RANDOMSEED=""
+tests/attacks/lucash-flap-end.random.mcd.out: KMCD_RANDOMSEED=""
+tests/attacks/lucash-flip-end.random.mcd.out: KMCD_RANDOMSEED=""
 
 tests/%.mcd.out: tests/%.mcd $(TEST_KOMPILED)
 	GENDEPTH=$(KMCD_GENDEPTH) RANDOMSEED=$(KMCD_RANDOMSEED) $(KMCD) run --backend $(TEST_BACKEND) $< > $<.out

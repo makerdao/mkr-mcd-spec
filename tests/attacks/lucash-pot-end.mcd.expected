@@ -489,7 +489,7 @@
   </kmcd-properties>
   <kmcd-gen>
     <random>
-      0
+      b""
     </random>
     <generator-depth-bound>
       20

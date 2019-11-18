@@ -90,27 +90,12 @@
           ListItem ( LogNote ( ADMIN , End . initBag "Bobby" ) )
           ListItem ( LogNote ( ADMIN , End . initOut "gold" "Alice" ) )
           ListItem ( LogNote ( ADMIN , End . initOut "gold" "Bobby" ) )
-          ListItem ( GenStep ( transact "Alice" Vat . move "Alice" Vow 16 /Rat 5 ) )
-          ListItem ( LogNote ( "Alice" , Vat . move "Alice" Vow 16 /Rat 5 ) )
-          ListItem ( GenStep ( transact "Bobby" GemJoin "gold" . join "Bobby" 27 /Rat 5 ) )
-          ListItem ( LogNote ( "Bobby" , Vat . slip "gold" "Bobby" 27 /Rat 5 ) )
-          ListItem ( LogNote ( "Bobby" , Gem "gold" . transferFrom "Bobby" GemJoin "gold" 27 /Rat 5 ) )
-          ListItem ( LogNote ( "Bobby" , GemJoin "gold" . join "Bobby" 27 /Rat 5 ) )
-          ListItem ( GenStep ( transact "Alice" Vat . hope Flap ) )
-          ListItem ( LogNote ( "Alice" , Vat . hope Flap ) )
-          ListItem ( GenStep ( transact "Alice" Flap . kick 476 /Rat 125 8 /Rat 5 ) )
-          ListItem ( Exception ( Flap . kick 476 /Rat 125 8 /Rat 5 ) )
-          ListItem ( GenStep ( transact ADMIN End . cage ) )
-          ListItem ( LogNote ( ADMIN , Vat . cage ) )
-          ListItem ( LogNote ( ADMIN , Cat . cage ) )
-          ListItem ( LogNote ( Vow , Vat . move Flap Vow 0 ) )
-          ListItem ( LogNote ( End , Flap . cage 0 ) )
-          ListItem ( LogNote ( End , Flop . cage ) )
-          ListItem ( LogNote ( End , Vat . heal 0 ) )
-          ListItem ( LogNote ( ADMIN , Vow . cage ) )
-          ListItem ( LogNote ( ADMIN , Pot . cage ) )
-          ListItem ( LogNote ( ADMIN , End . cage ) )
-          ListItem ( GenStepFailed ( GenFlapYank ) )
+          ListItem ( GenStepFailed ( GenStep ) )
+          ListItem ( GenStepFailed ( GenStep ) )
+          ListItem ( GenStepFailed ( GenStep ) )
+          ListItem ( GenStepFailed ( GenStep ) )
+          ListItem ( GenStepFailed ( GenStep ) )
+          ListItem ( GenStepFailed ( GenStep ) )
         </events>
         <frame-events>
           .List
@@ -125,7 +110,7 @@
             .Map
           </cat-ilks>
           <cat-live>
-            false
+            true
           </cat-live>
           <cat-vow>
             0
@@ -160,7 +145,7 @@
               .Set
             </end-wards>
             <end-live>
-              false
+              true
             </end-live>
             <end-when>
               0
@@ -204,7 +189,7 @@
             0
           </flap-kicks>
           <flap-live>
-            false
+            true
           </flap-live>
           <flap-beg>
             21 /Rat 20
@@ -252,7 +237,7 @@
             0
           </flop-kicks>
           <flop-live>
-            false
+            true
           </flop-live>
           <flop-beg>
             21 /Rat 20
@@ -291,8 +276,8 @@
             </gem-wards>
             <gem-balances>
               "Alice" |-> 10
-              "Bobby" |-> 23 /Rat 5
-              GemJoin "gold" |-> 127 /Rat 5
+              "Bobby" |-> 10
+              GemJoin "gold" |-> 20
             </gem-balances>
           </gem>
         </gems>
@@ -367,7 +352,7 @@
             0
           </pot-rho>
           <pot-live>
-            false
+            true
           </pot-live>
         </pot>
         <spot>
@@ -392,7 +377,6 @@
           </vat-wards>
           <vat-can>
             "Alice" |-> SetItem ( End )
-            SetItem ( Flap )
             SetItem ( Flip "gold" )
             SetItem ( Pot )
             "Bobby" |-> SetItem ( End )
@@ -413,17 +397,17 @@
           </vat-urns>
           <vat-gem>
             { "gold" , "Alice" } |-> 0
-            { "gold" , "Bobby" } |-> 27 /Rat 5
+            { "gold" , "Bobby" } |-> 0
             { "gold" , End } |-> 0
             { "gold" , Flip "gold" } |-> 0
           </vat-gem>
           <vat-dai>
-            "Alice" |-> 34 /Rat 5
+            "Alice" |-> 10
             "Bobby" |-> 10
             End |-> 0
             Flap |-> 0
             Pot |-> 0
-            Vow |-> 16 /Rat 5
+            Vow |-> 0
           </vat-dai>
           <vat-sin>
             "Alice" |-> 0
@@ -443,7 +427,7 @@
             1000000000000
           </vat-Line>
           <vat-live>
-            false
+            true
           </vat-live>
         </vat>
         <vow>
@@ -476,7 +460,7 @@
             0
           </vow-hump>
           <vow-live>
-            false
+            true
           </vow-live>
         </vow>
       </kmcd-state>
@@ -487,10 +471,10 @@
   </kmcd-properties>
   <kmcd-gen>
     <random>
-      1189641421
+      b""
     </random>
     <generator-depth-bound>
-      14
+      20
     </generator-depth-bound>
     <generator-next>
       1
@@ -507,7 +491,7 @@
           0
         </generator-id>
         <generator-steps>
-          .GenStep
+          GenVatMove "Alice" Vow ; GenGemJoinJoin "gold" "Bobby" ; GenVatHope "Alice" Flap ; GenFlapKick "Alice" ; GenEndCage ; GenFlapYank
         </generator-steps>
       </generator>
     </generators>
