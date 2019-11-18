@@ -3,12 +3,11 @@ STEPS ( ATTACK-PRELUDE )
 AddGenerator ( GenVatMove "Alice" Vow
              ; GenGemJoinJoin "gold" "Bobby"
              ; GenVatHope "Alice" Flap
-             ; GenFlapKick
+             ; GenFlapKick "Alice"
              ; GenEndCage
              ; GenFlapYank
              )
 
-GenStep
 GenStep
 GenStep
 GenStep

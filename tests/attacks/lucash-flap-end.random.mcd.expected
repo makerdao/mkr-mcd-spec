@@ -98,8 +98,8 @@
           ListItem ( LogNote ( "Bobby" , GemJoin "gold" . join "Bobby" 77 /Rat 10 ) )
           ListItem ( GenStep ( transact "Alice" Vat . hope Flap ) )
           ListItem ( LogNote ( "Alice" , Vat . hope Flap ) )
-          ListItem ( GenStep ( transact "Bobby" Flap . kick 43 /Rat 5 92 /Rat 5 ) )
-          ListItem ( Exception ( Flap . kick 43 /Rat 5 92 /Rat 5 ) )
+          ListItem ( GenStep ( transact "Alice" Flap . kick 119 /Rat 200 86 /Rat 5 ) )
+          ListItem ( Exception ( Flap . kick 119 /Rat 200 86 /Rat 5 ) )
           ListItem ( GenStep ( transact ADMIN End . cage ) )
           ListItem ( LogNote ( ADMIN , Vat . cage ) )
           ListItem ( LogNote ( ADMIN , Cat . cage ) )
@@ -487,10 +487,10 @@
   </kmcd-properties>
   <kmcd-gen>
     <random>
-      1350490027
+      1189641421
     </random>
     <generator-depth-bound>
-      13
+      14
     </generator-depth-bound>
     <generator-next>
       1
