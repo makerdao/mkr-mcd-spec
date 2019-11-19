@@ -11,4 +11,6 @@ transact "Alice" Pot . join 10
 transact "Alice" Pot . drip
 transact "Alice" Pot . exit 10
 
+assert
+
 .MCDSteps

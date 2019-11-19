@@ -17,4 +17,6 @@ transact "Alice" Flap . yank 1
 // If the `End . cage` doesn't go through, Alice could still create dummy auctions to just burn MKR for low collateral amount.
 // This would DoS the remaining auctions because they wouldn't have the MKR to pay out on finishing.
 
+assert
+
 .MCDSteps
