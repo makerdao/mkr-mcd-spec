@@ -9,13 +9,13 @@
           .
         </return-value>
         <msg-sender>
-          "Bobby"
+          ADMIN
         </msg-sender>
         <this>
-          "Bobby"
+          ADMIN
         </this>
         <current-time>
-          3600
+          0
         </current-time>
         <call-stack>
           .List
@@ -90,9 +90,17 @@
           ListItem ( LogNote ( ADMIN , End . initBag "Bobby" ) )
           ListItem ( LogNote ( ADMIN , End . initOut "gold" "Alice" ) )
           ListItem ( LogNote ( ADMIN , End . initOut "gold" "Bobby" ) )
-          ListItem ( LogNote ( "Bobby" , Vat . slip "gold" "Bobby" 1 ) )
-          ListItem ( LogNote ( "Bobby" , Gem "gold" . transferFrom "Bobby" GemJoin "gold" 1 ) )
-          ListItem ( LogNote ( "Bobby" , GemJoin "gold" . join "Bobby" 1 ) )
+          ListItem ( GenStep ( transact "Alice" Vat . move "Alice" Vow 16 /Rat 5 ) )
+          ListItem ( LogNote ( "Alice" , Vat . move "Alice" Vow 16 /Rat 5 ) )
+          ListItem ( GenStep ( transact "Bobby" GemJoin "gold" . join "Bobby" 27 /Rat 5 ) )
+          ListItem ( LogNote ( "Bobby" , Vat . slip "gold" "Bobby" 27 /Rat 5 ) )
+          ListItem ( LogNote ( "Bobby" , Gem "gold" . transferFrom "Bobby" GemJoin "gold" 27 /Rat 5 ) )
+          ListItem ( LogNote ( "Bobby" , GemJoin "gold" . join "Bobby" 27 /Rat 5 ) )
+          ListItem ( GenStep ( transact "Alice" Vat . hope Flap ) )
+          ListItem ( LogNote ( "Alice" , Vat . hope Flap ) )
+          ListItem ( GenStep ( transact "Alice" Flap . kick 476 /Rat 125 8 /Rat 5 ) )
+          ListItem ( Exception ( Flap . kick 476 /Rat 125 8 /Rat 5 ) )
+          ListItem ( GenStep ( transact ADMIN End . cage ) )
           ListItem ( LogNote ( ADMIN , Vat . cage ) )
           ListItem ( LogNote ( ADMIN , Cat . cage ) )
           ListItem ( LogNote ( Vow , Vat . move Flap Vow 0 ) )
@@ -102,12 +110,7 @@
           ListItem ( LogNote ( ADMIN , Vow . cage ) )
           ListItem ( LogNote ( ADMIN , Pot . cage ) )
           ListItem ( LogNote ( ADMIN , End . cage ) )
-          ListItem ( LogNote ( ADMIN , End . cage "gold" ) )
-          ListItem ( TimeStep ( 3600 , 3600 ) )
-          ListItem ( LogNote ( ADMIN , End . thaw ) )
-          ListItem ( LogNote ( ADMIN , End . flow "gold" ) )
-          ListItem ( Exception ( Flip "gold" . kick End "Bobby" 1001000000000 1 1000000000000 ) )
-          ListItem ( Exception ( End . skip "gold" 1 ) )
+          ListItem ( GenStepFailed ( GenFlapYank ) )
         </events>
         <frame-events>
           .List
@@ -166,19 +169,19 @@
               0
             </end-wait>
             <end-debt>
-              20
+              0
             </end-debt>
             <end-tag>
-              "gold" |-> 1
+              .Map
             </end-tag>
             <end-gap>
               "gold" |-> 0
             </end-gap>
             <end-art>
-              "gold" |-> 20
+              .Map
             </end-art>
             <end-fix>
-              "gold" |-> 1
+              .Map
             </end-fix>
             <end-bag>
               "Alice" |-> 0
@@ -288,8 +291,8 @@
             </gem-wards>
             <gem-balances>
               "Alice" |-> 10
-              "Bobby" |-> 9
-              GemJoin "gold" |-> 21
+              "Bobby" |-> 23 /Rat 5
+              GemJoin "gold" |-> 127 /Rat 5
             </gem-balances>
           </gem>
         </gems>
@@ -389,6 +392,7 @@
           </vat-wards>
           <vat-can>
             "Alice" |-> SetItem ( End )
+            SetItem ( Flap )
             SetItem ( Flip "gold" )
             SetItem ( Pot )
             "Bobby" |-> SetItem ( End )
@@ -409,17 +413,17 @@
           </vat-urns>
           <vat-gem>
             { "gold" , "Alice" } |-> 0
-            { "gold" , "Bobby" } |-> 1
+            { "gold" , "Bobby" } |-> 27 /Rat 5
             { "gold" , End } |-> 0
             { "gold" , Flip "gold" } |-> 0
           </vat-gem>
           <vat-dai>
-            "Alice" |-> 10
+            "Alice" |-> 34 /Rat 5
             "Bobby" |-> 10
             End |-> 0
             Flap |-> 0
             Pot |-> 0
-            Vow |-> 0
+            Vow |-> 16 /Rat 5
           </vat-dai>
           <vat-sin>
             "Alice" |-> 0
@@ -483,13 +487,13 @@
   </kmcd-properties>
   <kmcd-gen>
     <random>
-      0
+      1189641421
     </random>
     <generator-depth-bound>
-      20
+      14
     </generator-depth-bound>
     <generator-next>
-      0
+      1
     </generator-next>
     <generator-current>
       0
@@ -498,7 +502,14 @@
       .GenStep
     </generator-remainder>
     <generators>
-      .GeneratorCellMap
+      <generator>
+        <generator-id>
+          0
+        </generator-id>
+        <generator-steps>
+          .GenStep
+        </generator-steps>
+      </generator>
     </generators>
     <end-gen>
       .GenStep

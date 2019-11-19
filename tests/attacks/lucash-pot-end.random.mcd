@@ -1,0 +1,28 @@
+STEPS ( ATTACK-PRELUDE )
+
+AddGenerator ( GenEndCage
+             ; GenEndCageIlk
+             ; GenEndSkim { "gold" , "Alice" }
+             ; GenEndSkim { "gold" , "Bobby" }
+             ; GenEndThaw
+             ; GenEndFlow
+             ; GenPotJoin "Alice"
+             ; GenPotFileDSR
+             ; GenTimeStep
+             ; GenPotDrip
+             ; GenPotExit "Alice"
+             )
+
+GenStep
+GenStep
+GenStep
+GenStep
+GenStep
+GenStep
+GenStep
+GenStep
+GenStep
+GenStep
+GenStep
+
+.MCDSteps

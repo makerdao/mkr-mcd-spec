@@ -7,10 +7,12 @@ transact "Alice" Vat . move "Alice" Vow 1
 transact "Bobby" GemJoin "gold" . join "Bobby" 1
 
 transact "Alice" Vat . hope Flap
-transact "Alice" Flap . kick 1 2 // step that shouldn't go through
+transact "Alice" Flap . kick 1 20 // step that shouldn't go through
 
 transact ADMIN End . cage
 transact "Alice" Flap . yank 1
+
+// Now Alice has 20 MKR, at the cost of 1 Dai
 
 // If the `End . cage` doesn't go through, Alice could still create dummy auctions to just burn MKR for low collateral amount.
 // This would DoS the remaining auctions because they wouldn't have the MKR to pay out on finishing.
