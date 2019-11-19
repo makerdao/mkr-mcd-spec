@@ -163,7 +163,7 @@ ifeq ($(TEST_BACKEND), haskell)
 endif
 
 tests/attacks/lucash-pot-end.random.mcd.out:  KMCD_RANDOMSEED="aaaaaaaaaaaaaaaa"
-tests/attacks/lucash-pot.random.mcd.out:      KMCD_RANDOMSEED=""
+tests/attacks/lucash-pot.random.mcd.out:      KMCD_RANDOMSEED="aaaaaaaa"
 tests/attacks/lucash-flap-end.random.mcd.out: KMCD_RANDOMSEED="a0a3ao0Zaaa"
 tests/attacks/lucash-flip-end.random.mcd.out: KMCD_RANDOMSEED="aaaaaaaaaaaaaaaaa"
 

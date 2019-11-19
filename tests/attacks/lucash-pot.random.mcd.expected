@@ -9,13 +9,13 @@
           .
         </return-value>
         <msg-sender>
-          ADMIN
+          "Alice"
         </msg-sender>
         <this>
-          ADMIN
+          "Alice"
         </this>
         <current-time>
-          0
+          2
         </current-time>
         <call-stack>
           .List
@@ -90,11 +90,18 @@
           ListItem ( LogNote ( ADMIN , End . initBag "Bobby" ) )
           ListItem ( LogNote ( ADMIN , End . initOut "gold" "Alice" ) )
           ListItem ( LogNote ( ADMIN , End . initOut "gold" "Bobby" ) )
-          ListItem ( GenStepFailed ( GenStep ) )
-          ListItem ( GenStepFailed ( GenStep ) )
-          ListItem ( GenStepFailed ( GenStep ) )
-          ListItem ( GenStepFailed ( GenStep ) )
-          ListItem ( GenStepFailed ( GenStep ) )
+          ListItem ( GenStep ( transact ADMIN Pot . file dsr 597 /Rat 500 ) )
+          ListItem ( LogNote ( ADMIN , Pot . file dsr 597 /Rat 500 ) )
+          ListItem ( GenStep ( TimeStep 2 ) )
+          ListItem ( TimeStep ( 2 , 2 ) )
+          ListItem ( GenStep ( transact "Alice" Pot . join 97 /Rat 10 ) )
+          ListItem ( Exception ( Pot . join 97 /Rat 10 ) )
+          ListItem ( GenStep ( transact ANYONE Pot . drip ) )
+          ListItem ( LogNote ( ANYONE , Vat . suck Vow Pot 0 ) )
+          ListItem ( LogNote ( ANYONE , Pot . drip ) )
+          ListItem ( GenStep ( transact "Alice" Pot . exit 0 ) )
+          ListItem ( LogNote ( "Alice" , Vat . move Pot "Alice" 0 ) )
+          ListItem ( LogNote ( "Alice" , Pot . exit 0 ) )
         </events>
         <frame-events>
           .List
@@ -339,16 +346,16 @@
             0
           </pot-pie>
           <pot-dsr>
-            1
+            597 /Rat 500
           </pot-dsr>
           <pot-chi>
-            1
+            356409 /Rat 250000
           </pot-chi>
           <pot-vow>
             Vow
           </pot-vow>
           <pot-rho>
-            0
+            2
           </pot-rho>
           <pot-live>
             true
@@ -487,7 +494,7 @@
           0
         </generator-id>
         <generator-steps>
-          GenPotFileDSR ; GenTimeStep ; GenPotJoin "Alice" ; GenPotDrip ; GenPotExit "Alice"
+          .GenStep
         </generator-steps>
       </generator>
     </generators>
