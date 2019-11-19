@@ -106,7 +106,9 @@ Join Semantics
  // -----------------------------------------
     rule <k> GemJoin GEMID . join USR AMOUNT
           => call Vat . slip GEMID USR AMOUNT
-          ~> call Gem GEMID . transferFrom MSGSENDER THIS AMOUNT ... </k>
+          ~> call Gem GEMID . transferFrom MSGSENDER THIS AMOUNT
+         ...
+         </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
          <gem-join>
@@ -120,7 +122,9 @@ Join Semantics
  // -----------------------------------------
     rule <k> GemJoin GEMID . exit USR AMOUNT
           => call Vat . slip GEMID MSGSENDER (0 -Rat AMOUNT)
-          ~> call Gem GEMID . transfer USR AMOUNT ... </k>
+          ~> call Gem GEMID . transfer USR AMOUNT
+         ...
+         </k>
          <msg-sender> MSGSENDER </msg-sender>
       requires AMOUNT >=Rat 0
 
@@ -128,7 +132,9 @@ Join Semantics
  // -----------------------------------------
     rule <k> DaiJoin . join USR AMOUNT
           => call Vat . move THIS USR AMOUNT
-          ~> call Dai . burn MSGSENDER AMOUNT ... </k>
+          ~> call Dai . burn MSGSENDER AMOUNT
+         ...
+         </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
          <dai-join-live> true </dai-join-live>
@@ -138,7 +144,9 @@ Join Semantics
  // -----------------------------------------
     rule <k> DaiJoin . exit USR AMOUNT
           => call Vat . move MSGSENDER THIS AMOUNT
-          ~> call Dai . mint USR AMOUNT ... </k>
+          ~> call Dai . mint USR AMOUNT
+         ...
+         </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
       requires AMOUNT >=Rat 0
