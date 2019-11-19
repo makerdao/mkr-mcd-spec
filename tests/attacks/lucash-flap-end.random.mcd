@@ -8,13 +8,4 @@ AddGenerator ( GenVatMove "Alice" Vow
              ; GenFlapYank
              )
 
-GenStep
-GenStep
-GenStep
-GenStep
-GenStep
-GenStep
-
-assert
-
-.MCDSteps
+GenSteps
