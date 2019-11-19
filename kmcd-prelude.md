@@ -421,29 +421,32 @@ module KMCD-GEN
                          | "GenFlipKick" CDPID
                          | "GenFlipKick" CDPID Address
                          | "GenFlipKick" CDPID Address Address
- // ----------------------------------------------------------
+                         | "GenFlipKick" CDPID Address Address Rad
+                         | "GenFlipKick" CDPID Address Address Rad Wad
+ // ------------------------------------------------------------------
     rule <k> GenFlipKick => GenFlipKick chooseCDPID(I, keys_list(VAT_GEMS)) ... </k>
          <random> I => randInt(I) </random>
          <vat-gem> VAT_GEMS </vat-gem>
       requires size(VAT_GEMS) >Int 0
 
-    rule <k> GenFlipKick { ILKID , ADDRESS } => GenFlipKick { ILKID , ADDRESS } chooseAddress(I, keys_list(VAT_DAIS)) ... </k>
+    rule <k> GenFlipKick CDPID => GenFlipKick CDPID chooseAddress(I, keys_list(VAT_DAIS)) ... </k>
          <random> I => randInt(I) </random>
          <vat-dai> VAT_DAIS </vat-dai>
       requires size(VAT_DAIS) >Int 0
 
-    rule <k> GenFlipKick { ILKID , ADDRESS } STORAGE => GenFlipKick { ILKID , ADDRESS } STORAGE chooseAddress(I, keys_list(VAT_DAIS)) ... </k>
+    rule <k> GenFlipKick CDPID STORAGE => GenFlipKick CDPID STORAGE chooseAddress(I, keys_list(VAT_DAIS)) ... </k>
          <random> I => randInt(I) </random>
          <vat-dai> VAT_DAIS </vat-dai>
       requires size(VAT_DAIS) >Int 0
 
-    rule <k> GenFlipKick { ILKID , ADDRESS } STORAGE BENIFICIARY => LogGen ( transact ADDRESS Flip ILKID . kick STORAGE BENIFICIARY 1000 randRatBounded(I, VAT_GEM) randRatBounded(randInt(I), 1000) ) ... </k>
-         <random> I => randInt(randInt(I)) </random>
-         <vat-gem>
-           ...
-           { ILKID , ADDRESS } |-> VAT_GEM
-           ...
-         </vat-gem>
+    rule <k> GenFlipKick CDPID STORAGE BENEFICIARY => GenFlipKick CDPID STORAGE BENEFICIARY randRatBounded(I, VAT_GEM) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-gem> ... CDPID |-> VAT_GEM ... </vat-gem>
+
+    rule <k> GenFlipKick CDPID STORAGE BENEFICIARY LOT => GenFlipKick CDPID STORAGE BENEFICIARY LOT randRatBounded(I, 1000) ... </k>
+         <random> I => randInt(I) </random>
+
+    rule <k> GenFlipKick { ILKID , ADDRESS } STORAGE BENEFICIARY LOT BID => LogGen ( transact ADDRESS Flip ILKID . kick STORAGE BENEFICIARY 1000 LOT BID ) ... </k>
 
     syntax GenStep ::= GenPotStep
     syntax GenPotStep ::= "GenPotJoin"
