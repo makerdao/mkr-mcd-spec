@@ -10,17 +10,4 @@ AddGenerator ( GenGemJoinJoin "gold" "Bobby"
              ; GenEndSkip "gold"
              )
 
-GenStep
-GenStep
-GenStep
-GenStep
-GenStep
-GenStep
-GenStep
-GenStep
-GenStep
-GenStep
-
-assert
-
-.MCDSteps
+GenSteps

@@ -165,7 +165,7 @@ endif
 tests/attacks/lucash-pot-end.random.mcd.out:  KMCD_RANDOMSEED=""
 tests/attacks/lucash-pot.random.mcd.out:      KMCD_RANDOMSEED=""
 tests/attacks/lucash-flap-end.random.mcd.out: KMCD_RANDOMSEED="a0a3ao0Zaaa"
-tests/attacks/lucash-flip-end.random.mcd.out: KMCD_RANDOMSEED=""
+tests/attacks/lucash-flip-end.random.mcd.out: KMCD_RANDOMSEED="aaaaaaaaaaaaaaaaa"
 
 tests/%.mcd.out: tests/%.mcd $(TEST_KOMPILED)
 	RANDOMSEED=$(KMCD_RANDOMSEED) $(KMCD) run --backend $(TEST_BACKEND) $< > $<.out
