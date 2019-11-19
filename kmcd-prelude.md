@@ -170,6 +170,14 @@ module KMCD-GEN
         </kmcd-gen>
       </kmcd-random>
 
+    syntax Int ::= #timeStepMax() [function]
+                 | #dsrSpread()   [function]
+                 | #dsrMin()      [function]
+ // ----------------------------------------
+    rule #timeStepMax() => 2  [macro]
+    rule #dsrSpread()   => 20 [macro]
+    rule #dsrMin()      => 90 [macro]
+
     syntax DepthBound ::= Int | "*"
                         | decrement ( DepthBound ) [function, functional]
  // ---------------------------------------------------------------------
@@ -280,7 +288,7 @@ module KMCD-GEN
     syntax GenStep ::= GenTimeStep
     syntax GenTimeStep ::= "GenTimeStep"
  // ------------------------------------
-    rule <k> GenTimeStep => LogGen ( TimeStep ((I modInt 2) +Int 1) ) ... </k>
+    rule <k> GenTimeStep => LogGen ( TimeStep ((I modInt #timeStepMax()) +Int 1) ) ... </k>
          <random> I => randInt(I) </random>
 
     syntax GenStep ::= GenVatStep
@@ -460,7 +468,7 @@ module KMCD-GEN
          <random> I => randInt(I) </random>
          <vat-dai> ... ADDRESS |-> VAT_DAI ... </vat-dai>
 
-    rule <k> GenPotFileDSR => LogGen ( transact ADMIN Pot . file dsr (randRatBounded(I, 20 /Rat 100) +Rat (90 /Rat 100)) ) ... </k>
+    rule <k> GenPotFileDSR => LogGen ( transact ADMIN Pot . file dsr (randRatBounded(I, #dsrSpread() /Rat 100) +Rat (#dsrMin() /Rat 100)) ) ... </k>
          <random> I => randInt(I) </random>
 
     rule <k> GenPotExit => GenPotExit chooseAddress(I, keys_list(POT_PIES)) ... </k>
