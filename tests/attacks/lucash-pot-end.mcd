@@ -15,4 +15,6 @@ TimeStep 1 second
 transact "Alice" Pot . drip
 transact "Alice" Pot . exit 10
 
+assert
+
 .MCDSteps

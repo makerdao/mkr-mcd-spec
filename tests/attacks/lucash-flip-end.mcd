@@ -16,4 +16,6 @@ transact "Bobby" End . skip "gold" 1
 
 // Now Bobby has more dai than he should.
 
+assert
+
 .MCDSteps
