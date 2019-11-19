@@ -192,7 +192,7 @@ module KMCD-GEN
 
     syntax Rat ::= randRat ( Int ) [function]
  // -----------------------------------------
-    rule randRat(I) => (I modInt 100) /Rat 100
+    rule randRat(I) => (I modInt 101) /Rat 100
 
     syntax Rat ::= randRatBounded ( Int , Rat ) [function]
  // ------------------------------------------------------
