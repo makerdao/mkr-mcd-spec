@@ -485,9 +485,6 @@
     <random>
       b""
     </random>
-    <generator-depth-bound>
-      20
-    </generator-depth-bound>
     <generator-next>
       0
     </generator-next>

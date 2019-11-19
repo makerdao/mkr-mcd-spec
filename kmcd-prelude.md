@@ -156,7 +156,6 @@ module KMCD-GEN
         <kmcd-properties/>
         <kmcd-gen>
           <random> $RANDOMSEED:Bytes </random>
-          <generator-depth-bound> $GENDEPTH:DepthBound </generator-depth-bound>
           <generator-next> 0 </generator-next>
           <generator-current> 0 </generator-current>
           <generator-remainder> .GenStep </generator-remainder>
@@ -237,10 +236,8 @@ module KMCD-GEN
          <generator-next> N </generator-next>
          <generator-current> _ => head(BS) modInt N </generator-current>
          <generator-remainder> GSS => .GenStep </generator-remainder>
-         <generator-depth-bound> DB => decrement(DB) </generator-depth-bound>
          <violation> false </violation>
       requires lengthBytes(BS) >Int 0
-       andBool DB =/=K 0
 
     rule <k> GenStepLoad => GSS ... </k>
          <generator-current> I </generator-current>
@@ -256,6 +253,11 @@ module KMCD-GEN
            <generator-id> I </generator-id>
            <generator-steps> _ => GSS </generator-steps>
          </generator>
+
+    syntax MCDSteps ::= "GenSteps"
+ // ------------------------------
+    rule <k> GenSteps => #if lengthBytes(BS) >Int 0 #then GenStep ~> GenSteps #else assert #fi </k>
+         <random> BS </random>
 
     syntax AdminStep ::= LogGen ( MCDStep )
     syntax Event ::= GenStep ( MCDStep )
