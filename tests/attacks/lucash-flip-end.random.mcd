@@ -1,0 +1,24 @@
+STEPS ( ATTACK-PRELUDE )
+
+AddGenerator ( GenGemJoinJoin "gold" "Bobby"
+             ; GenEndCage
+             ; GenEndCageIlk
+             ; GenTimeStep
+             ; GenEndThaw
+             ; GenEndFlow
+             ; GenFlipKick { "gold" , "Bobby" }
+             ; GenEndSkip "gold"
+             )
+
+GenStep
+GenStep
+GenStep
+GenStep
+GenStep
+GenStep
+GenStep
+GenStep
+GenStep
+GenStep
+
+.MCDSteps

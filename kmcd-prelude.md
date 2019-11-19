@@ -82,6 +82,7 @@ module KMCD-PRELUDE
          transact ADMIN GemJoin "MKR" . init
 
          // Setup Flap account on MKR
+         transact ADMIN Gem "MKR" . initUser Vow
          transact ADMIN Gem "MKR" . initUser Flap
          transact ADMIN Gem "MKR" . mint Flap 20
 
@@ -169,6 +170,12 @@ module KMCD-GEN
         </kmcd-gen>
       </kmcd-random>
 
+    syntax Int ::= #timeStepMax() [function]
+                 | #dsrSpread()   [function]
+ // ----------------------------------------
+    rule #timeStepMax() => 2  [macro]
+    rule #dsrSpread()   => 20 [macro]
+
     syntax DepthBound ::= Int | "*"
                         | decrement ( DepthBound ) [function, functional]
  // ---------------------------------------------------------------------
@@ -183,7 +190,7 @@ module KMCD-GEN
 
     syntax Rat ::= randRat ( Int ) [function]
  // -----------------------------------------
-    rule randRat(I) => (I modInt 100) /Rat 100
+    rule randRat(I) => (I modInt 101) /Rat 100
 
     syntax Rat ::= randRatBounded ( Int , Rat ) [function]
  // ------------------------------------------------------
@@ -275,5 +282,269 @@ module KMCD-GEN
 
     rule <k> GSS | GSS' => #if R modInt 2 ==K 0 #then GSS #else GSS' #fi ... </k>
          <random> R => randInt(R) </random>
+
+    syntax GenStep ::= GenTimeStep
+    syntax GenTimeStep ::= "GenTimeStep"
+ // ------------------------------------
+    rule <k> GenTimeStep => LogGen ( TimeStep ((I modInt #timeStepMax()) +Int 1) ) ... </k>
+         <random> I => randInt(I) </random>
+
+    syntax GenStep ::= GenVatStep
+    syntax GenVatStep ::= "GenVatFrob"
+                        | "GenVatFrob" CDPID
+                        | "GenVatFrob" CDPID Wad [prefer]
+                        | "GenVatMove"
+                        | "GenVatMove" Address
+                        | "GenVatMove" Address Address
+                        | "GenVatHope"
+                        | "GenVatHope" Address
+                        | "GenVatHope" Address Address
+ // --------------------------------------------------
+    rule <k> GenVatFrob => GenVatFrob chooseCDPID(I, keys_list(VAT_URNS)) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-urns> VAT_URNS </vat-urns>
+      requires size(VAT_URNS) >Int 0
+
+    rule <k> GenVatFrob CDPID => GenVatFrob CDPID ((2 *Rat randRatBounded(I, VAT_GEM)) -Rat VAT_GEM) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-gem> ... CDPID |-> VAT_GEM ... </vat-gem>
+
+    rule <k> GenVatFrob { ILKID , ADDRESS } DINK
+          => #fun( DARTBOUND
+                => LogGen ( transact ADDRESS Vat . frob ILKID ADDRESS ADDRESS ADDRESS DINK ((2 *Rat randRatBounded(I, DARTBOUND)) -Rat DARTBOUND) )
+                 ) (((SPOT *Rat (URNINK +Rat DINK)) /Rat RATE) -Rat URNART)
+         ...
+         </k>
+         <random> I => randInt(I) </random>
+         <vat-ilks>
+           ...
+           ILKID |-> Ilk ( ... rate: RATE, spot: SPOT )
+           ...
+         </vat-ilks>
+         <vat-urns>
+           ...
+           { ILKID , ADDRESS } |-> Urn ( ... ink: URNINK, art: URNART )
+           ...
+         </vat-urns>
+
+    rule <k> GenVatMove => GenVatMove chooseAddress(I, keys_list(VAT_DAIS)) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-dai> VAT_DAIS </vat-dai>
+      requires size(VAT_DAIS) >Int 0
+
+    rule <k> GenVatMove ADDRSRC => GenVatMove ADDRSRC chooseAddress(I, keys_list(VAT_DAIS)) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-dai> VAT_DAIS </vat-dai>
+      requires size(VAT_DAIS) >Int 0
+
+    rule <k> GenVatMove ADDRSRC ADDRDST => LogGen ( transact ADDRSRC Vat . move ADDRSRC ADDRDST randRatBounded(I, VAT_DAI) ) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-dai>
+           ...
+           ADDRSRC |-> VAT_DAI
+           ...
+         </vat-dai>
+
+    rule <k> GenVatHope => GenVatHope chooseAddress(I, keys_list(VAT_DAI)) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-dai> VAT_DAI </vat-dai>
+      requires size(VAT_DAI) >Int 0
+
+    rule <k> GenVatHope ADDRSRC => GenVatHope ADDRSRC chooseAddress(I, keys_list(VAT_DAI)) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-dai> VAT_DAI </vat-dai>
+      requires size(VAT_DAI) >Int 0
+
+    rule <k> GenVatHope ADDRSRC ADDRDST => LogGen ( transact ADDRSRC Vat . hope ADDRDST ) ... </k>
+
+    syntax GenStep ::= GenGemJoinStep
+    syntax GenGemJoinStep ::= "GenGemJoinJoin"
+                            | "GenGemJoinJoin" String
+                            | "GenGemJoinJoin" String Address
+ // ---------------------------------------------------------
+    // **TODO**: Would be better to choose from an ILK with <gem-id>
+    rule <k> GenGemJoinJoin => GenGemJoinJoin chooseString(I, (ListItem("MKR") ListItem("gold"))) ... </k>
+         <random> I => randInt(I) </random>
+//         <gem-joins> GEM_JOINS </gem-joins>
+//      requires size(GEM_JOINS) >Int 0
+
+    rule <k> GenGemJoinJoin GEM_JOIN_ID => GenGemJoinJoin GEM_JOIN_ID chooseAddress(I, keys_list(GEM_BALANCES)) ... </k>
+         <random> I => randInt(I) </random>
+         <gem>
+           <gem-id> GEM_JOIN_ID </gem-id>
+           <gem-balances> GEM_BALANCES </gem-balances>
+           ...
+         </gem>
+      requires size(GEM_BALANCES) >Int 0
+
+    rule <k> GenGemJoinJoin GEM_JOIN_ID ADDRESS => LogGen ( transact ADDRESS GemJoin GEM_JOIN_ID . join ADDRESS randRatBounded(I, GEM_BALANCE) ) ... </k>
+         <random> I => randInt(I) </random>
+         <gem>
+           <gem-id> GEM_JOIN_ID </gem-id>
+           <gem-balances> ... ADDRESS |-> GEM_BALANCE ... </gem-balances>
+           ...
+         </gem>
+
+    syntax GenStep ::= GenFlapStep
+    syntax GenFlapStep ::= "GenFlapKick"
+                         | "GenFlapKick" Address
+                         | "GenFlapKick" Address Rad
+                         | "GenFlapKick" Address Rad Wad
+                         | "GenFlapYank"
+ // ------------------------------------
+    rule <k> GenFlapKick => GenFlapKick chooseAddress(I, keys_list(VAT_DAIS)) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-dai> VAT_DAIS </vat-dai>
+      requires size(VAT_DAIS) >Int 0
+
+    rule <k> GenFlapKick ADDRESS => GenFlapKick ADDRESS randRatBounded(I, VOW_DAI) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-dai> ... ADDRESS |-> VOW_DAI ... </vat-dai>
+
+    rule <k> GenFlapKick ADDRESS LOT => GenFlapKick ADDRESS LOT randRatBounded(I, FLAP_MKR) ... </k>
+         <random> I => randInt(I) </random>
+         <gem>
+           <gem-id> "MKR" </gem-id>
+           <gem-balances> ... Flap |-> FLAP_MKR ... </gem-balances>
+           ...
+         </gem>
+
+    rule <k> GenFlapKick ADDRESS LOT BID => LogGen ( transact ADDRESS Flap . kick LOT BID ) ... </k>
+
+    rule <k> GenFlapYank => LogGen ( transact ANYONE Flap . yank chooseInt(I, keys_list(FLAP_BIDS)) ) ... </k>
+         <random> I => randInt(I) </random>
+         <flap-bids> FLAP_BIDS </flap-bids>
+      requires size(FLAP_BIDS) >Int 0
+
+    syntax GenStep ::= GenFlipStep
+    syntax GenFlipStep ::= "GenFlipKick"
+                         | "GenFlipKick" CDPID
+                         | "GenFlipKick" CDPID Address
+                         | "GenFlipKick" CDPID Address Address
+ // ----------------------------------------------------------
+    rule <k> GenFlipKick => GenFlipKick chooseCDPID(I, keys_list(VAT_GEMS)) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-gem> VAT_GEMS </vat-gem>
+      requires size(VAT_GEMS) >Int 0
+
+    rule <k> GenFlipKick { ILKID , ADDRESS } => GenFlipKick { ILKID , ADDRESS } chooseAddress(I, keys_list(VAT_DAIS)) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-dai> VAT_DAIS </vat-dai>
+      requires size(VAT_DAIS) >Int 0
+
+    rule <k> GenFlipKick { ILKID , ADDRESS } STORAGE => GenFlipKick { ILKID , ADDRESS } STORAGE chooseAddress(I, keys_list(VAT_DAIS)) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-dai> VAT_DAIS </vat-dai>
+      requires size(VAT_DAIS) >Int 0
+
+    rule <k> GenFlipKick { ILKID , ADDRESS } STORAGE BENIFICIARY => LogGen ( transact ADDRESS Flip ILKID . kick STORAGE BENIFICIARY 1000 randRatBounded(I, VAT_GEM) randRatBounded(randInt(I), 1000) ) ... </k>
+         <random> I => randInt(randInt(I)) </random>
+         <vat-gem>
+           ...
+           { ILKID , ADDRESS } |-> VAT_GEM
+           ...
+         </vat-gem>
+
+    syntax GenStep ::= GenPotStep
+    syntax GenPotStep ::= "GenPotJoin"
+                        | "GenPotJoin" Address
+                        | "GenPotFileDSR"
+                        | "GenPotDrip"
+                        | "GenPotExit"
+                        | "GenPotExit" Address
+                        | "GenPotCage"
+ // ----------------------------------
+    rule <k> GenPotCage => LogGen ( transact ADMIN  Pot . cage ) ... </k>
+    rule <k> GenPotDrip => LogGen ( transact ANYONE Pot . drip ) ... </k>
+
+    rule <k> GenPotJoin => GenPotJoin chooseAddress(I, keys_list(POT_PIES)) ... </k>
+         <random> I => randInt(I) </random>
+         <pot-pies> POT_PIES </pot-pies>
+      requires size(POT_PIES) >Int 0
+
+    rule <k> GenPotJoin ADDRESS => LogGen ( transact ADDRESS Pot . join randRatBounded(I, VAT_DAI) ) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-dai> ... ADDRESS |-> VAT_DAI ... </vat-dai>
+
+    rule <k> GenPotFileDSR => LogGen ( transact ADMIN Pot . file dsr (randRatBounded(I, #dsrSpread() /Rat 100) +Rat 1) ) ... </k>
+         <random> I => randInt(I) </random>
+
+    rule <k> GenPotExit => GenPotExit chooseAddress(I, keys_list(POT_PIES)) ... </k>
+         <random> I => randInt(I) </random>
+         <pot-pies> POT_PIES </pot-pies>
+      requires size(POT_PIES) >Int 0
+
+    rule <k> GenPotExit ADDRESS => LogGen ( transact ADDRESS Pot . exit (VAT_DAI /Rat CHI) ) ... </k>
+         <vat-dai> ... Pot |-> VAT_DAI ... </vat-dai>
+         <pot-chi> CHI </pot-chi>
+
+    syntax GenStep ::= GenEndStep
+    syntax GenEndStep ::= "GenEndCage"
+                        | "GenEndCageIlk"
+                        | "GenEndSkim"
+                        | "GenEndSkim" CDPID
+                        | "GenEndThaw"
+                        | "GenEndFlow"
+                        | "GenEndSkip"
+                        | "GenEndSkip" String
+                        | "GenEndPack"
+                        | "GenEndPack" Address
+                        | "GenEndCash"
+                        | "GenEndCash" CDPID
+ // ----------------------------------------
+    rule <k> GenEndCage => LogGen ( transact ADMIN  End . cage ) ... </k>
+    rule <k> GenEndThaw => LogGen ( transact ANYONE End . thaw ) ... </k>
+
+    rule <k> GenEndCageIlk => LogGen ( transact ANYONE End . cage chooseString(I, keys_list(ILKS)) ) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-ilks> ILKS </vat-ilks>
+      requires size(ILKS) >Int 0
+
+    // **TODO**: Would be better to choose from an ILK with <end-tag> and <end-gap> too
+    rule <k> GenEndSkim => GenEndSkim chooseCDPID(I, keys_list(VAT_URNS)) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-urns> VAT_URNS </vat-urns>
+      requires size(VAT_URNS) >Int 0
+
+    rule <k> GenEndSkim { ILKID , ADDRESS } => LogGen ( transact ANYONE End . skim ILKID ADDRESS ) ... </k>
+
+    rule <k> GenEndFlow => LogGen ( transact ANYONE End . flow chooseString(I, keys_list(ILKS)) ) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-ilks> ILKS </vat-ilks>
+      requires size(ILKS) >Int 0
+
+    // **TODO**: Would be better to pick an ILKID from <flips>
+    rule <k> GenEndSkip => GenEndSkip chooseString(I, keys_list(ILKS)) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-ilks> ILKS </vat-ilks>
+      requires size(ILKS) >Int 0
+
+    rule <k> GenEndSkip ILKID => LogGen ( transact ANYONE End . skip ILKID chooseInt(I, keys_list(FLIP_BIDS)) ) ... </k>
+         <random> I => randInt(I) </random>
+         <flip>
+           <flip-ilk> ILKID </flip-ilk>
+           <flip-bids> FLIP_BIDS </flip-bids>
+           ...
+         </flip>
+      requires size(FLIP_BIDS) >Int 0
+
+    rule <k> GenEndPack => GenEndPack chooseAddress(I, keys_list(END_BAGS)) ... </k>
+         <random> I => randInt(I) </random>
+         <end-bag> END_BAGS </end-bag>
+      requires size(END_BAGS) >Int 0
+
+    rule <k> GenEndPack ADDRESS => LogGen ( transact ADDRESS End . pack randIntBounded(I, VAT_DAI) ) ... </k>
+         <random> I => randInt(I) </random>
+         <vat-dai> ... ADDRESS |-> VAT_DAI ... </vat-dai>
+
+    rule <k> GenEndCash => GenEndCash chooseCDPID(I, keys_list(END_OUTS)) ... </k>
+         <random> I => randInt(I) </random>
+         <end-out> END_OUTS </end-out>
+      requires size(END_OUTS) >Int 0
+
+    rule <k> GenEndCash { ILKID , ADDRESS } => LogGen ( transact ADDRESS End . cash ILKID randRatBounded(I, BAG -Rat OUT) ) ... </k>
+         <random> I => randInt(I) </random>
+         <end-out> ... { ILKID , ADDRESS } |-> OUT ... </end-out>
+         <end-bag> ... ADDRESS |-> BAG ... </end-bag>
 endmodule
 ```

@@ -9,13 +9,13 @@
           .
         </return-value>
         <msg-sender>
-          "Bobby"
+          "Alice"
         </msg-sender>
         <this>
-          "Bobby"
+          "Alice"
         </this>
         <current-time>
-          3600
+          1
         </current-time>
         <call-stack>
           .List
@@ -90,9 +90,7 @@
           ListItem ( LogNote ( ADMIN , End . initBag "Bobby" ) )
           ListItem ( LogNote ( ADMIN , End . initOut "gold" "Alice" ) )
           ListItem ( LogNote ( ADMIN , End . initOut "gold" "Bobby" ) )
-          ListItem ( LogNote ( "Bobby" , Vat . slip "gold" "Bobby" 1 ) )
-          ListItem ( LogNote ( "Bobby" , Gem "gold" . transferFrom "Bobby" GemJoin "gold" 1 ) )
-          ListItem ( LogNote ( "Bobby" , GemJoin "gold" . join "Bobby" 1 ) )
+          ListItem ( GenStep ( transact ADMIN End . cage ) )
           ListItem ( LogNote ( ADMIN , Vat . cage ) )
           ListItem ( LogNote ( ADMIN , Cat . cage ) )
           ListItem ( LogNote ( Vow , Vat . move Flap Vow 0 ) )
@@ -102,12 +100,31 @@
           ListItem ( LogNote ( ADMIN , Vow . cage ) )
           ListItem ( LogNote ( ADMIN , Pot . cage ) )
           ListItem ( LogNote ( ADMIN , End . cage ) )
-          ListItem ( LogNote ( ADMIN , End . cage "gold" ) )
-          ListItem ( TimeStep ( 3600 , 3600 ) )
-          ListItem ( LogNote ( ADMIN , End . thaw ) )
-          ListItem ( LogNote ( ADMIN , End . flow "gold" ) )
-          ListItem ( Exception ( Flip "gold" . kick End "Bobby" 1001000000000 1 1000000000000 ) )
-          ListItem ( Exception ( End . skip "gold" 1 ) )
+          ListItem ( GenStep ( transact ANYONE End . cage "gold" ) )
+          ListItem ( LogNote ( ANYONE , End . cage "gold" ) )
+          ListItem ( GenStep ( transact ANYONE End . skim "gold" "Alice" ) )
+          ListItem ( LogNote ( ANYONE , Vat . grab "gold" "Alice" End Vow -10 -10 ) )
+          ListItem ( LogNote ( ANYONE , End . skim "gold" "Alice" ) )
+          ListItem ( GenStep ( transact ANYONE End . skim "gold" "Bobby" ) )
+          ListItem ( LogNote ( ANYONE , Vat . grab "gold" "Bobby" End Vow -10 -10 ) )
+          ListItem ( LogNote ( ANYONE , End . skim "gold" "Bobby" ) )
+          ListItem ( GenStep ( transact ANYONE End . thaw ) )
+          ListItem ( LogNote ( ANYONE , End . thaw ) )
+          ListItem ( GenStep ( transact ANYONE End . flow "gold" ) )
+          ListItem ( LogNote ( ANYONE , End . flow "gold" ) )
+          ListItem ( GenStep ( transact "Alice" Pot . join 22 /Rat 5 ) )
+          ListItem ( LogNote ( "Alice" , Vat . move "Alice" Pot 22 /Rat 5 ) )
+          ListItem ( LogNote ( "Alice" , Pot . join 22 /Rat 5 ) )
+          ListItem ( GenStep ( transact ADMIN Pot . file dsr 136 /Rat 125 ) )
+          ListItem ( Exception ( Pot . file dsr 136 /Rat 125 ) )
+          ListItem ( GenStep ( TimeStep 1 ) )
+          ListItem ( TimeStep ( 1 , 1 ) )
+          ListItem ( GenStep ( transact ANYONE Pot . drip ) )
+          ListItem ( LogNote ( ANYONE , Vat . suck Vow Pot 0 ) )
+          ListItem ( LogNote ( ANYONE , Pot . drip ) )
+          ListItem ( GenStep ( transact "Alice" Pot . exit 22 /Rat 5 ) )
+          ListItem ( LogNote ( "Alice" , Vat . move Pot "Alice" 22 /Rat 5 ) )
+          ListItem ( LogNote ( "Alice" , Pot . exit 22 /Rat 5 ) )
         </events>
         <frame-events>
           .List
@@ -288,8 +305,8 @@
             </gem-wards>
             <gem-balances>
               "Alice" |-> 10
-              "Bobby" |-> 9
-              GemJoin "gold" |-> 21
+              "Bobby" |-> 10
+              GemJoin "gold" |-> 20
             </gem-balances>
           </gem>
         </gems>
@@ -361,7 +378,7 @@
             Vow
           </pot-vow>
           <pot-rho>
-            0
+            1
           </pot-rho>
           <pot-live>
             false
@@ -400,17 +417,17 @@
             Vow |-> .Set
           </vat-can>
           <vat-ilks>
-            "gold" |-> Ilk ( 20 , 1 , 3000000000 , 1000000000000 , 0 )
+            "gold" |-> Ilk ( 0 , 1 , 3000000000 , 1000000000000 , 0 )
           </vat-ilks>
           <vat-urns>
-            { "gold" , "Alice" } |-> Urn ( 10 , 10 )
-            { "gold" , "Bobby" } |-> Urn ( 10 , 10 )
+            { "gold" , "Alice" } |-> Urn ( 0 , 0 )
+            { "gold" , "Bobby" } |-> Urn ( 0 , 0 )
             { "gold" , End } |-> Urn ( 0 , 0 )
           </vat-urns>
           <vat-gem>
             { "gold" , "Alice" } |-> 0
-            { "gold" , "Bobby" } |-> 1
-            { "gold" , End } |-> 0
+            { "gold" , "Bobby" } |-> 0
+            { "gold" , End } |-> 20
             { "gold" , Flip "gold" } |-> 0
           </vat-gem>
           <vat-dai>
@@ -427,13 +444,13 @@
             End |-> 0
             Flap |-> 0
             Pot |-> 0
-            Vow |-> 0
+            Vow |-> 20
           </vat-sin>
           <vat-debt>
             20
           </vat-debt>
           <vat-vice>
-            0
+            20
           </vat-vice>
           <vat-Line>
             1000000000000
@@ -483,13 +500,13 @@
   </kmcd-properties>
   <kmcd-gen>
     <random>
-      0
+      1967513926
     </random>
     <generator-depth-bound>
-      20
+      9
     </generator-depth-bound>
     <generator-next>
-      0
+      1
     </generator-next>
     <generator-current>
       0
@@ -498,7 +515,14 @@
       .GenStep
     </generator-remainder>
     <generators>
-      .GeneratorCellMap
+      <generator>
+        <generator-id>
+          0
+        </generator-id>
+        <generator-steps>
+          .GenStep
+        </generator-steps>
+      </generator>
     </generators>
     <end-gen>
       .GenStep
