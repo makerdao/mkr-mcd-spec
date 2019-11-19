@@ -90,10 +90,10 @@
           ListItem ( LogNote ( ADMIN , End . initBag "Bobby" ) )
           ListItem ( LogNote ( ADMIN , End . initOut "gold" "Alice" ) )
           ListItem ( LogNote ( ADMIN , End . initOut "gold" "Bobby" ) )
-          ListItem ( GenStep ( transact "Bobby" GemJoin "gold" . join "Bobby" 83 /Rat 10 ) )
-          ListItem ( LogNote ( "Bobby" , Vat . slip "gold" "Bobby" 83 /Rat 10 ) )
-          ListItem ( LogNote ( "Bobby" , Gem "gold" . transferFrom "Bobby" GemJoin "gold" 83 /Rat 10 ) )
-          ListItem ( LogNote ( "Bobby" , GemJoin "gold" . join "Bobby" 83 /Rat 10 ) )
+          ListItem ( GenStep ( transact "Bobby" GemJoin "gold" . join "Bobby" 16 /Rat 5 ) )
+          ListItem ( LogNote ( "Bobby" , Vat . slip "gold" "Bobby" 16 /Rat 5 ) )
+          ListItem ( LogNote ( "Bobby" , Gem "gold" . transferFrom "Bobby" GemJoin "gold" 16 /Rat 5 ) )
+          ListItem ( LogNote ( "Bobby" , GemJoin "gold" . join "Bobby" 16 /Rat 5 ) )
           ListItem ( GenStep ( transact ADMIN End . cage ) )
           ListItem ( LogNote ( ADMIN , Vat . cage ) )
           ListItem ( LogNote ( ADMIN , Cat . cage ) )
@@ -112,8 +112,8 @@
           ListItem ( LogNote ( ANYONE , End . thaw ) )
           ListItem ( GenStep ( transact ANYONE End . flow "gold" ) )
           ListItem ( LogNote ( ANYONE , End . flow "gold" ) )
-          ListItem ( GenStep ( transact "Bobby" Flip "gold" . kick "Alice" "Bobby" 1000 747 /Rat 100 590 ) )
-          ListItem ( Exception ( Flip "gold" . kick "Alice" "Bobby" 1000 747 /Rat 100 590 ) )
+          ListItem ( GenStep ( transact "Bobby" Flip "gold" . kick End Flap 1000 52 /Rat 25 190 ) )
+          ListItem ( Exception ( Flip "gold" . kick End Flap 1000 52 /Rat 25 190 ) )
           ListItem ( GenStepFailed ( GenEndSkip "gold" ) )
         </events>
         <frame-events>
@@ -295,8 +295,8 @@
             </gem-wards>
             <gem-balances>
               "Alice" |-> 10
-              "Bobby" |-> 17 /Rat 10
-              GemJoin "gold" |-> 283 /Rat 10
+              "Bobby" |-> 34 /Rat 5
+              GemJoin "gold" |-> 116 /Rat 5
             </gem-balances>
           </gem>
         </gems>
@@ -416,7 +416,7 @@
           </vat-urns>
           <vat-gem>
             { "gold" , "Alice" } |-> 0
-            { "gold" , "Bobby" } |-> 83 /Rat 10
+            { "gold" , "Bobby" } |-> 16 /Rat 5
             { "gold" , End } |-> 0
             { "gold" , Flip "gold" } |-> 0
           </vat-gem>

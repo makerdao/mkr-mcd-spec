@@ -90,12 +90,12 @@
           ListItem ( LogNote ( ADMIN , End . initBag "Bobby" ) )
           ListItem ( LogNote ( ADMIN , End . initOut "gold" "Alice" ) )
           ListItem ( LogNote ( ADMIN , End . initOut "gold" "Bobby" ) )
-          ListItem ( GenStep ( transact ADMIN Pot . file dsr 533 /Rat 500 ) )
-          ListItem ( LogNote ( ADMIN , Pot . file dsr 533 /Rat 500 ) )
+          ListItem ( GenStep ( transact ADMIN Pot . file dsr 133 /Rat 125 ) )
+          ListItem ( LogNote ( ADMIN , Pot . file dsr 133 /Rat 125 ) )
           ListItem ( GenStep ( TimeStep 2 ) )
           ListItem ( TimeStep ( 2 , 2 ) )
-          ListItem ( GenStep ( transact "Alice" Pot . join 93 /Rat 10 ) )
-          ListItem ( Exception ( Pot . join 93 /Rat 10 ) )
+          ListItem ( GenStep ( transact "Alice" Pot . join 26 /Rat 5 ) )
+          ListItem ( Exception ( Pot . join 26 /Rat 5 ) )
           ListItem ( GenStep ( transact ANYONE Pot . drip ) )
           ListItem ( LogNote ( ANYONE , Vat . suck Vow Pot 0 ) )
           ListItem ( LogNote ( ANYONE , Pot . drip ) )
@@ -346,10 +346,10 @@
             0
           </pot-pie>
           <pot-dsr>
-            533 /Rat 500
+            133 /Rat 125
           </pot-dsr>
           <pot-chi>
-            284089 /Rat 250000
+            17689 /Rat 15625
           </pot-chi>
           <pot-vow>
             Vow
