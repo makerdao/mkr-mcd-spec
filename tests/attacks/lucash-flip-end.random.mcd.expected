@@ -112,8 +112,8 @@
           ListItem ( LogNote ( ANYONE , End . thaw ) )
           ListItem ( GenStep ( transact ANYONE End . flow "gold" ) )
           ListItem ( LogNote ( ANYONE , End . flow "gold" ) )
-          ListItem ( GenStep ( transact "Bobby" Flip "gold" . kick End Flap 1000 52 /Rat 25 190 ) )
-          ListItem ( Exception ( Flip "gold" . kick End Flap 1000 52 /Rat 25 190 ) )
+          ListItem ( GenStep ( transact "Bobby" Flip "gold" . kick End Flap 1000 176 /Rat 125 390 ) )
+          ListItem ( Exception ( Flip "gold" . kick End Flap 1000 176 /Rat 125 390 ) )
           ListItem ( GenStepFailed ( GenEndSkip "gold" ) )
         </events>
         <frame-events>
@@ -490,7 +490,7 @@
   </kmcd-properties>
   <kmcd-gen>
     <random>
-      304089172
+      1365180540
     </random>
     <generator-depth-bound>
       10
