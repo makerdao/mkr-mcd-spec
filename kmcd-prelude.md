@@ -172,11 +172,9 @@ module KMCD-GEN
 
     syntax Int ::= #timeStepMax() [function]
                  | #dsrSpread()   [function]
-                 | #dsrMin()      [function]
  // ----------------------------------------
     rule #timeStepMax() => 2  [macro]
     rule #dsrSpread()   => 20 [macro]
-    rule #dsrMin()      => 90 [macro]
 
     syntax DepthBound ::= Int | "*"
                         | decrement ( DepthBound ) [function, functional]
@@ -468,7 +466,7 @@ module KMCD-GEN
          <random> I => randInt(I) </random>
          <vat-dai> ... ADDRESS |-> VAT_DAI ... </vat-dai>
 
-    rule <k> GenPotFileDSR => LogGen ( transact ADMIN Pot . file dsr (randRatBounded(I, #dsrSpread() /Rat 100) +Rat (#dsrMin() /Rat 100)) ) ... </k>
+    rule <k> GenPotFileDSR => LogGen ( transact ADMIN Pot . file dsr (randRatBounded(I, #dsrSpread() /Rat 100) +Rat 1) ) ... </k>
          <random> I => randInt(I) </random>
 
     rule <k> GenPotExit => GenPotExit chooseAddress(I, keys_list(POT_PIES)) ... </k>
