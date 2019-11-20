@@ -151,6 +151,43 @@ def generatorChoice(genSteps):
 def addGenerator(generator):
     return KApply('AddGenerator(_)_KMCD-GEN_AdminStep_GenStep', [generator])
 
+#AddGenerator ( GenGemJoinJoin "gold" "Bobby"
+#             ; GenEndCage
+#             ; GenEndCageIlk
+#             ; GenTimeStep
+#             ; GenEndThaw
+#             ; GenEndFlow
+#             ; GenFlipKick { "gold" , "Bobby" } End Flap
+#             ; GenEndSkip "gold"
+#             )
+generator_lucash_flip_end = generatorSequence( [ KApply( 'GenGemJoinJoin___KMCD-GEN_GenGemJoinStep_String_Address' , [ KToken('"gold"', 'String')
+                                                                                                                     , KToken('"Bobby"', 'String')
+                                                                                                                     ]
+                                                       )
+                                               , KConstant('GenEndCage_KMCD-GEN_GenEndStep')
+                                               , KConstant('GenEndCageIlk_KMCD-GEN_GenEndStep')
+                                               , KConstant('GenTimeStep_KMCD-GEN_GenTimeStep')
+                                               , KConstant('GenEndThaw_KMCD-GEN_GenEndStep')
+                                               , KConstant('GenEndFlow_KMCD-GEN_GenEndStep')
+                                               , KApply( 'GenFlipKick____KMCD-GEN_GenFlipStep_CDPID_Address_Address' , [ KApply('{_,_}_VAT_CDPID_String_Address', [ KToken('"gold"', 'String'), KToken('"Bobby"', 'String') ])
+                                                                                                                       , KConstant('End_END_EndContract')
+                                                                                                                       , KConstant('Flap_FLAP_FlapContract')
+                                                                                                                       ]
+                                                       )
+                                               , KApply( 'GenEndSkip__KMCD-GEN_GenEndStep_String', [ KToken('"gold"', 'String') ] )
+                                               ]
+                                             )
+
+#AddGenerator ( GenVatMove "Alice" Vow
+#             ; GenGemJoinJoin "gold" "Bobby"
+#             ; GenVatHope "Alice" Flap
+#             ; GenFlapKick "Alice"
+#             ; GenEndCage
+#             ; GenFlapYank
+#             )
+def generator_lucash_flap_end():
+    sys.exit(1)
+
 if __name__ == '__main__':
     gendepth = int(sys.argv[1])
 
