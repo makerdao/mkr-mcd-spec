@@ -105,6 +105,52 @@ def get_init_config(init_term):
     (_, init_config, _) = krunJSON_llvm(kast_json, *randomSeedArgs())
     return pyk.splitConfigFrom(init_config)
 
+def steps(step):
+    return KApply('STEPS(_)_KMCD-PRELUDE_MCDStep_MCDSteps', [step])
+
+def depthBound(step, bound):
+    if type(bound) is int:
+        bound = intToken(bound)
+    elif type(bound) is str and bound == "*":
+        bound = KConstant('*_KMCD-GEN_DepthBound')
+    else:
+        _fatal('Unknown depth bound: ' + str(bound))
+    return KApply('___KMCD-GEN_GenStep_GenStep_DepthBound', [step, bound])
+
+def randombytes(size):
+    return bytearray(random.getrandbits(8) for _ in range(size))
+
+def sanitizeBytes(kast):
+    def _sanitizeBytes(_kast):
+        if pyk.isKToken(_kast) and _kast['sort'] == 'Bytes':
+            if len(_kast['token']) > 2 and _kast['token'][0:2] == 'b"' and _kast['token'][-1] == '"':
+                return KToken(_kast['token'][2:-1], 'Bytes')
+        return _kast
+    return pyk.traverseBottomUp(kast, _sanitizeBytes)
+
+def consJoin(elements, join, unit, assoc = False):
+    if len(elements) == 0:
+        return KConstant(unit)
+    elif assoc and len(elements) == 1:
+        return elements[0]
+    else:
+        return KApply(join, [elements[0], consJoin(elements[1:], join, unit)])
+
+genStep  = KConstant('GenStep_KMCD-GEN_GenStep')
+genSteps = KConstant('GenSteps_KMCD-GEN_MCDSteps')
+
+def mcdSteps(steps):
+    return consJoin(steps, '___KMCD-DRIVER_MCDSteps_MCDStep_MCDSteps', '.MCDSteps_KMCD-DRIVER_MCDSteps')
+
+def generatorSequence(genSteps):
+    return consJoin(genSteps, '_;__KMCD-GEN_GenStep_GenStep_GenStep', '.GenStep_KMCD-GEN_GenStep', assoc = True)
+
+def generatorChoice(genSteps):
+    return consJoin(genSteps, '_|__KMCD-GEN_GenStep_GenStep_GenStep', '.GenStep_KMCD-GEN_GenStep', assoc = True)
+
+def addGenerator(generator):
+    return KApply('AddGenerator(_)_KMCD-GEN_AdminStep_GenStep', [generator])
+
 if __name__ == '__main__':
     (symbolic_configuration, init_cells) = get_init_config(KConstant('.MCDSteps_KMCD-DRIVER_MCDSteps'))
     initial_configuration = pyk.substitute(symbolic_configuration, init_cells)
