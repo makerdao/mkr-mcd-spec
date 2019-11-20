@@ -238,6 +238,14 @@ module KMCD-GEN
          <generator-remainder> GSS => .GenStep </generator-remainder>
          <violation> false </violation>
       requires lengthBytes(BS) >Int 0
+       andBool N >Int 0
+
+    rule <k> GenStep => . ... </k>
+         <generator-next> N </generator-next>
+         <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS, 1, BE)) </used-random>
+      requires lengthBytes(BS) >Int 0
+       andBool notBool N >Int 0
 
     rule <k> GenStepLoad => GSS ... </k>
          <generator-current> I </generator-current>
