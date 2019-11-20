@@ -484,6 +484,9 @@
     <random>
       b""
     </random>
+    <used-random>
+      b""
+    </used-random>
     <generator-next>
       0
     </generator-next>
@@ -496,8 +499,5 @@
     <generators>
       .GeneratorCellMap
     </generators>
-    <end-gen>
-      .GenStep
-    </end-gen>
   </kmcd-gen>
 </kmcd-random>
