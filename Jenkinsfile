@@ -33,20 +33,6 @@ pipeline {
     }
     stage('Test') {
       parallel {
-        stage('Build Configuration') {
-          steps {
-            sh '''
-              make test-python-config
-            '''
-          }
-        }
-        stage('Run Simple Tests') {
-          steps {
-            sh '''
-              make test-python-run
-            '''
-          }
-        }
         stage('Run Simulation Tests') {
           steps {
             sh '''

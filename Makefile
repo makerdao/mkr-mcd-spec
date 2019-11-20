@@ -26,12 +26,11 @@ LUA_PATH:=$(PANDOC_TANGLE_SUBMODULE)/?.lua;;
 export TANGLER
 export LUA_PATH
 
-.PHONY: all clean                                              \
-        deps deps-k deps-tangle deps-media                     \
-        defn defn-llvm defn-haskell                            \
-        build build-llvm build-haskell build-java              \
-        test test-python-config test-python-run test-execution \
-        update-test-execution
+.PHONY: all clean                                 \
+        deps deps-k deps-tangle deps-media        \
+        defn defn-llvm defn-haskell               \
+        build build-llvm build-haskell build-java \
+        test test-execution update-test-execution
 .SECONDARY:
 
 all: build
@@ -137,15 +136,7 @@ $(java_kompiled): $(java_files)
 
 KMCD_RANDOMSEED := ""
 
-test: test-python-config test-python-run test-execution
-
-### `pyk` tests
-
-test-python-config:
-	RANDOMSEED=$(KMCD_RANDOMSEED) ./mcd-pyk.py
-
-test-python-run: tests/sneak-tx.json
-	RANDOMSEED=$(KMCD_RANDOMSEED) ./mcd-pyk.py $<
+test: test-execution
 
 ### Execution tests
 
@@ -168,7 +159,7 @@ tests/attacks/lucash-flap-end.random.mcd.out: KMCD_RANDOMSEED="a0a3ao0Zaaa"
 tests/attacks/lucash-flip-end.random.mcd.out: KMCD_RANDOMSEED="aaaaaaaaaaaaaaaaa"
 
 tests/%.mcd.out: tests/%.mcd $(TEST_KOMPILED)
-	RANDOMSEED=$(KMCD_RANDOMSEED) $(KMCD) run --backend $(TEST_BACKEND) $< > $<.out
+	$(KMCD) run --backend $(TEST_BACKEND) $< -cRANDOMSEED= > $<.out
 
 tests/%.mcd.run: tests/%.mcd.out
 	$(CHECK) tests/$*.mcd.expected tests/$*.mcd.out
