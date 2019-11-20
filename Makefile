@@ -30,7 +30,8 @@ export LUA_PATH
         deps deps-k deps-tangle deps-media        \
         defn defn-llvm defn-haskell               \
         build build-llvm build-haskell build-java \
-        test test-execution update-test-execution
+        test test-execution test-python-generator \
+        update-test-execution
 .SECONDARY:
 
 all: build
@@ -136,7 +137,12 @@ $(java_kompiled): $(java_files)
 
 KMCD_RANDOMSEED := ""
 
-test: test-execution
+test: test-execution test-python-generator
+
+### Python Generator Test
+
+test-python-generator: mcd-pyk.py
+	python3 mcd-pyk.py 5
 
 ### Execution tests
 
