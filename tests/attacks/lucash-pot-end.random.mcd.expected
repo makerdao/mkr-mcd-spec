@@ -15,7 +15,7 @@
           "Alice"
         </this>
         <current-time>
-          1
+          2
         </current-time>
         <call-stack>
           .List
@@ -112,19 +112,19 @@
           ListItem ( LogNote ( ANYONE , End . thaw ) )
           ListItem ( GenStep ( transact ANYONE End . flow "gold" ) )
           ListItem ( LogNote ( ANYONE , End . flow "gold" ) )
-          ListItem ( GenStep ( transact "Alice" Pot . join 22 /Rat 5 ) )
-          ListItem ( LogNote ( "Alice" , Vat . move "Alice" Pot 22 /Rat 5 ) )
-          ListItem ( LogNote ( "Alice" , Pot . join 22 /Rat 5 ) )
-          ListItem ( GenStep ( transact ADMIN Pot . file dsr 136 /Rat 125 ) )
-          ListItem ( Exception ( Pot . file dsr 136 /Rat 125 ) )
-          ListItem ( GenStep ( TimeStep 1 ) )
-          ListItem ( TimeStep ( 1 , 1 ) )
+          ListItem ( GenStep ( transact "Alice" Pot . join 97 /Rat 10 ) )
+          ListItem ( LogNote ( "Alice" , Vat . move "Alice" Pot 97 /Rat 10 ) )
+          ListItem ( LogNote ( "Alice" , Pot . join 97 /Rat 10 ) )
+          ListItem ( GenStep ( transact ADMIN Pot . file dsr 597 /Rat 500 ) )
+          ListItem ( Exception ( Pot . file dsr 597 /Rat 500 ) )
+          ListItem ( GenStep ( TimeStep 2 ) )
+          ListItem ( TimeStep ( 2 , 2 ) )
           ListItem ( GenStep ( transact ANYONE Pot . drip ) )
           ListItem ( LogNote ( ANYONE , Vat . suck Vow Pot 0 ) )
           ListItem ( LogNote ( ANYONE , Pot . drip ) )
-          ListItem ( GenStep ( transact "Alice" Pot . exit 22 /Rat 5 ) )
-          ListItem ( LogNote ( "Alice" , Vat . move Pot "Alice" 22 /Rat 5 ) )
-          ListItem ( LogNote ( "Alice" , Pot . exit 22 /Rat 5 ) )
+          ListItem ( GenStep ( transact "Alice" Pot . exit 97 /Rat 10 ) )
+          ListItem ( LogNote ( "Alice" , Vat . move Pot "Alice" 97 /Rat 10 ) )
+          ListItem ( LogNote ( "Alice" , Pot . exit 97 /Rat 10 ) )
         </events>
         <frame-events>
           .List
@@ -378,7 +378,7 @@
             Vow
           </pot-vow>
           <pot-rho>
-            1
+            2
           </pot-rho>
           <pot-live>
             false
@@ -500,11 +500,8 @@
   </kmcd-properties>
   <kmcd-gen>
     <random>
-      1967513926
+      b""
     </random>
-    <generator-depth-bound>
-      9
-    </generator-depth-bound>
     <generator-next>
       1
     </generator-next>

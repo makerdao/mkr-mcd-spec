@@ -90,12 +90,12 @@
           ListItem ( LogNote ( ADMIN , End . initBag "Bobby" ) )
           ListItem ( LogNote ( ADMIN , End . initOut "gold" "Alice" ) )
           ListItem ( LogNote ( ADMIN , End . initOut "gold" "Bobby" ) )
-          ListItem ( GenStep ( transact ADMIN Pot . file dsr 133 /Rat 125 ) )
-          ListItem ( LogNote ( ADMIN , Pot . file dsr 133 /Rat 125 ) )
+          ListItem ( GenStep ( transact ADMIN Pot . file dsr 597 /Rat 500 ) )
+          ListItem ( LogNote ( ADMIN , Pot . file dsr 597 /Rat 500 ) )
           ListItem ( GenStep ( TimeStep 2 ) )
           ListItem ( TimeStep ( 2 , 2 ) )
-          ListItem ( GenStep ( transact "Alice" Pot . join 26 /Rat 5 ) )
-          ListItem ( Exception ( Pot . join 26 /Rat 5 ) )
+          ListItem ( GenStep ( transact "Alice" Pot . join 97 /Rat 10 ) )
+          ListItem ( Exception ( Pot . join 97 /Rat 10 ) )
           ListItem ( GenStep ( transact ANYONE Pot . drip ) )
           ListItem ( LogNote ( ANYONE , Vat . suck Vow Pot 0 ) )
           ListItem ( LogNote ( ANYONE , Pot . drip ) )
@@ -346,10 +346,10 @@
             0
           </pot-pie>
           <pot-dsr>
-            133 /Rat 125
+            597 /Rat 500
           </pot-dsr>
           <pot-chi>
-            17689 /Rat 15625
+            356409 /Rat 250000
           </pot-chi>
           <pot-vow>
             Vow
@@ -477,11 +477,8 @@
   </kmcd-properties>
   <kmcd-gen>
     <random>
-      1649760492
+      b""
     </random>
-    <generator-depth-bound>
-      15
-    </generator-depth-bound>
     <generator-next>
       1
     </generator-next>

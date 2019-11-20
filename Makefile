@@ -135,18 +135,17 @@ $(java_kompiled): $(java_files)
 # Test
 # ----
 
-KMCD_GENDEPTH   := 20
-KMCD_RANDOMSEED := 0
+KMCD_RANDOMSEED := ""
 
 test: test-python-config test-python-run test-execution
 
 ### `pyk` tests
 
 test-python-config:
-	GENDEPTH=$(KMCD_GENDEPTH) RANDOMSEED=$(KMCD_RANDOMSEED) ./mcd-pyk.py
+	RANDOMSEED=$(KMCD_RANDOMSEED) ./mcd-pyk.py
 
 test-python-run: tests/sneak-tx.json
-	GENDEPTH=$(KMCD_GENDEPTH) RANDOMSEED=$(KMCD_RANDOMSEED) ./mcd-pyk.py $<
+	RANDOMSEED=$(KMCD_RANDOMSEED) ./mcd-pyk.py $<
 
 ### Execution tests
 
@@ -163,13 +162,13 @@ ifeq ($(TEST_BACKEND), haskell)
     TEST_KOMPILED := $(haskell_kompiled)
 endif
 
-tests/attacks/lucash-pot-end.random.mcd.out:  KMCD_RANDOMSEED=481
-tests/attacks/lucash-pot.random.mcd.out:      KMCD_RANDOMSEED=481
-tests/attacks/lucash-flap-end.random.mcd.out: KMCD_RANDOMSEED=481
-tests/attacks/lucash-flip-end.random.mcd.out: KMCD_RANDOMSEED=481
+tests/attacks/lucash-pot-end.random.mcd.out:  KMCD_RANDOMSEED="aaaaaaaaaaaaaaaa"
+tests/attacks/lucash-pot.random.mcd.out:      KMCD_RANDOMSEED="aaaaaaaa"
+tests/attacks/lucash-flap-end.random.mcd.out: KMCD_RANDOMSEED="a0a3ao0Zaaa"
+tests/attacks/lucash-flip-end.random.mcd.out: KMCD_RANDOMSEED="aaaaaaaaaaaaaaaaa"
 
 tests/%.mcd.out: tests/%.mcd $(TEST_KOMPILED)
-	GENDEPTH=$(KMCD_GENDEPTH) RANDOMSEED=$(KMCD_RANDOMSEED) $(KMCD) run --backend $(TEST_BACKEND) $< > $<.out
+	RANDOMSEED=$(KMCD_RANDOMSEED) $(KMCD) run --backend $(TEST_BACKEND) $< > $<.out
 
 tests/%.mcd.run: tests/%.mcd.out
 	$(CHECK) tests/$*.mcd.expected tests/$*.mcd.out

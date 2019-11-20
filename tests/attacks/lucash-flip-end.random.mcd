@@ -6,21 +6,8 @@ AddGenerator ( GenGemJoinJoin "gold" "Bobby"
              ; GenTimeStep
              ; GenEndThaw
              ; GenEndFlow
-             ; GenFlipKick { "gold" , "Bobby" }
+             ; GenFlipKick { "gold" , "Bobby" } End Flap
              ; GenEndSkip "gold"
              )
 
-GenStep
-GenStep
-GenStep
-GenStep
-GenStep
-GenStep
-GenStep
-GenStep
-GenStep
-GenStep
-
-assert
-
-.MCDSteps
+GenSteps

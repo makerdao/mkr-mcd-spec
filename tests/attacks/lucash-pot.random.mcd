@@ -7,12 +7,4 @@ AddGenerator ( GenPotFileDSR
              ; GenPotExit "Alice"
              )
 
-GenStep
-GenStep
-GenStep
-GenStep
-GenStep
-
-assert
-
-.MCDSteps
+GenSteps

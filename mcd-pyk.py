@@ -2,6 +2,7 @@
 
 import difflib
 import json
+import random
 import sys
 import tempfile
 import os
@@ -23,32 +24,33 @@ MCD_definition_llvm_kompiled    = MCD_definition_llvm_dir    + '/' + MCD_main_fi
 MCD_definition_haskell_kompiled = MCD_definition_haskell_dir + '/' + MCD_main_file_name + '-kompiled/compiled.json'
 
 def kast_llvm(inputFile, *kastArgs):
-    return pyk.kast(MCD_definition_llvm_dir, inputFile, kastArgs = list(kastArgs) + [ '-cGENDEPTH=' + os.environ['GENDEPTH'] , '-cRANDOMSEED=' + os.environ['RANDOMSEED'] ])
+    return pyk.kast(MCD_definition_llvm_dir, inputFile, kastArgs = list(kastArgs))
 
 def kast_haskell(inputFile, *kastArgs):
-    return pyk.kast(MCD_definition_haskell_dir, inputFile, kastArgs = list(kastArgs) + [ '-cGENDEPTH=' + os.environ['GENDEPTH'] , '-cRANDOMSEED=' + os.environ['RANDOMSEED'] ])
+    return pyk.kast(MCD_definition_haskell_dir, inputFile, kastArgs = list(kastArgs))
 
 def krun_llvm(inputFile, *krunArgs):
-    return pyk.krun(MCD_definition_llvm_dir, inputFile, krunArgs = list(krunArgs) + [ '-cGENDEPTH=' + os.environ['GENDEPTH'] , '-cRANDOMSEED=' + os.environ['RANDOMSEED'] ])
+    return pyk.krun(MCD_definition_llvm_dir, inputFile, krunArgs = list(krunArgs))
 
 def krun_haskell(inputFile, *krunArgs):
-    return pyk.krun(MCD_definition_haskell_dir, inputFile, krunArgs = list(krunArgs) + [ '-cGENDEPTH=' + os.environ['GENDEPTH'] , '-cRANDOMSEED=' + os.environ['RANDOMSEED'] ])
+    return pyk.krun(MCD_definition_haskell_dir, inputFile, krunArgs = list(krunArgs))
 
 def kastJSON_llvm(inputJSON, *kastArgs):
-    return pyk.kastJSON(MCD_definition_llvm_dir, inputJSON, kastArgs = list(kastArgs) + [ '-cGENDEPTH=' + os.environ['GENDEPTH'] , '-cRANDOMSEED=' + os.environ['RANDOMSEED'] ])
+    return pyk.kastJSON(MCD_definition_llvm_dir, inputJSON, kastArgs = list(kastArgs))
 
 def kastJSON_haskell(inputJSON, *kastArgs):
-    return pyk.kastJSON(MCD_definition_haskell_dir, inputJSON, kastArgs = list(kastArgs) + [ '-cGENDEPTH=' + os.environ['GENDEPTH'] , '-cRANDOMSEED=' + os.environ['RANDOMSEED'] ])
+    return pyk.kastJSON(MCD_definition_haskell_dir, inputJSON, kastArgs = list(kastArgs))
 
 def krunJSON_llvm(inputJSON, *krunArgs):
-    return pyk.krunJSON(MCD_definition_llvm_dir, inputJSON, krunArgs = list(krunArgs) + [ '-cGENDEPTH=' + os.environ['GENDEPTH'] , '-cRANDOMSEED=' + os.environ['RANDOMSEED'] ])
+    return pyk.krunJSON(MCD_definition_llvm_dir, inputJSON, krunArgs = list(krunArgs), keepTemp = True)
 
 def krunJSON_haskell(inputJSON, *krunArgs):
-    return pyk.krunJSON(MCD_definition_haskell_dir, inputJSON, krunArgs = list(krunArgs) + [ '-cGENDEPTH=' + os.environ['GENDEPTH'] , '-cRANDOMSEED=' + os.environ['RANDOMSEED'] ])
+    return pyk.krunJSON(MCD_definition_haskell_dir, inputJSON, krunArgs = list(krunArgs))
 
 MCD_definition_llvm    = pyk.readKastTerm(MCD_definition_llvm_kompiled)
 MCD_definition_haskell = pyk.readKastTerm(MCD_definition_haskell_kompiled)
 
+bytesToken   = lambda x: KToken(x.decode('latin-1'), 'Bytes')
 intToken     = lambda x: KToken(str(x), 'Int')
 boolToken    = lambda x: KToken(str(x).lower(), 'Bool')
 stringToken  = lambda x: KToken('"' + str(x) + '"', 'String')
@@ -83,15 +85,18 @@ MCD_definition_haskell_symbols = pyk.buildSymbolTable(MCD_definition_haskell)
 MCD_definition_llvm_symbols    [ '<_,_>Rat_RAT-COMMON_Rat_Int_Int' ] = pyk.underbarUnparsing('_/Rat_')
 MCD_definition_haskell_symbols [ '<_,_>Rat_RAT-COMMON_Rat_Int_Int' ] = pyk.underbarUnparsing('_/Rat_')
 
-def get_init_config():
-    kast_json = { 'format': 'KAST', 'version': 1, 'term': KConstant('.MCDSteps_KMCD-DRIVER_MCDSteps') }
-    (_, init_config, _) = krunJSON_llvm(kast_json)
+def randomSeedArgs(seedbytes = b''):
+    return [ '-cRANDOMSEED=' + '#token("' + seedbytes.decode('latin-1') + '", "Bytes")', '-pRANDOMSEED=printf %s' ]
+
+def get_init_config(init_term):
+    kast_json = { 'format': 'KAST', 'version': 1, 'term': init_term }
+    (_, init_config, _) = krunJSON_llvm(kast_json, *randomSeedArgs())
     return pyk.splitConfigFrom(init_config)
 
-(symbolic_configuration, init_cells) = get_init_config()
-initial_configuration = pyk.substitute(symbolic_configuration, init_cells)
-
 if __name__ == '__main__':
+    (symbolic_configuration, init_cells) = get_init_config(KConstant('.MCDSteps_KMCD-DRIVER_MCDSteps'))
+    initial_configuration = pyk.substitute(symbolic_configuration, init_cells)
+
     if len(sys.argv) <= 1:
         fastPrinted = pyk.prettyPrintKast(initial_configuration['args'][0], MCD_definition_llvm_symbols)
         _notif('fastPrinted output')
