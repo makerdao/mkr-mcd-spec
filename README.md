@@ -5,4 +5,7 @@ goodbye
 =======
 goodbye
 goodbye
+<<<<<<< HEAD
+>>>>>>> d48b880... !!! README.md: test pr
+=======
 >>>>>>> d48b880... !!! README.md: test pr
