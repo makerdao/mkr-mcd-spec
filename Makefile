@@ -165,7 +165,7 @@ tests/attacks/lucash-flap-end.random.mcd.out: KMCD_RANDOMSEED="a0a3ao0Zaaa"
 tests/attacks/lucash-flip-end.random.mcd.out: KMCD_RANDOMSEED="aaaaaaaaaaaaaaaaa"
 
 tests/%.mcd.out: tests/%.mcd $(TEST_KOMPILED)
-	$(KMCD) run --backend $(TEST_BACKEND) $< -cRANDOMSEED= > $<.out
+	RANDOMSEED=$(KMCD_RANDOMSEED) $(KMCD) run --backend $(TEST_BACKEND) $< > $<.out
 
 tests/%.mcd.run: tests/%.mcd.out
 	$(CHECK) tests/$*.mcd.expected tests/$*.mcd.out
