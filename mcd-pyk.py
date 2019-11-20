@@ -152,35 +152,16 @@ def addGenerator(generator):
     return KApply('AddGenerator(_)_KMCD-GEN_AdminStep_GenStep', [generator])
 
 if __name__ == '__main__':
-    (symbolic_configuration, init_cells) = get_init_config(KConstant('.MCDSteps_KMCD-DRIVER_MCDSteps'))
-    initial_configuration = pyk.substitute(symbolic_configuration, init_cells)
+    gendepth = int(sys.argv[1])
 
-    if len(sys.argv) <= 1:
-        fastPrinted = pyk.prettyPrintKast(initial_configuration['args'][0], MCD_definition_llvm_symbols)
-        _notif('fastPrinted output')
-        print(fastPrinted)
-        sys.stdout.flush()
+    config_loader = mcdSteps([steps(KConstant('ATTACK-PRELUDE'))])
 
-    elif len(sys.argv) > 1:
-        input_scrape = sys.argv[1]
-        scrape = None
-        with open(input_scrape, 'r') as scrape_file:
-            scrape = json.load(scrape_file)
+    (symbolic_configuration, init_cells) = get_init_config(config_loader)
+    init_cells['RANDOM_CELL'] = bytesToken(randombytes(gendepth))
+    init_cells['K_CELL']      = genSteps
 
-        txs = []
-        for txKey in scrape.keys():
-            if scrape[txKey]['status'] != 'ok':
-                continue
-            tx_result = scrape[txKey]['response']
-            tx_calls = [ call for call in tx_result['calls'] if call['contract_name'] == 'Vat' ]
-            if len(tx_calls) > 0:
-                txs.append({ 'calls': tx_calls, 'state_diffs': tx_result['state_diffs'] })
-            print(tx_result)
-            print(tx_calls)
-            sys.stdout.flush()
-
-        for tx in txs:
-            print([ pyk.prettyPrintKast(buildStep(call), MCD_definition_llvm_symbols) for call in tx['calls'] ])
-            _notif("state diff")
-            print(tx['state_diffs'])
-            sys.stdout.flush()
+    initial_configuration = sanitizeBytes(pyk.substitute(symbolic_configuration, init_cells))
+    print(pyk.prettyPrintKast(initial_configuration, MCD_definition_llvm_symbols))
+    (_, output, _) = krunJSON_llvm({ 'format': 'KAST' , 'version': 1 , 'term': initial_configuration }, '--term')
+    print(pyk.prettyPrintKast(output, MCD_definition_llvm_symbols))
+    sys.stdout.flush()
