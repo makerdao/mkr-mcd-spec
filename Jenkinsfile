@@ -40,6 +40,13 @@ pipeline {
             '''
           }
         }
+        stage('Python Generator') {
+          steps {
+            sh '''
+              make test-python-generator
+            '''
+          }
+        }
       }
     }
     stage('Deploy') {
