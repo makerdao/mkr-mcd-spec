@@ -156,6 +156,7 @@ module KMCD-GEN
         <kmcd-properties/>
         <kmcd-gen>
           <random> $RANDOMSEED:Bytes </random>
+          <used-random> .Bytes </used-random>
           <generator-next> 0 </generator-next>
           <generator-current> 0 </generator-current>
           <generator-remainder> .GenStep </generator-remainder>
@@ -233,6 +234,7 @@ module KMCD-GEN
  // -----------------------------------
     rule <k> GenStep => GenStepLoad ~> GenStepReplace ... </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
          <generator-next> N </generator-next>
          <generator-current> _ => head(BS) modInt N </generator-current>
          <generator-remainder> GSS => .GenStep </generator-remainder>
@@ -243,7 +245,7 @@ module KMCD-GEN
     rule <k> GenStep => . ... </k>
          <generator-next> N </generator-next>
          <random> BS => tail(BS) </random>
-         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS, 1, BE)) </used-random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
       requires lengthBytes(BS) >Int 0
        andBool notBool N >Int 0
 
@@ -268,11 +270,12 @@ module KMCD-GEN
          <random> BS </random>
 
     syntax AdminStep ::= LogGen ( MCDStep )
-    syntax Event ::= GenStep ( MCDStep )
+    syntax Event ::= GenStep ( Bytes , MCDStep )
                    | GenStepFailed ( GenStep )
  // ------------------------------------------
     rule <k> LogGen(MCDSTEP) => MCDSTEP ... </k>
-         <events> ... (.List => ListItem(GenStep(MCDSTEP))) </events>
+         <used-random> BS => .Bytes </used-random>
+         <events> ... (.List => ListItem(GenStep(BS, MCDSTEP))) </events>
 
     rule <k> GS => . ... </k>
          <events> ... (.List => ListItem(GenStepFailed(GS))) </events>
@@ -299,6 +302,7 @@ module KMCD-GEN
 
     rule <k> GSS | GSS' => #if head(BS) modInt 2 ==K 0 #then GSS #else GSS' #fi ... </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
       requires lengthBytes(BS) >Int 0
 
     syntax GenStep ::= GenTimeStep
@@ -306,6 +310,7 @@ module KMCD-GEN
  // ------------------------------------
     rule <k> GenTimeStep => LogGen ( TimeStep ((head(BS) modInt #timeStepMax()) +Int 1) ) ... </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
       requires lengthBytes(BS) >Int 0
 
     syntax GenStep ::= GenVatStep
@@ -321,12 +326,14 @@ module KMCD-GEN
  // --------------------------------------------------
     rule <k> GenVatFrob => GenVatFrob chooseCDPID(head(BS), keys_list(VAT_URNS)) ... </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
          <vat-urns> VAT_URNS </vat-urns>
       requires lengthBytes(BS) >Int 0
        andBool size(VAT_URNS) >Int 0
 
     rule <k> GenVatFrob CDPID => GenVatFrob CDPID ((2 *Rat randRatBounded(head(BS), VAT_GEM)) -Rat VAT_GEM) ... </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
          <vat-gem> ... CDPID |-> VAT_GEM ... </vat-gem>
       requires lengthBytes(BS) >Int 0
 
@@ -337,6 +344,7 @@ module KMCD-GEN
          ...
          </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
          <vat-ilks>
            ...
            ILKID |-> Ilk ( ... rate: RATE, spot: SPOT )
@@ -351,18 +359,21 @@ module KMCD-GEN
 
     rule <k> GenVatMove => GenVatMove chooseAddress(head(BS), keys_list(VAT_DAIS)) ... </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
          <vat-dai> VAT_DAIS </vat-dai>
       requires lengthBytes(BS) >Int 0
        andBool size(VAT_DAIS) >Int 0
 
     rule <k> GenVatMove ADDRSRC => GenVatMove ADDRSRC chooseAddress(head(BS), keys_list(VAT_DAIS)) ... </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
          <vat-dai> VAT_DAIS </vat-dai>
       requires lengthBytes(BS) >Int 0
        andBool size(VAT_DAIS) >Int 0
 
     rule <k> GenVatMove ADDRSRC ADDRDST => LogGen ( transact ADDRSRC Vat . move ADDRSRC ADDRDST randRatBounded(head(BS), VAT_DAI) ) ... </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
          <vat-dai>
            ...
            ADDRSRC |-> VAT_DAI
@@ -372,12 +383,14 @@ module KMCD-GEN
 
     rule <k> GenVatHope => GenVatHope chooseAddress(head(BS), keys_list(VAT_DAI)) ... </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
          <vat-dai> VAT_DAI </vat-dai>
       requires lengthBytes(BS) >Int 0
        andBool size(VAT_DAI) >Int 0
 
     rule <k> GenVatHope ADDRSRC => GenVatHope ADDRSRC chooseAddress(head(BS), keys_list(VAT_DAI)) ... </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
          <vat-dai> VAT_DAI </vat-dai>
       requires lengthBytes(BS) >Int 0
        andBool size(VAT_DAI) >Int 0
@@ -392,12 +405,14 @@ module KMCD-GEN
     // **TODO**: Would be better to choose from an ILK with <gem-id>
     rule <k> GenGemJoinJoin => GenGemJoinJoin chooseString(head(BS), (ListItem("MKR") ListItem("gold"))) ... </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
       requires lengthBytes(BS) >Int 0
 //         <gem-joins> GEM_JOINS </gem-joins>
 //      requires size(GEM_JOINS) >Int 0
 
     rule <k> GenGemJoinJoin GEM_JOIN_ID => GenGemJoinJoin GEM_JOIN_ID chooseAddress(head(BS), keys_list(GEM_BALANCES)) ... </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
          <gem>
            <gem-id> GEM_JOIN_ID </gem-id>
            <gem-balances> GEM_BALANCES </gem-balances>
@@ -408,6 +423,7 @@ module KMCD-GEN
 
     rule <k> GenGemJoinJoin GEM_JOIN_ID ADDRESS => LogGen ( transact ADDRESS GemJoin GEM_JOIN_ID . join ADDRESS randRatBounded(head(BS), GEM_BALANCE) ) ... </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
          <gem>
            <gem-id> GEM_JOIN_ID </gem-id>
            <gem-balances> ... ADDRESS |-> GEM_BALANCE ... </gem-balances>
@@ -424,17 +440,20 @@ module KMCD-GEN
  // ------------------------------------
     rule <k> GenFlapKick => GenFlapKick chooseAddress(head(BS), keys_list(VAT_DAIS)) ... </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
          <vat-dai> VAT_DAIS </vat-dai>
       requires lengthBytes(BS) >Int 0
        andBool size(VAT_DAIS) >Int 0
 
     rule <k> GenFlapKick ADDRESS => GenFlapKick ADDRESS randRatBounded(head(BS), VOW_DAI) ... </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
          <vat-dai> ... ADDRESS |-> VOW_DAI ... </vat-dai>
       requires lengthBytes(BS) >Int 0
 
     rule <k> GenFlapKick ADDRESS LOT => GenFlapKick ADDRESS LOT randRatBounded(head(BS), FLAP_MKR) ... </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
          <gem>
            <gem-id> "MKR" </gem-id>
            <gem-balances> ... Flap |-> FLAP_MKR ... </gem-balances>
@@ -446,6 +465,7 @@ module KMCD-GEN
 
     rule <k> GenFlapYank => LogGen ( transact ANYONE Flap . yank chooseInt(head(BS), keys_list(FLAP_BIDS)) ) ... </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
          <flap-bids> FLAP_BIDS </flap-bids>
       requires lengthBytes(BS) >Int 0
        andBool size(FLAP_BIDS) >Int 0
@@ -460,29 +480,34 @@ module KMCD-GEN
  // ------------------------------------------------------------------
     rule <k> GenFlipKick => GenFlipKick chooseCDPID(head(BS), keys_list(VAT_GEMS)) ... </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
          <vat-gem> VAT_GEMS </vat-gem>
       requires lengthBytes(BS) >Int 0
        andBool size(VAT_GEMS) >Int 0
 
     rule <k> GenFlipKick CDPID => GenFlipKick CDPID chooseAddress(head(BS), keys_list(VAT_DAIS)) ... </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
          <vat-dai> VAT_DAIS </vat-dai>
       requires lengthBytes(BS) >Int 0
        andBool size(VAT_DAIS) >Int 0
 
     rule <k> GenFlipKick CDPID STORAGE => GenFlipKick CDPID STORAGE chooseAddress(head(BS), keys_list(VAT_DAIS)) ... </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
          <vat-dai> VAT_DAIS </vat-dai>
       requires lengthBytes(BS) >Int 0
        andBool size(VAT_DAIS) >Int 0
 
     rule <k> GenFlipKick CDPID STORAGE BENEFICIARY => GenFlipKick CDPID STORAGE BENEFICIARY randRatBounded(head(BS), VAT_GEM) ... </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
          <vat-gem> ... CDPID |-> VAT_GEM ... </vat-gem>
       requires lengthBytes(BS) >Int 0
 
     rule <k> GenFlipKick CDPID STORAGE BENEFICIARY LOT => GenFlipKick CDPID STORAGE BENEFICIARY LOT randRatBounded(head(BS), 1000) ... </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
       requires lengthBytes(BS) >Int 0
 
     rule <k> GenFlipKick { ILKID , ADDRESS } STORAGE BENEFICIARY LOT BID => LogGen ( transact ADDRESS Flip ILKID . kick STORAGE BENEFICIARY 1000 LOT BID ) ... </k>
@@ -501,21 +526,25 @@ module KMCD-GEN
 
     rule <k> GenPotJoin => GenPotJoin chooseAddress(head(BS), keys_list(POT_PIES)) ... </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
          <pot-pies> POT_PIES </pot-pies>
       requires lengthBytes(BS) >Int 0
        andBool size(POT_PIES) >Int 0
 
     rule <k> GenPotJoin ADDRESS => LogGen ( transact ADDRESS Pot . join randRatBounded(head(BS), VAT_DAI) ) ... </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
          <vat-dai> ... ADDRESS |-> VAT_DAI ... </vat-dai>
       requires lengthBytes(BS) >Int 0
 
     rule <k> GenPotFileDSR => LogGen ( transact ADMIN Pot . file dsr (randRatBounded(head(BS), #dsrSpread() /Rat 100) +Rat 1) ) ... </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
       requires lengthBytes(BS) >Int 0
 
     rule <k> GenPotExit => GenPotExit chooseAddress(head(BS), keys_list(POT_PIES)) ... </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
          <pot-pies> POT_PIES </pot-pies>
       requires lengthBytes(BS) >Int 0
        andBool size(POT_PIES) >Int 0
@@ -543,6 +572,7 @@ module KMCD-GEN
 
     rule <k> GenEndCageIlk => LogGen ( transact ANYONE End . cage chooseString(head(BS), keys_list(ILKS)) ) ... </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
          <vat-ilks> ILKS </vat-ilks>
       requires lengthBytes(BS) >Int 0
        andBool size(ILKS) >Int 0
@@ -550,6 +580,7 @@ module KMCD-GEN
     // **TODO**: Would be better to choose from an ILK with <end-tag> and <end-gap> too
     rule <k> GenEndSkim => GenEndSkim chooseCDPID(head(BS), keys_list(VAT_URNS)) ... </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
          <vat-urns> VAT_URNS </vat-urns>
       requires lengthBytes(BS) >Int 0
        andBool size(VAT_URNS) >Int 0
@@ -558,6 +589,7 @@ module KMCD-GEN
 
     rule <k> GenEndFlow => LogGen ( transact ANYONE End . flow chooseString(head(BS), keys_list(ILKS)) ) ... </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
          <vat-ilks> ILKS </vat-ilks>
       requires lengthBytes(BS) >Int 0
        andBool size(ILKS) >Int 0
@@ -565,12 +597,14 @@ module KMCD-GEN
     // **TODO**: Would be better to pick an ILKID from <flips>
     rule <k> GenEndSkip => GenEndSkip chooseString(head(BS), keys_list(ILKS)) ... </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
          <vat-ilks> ILKS </vat-ilks>
       requires lengthBytes(BS) >Int 0
        andBool size(ILKS) >Int 0
 
     rule <k> GenEndSkip ILKID => LogGen ( transact ANYONE End . skip ILKID chooseInt(head(BS), keys_list(FLIP_BIDS)) ) ... </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
          <flip>
            <flip-ilk> ILKID </flip-ilk>
            <flip-bids> FLIP_BIDS </flip-bids>
@@ -581,23 +615,27 @@ module KMCD-GEN
 
     rule <k> GenEndPack => GenEndPack chooseAddress(head(BS), keys_list(END_BAGS)) ... </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
          <end-bag> END_BAGS </end-bag>
       requires lengthBytes(BS) >Int 0
        andBool size(END_BAGS) >Int 0
 
     rule <k> GenEndPack ADDRESS => LogGen ( transact ADDRESS End . pack randIntBounded(head(BS), VAT_DAI) ) ... </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
          <vat-dai> ... ADDRESS |-> VAT_DAI ... </vat-dai>
       requires lengthBytes(BS) >Int 0
 
     rule <k> GenEndCash => GenEndCash chooseCDPID(head(BS), keys_list(END_OUTS)) ... </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
          <end-out> END_OUTS </end-out>
       requires lengthBytes(BS) >Int 0
        andBool size(END_OUTS) >Int 0
 
     rule <k> GenEndCash { ILKID , ADDRESS } => LogGen ( transact ADDRESS End . cash ILKID randRatBounded(head(BS), BAG -Rat OUT) ) ... </k>
          <random> BS => tail(BS) </random>
+         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
          <end-out> ... { ILKID , ADDRESS } |-> OUT ... </end-out>
          <end-bag> ... ADDRESS |-> BAG ... </end-bag>
       requires lengthBytes(BS) >Int 0
