@@ -166,7 +166,6 @@ module KMCD-GEN
               <generator-steps> .GenStep </generator-steps>
             </generator>
           </generators>
-          <end-gen> .GenStep </end-gen>
         </kmcd-gen>
       </kmcd-random>
 
