@@ -8,7 +8,6 @@ requires "rat.k"
 
 module KMCD-DRIVER
     imports BOOL
-    imports BYTES
     imports INT
     imports MAP
     imports STRING

@@ -163,9 +163,11 @@ The Dai token is a mintable/burnable ERC20 token.
 
 **TODO**: `permit` logic, seems to be a time-locked allowance.
 
-```k
+```
     syntax DaiStep ::= "permit" Address Address Int Int Bool Int Bytes Bytes
  // ------------------------------------------------------------------------
+```
 
+```k
 endmodule
 ```
