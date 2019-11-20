@@ -150,6 +150,7 @@ endmodule
 ```k
 module KMCD-GEN
     imports KMCD-PRELUDE
+    imports BYTES
 
     configuration
       <kmcd-random>
