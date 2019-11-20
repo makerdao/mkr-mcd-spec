@@ -283,9 +283,9 @@ module KMCD-GEN
 
     syntax GenStep ::= ".GenStep"
                      | GenStep DepthBound
-                     > GenStep "|" GenStep [left]
-                     > GenStep ";" GenStep [left]
- // ---------------------------------------------
+                     > GenStep "|" GenStep [right]
+                     > GenStep ";" GenStep [right]
+ // ----------------------------------------------
     rule <k> .GenStep => . ... </k>
 
     rule <k> .GenStep ; GSS => GSS ... </k> [priority(49)]
