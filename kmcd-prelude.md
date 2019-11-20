@@ -234,7 +234,7 @@ module KMCD-GEN
  // -----------------------------------
     rule <k> GenStep => GenStepLoad ~> GenStepReplace ... </k>
          <random> BS => tail(BS) </random>
-         <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
+         <used-random> _ => Int2Bytes(head(BS), 1, BE) </used-random>
          <generator-next> N </generator-next>
          <generator-current> _ => head(BS) modInt N </generator-current>
          <generator-remainder> GSS => .GenStep </generator-remainder>
@@ -270,15 +270,16 @@ module KMCD-GEN
          <random> BS </random>
 
     syntax AdminStep ::= LogGen ( MCDStep )
-    syntax Event ::= GenStep ( Bytes , MCDStep )
-                   | GenStepFailed ( GenStep )
- // ------------------------------------------
+    syntax Event ::= GenStep       ( Bytes , MCDStep )
+                   | GenStepFailed ( Bytes , GenStep )
+ // --------------------------------------------------
     rule <k> LogGen(MCDSTEP) => MCDSTEP ... </k>
          <used-random> BS => .Bytes </used-random>
          <events> ... (.List => ListItem(GenStep(BS, MCDSTEP))) </events>
 
     rule <k> GS => . ... </k>
-         <events> ... (.List => ListItem(GenStepFailed(GS))) </events>
+         <used-random> BS =>.Bytes </used-random>
+         <events> ... (.List => ListItem(GenStepFailed(BS, GS))) </events>
       [owise]
 
     syntax GenStep ::= ".GenStep"
