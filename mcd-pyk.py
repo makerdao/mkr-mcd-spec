@@ -246,7 +246,13 @@ generator_lucash_flap_end = generatorSequence( [ KApply( 'GenVatMove___KMCD-GEN_
 if __name__ == '__main__':
     gendepth = int(sys.argv[1])
 
-    config_loader = mcdSteps([steps(KConstant('ATTACK-PRELUDE'))])
+    config_loader = mcdSteps( [ steps(KConstant('ATTACK-PRELUDE'))
+                              , addGenerator(generator_lucash_pot)
+                              , addGenerator(generator_lucash_pot_end)
+                              , addGenerator(generator_lucash_flip_end)
+                              , addGenerator(generator_lucash_flap_end)
+                              ]
+                            )
 
     (symbolic_configuration, init_cells) = get_init_config(config_loader)
     init_cells['RANDOM_CELL'] = bytesToken(randombytes(gendepth))
