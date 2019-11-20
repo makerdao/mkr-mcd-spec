@@ -1,12 +1,7 @@
 pipeline {
+  agent { label 'docker' }
   options {
     ansiColor('xterm')
-  }
-  agent {
-    dockerfile {
-      additionalBuildArgs '--build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g)'
-      args '-m 60g'
-    }
   }
   stages {
     stage('Init title') {
@@ -17,39 +12,55 @@ pipeline {
         }
       }
     }
-    stage('Dependencies') {
-      steps {
-        sh '''
-          make deps K_BUILD_TYPE=Release
-        '''
+    stage('Build and Test') {
+      agent {
+        dockerfile {
+          additionalBuildArgs '--build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g)'
+          args '-m 60g'
+        }
       }
-    }
-    stage('Build') {
-      steps {
-        sh '''
-          make build -j4
-        '''
-      }
-    }
-    stage('Test') {
-      parallel {
-        stage('Run Simulation Tests') {
+      stages {
+        stage('Dependencies') {
           steps {
             sh '''
-              make test-execution -j8
+              make deps K_BUILD_TYPE=Release
             '''
           }
         }
-        stage('Python Generator') {
+        stage('Build') {
           steps {
             sh '''
-              make test-python-generator
+              make build -j4
             '''
+          }
+        }
+        stage('Test') {
+          parallel {
+            stage('Run Simulation Tests') {
+              steps {
+                sh '''
+                  make test-execution -j8
+                '''
+              }
+            }
+            stage('Python Generator') {
+              steps {
+                sh '''
+                  make test-python-generator
+                '''
+              }
+            }
           }
         }
       }
     }
     stage('Deploy') {
+      agent {
+        dockerfile {
+          additionalBuildArgs '--build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g)'
+          args '-m 60g'
+        }
+      }
       when { branch 'master' }
       post {
         failure {
