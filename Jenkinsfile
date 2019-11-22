@@ -17,6 +17,7 @@ pipeline {
         dockerfile {
           additionalBuildArgs '--build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g)'
           args '-m 60g'
+          reuseNode true
         }
       }
       stages {
@@ -59,9 +60,13 @@ pipeline {
         dockerfile {
           additionalBuildArgs '--build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g)'
           args '-m 60g'
+          reuseNode true
         }
       }
-      when { branch 'master' }
+      when {
+        branch 'master'
+        beforeAgent true
+      }
       post {
         failure {
           slackSend color: '#cb2431'                            \
