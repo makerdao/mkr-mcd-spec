@@ -1,12 +1,7 @@
 pipeline {
+  agent { label 'docker' }
   options {
     ansiColor('xterm')
-  }
-  agent {
-    dockerfile {
-      additionalBuildArgs '--build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g)'
-      args '-m 60g'
-    }
   }
   stages {
     stage('Init title') {
@@ -17,47 +12,61 @@ pipeline {
         }
       }
     }
-    stage('Dependencies') {
-      steps {
-        sh '''
-          make deps K_BUILD_TYPE=Release
-        '''
+    stage('Build and Test') {
+      agent {
+        dockerfile {
+          additionalBuildArgs '--build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g)'
+          args '-m 60g'
+          reuseNode true
+        }
       }
-    }
-    stage('Build') {
-      steps {
-        sh '''
-          make build -j4
-        '''
-      }
-    }
-    stage('Test') {
-      parallel {
-        stage('Build Configuration') {
+      stages {
+        stage('Dependencies') {
           steps {
             sh '''
-              make test-python-config
+              make deps K_BUILD_TYPE=Release
             '''
           }
         }
-        stage('Run Simple Tests') {
+        stage('Build') {
           steps {
             sh '''
-              make test-python-run
+              make build -j4
             '''
           }
         }
-        stage('Run Simulation Tests') {
-          steps {
-            sh '''
-              make test-execution -j8
-            '''
+        stage('Test') {
+          parallel {
+            stage('Run Simulation Tests') {
+              steps {
+                sh '''
+                  make test-execution -j8
+                '''
+              }
+            }
+            stage('Python Generator') {
+              steps {
+                sh '''
+                  make test-python-generator
+                '''
+              }
+            }
           }
         }
       }
     }
     stage('Deploy') {
-      when { branch 'master' }
+      agent {
+        dockerfile {
+          additionalBuildArgs '--build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g)'
+          args '-m 60g'
+          reuseNode true
+        }
+      }
+      when {
+        branch 'master'
+        beforeAgent true
+      }
       post {
         failure {
           slackSend color: '#cb2431'                            \

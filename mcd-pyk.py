@@ -85,6 +85,18 @@ MCD_definition_haskell_symbols = pyk.buildSymbolTable(MCD_definition_haskell)
 MCD_definition_llvm_symbols    [ '<_,_>Rat_RAT-COMMON_Rat_Int_Int' ] = pyk.underbarUnparsing('_/Rat_')
 MCD_definition_haskell_symbols [ '<_,_>Rat_RAT-COMMON_Rat_Int_Int' ] = pyk.underbarUnparsing('_/Rat_')
 
+MCD_definition_llvm_symbols    [ '_List_' ] = lambda l1, l2: pyk.newLines([l1, l2])
+MCD_definition_haskell_symbols [ '_List_' ] = lambda l1, l2: pyk.newLines([l1, l2])
+
+MCD_definition_llvm_symbols    [ '_Set_' ] = lambda s1, s2: pyk.newLines([s1, s2])
+MCD_definition_haskell_symbols [ '_Set_' ] = lambda s1, s2: pyk.newLines([s1, s2])
+
+MCD_definition_llvm_symbols    [ '_Map_' ] = lambda m1, m2: pyk.newLines([m1, m2])
+MCD_definition_haskell_symbols [ '_Map_' ] = lambda m1, m2: pyk.newLines([m1, m2])
+
+MCD_definition_llvm_symbols    [ '___KMCD-DRIVER_MCDSteps_MCDStep_MCDSteps' ] = lambda s1, s2: pyk.newLines([s1, s2])
+MCD_definition_haskell_symbols [ '___KMCD-DRIVER_MCDSteps_MCDStep_MCDSteps' ] = lambda s1, s2: pyk.newLines([s1, s2])
+
 def randomSeedArgs(seedbytes = b''):
     return [ '-cRANDOMSEED=' + '#token("' + seedbytes.decode('latin-1') + '", "Bytes")', '-pRANDOMSEED=printf %s' ]
 
@@ -93,36 +105,63 @@ def get_init_config(init_term):
     (_, init_config, _) = krunJSON_llvm(kast_json, *randomSeedArgs())
     return pyk.splitConfigFrom(init_config)
 
+def steps(step):
+    return KApply('STEPS(_)_KMCD-PRELUDE_MCDStep_MCDSteps', [step])
+
+def depthBound(step, bound):
+    if type(bound) is int:
+        bound = intToken(bound)
+    elif type(bound) is str and bound == "*":
+        bound = KConstant('*_KMCD-GEN_DepthBound')
+    else:
+        _fatal('Unknown depth bound: ' + str(bound))
+    return KApply('___KMCD-GEN_GenStep_GenStep_DepthBound', [step, bound])
+
+def randombytes(size):
+    return bytearray(random.getrandbits(8) for _ in range(size))
+
+def sanitizeBytes(kast):
+    def _sanitizeBytes(_kast):
+        if pyk.isKToken(_kast) and _kast['sort'] == 'Bytes':
+            if len(_kast['token']) > 2 and _kast['token'][0:2] == 'b"' and _kast['token'][-1] == '"':
+                return KToken(_kast['token'][2:-1], 'Bytes')
+        return _kast
+    return pyk.traverseBottomUp(kast, _sanitizeBytes)
+
+def consJoin(elements, join, unit, assoc = False):
+    if len(elements) == 0:
+        return KConstant(unit)
+    elif assoc and len(elements) == 1:
+        return elements[0]
+    else:
+        return KApply(join, [elements[0], consJoin(elements[1:], join, unit)])
+
+genStep  = KConstant('GenStep_KMCD-GEN_GenStep')
+genSteps = KConstant('GenSteps_KMCD-GEN_MCDSteps')
+
+def mcdSteps(steps):
+    return consJoin(steps, '___KMCD-DRIVER_MCDSteps_MCDStep_MCDSteps', '.MCDSteps_KMCD-DRIVER_MCDSteps')
+
+def generatorSequence(genSteps):
+    return consJoin(genSteps, '_;__KMCD-GEN_GenStep_GenStep_GenStep', '.GenStep_KMCD-GEN_GenStep', assoc = True)
+
+def generatorChoice(genSteps):
+    return consJoin(genSteps, '_|__KMCD-GEN_GenStep_GenStep_GenStep', '.GenStep_KMCD-GEN_GenStep', assoc = True)
+
+def addGenerator(generator):
+    return KApply('AddGenerator(_)_KMCD-GEN_AdminStep_GenStep', [generator])
+
 if __name__ == '__main__':
-    (symbolic_configuration, init_cells) = get_init_config(KConstant('.MCDSteps_KMCD-DRIVER_MCDSteps'))
-    initial_configuration = pyk.substitute(symbolic_configuration, init_cells)
+    gendepth = int(sys.argv[1])
 
-    if len(sys.argv) <= 1:
-        fastPrinted = pyk.prettyPrintKast(initial_configuration['args'][0], MCD_definition_llvm_symbols)
-        _notif('fastPrinted output')
-        print(fastPrinted)
-        sys.stdout.flush()
+    config_loader = mcdSteps([steps(KConstant('ATTACK-PRELUDE'))])
 
-    elif len(sys.argv) > 1:
-        input_scrape = sys.argv[1]
-        scrape = None
-        with open(input_scrape, 'r') as scrape_file:
-            scrape = json.load(scrape_file)
+    (symbolic_configuration, init_cells) = get_init_config(config_loader)
+    init_cells['RANDOM_CELL'] = bytesToken(randombytes(gendepth))
+    init_cells['K_CELL']      = genSteps
 
-        txs = []
-        for txKey in scrape.keys():
-            if scrape[txKey]['status'] != 'ok':
-                continue
-            tx_result = scrape[txKey]['response']
-            tx_calls = [ call for call in tx_result['calls'] if call['contract_name'] == 'Vat' ]
-            if len(tx_calls) > 0:
-                txs.append({ 'calls': tx_calls, 'state_diffs': tx_result['state_diffs'] })
-            print(tx_result)
-            print(tx_calls)
-            sys.stdout.flush()
-
-        for tx in txs:
-            print([ pyk.prettyPrintKast(buildStep(call), MCD_definition_llvm_symbols) for call in tx['calls'] ])
-            _notif("state diff")
-            print(tx['state_diffs'])
-            sys.stdout.flush()
+    initial_configuration = sanitizeBytes(pyk.substitute(symbolic_configuration, init_cells))
+    print(pyk.prettyPrintKast(initial_configuration, MCD_definition_llvm_symbols))
+    (_, output, _) = krunJSON_llvm({ 'format': 'KAST' , 'version': 1 , 'term': initial_configuration }, '--term')
+    print(pyk.prettyPrintKast(output, MCD_definition_llvm_symbols))
+    sys.stdout.flush()
