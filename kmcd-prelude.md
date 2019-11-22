@@ -243,9 +243,9 @@ module KMCD-GEN
        andBool N >Int 0
 
     rule <k> GenStep => . ... </k>
-         <generator-next> N </generator-next>
          <random> BS => tail(BS) </random>
          <used-random> BS' => BS' +Bytes Int2Bytes(head(BS), 1, BE) </used-random>
+         <generator-next> N </generator-next>
       requires lengthBytes(BS) >Int 0
        andBool notBool N >Int 0
 
