@@ -141,8 +141,10 @@ test: test-execution test-python-generator
 
 ### Python Generator Test
 
-test-python-generator: mcd-pyk.py
-	python3 mcd-pyk.py 5
+test-python-generator: mcd-pyk.py.out
+
+mcd-pyk.py.out: mcd-pyk.py $(llvm_kompiled)
+	python3 $< 5 &> $@
 
 ### Execution tests
 
