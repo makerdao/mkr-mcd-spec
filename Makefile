@@ -26,11 +26,11 @@ LUA_PATH:=$(PANDOC_TANGLE_SUBMODULE)/?.lua;;
 export TANGLER
 export LUA_PATH
 
-.PHONY: all clean                                              \
-        deps deps-k deps-tangle deps-media                     \
-        defn defn-llvm defn-haskell                            \
-        build build-llvm build-haskell build-java              \
-        test test-python-config test-python-run test-execution \
+.PHONY: all clean                                 \
+        deps deps-k deps-tangle deps-media        \
+        defn defn-llvm defn-haskell               \
+        build build-llvm build-haskell build-java \
+        test test-execution test-python-generator \
         update-test-execution
 .SECONDARY:
 
@@ -137,15 +137,14 @@ $(java_kompiled): $(java_files)
 
 KMCD_RANDOMSEED := ""
 
-test: test-python-config test-python-run test-execution
+test: test-execution test-python-generator
 
-### `pyk` tests
+### Python Generator Test
 
-test-python-config:
-	RANDOMSEED=$(KMCD_RANDOMSEED) ./mcd-pyk.py
+test-python-generator: mcd-pyk.py.out
 
-test-python-run: tests/sneak-tx.json
-	RANDOMSEED=$(KMCD_RANDOMSEED) ./mcd-pyk.py $<
+mcd-pyk.py.out: mcd-pyk.py $(llvm_kompiled)
+	python3 $< 5 &> $@
 
 ### Execution tests
 
