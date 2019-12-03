@@ -148,8 +148,94 @@ endmodule
 ```
 
 ```k
-module KMCD-GEN
+module KMCD-RANDOM-CHOICES
     imports KMCD-PRELUDE
+
+    syntax Int ::= randIntBounded ( Int , Int ) [function]
+ // ------------------------------------------------------
+```
+
+```{.k .concrete}
+    rule randIntBounded(RAND, 0)     => 0
+    rule randIntBounded(RAND, BOUND) => RAND modInt (BOUND +Int 1) requires BOUND =/=Int 0
+```
+
+```{.k .symbolic}
+    rule randIntBounded(_, BOUND) => ?I:Int ensures 0 <=Int ?I andBool ?I <=Int BOUND
+```
+
+```k
+    syntax Rat ::= randRat ( Int ) [function]
+ // -----------------------------------------
+```
+
+```{.k .concrete}
+    rule randRat(I) => (I modInt 101) /Rat 100
+```
+
+```{.k .symbolic}
+    rule randRat(_) => ?R:Rat ensures 0 <=Rat ?R andBool ?R <=Rat 100
+```
+
+```k
+    syntax Rat ::= randRatBounded ( Int , Rat ) [function]
+ // ------------------------------------------------------
+```
+
+```{.k .concrete}
+    rule randRatBounded(I, BOUND) => BOUND *Rat randRat(I)
+```
+
+```{.k .symbolic}
+    rule randRatBounded(_, BOUND) => ?R:Rat ensures 0 <=Rat ?R andBool ?R <=Rat BOUND
+```
+
+```k
+    syntax Int     ::= chooseInt     ( Int , List ) [function]
+    syntax String  ::= chooseString  ( Int , List ) [function]
+    syntax Address ::= chooseAddress ( Int , List ) [function]
+    syntax CDPID   ::= chooseCDPID   ( Int , List ) [function]
+ // ----------------------------------------------------------
+```
+
+```{.k .concrete}
+    rule chooseInt    (I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>Int
+    rule chooseString (I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>String
+    rule chooseAddress(I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>Address
+    rule chooseCDPID  (I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>CDPID
+```
+
+```{.k .symbolic}
+    rule chooseInt    (_, ITEMS) => ?I:Int     ensures isChoiceInt    (?I, ITEMS)
+    rule chooseString (_, ITEMS) => ?S:String  ensures isChoiceString (?S, ITEMS)
+    rule chooseAddress(_, ITEMS) => ?A:Address ensures isChoiceAddress(?A, ITEMS)
+    rule chooseCDPID  (_, ITEMS) => ?C:CDPID   ensures isChoiceCDPID  (?C, ITEMS)
+
+    syntax Bool ::= isChoiceInt     ( Int     , List ) [function, functional]
+                  | isChoiceString  ( String  , List ) [function, functional]
+                  | isChoiceAddress ( Address , List ) [function, functional]
+                  | isChoiceCDPID   ( CDPID   , List ) [function, functional]
+ // -------------------------------------------------------------------------
+    rule isChoiceInt(_, .List)             => false
+    rule isChoiceInt(I, ListItem(I') REST) => I ==Int I' orBool isChoiceInt(I, REST)
+
+    rule isChoiceString(_, .List)             => false
+    rule isChoiceString(S, ListItem(S') REST) => S ==String S' orBool isChoiceString(S, REST)
+
+    rule isChoiceAddress(_, .List)                     => false
+    rule isChoiceAddress(A, ListItem(A':Address) REST) => A ==K A' orBool isChoiceAddress(A, REST)
+
+    rule isChoiceCDPID(_    , .List)                       => false
+    rule isChoiceCDPID(CDPID, ListItem(CDPID':CDPID) REST) => CDPID ==K CDPID' orBool isChoiceCDPID(CDPID, REST)
+```
+
+```k
+endmodule
+```
+
+```k
+module KMCD-GEN
+    imports KMCD-RANDOM-CHOICES
     imports BYTES
 
     configuration
@@ -190,29 +276,6 @@ module KMCD-GEN
     rule decrement(*) => *
     rule decrement(N) => N -Int 1 requires N  >Int 0
     rule decrement(N) => 0        requires N <=Int 0
-
-    syntax Int ::= randIntBounded ( Int , Int ) [function]
- // ------------------------------------------------------
-    rule randIntBounded(RAND, 0)     => 0
-    rule randIntBounded(RAND, BOUND) => RAND modInt BOUND requires BOUND =/=Int 0
-
-    syntax Rat ::= randRat ( Int ) [function]
- // -----------------------------------------
-    rule randRat(I) => (I modInt 101) /Rat 100
-
-    syntax Rat ::= randRatBounded ( Int , Rat ) [function]
- // ------------------------------------------------------
-    rule randRatBounded(I, BOUND) => BOUND *Rat randRat(I)
-
-    syntax Int     ::= chooseInt     ( Int , List ) [function]
-    syntax String  ::= chooseString  ( Int , List ) [function]
-    syntax Address ::= chooseAddress ( Int , List ) [function]
-    syntax CDPID   ::= chooseCDPID   ( Int , List ) [function]
- // ----------------------------------------------------------
-    rule chooseInt    (I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>Int
-    rule chooseString (I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>String
-    rule chooseAddress(I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>Address
-    rule chooseCDPID  (I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>CDPID
 
     syntax AdminStep ::= AddGenerator ( GenStep )
  // ---------------------------------------------

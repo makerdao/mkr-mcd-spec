@@ -93,17 +93,20 @@ defn-llvm:    $(llvm_files)
 defn-haskell: $(haskell_files)
 defn-java:    $(java_files)
 
+concrete_tangle := .k:not(.symbolic),.concrete
+symbolic_tangle := .k:not(.concrete),.symbolic
+
 $(llvm_dir)/%.k: %.md
 	@mkdir -p $(llvm_dir)
-	pandoc --from markdown --to "$(TANGLER)" --metadata=code:".k" $< > $@
+	pandoc --from markdown --to "$(TANGLER)" --metadata=code:"$(concrete_tangle)" $< > $@
 
 $(haskell_dir)/%.k: %.md
 	@mkdir -p $(haskell_dir)
-	pandoc --from markdown --to "$(TANGLER)" --metadata=code:".k" $< > $@
+	pandoc --from markdown --to "$(TANGLER)" --metadata=code:"$(symbolic_tangle)" $< > $@
 
 $(java_dir)/%.k: %.md
 	@mkdir -p $(java_dir)
-	pandoc --from markdown --to "$(TANGLER)" --metadata=code:".k" $< > $@
+	pandoc --from markdown --to "$(TANGLER)" --metadata=code:"$(symbolic_tangle)" $< > $@
 
 # LLVM Backend
 
