@@ -150,15 +150,6 @@ endmodule
 ```k
 module KMCD-RANDOM-CHOICES
     imports KMCD-PRELUDE
-    imports BYTES
-
-    syntax Int   ::= head        ( Bytes ) [function]
-    syntax Bytes ::= tail        ( Bytes ) [function]
-                   | headAsBytes ( Bytes ) [function]
- // -------------------------------------------------
-    rule head(BS)        => BS [ 0 ]                            requires lengthBytes(BS) >Int 0
-    rule tail(BS)        => substrBytes(BS, 1, lengthBytes(BS)) requires lengthBytes(BS) >Int 0
-    rule headAsBytes(BS) => substrBytes(BS, 0, 1)               requires lengthBytes(BS) >Int 0
 
     syntax Int ::= randIntBounded ( Int , Int ) [function]
  // ------------------------------------------------------
@@ -207,6 +198,14 @@ module KMCD-GEN
           </generators>
         </kmcd-gen>
       </kmcd-random>
+
+    syntax Int   ::= head        ( Bytes ) [function]
+    syntax Bytes ::= tail        ( Bytes ) [function]
+                   | headAsBytes ( Bytes ) [function]
+ // -------------------------------------------------
+    rule head(BS)        => BS [ 0 ]                            requires lengthBytes(BS) >Int 0
+    rule tail(BS)        => substrBytes(BS, 1, lengthBytes(BS)) requires lengthBytes(BS) >Int 0
+    rule headAsBytes(BS) => substrBytes(BS, 0, 1)               requires lengthBytes(BS) >Int 0
 
     syntax Int ::= #timeStepMax() [function]
                  | #dsrSpread()   [function]
