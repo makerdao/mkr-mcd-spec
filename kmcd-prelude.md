@@ -153,26 +153,47 @@ module KMCD-RANDOM-CHOICES
 
     syntax Int ::= randIntBounded ( Int , Int ) [function]
  // ------------------------------------------------------
+```
+
+```{.k .concrete}
     rule randIntBounded(RAND, 0)     => 0
     rule randIntBounded(RAND, BOUND) => RAND modInt BOUND requires BOUND =/=Int 0
+```
 
+```k
     syntax Rat ::= randRat ( Int ) [function]
  // -----------------------------------------
-    rule randRat(I) => (I modInt 101) /Rat 100
+```
 
+```{.k .concrete}
+    rule randRat(I) => (I modInt 101) /Rat 100
+```
+
+```k
     syntax Rat ::= randRatBounded ( Int , Rat ) [function]
  // ------------------------------------------------------
-    rule randRatBounded(I, BOUND) => BOUND *Rat randRat(I)
+```
 
+```{.k .concrete}
+    rule randRatBounded(I, BOUND) => BOUND *Rat randRat(I)
+```
+
+```k
     syntax Int     ::= chooseInt     ( Int , List ) [function]
     syntax String  ::= chooseString  ( Int , List ) [function]
     syntax Address ::= chooseAddress ( Int , List ) [function]
     syntax CDPID   ::= chooseCDPID   ( Int , List ) [function]
  // ----------------------------------------------------------
+```
+
+```{.k .concrete}
     rule chooseInt    (I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>Int
     rule chooseString (I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>String
     rule chooseAddress(I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>Address
     rule chooseCDPID  (I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>CDPID
+```
+
+```k
 endmodule
 ```
 
