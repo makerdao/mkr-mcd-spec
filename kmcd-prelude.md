@@ -256,6 +256,12 @@ module KMCD-GEN
         </kmcd-gen>
       </kmcd-random>
 
+    syntax Int ::= #timeStepMax() [function]
+                 | #dsrSpread()   [function]
+ // ----------------------------------------
+    rule #timeStepMax() => 2  [macro]
+    rule #dsrSpread()   => 20 [macro]
+
     syntax Int   ::= head        ( Bytes ) [function]
     syntax Bytes ::= tail        ( Bytes ) [function]
                    | headAsBytes ( Bytes ) [function]
@@ -263,12 +269,6 @@ module KMCD-GEN
     rule head(BS)        => BS [ 0 ]                            requires lengthBytes(BS) >Int 0
     rule tail(BS)        => substrBytes(BS, 1, lengthBytes(BS)) requires lengthBytes(BS) >Int 0
     rule headAsBytes(BS) => substrBytes(BS, 0, 1)               requires lengthBytes(BS) >Int 0
-
-    syntax Int ::= #timeStepMax() [function]
-                 | #dsrSpread()   [function]
- // ----------------------------------------
-    rule #timeStepMax() => 2  [macro]
-    rule #dsrSpread()   => 20 [macro]
 
     syntax DepthBound ::= Int | "*"
                         | decrement ( DepthBound ) [function, functional]
