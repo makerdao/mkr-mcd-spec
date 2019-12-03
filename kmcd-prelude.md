@@ -148,8 +148,46 @@ endmodule
 ```
 
 ```k
-module KMCD-GEN
+module KMCD-RANDOM-CHOICES
     imports KMCD-PRELUDE
+    imports BYTES
+
+    syntax Int   ::= head        ( Bytes ) [function]
+    syntax Bytes ::= tail        ( Bytes ) [function]
+                   | headAsBytes ( Bytes ) [function]
+ // -------------------------------------------------
+    rule head(BS)        => BS [ 0 ]                            requires lengthBytes(BS) >Int 0
+    rule tail(BS)        => substrBytes(BS, 1, lengthBytes(BS)) requires lengthBytes(BS) >Int 0
+    rule headAsBytes(BS) => substrBytes(BS, 0, 1)               requires lengthBytes(BS) >Int 0
+
+    syntax Int ::= randIntBounded ( Int , Int ) [function]
+ // ------------------------------------------------------
+    rule randIntBounded(RAND, 0)     => 0
+    rule randIntBounded(RAND, BOUND) => RAND modInt BOUND requires BOUND =/=Int 0
+
+    syntax Rat ::= randRat ( Int ) [function]
+ // -----------------------------------------
+    rule randRat(I) => (I modInt 101) /Rat 100
+
+    syntax Rat ::= randRatBounded ( Int , Rat ) [function]
+ // ------------------------------------------------------
+    rule randRatBounded(I, BOUND) => BOUND *Rat randRat(I)
+
+    syntax Int     ::= chooseInt     ( Int , List ) [function]
+    syntax String  ::= chooseString  ( Int , List ) [function]
+    syntax Address ::= chooseAddress ( Int , List ) [function]
+    syntax CDPID   ::= chooseCDPID   ( Int , List ) [function]
+ // ----------------------------------------------------------
+    rule chooseInt    (I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>Int
+    rule chooseString (I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>String
+    rule chooseAddress(I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>Address
+    rule chooseCDPID  (I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>CDPID
+endmodule
+```
+
+```k
+module KMCD-GEN
+    imports KMCD-RANDOM-CHOICES
     imports BYTES
 
     configuration
@@ -176,43 +214,12 @@ module KMCD-GEN
     rule #timeStepMax() => 2  [macro]
     rule #dsrSpread()   => 20 [macro]
 
-    syntax Int   ::= head        ( Bytes ) [function]
-    syntax Bytes ::= tail        ( Bytes ) [function]
-                   | headAsBytes ( Bytes ) [function]
- // -------------------------------------------------
-    rule head(BS)        => BS [ 0 ]                            requires lengthBytes(BS) >Int 0
-    rule tail(BS)        => substrBytes(BS, 1, lengthBytes(BS)) requires lengthBytes(BS) >Int 0
-    rule headAsBytes(BS) => substrBytes(BS, 0, 1)               requires lengthBytes(BS) >Int 0
-
     syntax DepthBound ::= Int | "*"
                         | decrement ( DepthBound ) [function, functional]
  // ---------------------------------------------------------------------
     rule decrement(*) => *
     rule decrement(N) => N -Int 1 requires N  >Int 0
     rule decrement(N) => 0        requires N <=Int 0
-
-    syntax Int ::= randIntBounded ( Int , Int ) [function]
- // ------------------------------------------------------
-    rule randIntBounded(RAND, 0)     => 0
-    rule randIntBounded(RAND, BOUND) => RAND modInt BOUND requires BOUND =/=Int 0
-
-    syntax Rat ::= randRat ( Int ) [function]
- // -----------------------------------------
-    rule randRat(I) => (I modInt 101) /Rat 100
-
-    syntax Rat ::= randRatBounded ( Int , Rat ) [function]
- // ------------------------------------------------------
-    rule randRatBounded(I, BOUND) => BOUND *Rat randRat(I)
-
-    syntax Int     ::= chooseInt     ( Int , List ) [function]
-    syntax String  ::= chooseString  ( Int , List ) [function]
-    syntax Address ::= chooseAddress ( Int , List ) [function]
-    syntax CDPID   ::= chooseCDPID   ( Int , List ) [function]
- // ----------------------------------------------------------
-    rule chooseInt    (I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>Int
-    rule chooseString (I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>String
-    rule chooseAddress(I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>Address
-    rule chooseCDPID  (I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>CDPID
 
     syntax AdminStep ::= AddGenerator ( GenStep )
  // ---------------------------------------------
