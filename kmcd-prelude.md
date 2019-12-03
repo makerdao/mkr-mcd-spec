@@ -157,7 +157,7 @@ module KMCD-RANDOM-CHOICES
 
 ```{.k .concrete}
     rule randIntBounded(RAND, 0)     => 0
-    rule randIntBounded(RAND, BOUND) => RAND modInt BOUND requires BOUND =/=Int 0
+    rule randIntBounded(RAND, BOUND) => RAND modInt (BOUND +Int 1) requires BOUND =/=Int 0
 ```
 
 ```k
