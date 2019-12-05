@@ -88,7 +88,7 @@ The parameters controlled by governance are:
                       | "tau" Int
                       | "pad" Ray
                       | "vow-file" Address
- // -----------------------------
+ // --------------------------------------
     rule <k> Flop . file beg BEG => . ... </k>
          <flop-beg> _ => BEG </flop-beg>
 
