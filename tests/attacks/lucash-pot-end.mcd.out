@@ -1,0 +1,513 @@
+<kmcd-random>
+  <kmcd-properties>
+    <kmcd>
+      <kmcd-driver>
+        <k>
+          .
+        </k>
+        <return-value>
+          .
+        </return-value>
+        <msg-sender>
+          "Alice"
+        </msg-sender>
+        <this>
+          "Alice"
+        </this>
+        <current-time>
+          1
+        </current-time>
+        <call-stack>
+          .List
+        </call-stack>
+        <pre-state>
+          .
+        </pre-state>
+        <events>
+          ListItem ( LogNote ( ADMIN , Vat . rely Pot ) )
+          ListItem ( LogNote ( ADMIN , Vat . rely End ) )
+          ListItem ( LogNote ( ADMIN , Pot . rely End ) )
+          ListItem ( LogNote ( ADMIN , Vow . rely Pot ) )
+          ListItem ( LogNote ( ADMIN , Vow . rely End ) )
+          ListItem ( LogNote ( ADMIN , Cat . rely End ) )
+          ListItem ( LogNote ( ADMIN , Flap . rely Vow ) )
+          ListItem ( LogNote ( ADMIN , Flop . rely Vow ) )
+          ListItem ( LogNote ( ADMIN , Vat . initUser Vow ) )
+          ListItem ( LogNote ( ADMIN , Vat . initUser Pot ) )
+          ListItem ( LogNote ( ADMIN , Vat . initUser Flap ) )
+          ListItem ( LogNote ( ADMIN , Vat . initUser End ) )
+          ListItem ( LogNote ( ADMIN , Pot . file vow-file Vow ) )
+          ListItem ( LogNote ( ADMIN , Gem "gold" . init ) )
+          ListItem ( LogNote ( ADMIN , GemJoin "gold" . init ) )
+          ListItem ( LogNote ( ADMIN , Vat . rely GemJoin "gold" ) )
+          ListItem ( LogNote ( ADMIN , Vat . initGem "gold" End ) )
+          ListItem ( LogNote ( ADMIN , Vat . initGem "gold" Flip "gold" ) )
+          ListItem ( LogNote ( ADMIN , Vat . initCDP "gold" End ) )
+          ListItem ( LogNote ( ADMIN , Spot . init "gold" ) )
+          ListItem ( LogNote ( ADMIN , Spot . setPrice "gold" 1 ) )
+          ListItem ( LogNote ( ADMIN , Flip "gold" . init ) )
+          ListItem ( LogNote ( ADMIN , Flip "gold" . rely End ) )
+          ListItem ( LogNote ( ADMIN , End . initGap "gold" ) )
+          ListItem ( LogNote ( ADMIN , Gem "MKR" . init ) )
+          ListItem ( LogNote ( ADMIN , GemJoin "MKR" . init ) )
+          ListItem ( LogNote ( ADMIN , Gem "MKR" . initUser Vow ) )
+          ListItem ( LogNote ( ADMIN , Gem "MKR" . initUser Flap ) )
+          ListItem ( LogNote ( ADMIN , Gem "MKR" . mint Flap 20 ) )
+          ListItem ( LogNote ( ADMIN , Vat . file Line 1000000000000 ) )
+          ListItem ( LogNote ( ADMIN , Vat . initIlk "gold" ) )
+          ListItem ( LogNote ( ADMIN , Vat . file spot "gold" 3000000000 ) )
+          ListItem ( LogNote ( ADMIN , Vat . file line "gold" 1000000000000 ) )
+          ListItem ( LogNote ( ADMIN , Vow . file bump 1000000000 ) )
+          ListItem ( LogNote ( ADMIN , Gem "gold" . initUser "Alice" ) )
+          ListItem ( LogNote ( ADMIN , Gem "gold" . initUser "Bobby" ) )
+          ListItem ( LogNote ( ADMIN , Gem "gold" . mint "Alice" 20 ) )
+          ListItem ( LogNote ( ADMIN , Gem "gold" . mint "Bobby" 20 ) )
+          ListItem ( LogNote ( ADMIN , Gem "MKR" . initUser "Alice" ) )
+          ListItem ( LogNote ( ADMIN , Gem "MKR" . initUser "Bobby" ) )
+          ListItem ( LogNote ( ADMIN , Pot . initUser "Alice" ) )
+          ListItem ( LogNote ( ADMIN , Pot . initUser "Bobby" ) )
+          ListItem ( LogNote ( ADMIN , Vat . initUser "Alice" ) )
+          ListItem ( LogNote ( ADMIN , Vat . initGem "gold" "Alice" ) )
+          ListItem ( LogNote ( ADMIN , Vat . initCDP "gold" "Alice" ) )
+          ListItem ( LogNote ( ADMIN , Vat . initUser "Bobby" ) )
+          ListItem ( LogNote ( ADMIN , Vat . initGem "gold" "Bobby" ) )
+          ListItem ( LogNote ( ADMIN , Vat . initCDP "gold" "Bobby" ) )
+          ListItem ( LogNote ( "Alice" , Vat . hope Pot ) )
+          ListItem ( LogNote ( "Alice" , Vat . hope Flip "gold" ) )
+          ListItem ( LogNote ( "Alice" , Vat . hope End ) )
+          ListItem ( LogNote ( "Bobby" , Vat . hope Pot ) )
+          ListItem ( LogNote ( "Bobby" , Vat . hope Flip "gold" ) )
+          ListItem ( LogNote ( "Bobby" , Vat . hope End ) )
+          ListItem ( LogNote ( "Alice" , Vat . slip "gold" "Alice" 10 ) )
+          ListItem ( LogNote ( "Alice" , Gem "gold" . transferFrom "Alice" GemJoin "gold" 10 ) )
+          ListItem ( LogNote ( "Alice" , GemJoin "gold" . join "Alice" 10 ) )
+          ListItem ( LogNote ( "Bobby" , Vat . slip "gold" "Bobby" 10 ) )
+          ListItem ( LogNote ( "Bobby" , Gem "gold" . transferFrom "Bobby" GemJoin "gold" 10 ) )
+          ListItem ( LogNote ( "Bobby" , GemJoin "gold" . join "Bobby" 10 ) )
+          ListItem ( LogNote ( "Alice" , Vat . frob "gold" "Alice" "Alice" "Alice" 10 10 ) )
+          ListItem ( LogNote ( "Bobby" , Vat . frob "gold" "Bobby" "Bobby" "Bobby" 10 10 ) )
+          ListItem ( LogNote ( ADMIN , End . initBag "Alice" ) )
+          ListItem ( LogNote ( ADMIN , End . initBag "Bobby" ) )
+          ListItem ( LogNote ( ADMIN , End . initOut "gold" "Alice" ) )
+          ListItem ( LogNote ( ADMIN , End . initOut "gold" "Bobby" ) )
+          ListItem ( LogNote ( ADMIN , Vat . cage ) )
+          ListItem ( LogNote ( ADMIN , Cat . cage ) )
+          ListItem ( LogNote ( Vow , Vat . move Flap Vow 0 ) )
+          ListItem ( LogNote ( End , Flap . cage 0 ) )
+          ListItem ( LogNote ( End , Flop . cage ) )
+          ListItem ( LogNote ( End , Vat . heal 0 ) )
+          ListItem ( LogNote ( ADMIN , Vow . cage ) )
+          ListItem ( LogNote ( ADMIN , Pot . cage ) )
+          ListItem ( LogNote ( ADMIN , End . cage ) )
+          ListItem ( LogNote ( ADMIN , End . cage "gold" ) )
+          ListItem ( LogNote ( ADMIN , Vat . grab "gold" "Alice" End Vow -10 -10 ) )
+          ListItem ( LogNote ( ADMIN , End . skim "gold" "Alice" ) )
+          ListItem ( LogNote ( ADMIN , Vat . grab "gold" "Bobby" End Vow -10 -10 ) )
+          ListItem ( LogNote ( ADMIN , End . skim "gold" "Bobby" ) )
+          ListItem ( LogNote ( ADMIN , End . thaw ) )
+          ListItem ( LogNote ( ADMIN , End . flow "gold" ) )
+          ListItem ( LogNote ( "Alice" , Vat . move "Alice" Pot 10 ) )
+          ListItem ( LogNote ( "Alice" , Pot . join 10 ) )
+          ListItem ( Exception ( Pot . file dsr 2 ) )
+          ListItem ( TimeStep ( 1 , 1 ) )
+          ListItem ( LogNote ( "Alice" , Vat . suck Vow Pot 0 ) )
+          ListItem ( LogNote ( "Alice" , Pot . drip ) )
+          ListItem ( LogNote ( "Alice" , Vat . move Pot "Alice" 10 ) )
+          ListItem ( LogNote ( "Alice" , Pot . exit 10 ) )
+        </events>
+        <frame-events>
+          .List
+        </frame-events>
+      </kmcd-driver>
+      <kmcd-state>
+        <cat>
+          <cat-wards>
+            SetItem ( End )
+          </cat-wards>
+          <cat-ilks>
+            .Map
+          </cat-ilks>
+          <cat-live>
+            false
+          </cat-live>
+          <cat-vow>
+            0
+          </cat-vow>
+        </cat>
+        <dai>
+          <dai-wards>
+            .Set
+          </dai-wards>
+          <dai-totalSupply>
+            0
+          </dai-totalSupply>
+          <dai-account-id>
+            0
+          </dai-account-id>
+          <dai-balance>
+            .Map
+          </dai-balance>
+          <dai-allowance>
+            .Map
+          </dai-allowance>
+          <dai-nonce>
+            .Map
+          </dai-nonce>
+        </dai>
+        <end-state>
+          <endPhase>
+            false
+          </endPhase>
+          <end>
+            <end-wards>
+              .Set
+            </end-wards>
+            <end-live>
+              false
+            </end-live>
+            <end-when>
+              0
+            </end-when>
+            <end-wait>
+              0
+            </end-wait>
+            <end-debt>
+              20
+            </end-debt>
+            <end-tag>
+              "gold" |-> 1
+            </end-tag>
+            <end-gap>
+              "gold" |-> 0
+            </end-gap>
+            <end-art>
+              "gold" |-> 20
+            </end-art>
+            <end-fix>
+              "gold" |-> 1
+            </end-fix>
+            <end-bag>
+              "Alice" |-> 0
+              "Bobby" |-> 0
+            </end-bag>
+            <end-out>
+              { "gold" , "Alice" } |-> 0
+              { "gold" , "Bobby" } |-> 0
+            </end-out>
+          </end>
+        </end-state>
+        <flap-state>
+          <flap-wards>
+            SetItem ( Vow )
+          </flap-wards>
+          <flap-bids>
+            .Map
+          </flap-bids>
+          <flap-kicks>
+            0
+          </flap-kicks>
+          <flap-live>
+            false
+          </flap-live>
+          <flap-beg>
+            21 /Rat 20
+          </flap-beg>
+          <flap-ttl>
+            10800
+          </flap-ttl>
+          <flap-tau>
+            172800
+          </flap-tau>
+        </flap-state>
+        <flips>
+          <flip>
+            <flip-ilk>
+              "gold"
+            </flip-ilk>
+            <flip-wards>
+              SetItem ( End )
+            </flip-wards>
+            <flip-bids>
+              .Map
+            </flip-bids>
+            <flip-beg>
+              21 /Rat 20
+            </flip-beg>
+            <flip-ttl>
+              10800
+            </flip-ttl>
+            <flip-tau>
+              172800
+            </flip-tau>
+            <flip-kicks>
+              0
+            </flip-kicks>
+          </flip>
+        </flips>
+        <flop-state>
+          <flop-wards>
+            SetItem ( Vow )
+          </flop-wards>
+          <flop-bids>
+            .Map
+          </flop-bids>
+          <flop-kicks>
+            0
+          </flop-kicks>
+          <flop-live>
+            false
+          </flop-live>
+          <flop-beg>
+            21 /Rat 20
+          </flop-beg>
+          <flop-pad>
+            3 /Rat 2
+          </flop-pad>
+          <flop-ttl>
+            10800
+          </flop-ttl>
+          <flop-tau>
+            172800
+          </flop-tau>
+          <flop-vow>
+            0
+          </flop-vow>
+        </flop-state>
+        <gems>
+          <gem>
+            <gem-id>
+              "MKR"
+            </gem-id>
+            <gem-wards>
+              .Set
+            </gem-wards>
+            <gem-balances>
+              "Alice" |-> 0
+              "Bobby" |-> 0
+              Flap |-> 20
+              GemJoin "MKR" |-> 0
+              Vow |-> 0
+            </gem-balances>
+          </gem> <gem>
+            <gem-id>
+              "gold"
+            </gem-id>
+            <gem-wards>
+              .Set
+            </gem-wards>
+            <gem-balances>
+              "Alice" |-> 10
+              "Bobby" |-> 10
+              GemJoin "gold" |-> 20
+            </gem-balances>
+          </gem>
+        </gems>
+        <join-state>
+          <gem-joins>
+            <gem-join>
+              <gem-join-gem>
+                "MKR"
+              </gem-join-gem>
+              <gem-join-wards>
+                .Set
+              </gem-join-wards>
+              <gem-join-live>
+                true
+              </gem-join-live>
+            </gem-join> <gem-join>
+              <gem-join-gem>
+                "gold"
+              </gem-join-gem>
+              <gem-join-wards>
+                .Set
+              </gem-join-wards>
+              <gem-join-live>
+                true
+              </gem-join-live>
+            </gem-join>
+          </gem-joins>
+          <dai-join>
+            <dai-join-wards>
+              .Set
+            </dai-join-wards>
+            <dai-join-live>
+              true
+            </dai-join-live>
+          </dai-join>
+        </join-state>
+        <jug>
+          <jug-wards>
+            .Set
+          </jug-wards>
+          <jug-ilks>
+            .Map
+          </jug-ilks>
+          <jug-vow>
+            0
+          </jug-vow>
+          <jug-base>
+            0
+          </jug-base>
+        </jug>
+        <pot>
+          <pot-wards>
+            SetItem ( End )
+          </pot-wards>
+          <pot-pies>
+            "Alice" |-> 0
+            "Bobby" |-> 0
+          </pot-pies>
+          <pot-pie>
+            0
+          </pot-pie>
+          <pot-dsr>
+            1
+          </pot-dsr>
+          <pot-chi>
+            1
+          </pot-chi>
+          <pot-vow>
+            Vow
+          </pot-vow>
+          <pot-rho>
+            1
+          </pot-rho>
+          <pot-live>
+            false
+          </pot-live>
+        </pot>
+        <spot>
+          <spot-wards>
+            .Set
+          </spot-wards>
+          <spot-ilks>
+            "gold" |-> SpotIlk ( 1 , 1 )
+          </spot-ilks>
+          <spot-par>
+            1
+          </spot-par>
+          <spot-live>
+            true
+          </spot-live>
+        </spot>
+        <vat>
+          <vat-wards>
+            SetItem ( End )
+            SetItem ( GemJoin "gold" )
+            SetItem ( Pot )
+          </vat-wards>
+          <vat-can>
+            "Alice" |-> SetItem ( End )
+            SetItem ( Flip "gold" )
+            SetItem ( Pot )
+            "Bobby" |-> SetItem ( End )
+            SetItem ( Flip "gold" )
+            SetItem ( Pot )
+            End |-> .Set
+            Flap |-> .Set
+            Pot |-> .Set
+            Vow |-> .Set
+          </vat-can>
+          <vat-ilks>
+            "gold" |-> Ilk ( 0 , 1 , 3000000000 , 1000000000000 , 0 )
+          </vat-ilks>
+          <vat-urns>
+            { "gold" , "Alice" } |-> Urn ( 0 , 0 )
+            { "gold" , "Bobby" } |-> Urn ( 0 , 0 )
+            { "gold" , End } |-> Urn ( 0 , 0 )
+          </vat-urns>
+          <vat-gem>
+            { "gold" , "Alice" } |-> 0
+            { "gold" , "Bobby" } |-> 0
+            { "gold" , End } |-> 20
+            { "gold" , Flip "gold" } |-> 0
+          </vat-gem>
+          <vat-dai>
+            "Alice" |-> 10
+            "Bobby" |-> 10
+            End |-> 0
+            Flap |-> 0
+            Pot |-> 0
+            Vow |-> 0
+          </vat-dai>
+          <vat-sin>
+            "Alice" |-> 0
+            "Bobby" |-> 0
+            End |-> 0
+            Flap |-> 0
+            Pot |-> 0
+            Vow |-> 20
+          </vat-sin>
+          <vat-debt>
+            20
+          </vat-debt>
+          <vat-vice>
+            20
+          </vat-vice>
+          <vat-Line>
+            1000000000000
+          </vat-Line>
+          <vat-live>
+            false
+          </vat-live>
+        </vat>
+        <vow>
+          <vow-wards>
+            SetItem ( End )
+            SetItem ( Pot )
+          </vow-wards>
+          <vow-sins>
+            .Map
+          </vow-sins>
+          <vow-sin>
+            0
+          </vow-sin>
+          <vow-ash>
+            0
+          </vow-ash>
+          <vow-wait>
+            0
+          </vow-wait>
+          <vow-dump>
+            0
+          </vow-dump>
+          <vow-sump>
+            0
+          </vow-sump>
+          <vow-bump>
+            1000000000
+          </vow-bump>
+          <vow-hump>
+            0
+          </vow-hump>
+          <vow-live>
+            false
+          </vow-live>
+        </vow>
+      </kmcd-state>
+    </kmcd>
+    <violation>
+      false
+    </violation>
+  </kmcd-properties>
+  <kmcd-gen>
+    <random>
+      b""
+    </random>
+    <used-random>
+      b""
+    </used-random>
+    <generator-next>
+      0
+    </generator-next>
+    <generator-current>
+      0
+    </generator-current>
+    <generator-remainder>
+      .GenStep
+    </generator-remainder>
+    <generators>
+      .GeneratorCellMap
+    </generators>
+  </kmcd-gen>
+</kmcd-random>
