@@ -14,6 +14,16 @@ module KMCD-PROPS
         </kmcd-properties>
 ```
 
+Measure Event
+-------------
+
+```k
+    syntax Event ::= Measure ( )
+ // ----------------------------
+    rule <k> measure => . ... </k>
+         <events> ... (.List => ListItem(Measure())) </events>
+```
+
 Properties
 ----------
 
