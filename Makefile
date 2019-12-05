@@ -153,8 +153,7 @@ mcd-pyk.py.out: mcd-pyk.py $(llvm_kompiled)
 
 TEST_BACKEND := llvm
 KMCD         := ./kmcd
-CHECK        := git --no-pager diff --no-index
-UPDATE       := cp
+CHECK        := git --no-pager diff --no-index --ignore-all-space -R
 
 TEST_KOMPILED := $(llvm_kompiled)
 ifeq ($(TEST_BACKEND), java)
@@ -173,10 +172,7 @@ tests/%.mcd.out: tests/%.mcd $(TEST_KOMPILED)
 	RANDOMSEED=$(KMCD_RANDOMSEED) $(KMCD) run --backend $(TEST_BACKEND) $< > $<.out
 
 tests/%.mcd.run: tests/%.mcd.out
-	$(CHECK) tests/$*.mcd.expected tests/$*.mcd.out
-
-tests/%.mcd.update: tests/%.mcd.out
-	$(UPDATE) tests/$*.mcd.out tests/$*.mcd.expected
+	$(CHECK) tests/$*.mcd.out tests/$*.mcd.expected
 
 execution_tests := $(wildcard tests/*/*.mcd)
 
