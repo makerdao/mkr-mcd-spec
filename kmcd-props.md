@@ -18,16 +18,54 @@ Measure Event
 -------------
 
 ```k
-    syntax Event ::= Measure ( )
- // ----------------------------
+    syntax Event ::= Measure ( debt: Rat , controlDai: Map )
+ // --------------------------------------------------------
     rule <k> measure => . ... </k>
-         <events> ... (.List => ListItem(Measure())) </events>
+         <events> ... (.List => ListItem(Measure(... debt: DEBT, controlDai: controlDais(keys_list(VAT_DAIS))))) </events>
+         <vat-debt> DEBT </vat-debt>
+         <vat-dai> VAT_DAIS </vat-dai>
 ```
 
 Properties
 ----------
 
 State predicates that capture undesirable states in the system (representing violations of certain invariants).
+
+```k
+    syntax Map ::= controlDais    ( List       ) [function]
+                 | controlDaisAux ( List , Map ) [function]
+ // -------------------------------------------------------
+    rule controlDais(USERS) => controlDaisAux(USERS, .Map)
+
+    rule controlDaisAux(.List               , USER_DAIS) => USER_DAIS
+    rule controlDaisAux(ListItem(ADDR) REST , USER_DAIS) => controlDaisAux(REST, USER_DAIS [ ADDR <- controlDaiForUser(ADDR) ])
+
+    syntax Rat ::= controlDaiForUser ( Address ) [function]
+                 | vatDaiForUser     ( Address ) [function]
+                 | erc20DaiForUser   ( Address ) [function]
+                 | potDaiForUser     ( Address ) [function]
+ // -------------------------------------------------------
+    rule controlDaiForUser(ADDR) => vatDaiForUser(ADDR) +Rat potDaiForUser(ADDR) +Rat erc20DaiForUser(ADDR)
+
+    rule    vatDaiForUser(_) => 0 [owise]
+    rule [[ vatDaiForUser(ADDR) => VAT_DAI ]]
+         <vat-dai> ... ADDR |-> VAT_DAI:Rat ... </vat-dai>
+
+    rule potDaiForUser(ADDR) => vatDaiForUser(Pot) *Rat portionOfPie(ADDR)
+
+    rule    erc20DaiForUser(_) => 0 [owise]
+    rule [[ erc20DaiForUser(ADDR) => USER_ADAPT_DAI ]]
+         <dai-balance> ... ADDR |-> USER_ADAPT_DAI ... </dai-balance>
+
+    syntax Rat ::= portionOfPie ( Address ) [function]
+ // --------------------------------------------------
+    rule    portionOfPie(_) => 0 [owise]
+    rule [[ portionOfPie(ADDR) => USER_PIE /Rat PIE ]]
+         <pot-pies> ... ADDR |-> USER_PIE ... </pot-pies>
+         <pot-pie> PIE </pot-pie>
+      requires PIE =/=Rat 0
+       andBool ADDR =/=K Pot
+```
 
 ### Vat Invariants
 
@@ -44,9 +82,9 @@ Art of an ilk = Sum of all urn art across all users for that ilk.
 
     //rule conservedArt() => false [owise]
 
-    rule conservedArt( ILKIDS ) 
-      => conservedArtOfIlk( { ILKIDS[0] }:>String ) 
-         andBool conservedArt( range(ILKIDS, 1, 0) ) 
+    rule conservedArt( ILKIDS )
+      => conservedArtOfIlk( { ILKIDS[0] }:>String )
+         andBool conservedArt( range(ILKIDS, 1, 0) )
       requires size( ILKIDS ) >Int 0
 
     rule conservedArt(.List) => true
@@ -65,7 +103,7 @@ Art of an ilk = Sum of all urn art across all users for that ilk.
       => #if ILKID ==K ILKID'
             #then sumOfUrnArt( URNS, ILKID', SUM +Int ART)
             #else sumOfUrnArt( URNS, ILKID', SUM)
-	 #fi
+         #fi
 
     rule sumOfUrnArt( _ |-> _ URNS, ILKID', SUM ) => sumOfUrnArt( URNS, ILKID', SUM ) [owise]
 
@@ -74,7 +112,7 @@ Art of an ilk = Sum of all urn art across all users for that ilk.
 
 - Conservation of Ink of an Ilk
 
-Ink of an ilk = Sum of all urn ink across all users for that ilk. 
+Ink of an ilk = Sum of all urn ink across all users for that ilk.
 
 **Note:** Cannot be stated directly since the total `Ink` is not maintained in the state.
 
@@ -132,8 +170,8 @@ Total dai of all users = CDP debt for all users and gem + system debt (vice)
 ```k
     syntax Bool ::= conservedTotalDai() [function, functional]
  // ----------------------------------------------------------
-    rule [[ conservedTotalDai() => 
-              sumOfAllDebt(USERDAI, 0) ==K (sumOfAllUserDebt(ILKS, URNS, 0) +Rat sumOfAllSin(USERSIN, 0)) 
+    rule [[ conservedTotalDai() =>
+              sumOfAllDebt(USERDAI, 0) ==K (sumOfAllUserDebt(ILKS, URNS, 0) +Rat sumOfAllSin(USERSIN, 0))
          ]]
       <vat-dai> USERDAI </vat-dai>
       <vat-sin> USERSIN </vat-sin>
@@ -146,10 +184,10 @@ Total dai of all users = CDP debt for all users and gem + system debt (vice)
  // ---------------------------------------------------------------------------------------
     rule sumOfAllUserDebt(
              ILKID |-> ILK ILKS => ILKS,
-             URNS, 
+             URNS,
              SUM => SUM +Rat (rate(ILK) *Rat sumOfUrnArt(URNS, ILKID, 0)) )
 
-    rule sumOfAllUserDebt(_ |-> _ ILKS => ILKS, URNS, SUM) [owise] 
+    rule sumOfAllUserDebt(_ |-> _ ILKS => ILKS, URNS, SUM) [owise]
 
     rule sumOfAllUserDebt(.Map, _, SUM) => SUM
 
