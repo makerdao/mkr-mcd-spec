@@ -23,6 +23,7 @@ Flop Configuration
         <flop-pad>    150 /Rat 100 </flop-pad>
         <flop-ttl>    3 hours      </flop-ttl>
         <flop-tau>    2 days       </flop-tau>
+        <flop-vow>    0:Address    </flop-vow>
       </flop-state>
 ```
 
@@ -86,7 +87,8 @@ The parameters controlled by governance are:
                       | "ttl" Int
                       | "tau" Int
                       | "pad" Ray
- // -----------------------------
+                      | "vow-file" Address
+ // --------------------------------------
     rule <k> Flop . file beg BEG => . ... </k>
          <flop-beg> _ => BEG </flop-beg>
 
@@ -98,6 +100,9 @@ The parameters controlled by governance are:
 
     rule <k> Flop . file pad PAD => . ... </k>
          <flop-pad> _ => PAD </flop-pad>
+
+    rule <k> Flop . file vow-file ADDR => . ... </k>
+         <flop-vow> _ => ADDR </flop-vow>
 ```
 
 Flop Events
@@ -202,12 +207,13 @@ Flop Semantics
     syntax FlopStep ::= "yank" Int [klabel(FlopYank),symbol]
  // --------------------------------------------------------
     rule <k> Flop . yank ID
-          => call Vat . move THIS GUY BID
+          => call Vat . suck VOWADDR GUY BID
          ...
          </k>
          <this> THIS </this>
          <flop-bids> ... ID |-> FlopBid(... bid: BID, guy: GUY) => .Map ... </flop-bids>
          <flop-live> false </flop-live>
+         <flop-vow> VOWADDR </flop-vow>
 ```
 
 ```k
