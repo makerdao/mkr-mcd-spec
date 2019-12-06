@@ -70,34 +70,9 @@ State predicates that capture undesirable states in the system (representing vio
 
 ### Vat Measures
 
-- Conservation of collatoral (Art -- in gem):
-
 Art of an ilk = Sum of all urn art across all users for that ilk.
 
 ```k
-    syntax Bool ::= conservedArt() [function, functional]
-    syntax Bool ::= conservedArt(List) [function, functional]
- // ---------------------------------------------------------
-    rule [[ conservedArt() => conservedArt(keys_list(ILKS)) ]]
-      <vat-ilks> ILKS </vat-ilks>
-
-    //rule conservedArt() => false [owise]
-
-    rule conservedArt( ILKIDS )
-      => conservedArtOfIlk( { ILKIDS[0] }:>String )
-         andBool conservedArt( range(ILKIDS, 1, 0) )
-      requires size( ILKIDS ) >Int 0
-
-    rule conservedArt(.List) => true
-
-    syntax Bool ::= conservedArtOfIlk(String) [function, functional]
- // ----------------------------------------------------------------
-    rule [[ conservedArtOfIlk(ILKID) => ART ==Int sumOfUrnArt(URNS, ILKID, 0) ]]
-      <vat-ilks> ... ILKID |-> Ilk( ... Art: ART ) ... </vat-ilks>
-      <vat-urns> URNS </vat-urns>
-
-    rule conservedArtOfIlk(ILKID) => false [owise]
-
     syntax Int ::= sumOfUrnArt(Map, String, Int) [function, functional]
  // -------------------------------------------------------------------
     rule sumOfUrnArt( {ILKID , ADDR} |-> Urn ( _ , ART) URNS, ILKID', SUM)
@@ -111,26 +86,11 @@ Art of an ilk = Sum of all urn art across all users for that ilk.
     rule sumOfUrnArt(.Map, _, SUM) => SUM
 ```
 
-- Conservation of Ink of an Ilk
-
 Ink of an ilk = Sum of all urn ink across all users for that ilk.
-
-**Note:** Cannot be stated directly since the total `Ink` is not maintained in the state.
-
-
-- Conservation of debt (debt -- in dai):
 
 Total debt = Sum of all debt across all users.
 
 ```k
-    syntax Bool ::= conservedDebt() [function, functional]
- // ------------------------------------------------------
-    rule [[ conservedDebt() => DEBT ==Int sumOfAllDebt(USERDAI, 0) ]]
-      <vat-debt> DEBT </vat-debt>
-      <vat-dai> USERDAI </vat-dai>
-
-    rule conservedDebt() => false [owise]
-
     syntax Int ::= sumOfAllDebt(Map, Int) [function, functional]
  // ------------------------------------------------------------
     rule sumOfAllDebt( ADDR |-> DAI USERDAI, SUM)
@@ -141,19 +101,9 @@ Total debt = Sum of all debt across all users.
     rule sumOfAllDebt(.Map, SUM) => SUM
 ```
 
-- Conservation of vice (sin):
-
 Total vice = Sum of all sin across all users.
 
 ```k
-    syntax Bool ::= conservedVice() [function, functional]
- // ------------------------------------------------------
-    rule [[ conservedVice() => VICE ==Int sumOfAllSin(USERSIN, 0) ]]
-      <vat-vice> VICE </vat-vice>
-      <vat-sin> USERSIN </vat-sin>
-
-    rule conservedVice() => false [owise]
-
     syntax Int ::= sumOfAllSin(Map, Int) [function, functional]
  // ------------------------------------------------------------
     rule sumOfAllSin( ADDR |-> SIN USERSIN, SUM)
@@ -164,23 +114,9 @@ Total vice = Sum of all sin across all users.
     rule sumOfAllSin(.Map, SUM) => SUM
 ```
 
-- Conservation of dai (total dai supply):
-
 Total dai of all users = CDP debt for all users and gem + system debt (vice)
 
 ```k
-    syntax Bool ::= conservedTotalDai() [function, functional]
- // ----------------------------------------------------------
-    rule [[ conservedTotalDai() =>
-              sumOfAllDebt(USERDAI, 0) ==K (sumOfAllUserDebt(ILKS, URNS, 0) +Rat sumOfAllSin(USERSIN, 0))
-         ]]
-      <vat-dai> USERDAI </vat-dai>
-      <vat-sin> USERSIN </vat-sin>
-      <vat-ilks> ILKS </vat-ilks>
-      <vat-urns> URNS </vat-urns>
-
-    //rule conservedTotalDai() => false [owise]
-
     syntax Rat ::= sumOfAllUserDebt( ilks: Map, urns: Map, sum: Rat) [function, functional]
  // ---------------------------------------------------------------------------------------
     rule sumOfAllUserDebt(
@@ -221,6 +157,79 @@ it is recorded in the state and execution is immediately terminated.
          <events> EVENTS </events>
          <violation> false => true </violation>
       requires violated(EVENTS)
+```
+
+### Vat Invariants
+
+-   Conservation of collatoral (Art -- in gem):
+
+```k
+    syntax Bool ::= conservedArt() [function, functional]
+    syntax Bool ::= conservedArt(List) [function, functional]
+ // ---------------------------------------------------------
+    rule [[ conservedArt() => conservedArt(keys_list(ILKS)) ]]
+      <vat-ilks> ILKS </vat-ilks>
+
+    //rule conservedArt() => false [owise]
+
+    rule conservedArt( ILKIDS )
+      => conservedArtOfIlk( { ILKIDS[0] }:>String )
+         andBool conservedArt( range(ILKIDS, 1, 0) )
+      requires size( ILKIDS ) >Int 0
+
+    rule conservedArt(.List) => true
+
+    syntax Bool ::= conservedArtOfIlk(String) [function, functional]
+ // ----------------------------------------------------------------
+    rule [[ conservedArtOfIlk(ILKID) => ART ==Int sumOfUrnArt(URNS, ILKID, 0) ]]
+      <vat-ilks> ... ILKID |-> Ilk( ... Art: ART ) ... </vat-ilks>
+      <vat-urns> URNS </vat-urns>
+
+    rule conservedArtOfIlk(ILKID) => false [owise]
+```
+
+-   Conservation of Ink of an Ilk
+
+**Note:** Cannot be stated directly since the total `Ink` is not maintained in the state.
+
+-   Conservation of debt (debt -- in dai):
+
+```k
+    syntax Bool ::= conservedDebt() [function, functional]
+ // ------------------------------------------------------
+    rule [[ conservedDebt() => DEBT ==Int sumOfAllDebt(USERDAI, 0) ]]
+      <vat-debt> DEBT </vat-debt>
+      <vat-dai> USERDAI </vat-dai>
+
+    rule conservedDebt() => false [owise]
+```
+
+-   Conservation of vice (sin):
+
+```k
+    syntax Bool ::= conservedVice() [function, functional]
+ // ------------------------------------------------------
+    rule [[ conservedVice() => VICE ==Int sumOfAllSin(USERSIN, 0) ]]
+      <vat-vice> VICE </vat-vice>
+      <vat-sin> USERSIN </vat-sin>
+
+    rule conservedVice() => false [owise]
+```
+
+- Conservation of dai (total dai supply):
+
+```k
+    syntax Bool ::= conservedTotalDai() [function, functional]
+ // ----------------------------------------------------------
+    rule [[ conservedTotalDai() =>
+              sumOfAllDebt(USERDAI, 0) ==K (sumOfAllUserDebt(ILKS, URNS, 0) +Rat sumOfAllSin(USERSIN, 0))
+         ]]
+      <vat-dai> USERDAI </vat-dai>
+      <vat-sin> USERSIN </vat-sin>
+      <vat-ilks> ILKS </vat-ilks>
+      <vat-urns> URNS </vat-urns>
+
+    //rule conservedTotalDai() => false [owise]
 ```
 
 ### Kicking off a fake `flip` auction (inspired by lucash-flip)
