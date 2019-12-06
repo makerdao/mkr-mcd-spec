@@ -159,6 +159,25 @@ it is recorded in the state and execution is immediately terminated.
       requires violated(EVENTS)
 ```
 
+### Bounded Debt Growth
+
+The Debt growth should be bounded in principle by the interest rates available in the system.
+
+```k
+    syntax Bool ::= totalDebtBounded    ( List             ) [function]
+                  | totalDebtBoundedAux ( List , Rat , Rat ) [function]
+ // -------------------------------------------------------------------
+    rule totalDebtBounded(.List)                           => true
+    rule totalDebtBounded(ListItem(Measure(DEBT, _)) REST) => totalDebtBoundedAux(REST, DEBT, 1) // initial DSR 1
+    rule totalDebtBounded(ListItem(_) REST)                => totalDebtBounded(REST)             [owise]
+
+    rule totalDebtBoundedAux( .List                                           , _    , _   ) => true
+    rule totalDebtBoundedAux( ListItem(Measure(DEBT', _))                _    , DEBT , _   ) => false requires notBool DEBT' <=Rat DEBT
+    rule totalDebtBoundedAux( ListItem(TimeStep(TIME, _))                REST , DEBT , DSR ) => totalDebtBoundedAux( REST , DEBT *Rat (DSR ^Rat TIME) , DSR  )
+    rule totalDebtBoundedAux( ListItem(LogNote(_ , Pot . file dsr DSR')) REST , DEBT , DSR ) => totalDebtBoundedAux( REST , DEBT                      , DSR' )
+    rule totalDebtBoundedAux( ListItem(_)                                REST , DEBT , DSR ) => totalDebtBoundedAux( REST , DEBT                      , DSR  ) [owise]
+```
+
 ### Vat Invariants
 
 -   Conservation of collatoral (Art -- in gem):
