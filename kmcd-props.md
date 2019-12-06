@@ -14,8 +14,10 @@ module KMCD-PROPS
         </kmcd-properties>
 ```
 
-Measure Event
--------------
+Measurables
+-----------
+
+### Measure Event
 
 ```k
     syntax Event ::= Measure ( debt: Rat , controlDai: Map )
@@ -26,8 +28,7 @@ Measure Event
          <vat-dai> VAT_DAIS </vat-dai>
 ```
 
-Properties
-----------
+### Dai in Circulation
 
 State predicates that capture undesirable states in the system (representing violations of certain invariants).
 
@@ -67,7 +68,7 @@ State predicates that capture undesirable states in the system (representing vio
        andBool ADDR =/=K Pot
 ```
 
-### Vat Invariants
+### Vat Measures
 
 - Conservation of collatoral (Art -- in gem):
 
@@ -190,7 +191,36 @@ Total dai of all users = CDP debt for all users and gem + system debt (vice)
     rule sumOfAllUserDebt(_ |-> _ ILKS => ILKS, URNS, SUM) [owise]
 
     rule sumOfAllUserDebt(.Map, _, SUM) => SUM
+```
 
+Violations
+----------
+
+A violation occurs if any of the properties above holds.
+
+```k
+    syntax Bool ::= violated(List) [function, functional]
+ // -----------------------------------------------------
+    rule violated(EVENTS) => zeroTimePotInterest(EVENTS)
+                      orBool unAuthFlipKick(EVENTS)
+                      orBool unAuthFlapKick(EVENTS)
+                      orBool potEndInterest(EVENTS)
+```
+
+A violation can be checked using the Admin step `assert`. If a violation is detected,
+it is recorded in the state and execution is immediately terminated.
+
+```k
+    syntax AdminStep ::= "assert"
+ // -----------------------------
+    rule <k> (assert => .) ... </k>
+         <events> EVENTS </events>
+      requires notBool violated(EVENTS)
+
+    rule <k> assert ~> _ => . </k>
+         <events> EVENTS </events>
+         <violation> false => true </violation>
+      requires violated(EVENTS)
 ```
 
 ### Kicking off a fake `flip` auction (inspired by lucash-flip)
@@ -300,36 +330,6 @@ The property checks if a successful `Pot . join` is preceded by a `TimeStep` mor
          => zeroTimePotInterestEnd(EVENTS) [owise]
 
     rule zeroTimePotInterestEnd(.List) => false
-```
-
-Violations
-----------
-
-A violation occurs if any of the properties above holds.
-
-```k
-    syntax Bool ::= violated(List) [function, functional]
- // -----------------------------------------------------
-    rule violated(EVENTS) => zeroTimePotInterest(EVENTS)
-                      orBool unAuthFlipKick(EVENTS)
-                      orBool unAuthFlapKick(EVENTS)
-                      orBool potEndInterest(EVENTS)
-```
-
-A violation can be checked using the Admin step `assert`. If a violation is detected,
-it is recorded in the state and execution is immediately terminated.
-
-```k
-    syntax AdminStep ::= "assert"
- // -----------------------------
-    rule <k> (assert => .) ... </k>
-         <events> EVENTS </events>
-      requires notBool violated(EVENTS)
-
-    rule <k> assert ~> _ => . </k>
-         <events> EVENTS </events>
-         <violation> false => true </violation>
-      requires violated(EVENTS)
 ```
 
 ```k
