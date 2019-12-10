@@ -20,12 +20,14 @@ Measurables
 ### Measure Event
 
 ```k
-    syntax Event ::= Measure ( debt: Rat , controlDai: Map )
- // --------------------------------------------------------
+    syntax Event ::= Measure ( debt: Rat , controlDai: Map , potChi: Rat , potPie: Rat )
+ // ------------------------------------------------------------------------------------
     rule <k> measure => . ... </k>
-         <events> ... (.List => ListItem(Measure(... debt: DEBT, controlDai: controlDais(keys_list(VAT_DAIS))))) </events>
+         <events> ... (.List => ListItem(Measure(... debt: DEBT, controlDai: controlDais(keys_list(VAT_DAIS)), potChi: POT_CHI, potPie: POT_PIE))) </events>
          <vat-debt> DEBT </vat-debt>
          <vat-dai> VAT_DAIS </vat-dai>
+         <pot-chi> POT_CHI </pot-chi>
+         <pot-pie> POT_PIE </pot-pie>
 ```
 
 ### Dai in Circulation
@@ -176,6 +178,18 @@ The Debt growth should be bounded in principle by the interest rates available i
     rule totalDebtBoundedAux( ListItem(TimeStep(TIME, _))                REST , DEBT , DSR ) => totalDebtBoundedAux( REST , DEBT +Rat (vatDaiForUser(Pot) *Rat ((DSR ^Rat TIME) -Rat 1)) , DSR  )
     rule totalDebtBoundedAux( ListItem(LogNote(_ , Pot . file dsr DSR')) REST , DEBT , DSR ) => totalDebtBoundedAux( REST , DEBT                      , DSR' )
     rule totalDebtBoundedAux( ListItem(_)                                REST , DEBT , DSR ) => totalDebtBoundedAux( REST , DEBT                      , DSR  ) [owise]
+```
+
+### Pot Chi * Pot Pie == Vat Dai(Pot)
+
+The Pot Chi multiplied by Pot Pie should equal the Vat Dai for the Pot
+
+```k
+    syntax Bool ::= potChiPieDai    ( List ) [function]
+ // ---------------------------------------------------
+    rule potChiPieDai( .List                                                                                 ) => true
+    rule potChiPieDai( ListItem(Measure(... controlDai: CONTROL_DAI, potChi: POT_CHI, potPie: POT_PIE)) _    ) => false requires POT_CHI *Rat POT_PIE =/=Rat CONTROL_DAI[Pot]
+    rule potChiPieDai( ListItem(_)                                                                      REST ) => potChiPieDai( REST ) [owise]
 ```
 
 ### Vat Invariants
