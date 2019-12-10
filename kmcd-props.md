@@ -172,8 +172,8 @@ The Debt growth should be bounded in principle by the interest rates available i
     rule totalDebtBounded(ListItem(_) REST)                => totalDebtBounded(REST)             [owise]
 
     rule totalDebtBoundedAux( .List                                           , _    , _   ) => true
-    rule totalDebtBoundedAux( ListItem(Measure(DEBT', _))                _    , DEBT , _   ) => false requires notBool DEBT' <=Rat DEBT
-    rule totalDebtBoundedAux( ListItem(TimeStep(TIME, _))                REST , DEBT , DSR ) => totalDebtBoundedAux( REST , DEBT *Rat (DSR ^Rat TIME) , DSR  )
+    rule totalDebtBoundedAux( ListItem(Measure(DEBT', _))                _    , DEBT , _   ) => false requires DEBT' >Rat DEBT
+    rule totalDebtBoundedAux( ListItem(TimeStep(TIME, _))                REST , DEBT , DSR ) => totalDebtBoundedAux( REST , DEBT +Rat (vatDaiForUser(Pot) *Rat ((DSR ^Rat TIME) -Rat 1)) , DSR  )
     rule totalDebtBoundedAux( ListItem(LogNote(_ , Pot . file dsr DSR')) REST , DEBT , DSR ) => totalDebtBoundedAux( REST , DEBT                      , DSR' )
     rule totalDebtBoundedAux( ListItem(_)                                REST , DEBT , DSR ) => totalDebtBoundedAux( REST , DEBT                      , DSR  ) [owise]
 ```
