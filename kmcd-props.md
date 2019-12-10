@@ -168,6 +168,7 @@ The Debt growth should be bounded in principle by the interest rates available i
 ```k
     syntax Bool ::= totalDebtBounded    ( List             ) [function]
                   | totalDebtBoundedAux ( List , Rat , Rat ) [function]
+                  | totalDebtBoundedEnd ( List , Rat       ) [function]
  // -------------------------------------------------------------------
     rule totalDebtBounded(.List)                                   => true
     rule totalDebtBounded(ListItem(Measure(... debt: DEBT )) REST) => totalDebtBoundedAux(REST, DEBT, 1) // initial DSR 1
@@ -177,7 +178,12 @@ The Debt growth should be bounded in principle by the interest rates available i
     rule totalDebtBoundedAux( ListItem(Measure(... debt: DEBT'))         _    , DEBT , _   ) => false requires DEBT' >Rat DEBT
     rule totalDebtBoundedAux( ListItem(TimeStep(TIME, _))                REST , DEBT , DSR ) => totalDebtBoundedAux( REST , DEBT +Rat (vatDaiForUser(Pot) *Rat ((DSR ^Rat TIME) -Rat 1)) , DSR  )
     rule totalDebtBoundedAux( ListItem(LogNote(_ , Pot . file dsr DSR')) REST , DEBT , DSR ) => totalDebtBoundedAux( REST , DEBT , DSR' )
+    rule totalDebtBoundedAux( ListItem(LogNote(_ , End . cage         )) REST , DEBT , _   ) => totalDebtBoundedEnd( REST , DEBT        )
     rule totalDebtBoundedAux( ListItem(_)                                REST , DEBT , DSR ) => totalDebtBoundedAux( REST , DEBT , DSR  ) [owise]
+
+    rule totalDebtBoundedEnd( .List                                   , _    ) => true
+    rule totalDebtBoundedEnd( ListItem(Measure(... debt: DEBT')) _    , DEBT ) => false requires DEBT' =/=Rat DEBT
+    rule totalDebtBoundedEnd( ListItem(_)                        REST , DEBT ) => totalDebtBoundedEnd( REST , DEBT ) [owise]
 ```
 
 ### Pot Chi * Pot Pie == Vat Dai(Pot)
