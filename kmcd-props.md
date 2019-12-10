@@ -143,6 +143,8 @@ A violation occurs if any of the properties above holds.
                       orBool unAuthFlipKick(EVENTS)
                       orBool unAuthFlapKick(EVENTS)
                       orBool potEndInterest(EVENTS)
+                      orBool ( notBool totalDebtBounded(EVENTS) )
+                      orBool ( notBool potChiPieDai(EVENTS)     )
 ```
 
 A violation can be checked using the Admin step `assert`. If a violation is detected,
@@ -191,8 +193,8 @@ The Debt growth should be bounded in principle by the interest rates available i
 The Pot Chi multiplied by Pot Pie should equal the Vat Dai for the Pot
 
 ```k
-    syntax Bool ::= potChiPieDai    ( List ) [function]
- // ---------------------------------------------------
+    syntax Bool ::= potChiPieDai ( List ) [function]
+ // ------------------------------------------------
     rule potChiPieDai( .List                                                                                 ) => true
     rule potChiPieDai( ListItem(Measure(... controlDai: CONTROL_DAI, potChi: POT_CHI, potPie: POT_PIE)) _    ) => false requires POT_CHI *Rat POT_PIE =/=Rat { CONTROL_DAI[Pot] }:>Rat
     rule potChiPieDai( ListItem(_)                                                                      REST ) => potChiPieDai( REST ) [owise]
