@@ -1,6 +1,10 @@
 KMCD Attack Prelude
 ===================
 
+```{.k .symbolic}
+requires "kast.k"
+```
+
 ```k
 requires "kmcd-props.k"
 
@@ -150,7 +154,13 @@ endmodule
 ```k
 module KMCD-RANDOM-CHOICES
     imports KMCD-PRELUDE
+```
 
+```{.k .symbolic}
+    imports ML-SYNTAX
+```
+
+```k
     syntax Int ::= randIntBounded ( Int , Int ) [function]
  // ------------------------------------------------------
 ```
@@ -206,27 +216,10 @@ module KMCD-RANDOM-CHOICES
 ```
 
 ```{.k .symbolic}
-    rule chooseInt    (_, ITEMS) => ?I:Int     ensures isChoiceInt    (?I, ITEMS)
-    rule chooseString (_, ITEMS) => ?S:String  ensures isChoiceString (?S, ITEMS)
-    rule chooseAddress(_, ITEMS) => ?A:Address ensures isChoiceAddress(?A, ITEMS)
-    rule chooseCDPID  (_, ITEMS) => ?C:CDPID   ensures isChoiceCDPID  (?C, ITEMS)
-
-    syntax Bool ::= isChoiceInt     ( Int     , List ) [function, functional]
-                  | isChoiceString  ( String  , List ) [function, functional]
-                  | isChoiceAddress ( Address , List ) [function, functional]
-                  | isChoiceCDPID   ( CDPID   , List ) [function, functional]
- // -------------------------------------------------------------------------
-    rule isChoiceInt(_, .List)             => false
-    rule isChoiceInt(I, ListItem(I') REST) => I ==Int I' orBool isChoiceInt(I, REST)
-
-    rule isChoiceString(_, .List)             => false
-    rule isChoiceString(S, ListItem(S') REST) => S ==String S' orBool isChoiceString(S, REST)
-
-    rule isChoiceAddress(_, .List)                     => false
-    rule isChoiceAddress(A, ListItem(A':Address) REST) => A ==K A' orBool isChoiceAddress(A, REST)
-
-    rule isChoiceCDPID(_    , .List)                       => false
-    rule isChoiceCDPID(CDPID, ListItem(CDPID':CDPID) REST) => CDPID ==K CDPID' orBool isChoiceCDPID(CDPID, REST)
+    rule chooseInt    (_, ITEMS) => #Exists I:Int     . (I #And { I in ITEMS #Equals true }) [anywhere]
+    rule chooseString (_, ITEMS) => #Exists S:String  . (S #And { S in ITEMS #Equals true }) [anywhere]
+    rule chooseAddress(_, ITEMS) => #Exists A:Address . (A #And { A in ITEMS #Equals true }) [anywhere]
+    rule chooseCDPID  (_, ITEMS) => #Exists C:CDPID   . (C #And { C in ITEMS #Equals true }) [anywhere]
 ```
 
 ```k
