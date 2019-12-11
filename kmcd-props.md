@@ -14,16 +14,173 @@ module KMCD-PROPS
         </kmcd-properties>
 ```
 
-Properties
-----------
+Measurables
+-----------
+
+### Measure Event
+
+```k
+    syntax Event ::= Measure ( debt: Rat , controlDai: Map )
+ // --------------------------------------------------------
+    rule <k> measure => . ... </k>
+         <events> ... (.List => ListItem(Measure(... debt: DEBT, controlDai: controlDais(keys_list(VAT_DAIS))))) </events>
+         <vat-debt> DEBT </vat-debt>
+         <vat-dai> VAT_DAIS </vat-dai>
+```
+
+### Dai in Circulation
 
 State predicates that capture undesirable states in the system (representing violations of certain invariants).
 
-### Vat Invariants
+```k
+    syntax Map ::= controlDais    ( List       ) [function]
+                 | controlDaisAux ( List , Map ) [function]
+ // -------------------------------------------------------
+    rule controlDais(USERS) => controlDaisAux(USERS, .Map)
 
-- Conservation of collatoral (Art -- in gem):
+    rule controlDaisAux(.List               , USER_DAIS) => USER_DAIS
+    rule controlDaisAux(ListItem(ADDR) REST , USER_DAIS) => controlDaisAux(REST, USER_DAIS [ ADDR <- controlDaiForUser(ADDR) ])
+
+    syntax Rat ::= controlDaiForUser ( Address ) [function]
+                 | vatDaiForUser     ( Address ) [function]
+                 | erc20DaiForUser   ( Address ) [function]
+                 | potDaiForUser     ( Address ) [function]
+ // -------------------------------------------------------
+    rule controlDaiForUser(ADDR) => vatDaiForUser(ADDR) +Rat potDaiForUser(ADDR) +Rat erc20DaiForUser(ADDR)
+
+    rule    vatDaiForUser(_) => 0 [owise]
+    rule [[ vatDaiForUser(ADDR) => VAT_DAI ]]
+         <vat-dai> ... ADDR |-> VAT_DAI:Rat ... </vat-dai>
+
+    rule potDaiForUser(ADDR) => vatDaiForUser(Pot) *Rat portionOfPie(ADDR)
+
+    rule    erc20DaiForUser(_) => 0 [owise]
+    rule [[ erc20DaiForUser(ADDR) => USER_ADAPT_DAI ]]
+         <dai-balance> ... ADDR |-> USER_ADAPT_DAI ... </dai-balance>
+
+    syntax Rat ::= portionOfPie ( Address ) [function]
+ // --------------------------------------------------
+    rule    portionOfPie(_) => 0 [owise]
+    rule [[ portionOfPie(ADDR) => USER_PIE /Rat PIE ]]
+         <pot-pies> ... ADDR |-> USER_PIE ... </pot-pies>
+         <pot-pie> PIE </pot-pie>
+      requires PIE =/=Rat 0
+       andBool ADDR =/=K Pot
+```
+
+### Vat Measures
 
 Art of an ilk = Sum of all urn art across all users for that ilk.
+
+```k
+    syntax Int ::= sumOfUrnArt(Map, String, Int) [function, functional]
+ // -------------------------------------------------------------------
+    rule sumOfUrnArt( {ILKID , ADDR} |-> Urn ( _ , ART) URNS, ILKID', SUM)
+      => #if ILKID ==K ILKID'
+            #then sumOfUrnArt( URNS, ILKID', SUM +Int ART)
+            #else sumOfUrnArt( URNS, ILKID', SUM)
+         #fi
+
+    rule sumOfUrnArt( _ |-> _ URNS, ILKID', SUM ) => sumOfUrnArt( URNS, ILKID', SUM ) [owise]
+
+    rule sumOfUrnArt(.Map, _, SUM) => SUM
+```
+
+Ink of an ilk = Sum of all urn ink across all users for that ilk.
+
+Total debt = Sum of all debt across all users.
+
+```k
+    syntax Int ::= sumOfAllDebt(Map, Int) [function, functional]
+ // ------------------------------------------------------------
+    rule sumOfAllDebt( ADDR |-> DAI USERDAI, SUM)
+      => sumOfAllDebt( USERDAI, SUM +Int DAI)
+
+    rule sumOfAllDebt( _ |-> _ USERDAI, SUM ) => sumOfAllDebt( USERDAI, SUM ) [owise]
+
+    rule sumOfAllDebt(.Map, SUM) => SUM
+```
+
+Total vice = Sum of all sin across all users.
+
+```k
+    syntax Int ::= sumOfAllSin(Map, Int) [function, functional]
+ // ------------------------------------------------------------
+    rule sumOfAllSin( ADDR |-> SIN USERSIN, SUM)
+      => sumOfAllSin( USERSIN, SUM +Int SIN)
+
+    rule sumOfAllSin( _ |-> _ USERSIN, SUM ) => sumOfAllSin( USERSIN, SUM ) [owise]
+
+    rule sumOfAllSin(.Map, SUM) => SUM
+```
+
+Total dai of all users = CDP debt for all users and gem + system debt (vice)
+
+```k
+    syntax Rat ::= sumOfAllUserDebt( ilks: Map, urns: Map, sum: Rat) [function, functional]
+ // ---------------------------------------------------------------------------------------
+    rule sumOfAllUserDebt(
+             ILKID |-> ILK ILKS => ILKS,
+             URNS,
+             SUM => SUM +Rat (rate(ILK) *Rat sumOfUrnArt(URNS, ILKID, 0)) )
+
+    rule sumOfAllUserDebt(_ |-> _ ILKS => ILKS, URNS, SUM) [owise]
+
+    rule sumOfAllUserDebt(.Map, _, SUM) => SUM
+```
+
+Violations
+----------
+
+A violation occurs if any of the properties above holds.
+
+```k
+    syntax Bool ::= violated(List) [function, functional]
+ // -----------------------------------------------------
+    rule violated(EVENTS) => zeroTimePotInterest(EVENTS)
+                      orBool unAuthFlipKick(EVENTS)
+                      orBool unAuthFlapKick(EVENTS)
+                      orBool potEndInterest(EVENTS)
+```
+
+A violation can be checked using the Admin step `assert`. If a violation is detected,
+it is recorded in the state and execution is immediately terminated.
+
+```k
+    syntax AdminStep ::= "assert"
+ // -----------------------------
+    rule <k> (assert => .) ... </k>
+         <events> EVENTS </events>
+      requires notBool violated(EVENTS)
+
+    rule <k> assert ~> _ => . </k>
+         <events> EVENTS </events>
+         <violation> false => true </violation>
+      requires violated(EVENTS)
+```
+
+### Bounded Debt Growth
+
+The Debt growth should be bounded in principle by the interest rates available in the system.
+
+```k
+    syntax Bool ::= totalDebtBounded    ( List             ) [function]
+                  | totalDebtBoundedAux ( List , Rat , Rat ) [function]
+ // -------------------------------------------------------------------
+    rule totalDebtBounded(.List)                           => true
+    rule totalDebtBounded(ListItem(Measure(DEBT, _)) REST) => totalDebtBoundedAux(REST, DEBT, 1) // initial DSR 1
+    rule totalDebtBounded(ListItem(_) REST)                => totalDebtBounded(REST)             [owise]
+
+    rule totalDebtBoundedAux( .List                                           , _    , _   ) => true
+    rule totalDebtBoundedAux( ListItem(Measure(DEBT', _))                _    , DEBT , _   ) => false requires notBool DEBT' <=Rat DEBT
+    rule totalDebtBoundedAux( ListItem(TimeStep(TIME, _))                REST , DEBT , DSR ) => totalDebtBoundedAux( REST , DEBT *Rat (DSR ^Rat TIME) , DSR  )
+    rule totalDebtBoundedAux( ListItem(LogNote(_ , Pot . file dsr DSR')) REST , DEBT , DSR ) => totalDebtBoundedAux( REST , DEBT                      , DSR' )
+    rule totalDebtBoundedAux( ListItem(_)                                REST , DEBT , DSR ) => totalDebtBoundedAux( REST , DEBT                      , DSR  ) [owise]
+```
+
+### Vat Invariants
+
+-   Conservation of collatoral (Art -- in gem):
 
 ```k
     syntax Bool ::= conservedArt() [function, functional]
@@ -34,9 +191,9 @@ Art of an ilk = Sum of all urn art across all users for that ilk.
 
     //rule conservedArt() => false [owise]
 
-    rule conservedArt( ILKIDS ) 
-      => conservedArtOfIlk( { ILKIDS[0] }:>String ) 
-         andBool conservedArt( range(ILKIDS, 1, 0) ) 
+    rule conservedArt( ILKIDS )
+      => conservedArtOfIlk( { ILKIDS[0] }:>String )
+         andBool conservedArt( range(ILKIDS, 1, 0) )
       requires size( ILKIDS ) >Int 0
 
     rule conservedArt(.List) => true
@@ -48,30 +205,13 @@ Art of an ilk = Sum of all urn art across all users for that ilk.
       <vat-urns> URNS </vat-urns>
 
     rule conservedArtOfIlk(ILKID) => false [owise]
-
-    syntax Int ::= sumOfUrnArt(Map, String, Int) [function, functional]
- // -------------------------------------------------------------------
-    rule sumOfUrnArt( {ILKID , ADDR} |-> Urn ( _ , ART) URNS, ILKID', SUM)
-      => #if ILKID ==K ILKID'
-            #then sumOfUrnArt( URNS, ILKID', SUM +Int ART)
-            #else sumOfUrnArt( URNS, ILKID', SUM)
-	 #fi
-
-    rule sumOfUrnArt( _ |-> _ URNS, ILKID', SUM ) => sumOfUrnArt( URNS, ILKID', SUM ) [owise]
-
-    rule sumOfUrnArt(.Map, _, SUM) => SUM
 ```
 
-- Conservation of Ink of an Ilk
-
-Ink of an ilk = Sum of all urn ink across all users for that ilk. 
+-   Conservation of Ink of an Ilk
 
 **Note:** Cannot be stated directly since the total `Ink` is not maintained in the state.
 
-
-- Conservation of debt (debt -- in dai):
-
-Total debt = Sum of all debt across all users.
+-   Conservation of debt (debt -- in dai):
 
 ```k
     syntax Bool ::= conservedDebt() [function, functional]
@@ -81,20 +221,9 @@ Total debt = Sum of all debt across all users.
       <vat-dai> USERDAI </vat-dai>
 
     rule conservedDebt() => false [owise]
-
-    syntax Int ::= sumOfAllDebt(Map, Int) [function, functional]
- // ------------------------------------------------------------
-    rule sumOfAllDebt( ADDR |-> DAI USERDAI, SUM)
-      => sumOfAllDebt( USERDAI, SUM +Int DAI)
-
-    rule sumOfAllDebt( _ |-> _ USERDAI, SUM ) => sumOfAllDebt( USERDAI, SUM ) [owise]
-
-    rule sumOfAllDebt(.Map, SUM) => SUM
 ```
 
-- Conservation of vice (sin):
-
-Total vice = Sum of all sin across all users.
+-   Conservation of vice (sin):
 
 ```k
     syntax Bool ::= conservedVice() [function, functional]
@@ -104,26 +233,15 @@ Total vice = Sum of all sin across all users.
       <vat-sin> USERSIN </vat-sin>
 
     rule conservedVice() => false [owise]
-
-    syntax Int ::= sumOfAllSin(Map, Int) [function, functional]
- // ------------------------------------------------------------
-    rule sumOfAllSin( ADDR |-> SIN USERSIN, SUM)
-      => sumOfAllSin( USERSIN, SUM +Int SIN)
-
-    rule sumOfAllSin( _ |-> _ USERSIN, SUM ) => sumOfAllSin( USERSIN, SUM ) [owise]
-
-    rule sumOfAllSin(.Map, SUM) => SUM
 ```
 
 - Conservation of dai (total dai supply):
 
-Total dai of all users = CDP debt for all users and gem + system debt (vice)
-
 ```k
     syntax Bool ::= conservedTotalDai() [function, functional]
  // ----------------------------------------------------------
-    rule [[ conservedTotalDai() => 
-              sumOfAllDebt(USERDAI, 0) ==K (sumOfAllUserDebt(ILKS, URNS, 0) +Rat sumOfAllSin(USERSIN, 0)) 
+    rule [[ conservedTotalDai() =>
+              sumOfAllDebt(USERDAI, 0) ==K (sumOfAllUserDebt(ILKS, URNS, 0) +Rat sumOfAllSin(USERSIN, 0))
          ]]
       <vat-dai> USERDAI </vat-dai>
       <vat-sin> USERSIN </vat-sin>
@@ -131,18 +249,6 @@ Total dai of all users = CDP debt for all users and gem + system debt (vice)
       <vat-urns> URNS </vat-urns>
 
     //rule conservedTotalDai() => false [owise]
-
-    syntax Rat ::= sumOfAllUserDebt( ilks: Map, urns: Map, sum: Rat) [function, functional]
- // ---------------------------------------------------------------------------------------
-    rule sumOfAllUserDebt(
-             ILKID |-> ILK ILKS => ILKS,
-             URNS, 
-             SUM => SUM +Rat (rate(ILK) *Rat sumOfUrnArt(URNS, ILKID, 0)) )
-
-    rule sumOfAllUserDebt(_ |-> _ ILKS => ILKS, URNS, SUM) [owise] 
-
-    rule sumOfAllUserDebt(.Map, _, SUM) => SUM
-
 ```
 
 ### Kicking off a fake `flip` auction (inspired by lucash-flip)
@@ -252,36 +358,6 @@ The property checks if a successful `Pot . join` is preceded by a `TimeStep` mor
          => zeroTimePotInterestEnd(EVENTS) [owise]
 
     rule zeroTimePotInterestEnd(.List) => false
-```
-
-Violations
-----------
-
-A violation occurs if any of the properties above holds.
-
-```k
-    syntax Bool ::= violated(List) [function, functional]
- // -----------------------------------------------------
-    rule violated(EVENTS) => zeroTimePotInterest(EVENTS)
-                      orBool unAuthFlipKick(EVENTS)
-                      orBool unAuthFlapKick(EVENTS)
-                      orBool potEndInterest(EVENTS)
-```
-
-A violation can be checked using the Admin step `assert`. If a violation is detected,
-it is recorded in the state and execution is immediately terminated.
-
-```k
-    syntax AdminStep ::= "assert"
- // -----------------------------
-    rule <k> (assert => .) ... </k>
-         <events> EVENTS </events>
-      requires notBool violated(EVENTS)
-
-    rule <k> assert ~> _ => . </k>
-         <events> EVENTS </events>
-         <violation> false => true </violation>
-      requires violated(EVENTS)
 ```
 
 ```k
