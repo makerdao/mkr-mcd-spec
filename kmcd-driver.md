@@ -90,7 +90,7 @@ Use `transact ...` for initiating top-level calls from a given user.
 ```k
     syntax AdminStep ::= "transact" Address MCDStep
  // -----------------------------------------------
-    rule <k> transact ADDR:Address MCD:MCDStep => pushState ~> call MCD ~> dropState ... </k>
+    rule <k> transact ADDR:Address MCD:MCDStep => measure ~> pushState ~> call MCD ~> dropState ... </k>
          <this> _ => ADDR </this>
          <msg-sender> _ => ADDR </msg-sender>
          <call-stack> _ => .List </call-stack>
@@ -98,8 +98,8 @@ Use `transact ...` for initiating top-level calls from a given user.
          <frame-events> _ => .List </frame-events>
          <return-value> _ => .K </return-value>
 
-    syntax AdminStep ::= "pushState" | "dropState" | "popState"
- // -----------------------------------------------------------
+    syntax AdminStep ::= "pushState" | "dropState" | "popState" | "measure"
+ // -----------------------------------------------------------------------
 ```
 
 Function Calls
