@@ -140,10 +140,12 @@ A violation occurs if any of the properties above holds.
 ```k
     syntax Map ::= "#violationFSMs" [function]
  // ------------------------------------------
-    rule #violationFSMs => "Zero-Time Pot Interest Accumulation" |-> zeroTimePotInterest
-                           "Pot Interest Accumulation After End" |-> potEndInterest
-                           "Unauthorized Flip Kick"              |-> unAuthFlipKick
-                           "Unauthorized Flap Kick"              |-> unAuthFlapKick
+    rule #violationFSMs => ( "Zero-Time Pot Interest Accumulation" |-> zeroTimePotInterest )
+                           ( "Pot Interest Accumulation After End" |-> potEndInterest      )
+                           ( "Unauthorized Flip Kick"              |-> unAuthFlipKick      )
+                           ( "Unauthorized Flap Kick"              |-> unAuthFlapKick      )
+                           ( "PotChi * PotPie = Vat(Pot)"          |-> potChiPieDai        )
+                           ( "Total Debt Bounded by DSR"           |-> totalDebtBounded    )
 ```
 
 A violation can be checked using the Admin step `assert`. If a violation is detected,
