@@ -143,8 +143,6 @@ A violation occurs if any of the properties above holds.
                       orBool unAuthFlipKick(EVENTS)
                       orBool unAuthFlapKick(EVENTS)
                       orBool potEndInterest(EVENTS)
-                      orBool ( notBool totalDebtBounded(EVENTS) )
-                      orBool ( notBool potChiPieDai(EVENTS)     )
 ```
 
 A violation can be checked using the Admin step `assert`. If a violation is detected,
