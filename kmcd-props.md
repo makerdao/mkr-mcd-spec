@@ -11,8 +11,7 @@ module KMCD-PROPS
         <kmcd-properties>
           <kmcd/>
           <processed-events> .List </processed-events>
-          <properties> .Map </properties>
-          <violation> false </violation>
+          <properties> #violationFSMs </properties>
         </kmcd-properties>
 ```
 
@@ -139,12 +138,12 @@ Violations
 A violation occurs if any of the properties above holds.
 
 ```k
-    syntax Bool ::= violated(List) [function, functional]
- // -----------------------------------------------------
-    rule violated(EVENTS) => zeroTimePotInterest(EVENTS)
-                      orBool unAuthFlipKick(EVENTS)
-                      orBool unAuthFlapKick(EVENTS)
-                      orBool potEndInterest(EVENTS)
+    syntax Map ::= "#violationFSMs" [function]
+ // ------------------------------------------
+    rule #violationFSMs => "Zero-Time Pot Interest Accumulation" |-> zeroTimePotInterest
+                           "Pot Interest Accumulation After End" |-> potEndInterest
+                           "Unauthorized Flip Kick"              |-> unAuthFlipKick
+                           "Unauthorized Flap Kick"              |-> unAuthFlapKick
 ```
 
 A violation can be checked using the Admin step `assert`. If a violation is detected,
@@ -153,14 +152,9 @@ it is recorded in the state and execution is immediately terminated.
 ```k
     syntax AdminStep ::= "assert"
  // -----------------------------
-    rule <k> (assert => .) ... </k>
-         <events> EVENTS </events>
-      requires notBool violated(EVENTS)
-
-    rule <k> assert ~> _ => . </k>
-         <events> EVENTS </events>
-         <violation> false => true </violation>
-      requires violated(EVENTS)
+    rule <k> assert => deriveAll(keys_list(VFSMS), EVENTS) ... </k>
+         <events> EVENTS => .List </events>
+         <properties> VFSMS </properties>
 ```
 
 ### Violation Finite State Machines (FSMs)
@@ -191,19 +185,19 @@ A default `owise` rule is added which leaves the FSM state unchanged.
  // ------------------------------------------------------------------
     rule derive(VFSM, _) => VFSM [owise]
 
-    syntax AdminStep ::= deriveAll  ( List   , List )
-                       | deriveVFSM ( String , List )
- // -------------------------------------------------
-    rule <k> deriveAll(.List, _) => . ... </k>
-    rule <k> deriveAll(ListItem(VFSMID:String) REST, EVENTS)
-          => deriveVFSM(VFSMID, EVENTS)
-          ~> checkViolated(VFSMID)
-          ~> deriveAll(REST, EVENTS)
+    syntax AdminStep ::= deriveAll  ( List , List  )
+                       | deriveVFSM ( List , Event )
+ // ------------------------------------------------
+    rule <k> deriveAll(_, .List) => . ... </k>
+    rule <k> deriveAll(VFSMIDS, ListItem(E) REST)
+          => deriveVFSM(VFSMIDS, E)
+          ~> deriveAll(VFSMIDS, REST)
          ...
          </k>
+         <processed-events> ... (.List => ListItem(E)) </processed-events>
 
-    rule <k> deriveVFSM(VFSMID, .List)            => . ... </k>
-    rule <k> deriveVFSM(VFSMID, ListItem(E) REST) => . ... </k>
+    rule <k> deriveVFSM(.List                 , E) => .                                            ... </k>
+    rule <k> deriveVFSM(ListItem(VFSMID) REST , E) => checkViolated(VFSMID) ~> deriveVFSM(REST, E) ... </k>
          <properties> ... VFSMID |-> (VFSM => derive(VFSM, E)) ... </properties>
 ```
 
@@ -242,6 +236,53 @@ The Pot Chi multiplied by Pot Pie should equal the Vat Dai for the Pot
     rule potChiPieDai( .List                                                                                 ) => true
     rule potChiPieDai( ListItem(Measure(... controlDai: CONTROL_DAI, potChi: POT_CHI, potPie: POT_PIE)) _    ) => false requires POT_CHI *Rat POT_PIE =/=Rat { CONTROL_DAI[Pot] }:>Rat
     rule potChiPieDai( ListItem(_)                                                                      REST ) => potChiPieDai( REST ) [owise]
+```
+
+### Kicking off a fake `flip` auction (inspired by lucash-flip)
+
+The property checks if `flip . kick` is ever called by an unauthorized user (alternatively, the property can check whether a `flip` auction is kicked off with a zero bid?).
+
+```k
+    syntax ViolationFSM ::= "unAuthFlipKick"
+ // ----------------------------------------
+    rule derive(unAuthFlipKick, FlipKick(ADDR, ILK, _, _, _, _, _, _))
+      => #if isAuthorized(ADDR, Flip ILK) #then unAuthFlipKick #else Violated #fi
+```
+
+### Kicking off a fake `flap` auction (inspired by lucash-flap)
+
+The property checks if `flap . kick` is ever called by an unauthorized user (alternatively, the property can check whether a `flap` auction is kicked off with a zero bid?).
+
+```k
+    syntax ViolationFSM ::= "unAuthFlapKick"
+ // ----------------------------------------
+    rule derive(unAuthFlapKick, FlapKick(ADDR, _, _, _))
+      => #if isAuthorized(ADDR, Flap) #then unAuthFlapKick #else Violated #fi
+```
+
+### Earning interest from a pot after End is deactivated (inspired by the lucash-pot-end attack)
+
+The property checks if an `End . cage` is eventually followed by a successful `Pot . file dsr`.
+
+```k
+    syntax ViolationFSM ::= "potEndInterest" | "potEndInterestEnd"
+ // --------------------------------------------------------------
+    rule derive(potEndInterest   , LogNote( _ , End . cage       )) => potEndInterestEnd
+    rule derive(potEndInterestEnd, LogNote( _ , Pot . file dsr _ )) => Violated
+```
+
+### Earning interest from a pot in zero time (inspired by the lucash-pot attack)
+
+The property checks if a successful `Pot . join` is preceded by a `TimeStep` more recently than a `Pot . drip'.
+
+```k
+    syntax ViolationFSM ::= "zeroTimePotInterest" | "zeroTimePotInterestEnd"
+ // ------------------------------------------------------------------------
+    rule derive(zeroTimePotInterest, TimeStep(N,_)) => zeroTimePotInterestEnd
+      requires N >Int 0
+
+    rule derive(zeroTimePotInterestEnd, LogNote( _ , Pot . join _ )) => Violated
+    rule derive(zeroTimePotInterestEnd, LogNote( _ , Pot . drip   )) => zeroTimePotInterest
 ```
 
 ### Vat Invariants
@@ -315,115 +356,6 @@ The Pot Chi multiplied by Pot Pie should equal the Vat Dai for the Pot
       <vat-urns> URNS </vat-urns>
 
     //rule conservedTotalDai() => false [owise]
-```
-
-### Kicking off a fake `flip` auction (inspired by lucash-flip)
-
-The property checks if `flip . kick` is ever called by an unauthorized user (alternatively, the property can check whether a `flip` auction is kicked off with a zero bid?).
-
-```k
-    syntax Bool ::= unAuthFlipKick(List) [function, functional]
- // -----------------------------------------------------------
-    rule unAuthFlipKick(
-           ListItem(FlipKick(ADDR, ILK, _, _, _, _, _, _))
-           EVENTS:List
-         )
-         => #if isAuthorized(ADDR, Flip ILK) #then unAuthFlipKick(EVENTS) #else true #fi
-
-    rule unAuthFlipKick( ListItem(_) EVENTS:List )
-         => unAuthFlipKick(EVENTS) [owise]
-
-    rule unAuthFlipKick(.List) => false
-```
-
-### Kicking off a fake `flap` auction (inspired by lucash-flap)
-
-The property checks if `flap . kick` is ever called by an unauthorized user (alternatively, the property can check whether a `flap` auction is kicked off with a zero bid?).
-
-```k
-    syntax Bool ::= unAuthFlapKick(List) [function, functional]
- // -----------------------------------------------------------
-    rule unAuthFlapKick(
-          ListItem(FlapKick(ADDR, _, _, _))
-           EVENTS:List
-         )
-         => #if isAuthorized(ADDR, Flap) #then unAuthFlapKick(EVENTS) #else true #fi
-
-    rule unAuthFlapKick( ListItem(_) EVENTS:List )
-         => unAuthFlapKick(EVENTS) [owise]
-
-    rule unAuthFlapKick(.List) => false
-```
-
-### Earning interest from a pot after End is deactivated (inspired by the lucash-pot-end attack)
-
-The property checks if an `End . cage` is eventually followed by a successful `Pot . file dsr`.
-
-```k
-    syntax Bool ::= potEndInterest(List) [function, functional]
- // -----------------------------------------------------------
-    rule potEndInterest(
-           ListItem(LogNote( ADDR, End . cage))
-           EVENTS:List
-         )
-         => potEndInterestEnd(EVENTS)
-
-    rule potEndInterest(ListItem(_) EVENTS:List )
-         => potEndInterest(EVENTS) [owise]
-
-    rule potEndInterest(.List) => false
-
-    syntax Bool ::= potEndInterestEnd(List) [function, functional]
- // ----------------------------------------------------------------
-    rule potEndInterestEnd(
-           ListItem(LogNote( _ , Pot . file dsr _ ))
-           EVENTS:List
-         )
-         => true
-
-    rule potEndInterestEnd( ListItem(_) EVENTS:List )
-         => potEndInterestEnd(EVENTS) [owise]
-
-    rule potEndInterestEnd(.List) => false
-```
-
-### Earning interest from a pot in zero time (inspired by the lucash-pot attack)
-
-The property checks if a successful `Pot . join` is preceded by a `TimeStep` more recently than a `Pot . drip'.
-
-```k
-    syntax Bool ::= zeroTimePotInterest(List) [function, functional]
- // ----------------------------------------------------------------
-    rule zeroTimePotInterest(
-           ListItem( TimeStep(N,_) )
-           EVENTS:List
-         )
-         => zeroTimePotInterestEnd(EVENTS)
-      requires N >Int 0
-
-    rule zeroTimePotInterest( ListItem(_) EVENTS:List )
-         => zeroTimePotInterest(EVENTS) [owise]
-
-    rule zeroTimePotInterest(.List) => false
-
-    syntax Bool ::= zeroTimePotInterestEnd(List) [function, functional]
- // -------------------------------------------------------------------
-    rule zeroTimePotInterestEnd(
-           ListItem(LogNote( _ , Pot . join _ ))
-           EVENTS:List
-         )
-         => true
-
-    rule zeroTimePotInterestEnd(
-           ListItem(LogNote( _ , Pot . drip ))
-           EVENTS:List
-         )
-         => zeroTimePotInterest(EVENTS)
-
-    rule zeroTimePotInterestEnd( ListItem(_) EVENTS:List )
-         => zeroTimePotInterestEnd(EVENTS) [owise]
-
-    rule zeroTimePotInterestEnd(.List) => false
 ```
 
 ```k
