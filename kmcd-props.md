@@ -206,24 +206,18 @@ A default `owise` rule is added which leaves the FSM state unchanged.
 The Debt growth should be bounded in principle by the interest rates available in the system.
 
 ```k
-    syntax Bool ::= totalDebtBounded    ( List             ) [function]
-                  | totalDebtBoundedAux ( List , Rat , Rat ) [function]
-                  | totalDebtBoundedEnd ( List , Rat       ) [function]
- // -------------------------------------------------------------------
-    rule totalDebtBounded(.List)                                   => true
-    rule totalDebtBounded(ListItem(Measure(... debt: DEBT )) REST) => totalDebtBoundedAux(REST, DEBT, 1) // initial DSR 1
-    rule totalDebtBounded(ListItem(_) REST)                        => totalDebtBounded(REST)             [owise]
+    syntax ViolationFSM ::= "totalDebtBounded"
+                          | totalDebtBounded    ( Rat , Rat )
+                          | totalDebtBoundedEnd ( Rat       )
+ // ---------------------------------------------------------
+    rule derive(totalDebtBounded, Measure(... debt: DEBT)) => totalDebtBounded(DEBT, 1) // initial DSR 1
 
-    rule totalDebtBoundedAux( .List                                           , _    , _   ) => true
-    rule totalDebtBoundedAux( ListItem(Measure(... debt: DEBT'))         _    , DEBT , _   ) => false requires DEBT' >Rat DEBT
-    rule totalDebtBoundedAux( ListItem(TimeStep(TIME, _))                REST , DEBT , DSR ) => totalDebtBoundedAux( REST , DEBT +Rat (vatDaiForUser(Pot) *Rat ((DSR ^Rat TIME) -Rat 1)) , DSR  )
-    rule totalDebtBoundedAux( ListItem(LogNote(_ , Pot . file dsr DSR')) REST , DEBT , DSR ) => totalDebtBoundedAux( REST , DEBT , DSR' )
-    rule totalDebtBoundedAux( ListItem(LogNote(_ , End . cage         )) REST , DEBT , _   ) => totalDebtBoundedEnd( REST , DEBT        )
-    rule totalDebtBoundedAux( ListItem(_)                                REST , DEBT , DSR ) => totalDebtBoundedAux( REST , DEBT , DSR  ) [owise]
+    rule derive(totalDebtBounded(DEBT, _  ), Measure(... debt: DEBT')        ) => Violated requires DEBT' >Rat DEBT
+    rule derive(totalDebtBounded(DEBT, DSR), TimeStep(TIME, _)               ) => totalDebtBounded(DEBT +Rat (vatDaiForUser(Pot) *Rat ((DSR ^Rat TIME) -Rat 1)) , DSR )
+    rule derive(totalDebtBounded(DEBT, DSR), LogNote(_ , Pot . file dsr DSR')) => totalDebtBounded(DEBT , DSR')
+    rule derive(totalDebtBounded(DEBT, _  ), LogNote(_ , End . cage         )) => totalDebtBoundedEnd(DEBT)
 
-    rule totalDebtBoundedEnd( .List                                   , _    ) => true
-    rule totalDebtBoundedEnd( ListItem(Measure(... debt: DEBT')) _    , DEBT ) => false requires DEBT' =/=Rat DEBT
-    rule totalDebtBoundedEnd( ListItem(_)                        REST , DEBT ) => totalDebtBoundedEnd( REST , DEBT ) [owise]
+    rule derive(totalDebtBoundedEnd(DEBT), Measure(... debt: DEBT')) => Violated requires DEBT' =/=Rat DEBT
 ```
 
 ### Pot Chi * Pot Pie == Vat Dai(Pot)
@@ -231,11 +225,9 @@ The Debt growth should be bounded in principle by the interest rates available i
 The Pot Chi multiplied by Pot Pie should equal the Vat Dai for the Pot
 
 ```k
-    syntax Bool ::= potChiPieDai ( List ) [function]
- // ------------------------------------------------
-    rule potChiPieDai( .List                                                                                 ) => true
-    rule potChiPieDai( ListItem(Measure(... controlDai: CONTROL_DAI, potChi: POT_CHI, potPie: POT_PIE)) _    ) => false requires POT_CHI *Rat POT_PIE =/=Rat { CONTROL_DAI[Pot] }:>Rat
-    rule potChiPieDai( ListItem(_)                                                                      REST ) => potChiPieDai( REST ) [owise]
+    syntax ViolationFSM ::= "potChiPieDai"
+ // --------------------------------------
+    rule derive(potChiPieDai, Measure(... controlDai: CONTROL_DAI, potChi: POT_CHI, potPie: POT_PIE)) => Violated requires POT_CHI *Rat POT_PIE =/=Rat { CONTROL_DAI[Pot] }:>Rat
 ```
 
 ### Kicking off a fake `flip` auction (inspired by lucash-flip)
