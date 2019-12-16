@@ -773,6 +773,12 @@
         </vow>
       </kmcd-state>
     </kmcd>
+    <processed-events>
+      .List
+    </processed-events>
+    <properties>
+      .Map
+    </properties>
     <violation>
       false
     </violation>

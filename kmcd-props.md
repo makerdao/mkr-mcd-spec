@@ -10,6 +10,8 @@ module KMCD-PROPS
     configuration
         <kmcd-properties>
           <kmcd/>
+          <processed-events> .List </processed-events>
+          <properties> .Map </properties>
           <violation> false </violation>
         </kmcd-properties>
 ```
@@ -159,6 +161,50 @@ it is recorded in the state and execution is immediately terminated.
          <events> EVENTS </events>
          <violation> false => true </violation>
       requires violated(EVENTS)
+```
+
+### Violation Finite State Machines (FSMs)
+
+These Finite State Machines help track whether certain properties of the system are violated or not.
+Every FSM is equipped with two states, `Violated` and `NoViolation`.
+
+```k
+    syntax ViolationFSM ::= "Violated" | "NoViolation"
+ // --------------------------------------------------
+```
+
+You can inject `checkViolated(_)` steps to each FSM to see whether we should halt because that FSM has a violation.
+
+```k
+    syntax AdminStep ::= checkViolated ( String )
+ // ---------------------------------------------
+    rule <k> checkViolated(VFSMID) => . ... </k>
+         <properties> ... VFSMID |-> VFSM ... </properties>
+      requires VFSM =/=K Violated
+```
+
+For each FSM, the user must define the `derive` function, which dictates how that FSM behaves.
+A default `owise` rule is added which leaves the FSM state unchanged.
+
+```k
+    syntax ViolationFSM ::= derive ( ViolationFSM , Event ) [function]
+ // ------------------------------------------------------------------
+    rule derive(VFSM, _) => VFSM [owise]
+
+    syntax AdminStep ::= deriveAll  ( List   , List )
+                       | deriveVFSM ( String , List )
+ // -------------------------------------------------
+    rule <k> deriveAll(.List, _) => . ... </k>
+    rule <k> deriveAll(ListItem(VFSMID:String) REST, EVENTS)
+          => deriveVFSM(VFSMID, EVENTS)
+          ~> checkViolated(VFSMID)
+          ~> deriveAll(REST, EVENTS)
+         ...
+         </k>
+
+    rule <k> deriveVFSM(VFSMID, .List)            => . ... </k>
+    rule <k> deriveVFSM(VFSMID, ListItem(E) REST) => . ... </k>
+         <properties> ... VFSMID |-> (VFSM => derive(VFSM, E)) ... </properties>
 ```
 
 ### Bounded Debt Growth
