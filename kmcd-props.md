@@ -20,12 +20,14 @@ Measurables
 ### Measure Event
 
 ```k
-    syntax Event ::= Measure ( debt: Rat , controlDai: Map )
- // --------------------------------------------------------
+    syntax Event ::= Measure ( debt: Rat , controlDai: Map , potChi: Rat , potPie: Rat )
+ // ------------------------------------------------------------------------------------
     rule <k> measure => . ... </k>
-         <events> ... (.List => ListItem(Measure(... debt: DEBT, controlDai: controlDais(keys_list(VAT_DAIS))))) </events>
+         <events> ... (.List => ListItem(Measure(... debt: DEBT, controlDai: controlDais(keys_list(VAT_DAIS)), potChi: POT_CHI, potPie: POT_PIE))) </events>
          <vat-debt> DEBT </vat-debt>
          <vat-dai> VAT_DAIS </vat-dai>
+         <pot-chi> POT_CHI </pot-chi>
+         <pot-pie> POT_PIE </pot-pie>
 ```
 
 ### Dai in Circulation
@@ -166,16 +168,34 @@ The Debt growth should be bounded in principle by the interest rates available i
 ```k
     syntax Bool ::= totalDebtBounded    ( List             ) [function]
                   | totalDebtBoundedAux ( List , Rat , Rat ) [function]
+                  | totalDebtBoundedEnd ( List , Rat       ) [function]
  // -------------------------------------------------------------------
-    rule totalDebtBounded(.List)                           => true
-    rule totalDebtBounded(ListItem(Measure(DEBT, _)) REST) => totalDebtBoundedAux(REST, DEBT, 1) // initial DSR 1
-    rule totalDebtBounded(ListItem(_) REST)                => totalDebtBounded(REST)             [owise]
+    rule totalDebtBounded(.List)                                   => true
+    rule totalDebtBounded(ListItem(Measure(... debt: DEBT )) REST) => totalDebtBoundedAux(REST, DEBT, 1) // initial DSR 1
+    rule totalDebtBounded(ListItem(_) REST)                        => totalDebtBounded(REST)             [owise]
 
     rule totalDebtBoundedAux( .List                                           , _    , _   ) => true
-    rule totalDebtBoundedAux( ListItem(Measure(DEBT', _))                _    , DEBT , _   ) => false requires notBool DEBT' <=Rat DEBT
-    rule totalDebtBoundedAux( ListItem(TimeStep(TIME, _))                REST , DEBT , DSR ) => totalDebtBoundedAux( REST , DEBT *Rat (DSR ^Rat TIME) , DSR  )
-    rule totalDebtBoundedAux( ListItem(LogNote(_ , Pot . file dsr DSR')) REST , DEBT , DSR ) => totalDebtBoundedAux( REST , DEBT                      , DSR' )
-    rule totalDebtBoundedAux( ListItem(_)                                REST , DEBT , DSR ) => totalDebtBoundedAux( REST , DEBT                      , DSR  ) [owise]
+    rule totalDebtBoundedAux( ListItem(Measure(... debt: DEBT'))         _    , DEBT , _   ) => false requires DEBT' >Rat DEBT
+    rule totalDebtBoundedAux( ListItem(TimeStep(TIME, _))                REST , DEBT , DSR ) => totalDebtBoundedAux( REST , DEBT +Rat (vatDaiForUser(Pot) *Rat ((DSR ^Rat TIME) -Rat 1)) , DSR  )
+    rule totalDebtBoundedAux( ListItem(LogNote(_ , Pot . file dsr DSR')) REST , DEBT , DSR ) => totalDebtBoundedAux( REST , DEBT , DSR' )
+    rule totalDebtBoundedAux( ListItem(LogNote(_ , End . cage         )) REST , DEBT , _   ) => totalDebtBoundedEnd( REST , DEBT        )
+    rule totalDebtBoundedAux( ListItem(_)                                REST , DEBT , DSR ) => totalDebtBoundedAux( REST , DEBT , DSR  ) [owise]
+
+    rule totalDebtBoundedEnd( .List                                   , _    ) => true
+    rule totalDebtBoundedEnd( ListItem(Measure(... debt: DEBT')) _    , DEBT ) => false requires DEBT' =/=Rat DEBT
+    rule totalDebtBoundedEnd( ListItem(_)                        REST , DEBT ) => totalDebtBoundedEnd( REST , DEBT ) [owise]
+```
+
+### Pot Chi * Pot Pie == Vat Dai(Pot)
+
+The Pot Chi multiplied by Pot Pie should equal the Vat Dai for the Pot
+
+```k
+    syntax Bool ::= potChiPieDai ( List ) [function]
+ // ------------------------------------------------
+    rule potChiPieDai( .List                                                                                 ) => true
+    rule potChiPieDai( ListItem(Measure(... controlDai: CONTROL_DAI, potChi: POT_CHI, potPie: POT_PIE)) _    ) => false requires POT_CHI *Rat POT_PIE =/=Rat { CONTROL_DAI[Pot] }:>Rat
+    rule potChiPieDai( ListItem(_)                                                                      REST ) => potChiPieDai( REST ) [owise]
 ```
 
 ### Vat Invariants

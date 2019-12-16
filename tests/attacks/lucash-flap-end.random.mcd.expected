@@ -24,268 +24,268 @@
           .
         </pre-state>
         <events>
-          ListItem ( Measure ( 0 , .Map ) )
+          ListItem ( Measure ( 0 , .Map , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Vat . rely Pot ) )
-          ListItem ( Measure ( 0 , .Map ) )
+          ListItem ( Measure ( 0 , .Map , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Vat . rely End ) )
-          ListItem ( Measure ( 0 , .Map ) )
+          ListItem ( Measure ( 0 , .Map , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Pot . rely End ) )
-          ListItem ( Measure ( 0 , .Map ) )
+          ListItem ( Measure ( 0 , .Map , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Vow . rely Pot ) )
-          ListItem ( Measure ( 0 , .Map ) )
+          ListItem ( Measure ( 0 , .Map , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Vow . rely End ) )
-          ListItem ( Measure ( 0 , .Map ) )
+          ListItem ( Measure ( 0 , .Map , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Cat . rely End ) )
-          ListItem ( Measure ( 0 , .Map ) )
+          ListItem ( Measure ( 0 , .Map , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Flap . rely Vow ) )
-          ListItem ( Measure ( 0 , .Map ) )
+          ListItem ( Measure ( 0 , .Map , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Flop . rely Vow ) )
-          ListItem ( Measure ( 0 , .Map ) )
+          ListItem ( Measure ( 0 , .Map , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Vat . initUser Vow ) )
-          ListItem ( Measure ( 0 , Vow |-> 0 ) )
+          ListItem ( Measure ( 0 , Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Vat . initUser Pot ) )
           ListItem ( Measure ( 0 , Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Vat . initUser Flap ) )
           ListItem ( Measure ( 0 , Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Vat . initUser End ) )
           ListItem ( Measure ( 0 , End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Pot . file vow-file Vow ) )
           ListItem ( Measure ( 0 , End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Gem "gold" . init ) )
           ListItem ( Measure ( 0 , End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , GemJoin "gold" . init ) )
           ListItem ( Measure ( 0 , End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Vat . rely GemJoin "gold" ) )
           ListItem ( Measure ( 0 , End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Vat . initGem "gold" End ) )
           ListItem ( Measure ( 0 , End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Vat . initGem "gold" Flip "gold" ) )
           ListItem ( Measure ( 0 , End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Vat . initCDP "gold" End ) )
           ListItem ( Measure ( 0 , End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Spot . init "gold" ) )
           ListItem ( Measure ( 0 , End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Spot . setPrice "gold" 1 ) )
           ListItem ( Measure ( 0 , End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Flip "gold" . init ) )
           ListItem ( Measure ( 0 , End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Flip "gold" . rely End ) )
           ListItem ( Measure ( 0 , End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , End . initGap "gold" ) )
           ListItem ( Measure ( 0 , End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Gem "MKR" . init ) )
           ListItem ( Measure ( 0 , End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , GemJoin "MKR" . init ) )
           ListItem ( Measure ( 0 , End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Gem "MKR" . initUser Vow ) )
           ListItem ( Measure ( 0 , End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Gem "MKR" . initUser Flap ) )
           ListItem ( Measure ( 0 , End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Gem "MKR" . mint Flap 20 ) )
           ListItem ( Measure ( 0 , End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Vat . file Line 1000000000000 ) )
           ListItem ( Measure ( 0 , End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Vat . initIlk "gold" ) )
           ListItem ( Measure ( 0 , End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Vat . file spot "gold" 3000000000 ) )
           ListItem ( Measure ( 0 , End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Vat . file line "gold" 1000000000000 ) )
           ListItem ( Measure ( 0 , End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Vow . file bump 1000000000 ) )
           ListItem ( Measure ( 0 , End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Gem "gold" . initUser "Alice" ) )
           ListItem ( Measure ( 0 , End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Gem "gold" . initUser "Bobby" ) )
           ListItem ( Measure ( 0 , End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Gem "gold" . mint "Alice" 20 ) )
           ListItem ( Measure ( 0 , End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Gem "gold" . mint "Bobby" 20 ) )
           ListItem ( Measure ( 0 , End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Gem "MKR" . initUser "Alice" ) )
           ListItem ( Measure ( 0 , End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Gem "MKR" . initUser "Bobby" ) )
           ListItem ( Measure ( 0 , End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Pot . initUser "Alice" ) )
           ListItem ( Measure ( 0 , End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Pot . initUser "Bobby" ) )
           ListItem ( Measure ( 0 , End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Vat . initUser "Alice" ) )
           ListItem ( Measure ( 0 , "Alice" |-> 0
           End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Vat . initGem "gold" "Alice" ) )
           ListItem ( Measure ( 0 , "Alice" |-> 0
           End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Vat . initCDP "gold" "Alice" ) )
           ListItem ( Measure ( 0 , "Alice" |-> 0
           End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Vat . initUser "Bobby" ) )
           ListItem ( Measure ( 0 , "Alice" |-> 0
           "Bobby" |-> 0
           End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Vat . initGem "gold" "Bobby" ) )
           ListItem ( Measure ( 0 , "Alice" |-> 0
           "Bobby" |-> 0
           End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Vat . initCDP "gold" "Bobby" ) )
           ListItem ( Measure ( 0 , "Alice" |-> 0
           "Bobby" |-> 0
           End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( "Alice" , Vat . hope Pot ) )
           ListItem ( Measure ( 0 , "Alice" |-> 0
           "Bobby" |-> 0
           End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( "Alice" , Vat . hope Flip "gold" ) )
           ListItem ( Measure ( 0 , "Alice" |-> 0
           "Bobby" |-> 0
           End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( "Alice" , Vat . hope End ) )
           ListItem ( Measure ( 0 , "Alice" |-> 0
           "Bobby" |-> 0
           End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( "Bobby" , Vat . hope Pot ) )
           ListItem ( Measure ( 0 , "Alice" |-> 0
           "Bobby" |-> 0
           End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( "Bobby" , Vat . hope Flip "gold" ) )
           ListItem ( Measure ( 0 , "Alice" |-> 0
           "Bobby" |-> 0
           End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( "Bobby" , Vat . hope End ) )
           ListItem ( Measure ( 0 , "Alice" |-> 0
           "Bobby" |-> 0
           End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( "Alice" , Vat . slip "gold" "Alice" 10 ) )
           ListItem ( LogNote ( "Alice" , Gem "gold" . transferFrom "Alice" GemJoin "gold" 10 ) )
           ListItem ( LogNote ( "Alice" , GemJoin "gold" . join "Alice" 10 ) )
@@ -294,7 +294,7 @@
           End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( "Bobby" , Vat . slip "gold" "Bobby" 10 ) )
           ListItem ( LogNote ( "Bobby" , Gem "gold" . transferFrom "Bobby" GemJoin "gold" 10 ) )
           ListItem ( LogNote ( "Bobby" , GemJoin "gold" . join "Bobby" 10 ) )
@@ -303,42 +303,42 @@
           End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( "Alice" , Vat . frob "gold" "Alice" "Alice" "Alice" 10 10 ) )
           ListItem ( Measure ( 10 , "Alice" |-> 10
           "Bobby" |-> 0
           End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( "Bobby" , Vat . frob "gold" "Bobby" "Bobby" "Bobby" 10 10 ) )
           ListItem ( Measure ( 20 , "Alice" |-> 10
           "Bobby" |-> 10
           End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , End . initBag "Alice" ) )
           ListItem ( Measure ( 20 , "Alice" |-> 10
           "Bobby" |-> 10
           End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , End . initBag "Bobby" ) )
           ListItem ( Measure ( 20 , "Alice" |-> 10
           "Bobby" |-> 10
           End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , End . initOut "gold" "Alice" ) )
           ListItem ( Measure ( 20 , "Alice" |-> 10
           "Bobby" |-> 10
           End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , End . initOut "gold" "Bobby" ) )
           ListItem ( GenStep ( b"a0" , transact "Alice" Vat . move "Alice" Vow 24 /Rat 5 ) )
           ListItem ( Measure ( 20 , "Alice" |-> 10
@@ -346,7 +346,7 @@
           End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 0 ) )
+          Vow |-> 0 , 1 , 0 ) )
           ListItem ( LogNote ( "Alice" , Vat . move "Alice" Vow 24 /Rat 5 ) )
           ListItem ( GenStep ( b"a3" , transact "Bobby" GemJoin "gold" . join "Bobby" 51 /Rat 10 ) )
           ListItem ( Measure ( 20 , "Alice" |-> 26 /Rat 5
@@ -354,7 +354,7 @@
           End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 24 /Rat 5 ) )
+          Vow |-> 24 /Rat 5 , 1 , 0 ) )
           ListItem ( LogNote ( "Bobby" , Vat . slip "gold" "Bobby" 51 /Rat 10 ) )
           ListItem ( LogNote ( "Bobby" , Gem "gold" . transferFrom "Bobby" GemJoin "gold" 51 /Rat 10 ) )
           ListItem ( LogNote ( "Bobby" , GemJoin "gold" . join "Bobby" 51 /Rat 10 ) )
@@ -364,7 +364,7 @@
           End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 24 /Rat 5 ) )
+          Vow |-> 24 /Rat 5 , 1 , 0 ) )
           ListItem ( LogNote ( "Alice" , Vat . hope Flap ) )
           ListItem ( GenStep ( b"o0Z" , transact "Alice" Flap . kick 312 /Rat 125 18 ) )
           ListItem ( Measure ( 20 , "Alice" |-> 26 /Rat 5
@@ -372,7 +372,7 @@
           End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 24 /Rat 5 ) )
+          Vow |-> 24 /Rat 5 , 1 , 0 ) )
           ListItem ( Exception ( Flap . kick 312 /Rat 125 18 ) )
           ListItem ( GenStep ( b"a" , transact ADMIN End . cage ) )
           ListItem ( Measure ( 20 , "Alice" |-> 26 /Rat 5
@@ -380,7 +380,7 @@
           End |-> 0
           Flap |-> 0
           Pot |-> 0
-          Vow |-> 24 /Rat 5 ) )
+          Vow |-> 24 /Rat 5 , 1 , 0 ) )
           ListItem ( LogNote ( ADMIN , Vat . cage ) )
           ListItem ( LogNote ( ADMIN , Cat . cage ) )
           ListItem ( LogNote ( Vow , Vat . move Flap Vow 0 ) )
