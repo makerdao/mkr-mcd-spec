@@ -152,11 +152,15 @@ A violation can be checked using the Admin step `assert`. If a violation is dete
 it is recorded in the state and execution is immediately terminated.
 
 ```k
-    syntax AdminStep ::= "assert"
- // -----------------------------
-    rule <k> assert => deriveAll(keys_list(VFSMS), EVENTS) ... </k>
+    syntax AdminStep ::= "assert" | "#assert"
+ // -----------------------------------------
+    rule <k> assert => deriveAll(keys_list(VFSMS), EVENTS) ~> #assert ... </k>
          <events> EVENTS => .List </events>
          <properties> VFSMS </properties>
+
+    rule <k> #assert => . ... </k>
+         <properties> VFSMS </properties>
+      requires notBool anyViolation(values(VFSMS))
 ```
 
 ### Violation Finite State Machines (FSMs)
@@ -172,11 +176,11 @@ Every FSM is equipped with two states, `Violated` and `NoViolation`.
 You can inject `checkViolated(_)` steps to each FSM to see whether we should halt because that FSM has a violation.
 
 ```k
-    syntax AdminStep ::= checkViolated ( String )
- // ---------------------------------------------
-    rule <k> checkViolated(VFSMID) => . ... </k>
-         <properties> ... VFSMID |-> VFSM ... </properties>
-      requires VFSM =/=K Violated
+    syntax Bool ::= anyViolation ( List ) [function]
+ // ------------------------------------------------
+    rule anyViolation(.List)                   => false
+    rule anyViolation(ListItem(Violated) _   ) => true
+    rule anyViolation(ListItem(VFSM)     REST) => anyViolation(REST) requires VFSM =/=K Violated
 ```
 
 For each FSM, the user must define the `derive` function, which dictates how that FSM behaves.
@@ -198,8 +202,8 @@ A default `owise` rule is added which leaves the FSM state unchanged.
          </k>
          <processed-events> ... (.List => ListItem(E)) </processed-events>
 
-    rule <k> deriveVFSM(.List                 , E) => .                                            ... </k>
-    rule <k> deriveVFSM(ListItem(VFSMID) REST , E) => checkViolated(VFSMID) ~> deriveVFSM(REST, E) ... </k>
+    rule <k> deriveVFSM(.List                 , E) => .                   ... </k>
+    rule <k> deriveVFSM(ListItem(VFSMID) REST , E) => deriveVFSM(REST, E) ... </k>
          <properties> ... VFSMID |-> (VFSM => derive(VFSM, E)) ... </properties>
 ```
 
