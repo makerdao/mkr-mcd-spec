@@ -212,17 +212,17 @@ A default `owise` rule is added which leaves the FSM state unchanged.
 The Debt growth should be bounded in principle by the interest rates available in the system.
 
 ```k
-    syntax ViolationFSM ::= totalDebtBounded    ( Rat )
-                          | totalDebtBounded    ( Rat , Rat )
-                          | totalDebtBoundedEnd ( Rat       )
- // ---------------------------------------------------------
-    rule derive(totalDebtBounded(DSR), Measure(... debt: DEBT)) => totalDebtBounded(DEBT, DSR)
+    syntax ViolationFSM ::= totalDebtBounded    (             dsr: Rat )
+                          | totalDebtBoundedRun ( debt: Rat , dsr: Rat )
+                          | totalDebtBoundedEnd ( debt: Rat            )
+ // --------------------------------------------------------------------
+    rule derive(totalDebtBounded(DSR), Measure(... debt: DEBT)) => totalDebtBoundedRun(DEBT, DSR)
 
-    rule derive( totalDebtBounded(DEBT, _  ) , Measure(... debt: DEBT')            ) => Violated requires DEBT' >Rat DEBT
-    rule derive( totalDebtBounded(DEBT, DSR) , TimeStep(TIME, _)                   ) => totalDebtBounded(DEBT +Rat (vatDaiForUser(Pot) *Rat ((DSR ^Rat TIME) -Rat 1)) , DSR )
-    rule derive( totalDebtBounded(DEBT, DSR) , LogNote(_ , Vat . frob _ _ _ _ _ _) ) => totalDebtBounded(DSR)
-    rule derive( totalDebtBounded(DEBT, DSR) , LogNote(_ , Pot . file dsr DSR')    ) => totalDebtBounded(DEBT , DSR')
-    rule derive( totalDebtBounded(DEBT, _  ) , LogNote(_ , End . cage         )    ) => totalDebtBoundedEnd(DEBT)
+    rule derive( totalDebtBoundedRun(DEBT, _  ) , Measure(... debt: DEBT')            ) => Violated requires DEBT' >Rat DEBT
+    rule derive( totalDebtBoundedRun(DEBT, DSR) , TimeStep(TIME, _)                   ) => totalDebtBoundedRun(DEBT +Rat (vatDaiForUser(Pot) *Rat ((DSR ^Rat TIME) -Rat 1)) , DSR )
+    rule derive( totalDebtBoundedRun(DEBT, DSR) , LogNote(_ , Vat . frob _ _ _ _ _ _) ) => totalDebtBounded(DSR)
+    rule derive( totalDebtBoundedRun(DEBT, DSR) , LogNote(_ , Pot . file dsr DSR')    ) => totalDebtBoundedRun(DEBT , DSR')
+    rule derive( totalDebtBoundedRun(DEBT, _  ) , LogNote(_ , End . cage         )    ) => totalDebtBoundedEnd(DEBT)
 
     rule derive(totalDebtBoundedEnd(DEBT), Measure(... debt: DEBT')) => Violated requires DEBT' =/=Rat DEBT
 ```
