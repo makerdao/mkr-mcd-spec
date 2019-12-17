@@ -229,7 +229,7 @@ The Pot Chi multiplied by Pot Pie should equal the Vat Dai for the Pot
 ```k
     syntax ViolationFSM ::= "potChiPieDai"
  // --------------------------------------
-    rule derive(potChiPieDai, Measure(... controlDai: CONTROL_DAI, potChi: POT_CHI, potPie: POT_PIE)) => Violated requires POT_CHI *Rat POT_PIE =/=Rat { CONTROL_DAI[Pot] }:>Rat
+    rule derive(potChiPieDai, Measure(... controlDai: CONTROL_DAI, potChi: POT_CHI, potPie: POT_PIE)) => Violated requires POT_CHI *Rat POT_PIE =/=Rat #lookup(CONTROL_DAI, Pot)
 ```
 
 ### Kicking off a fake `flip` auction (inspired by lucash-flip)
