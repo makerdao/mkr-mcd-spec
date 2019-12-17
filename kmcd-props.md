@@ -144,7 +144,7 @@ A violation occurs if any of the properties above holds.
                            ( "Pot Interest Accumulation After End" |-> potEndInterest      )
                            ( "Unauthorized Flip Kick"              |-> unAuthFlipKick      )
                            ( "Unauthorized Flap Kick"              |-> unAuthFlapKick      )
-                           ( "Total Bound on Debt"                 |-> totalDebtBounded    )
+                           ( "Total Bound on Debt"                 |-> totalDebtBounded(1) )
                            ( "PotChi PotPie VatPot"                |-> potChiPieDai        )
 ```
 
@@ -208,16 +208,17 @@ A default `owise` rule is added which leaves the FSM state unchanged.
 The Debt growth should be bounded in principle by the interest rates available in the system.
 
 ```k
-    syntax ViolationFSM ::= "totalDebtBounded"
+    syntax ViolationFSM ::= totalDebtBounded    ( Rat )
                           | totalDebtBounded    ( Rat , Rat )
                           | totalDebtBoundedEnd ( Rat       )
  // ---------------------------------------------------------
-    rule derive(totalDebtBounded, Measure(... debt: DEBT)) => totalDebtBounded(DEBT, 1) // initial DSR 1
+    rule derive(totalDebtBounded(DSR), Measure(... debt: DEBT)) => totalDebtBounded(DEBT, DSR)
 
-    rule derive(totalDebtBounded(DEBT, _  ), Measure(... debt: DEBT')        ) => Violated requires DEBT' >Rat DEBT
-    rule derive(totalDebtBounded(DEBT, DSR), TimeStep(TIME, _)               ) => totalDebtBounded(DEBT +Rat (vatDaiForUser(Pot) *Rat ((DSR ^Rat TIME) -Rat 1)) , DSR )
-    rule derive(totalDebtBounded(DEBT, DSR), LogNote(_ , Pot . file dsr DSR')) => totalDebtBounded(DEBT , DSR')
-    rule derive(totalDebtBounded(DEBT, _  ), LogNote(_ , End . cage         )) => totalDebtBoundedEnd(DEBT)
+    rule derive( totalDebtBounded(DEBT, _  ) , Measure(... debt: DEBT')            ) => Violated requires DEBT' >Rat DEBT
+    rule derive( totalDebtBounded(DEBT, DSR) , TimeStep(TIME, _)                   ) => totalDebtBounded(DEBT +Rat (vatDaiForUser(Pot) *Rat ((DSR ^Rat TIME) -Rat 1)) , DSR )
+    rule derive( totalDebtBounded(DEBT, DSR) , LogNote(_ , Vat . frob _ _ _ _ _ _) ) => totalDebtBounded(DSR)
+    rule derive( totalDebtBounded(DEBT, DSR) , LogNote(_ , Pot . file dsr DSR')    ) => totalDebtBounded(DEBT , DSR')
+    rule derive( totalDebtBounded(DEBT, _  ) , LogNote(_ , End . cage         )    ) => totalDebtBoundedEnd(DEBT)
 
     rule derive(totalDebtBoundedEnd(DEBT), Measure(... debt: DEBT')) => Violated requires DEBT' =/=Rat DEBT
 ```
