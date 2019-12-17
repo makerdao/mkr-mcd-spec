@@ -144,8 +144,8 @@ A violation occurs if any of the properties above holds.
                            ( "Pot Interest Accumulation After End" |-> potEndInterest      )
                            ( "Unauthorized Flip Kick"              |-> unAuthFlipKick      )
                            ( "Unauthorized Flap Kick"              |-> unAuthFlapKick      )
-                           ( "PotChi * PotPie = Vat(Pot)"          |-> potChiPieDai        )
-                           ( "Total Debt Bounded by DSR"           |-> totalDebtBounded    )
+                           ( "Total Bound on Debt"                 |-> totalDebtBounded    )
+                           ( "PotChi PotPie VatPot"                |-> potChiPieDai        )
 ```
 
 A violation can be checked using the Admin step `assert`. If a violation is detected,

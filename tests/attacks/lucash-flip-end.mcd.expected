@@ -3,7 +3,105 @@
     <kmcd>
       <kmcd-driver>
         <k>
-          .
+          checkViolated ( "Total Bound on Debt" ) ~> deriveVFSM ( ListItem ( "Unauthorized Flip Kick" ) , Measure ( 10 , "Alice" |-> 10
+          "Bobby" |-> 0
+          End |-> 0
+          Flap |-> 0
+          Pot |-> 0
+          Vow |-> 0 , 1 , 0 ) ) ~> deriveAll ( ListItem ( "Unauthorized Flap Kick" )
+          ListItem ( "Zero-Time Pot Interest Accumulation" )
+          ListItem ( "PotChi PotPie VatPot" )
+          ListItem ( "Pot Interest Accumulation After End" )
+          ListItem ( "Total Bound on Debt" )
+          ListItem ( "Unauthorized Flip Kick" ) , ListItem ( LogNote ( "Bobby" , Vat . frob "gold" "Bobby" "Bobby" "Bobby" 10 10 ) )
+          ListItem ( Measure ( 20 , "Alice" |-> 10
+          "Bobby" |-> 10
+          End |-> 0
+          Flap |-> 0
+          Pot |-> 0
+          Vow |-> 0 , 1 , 0 ) )
+          ListItem ( LogNote ( ADMIN , End . initBag "Alice" ) )
+          ListItem ( Measure ( 20 , "Alice" |-> 10
+          "Bobby" |-> 10
+          End |-> 0
+          Flap |-> 0
+          Pot |-> 0
+          Vow |-> 0 , 1 , 0 ) )
+          ListItem ( LogNote ( ADMIN , End . initBag "Bobby" ) )
+          ListItem ( Measure ( 20 , "Alice" |-> 10
+          "Bobby" |-> 10
+          End |-> 0
+          Flap |-> 0
+          Pot |-> 0
+          Vow |-> 0 , 1 , 0 ) )
+          ListItem ( LogNote ( ADMIN , End . initOut "gold" "Alice" ) )
+          ListItem ( Measure ( 20 , "Alice" |-> 10
+          "Bobby" |-> 10
+          End |-> 0
+          Flap |-> 0
+          Pot |-> 0
+          Vow |-> 0 , 1 , 0 ) )
+          ListItem ( LogNote ( ADMIN , End . initOut "gold" "Bobby" ) )
+          ListItem ( Measure ( 20 , "Alice" |-> 10
+          "Bobby" |-> 10
+          End |-> 0
+          Flap |-> 0
+          Pot |-> 0
+          Vow |-> 0 , 1 , 0 ) )
+          ListItem ( LogNote ( "Bobby" , Vat . slip "gold" "Bobby" 1 ) )
+          ListItem ( LogNote ( "Bobby" , Gem "gold" . transferFrom "Bobby" GemJoin "gold" 1 ) )
+          ListItem ( LogNote ( "Bobby" , GemJoin "gold" . join "Bobby" 1 ) )
+          ListItem ( Measure ( 20 , "Alice" |-> 10
+          "Bobby" |-> 10
+          End |-> 0
+          Flap |-> 0
+          Pot |-> 0
+          Vow |-> 0 , 1 , 0 ) )
+          ListItem ( LogNote ( ADMIN , Vat . cage ) )
+          ListItem ( LogNote ( ADMIN , Cat . cage ) )
+          ListItem ( LogNote ( Vow , Vat . move Flap Vow 0 ) )
+          ListItem ( LogNote ( End , Flap . cage 0 ) )
+          ListItem ( LogNote ( End , Flop . cage ) )
+          ListItem ( LogNote ( End , Vat . heal 0 ) )
+          ListItem ( LogNote ( ADMIN , Vow . cage ) )
+          ListItem ( LogNote ( ADMIN , Pot . cage ) )
+          ListItem ( LogNote ( ADMIN , End . cage ) )
+          ListItem ( Measure ( 20 , "Alice" |-> 10
+          "Bobby" |-> 10
+          End |-> 0
+          Flap |-> 0
+          Pot |-> 0
+          Vow |-> 0 , 1 , 0 ) )
+          ListItem ( LogNote ( ADMIN , End . cage "gold" ) )
+          ListItem ( TimeStep ( 3600 , 3600 ) )
+          ListItem ( Measure ( 20 , "Alice" |-> 10
+          "Bobby" |-> 10
+          End |-> 0
+          Flap |-> 0
+          Pot |-> 0
+          Vow |-> 0 , 1 , 0 ) )
+          ListItem ( LogNote ( ADMIN , End . thaw ) )
+          ListItem ( Measure ( 20 , "Alice" |-> 10
+          "Bobby" |-> 10
+          End |-> 0
+          Flap |-> 0
+          Pot |-> 0
+          Vow |-> 0 , 1 , 0 ) )
+          ListItem ( LogNote ( ADMIN , End . flow "gold" ) )
+          ListItem ( Measure ( 20 , "Alice" |-> 10
+          "Bobby" |-> 10
+          End |-> 0
+          Flap |-> 0
+          Pot |-> 0
+          Vow |-> 0 , 1 , 0 ) )
+          ListItem ( Exception ( Flip "gold" . kick End "Bobby" 1001000000000 1 1000000000000 ) )
+          ListItem ( Measure ( 20 , "Alice" |-> 10
+          "Bobby" |-> 10
+          End |-> 0
+          Flap |-> 0
+          Pot |-> 0
+          Vow |-> 0 , 1 , 0 ) )
+          ListItem ( Exception ( End . skip "gold" 1 ) ) ) ~> .MCDSteps
         </k>
         <return-value>
           .
@@ -685,101 +783,14 @@
       Flap |-> 0
       Pot |-> 0
       Vow |-> 0 , 1 , 0 ) )
-      ListItem ( LogNote ( "Bobby" , Vat . frob "gold" "Bobby" "Bobby" "Bobby" 10 10 ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 ) )
-      ListItem ( LogNote ( ADMIN , End . initBag "Alice" ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 ) )
-      ListItem ( LogNote ( ADMIN , End . initBag "Bobby" ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 ) )
-      ListItem ( LogNote ( ADMIN , End . initOut "gold" "Alice" ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 ) )
-      ListItem ( LogNote ( ADMIN , End . initOut "gold" "Bobby" ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 ) )
-      ListItem ( LogNote ( "Bobby" , Vat . slip "gold" "Bobby" 1 ) )
-      ListItem ( LogNote ( "Bobby" , Gem "gold" . transferFrom "Bobby" GemJoin "gold" 1 ) )
-      ListItem ( LogNote ( "Bobby" , GemJoin "gold" . join "Bobby" 1 ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 ) )
-      ListItem ( LogNote ( ADMIN , Vat . cage ) )
-      ListItem ( LogNote ( ADMIN , Cat . cage ) )
-      ListItem ( LogNote ( Vow , Vat . move Flap Vow 0 ) )
-      ListItem ( LogNote ( End , Flap . cage 0 ) )
-      ListItem ( LogNote ( End , Flop . cage ) )
-      ListItem ( LogNote ( End , Vat . heal 0 ) )
-      ListItem ( LogNote ( ADMIN , Vow . cage ) )
-      ListItem ( LogNote ( ADMIN , Pot . cage ) )
-      ListItem ( LogNote ( ADMIN , End . cage ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 ) )
-      ListItem ( LogNote ( ADMIN , End . cage "gold" ) )
-      ListItem ( TimeStep ( 3600 , 3600 ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 ) )
-      ListItem ( LogNote ( ADMIN , End . thaw ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 ) )
-      ListItem ( LogNote ( ADMIN , End . flow "gold" ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 ) )
-      ListItem ( Exception ( Flip "gold" . kick End "Bobby" 1001000000000 1 1000000000000 ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 ) )
-      ListItem ( Exception ( End . skip "gold" 1 ) )
     </processed-events>
     <properties>
-      "Pot Interest Accumulation After End" |-> potEndInterestEnd
+      "Pot Interest Accumulation After End" |-> potEndInterest
+      "PotChi PotPie VatPot" |-> potChiPieDai
+      "Total Bound on Debt" |-> Violated
       "Unauthorized Flap Kick" |-> unAuthFlapKick
       "Unauthorized Flip Kick" |-> unAuthFlipKick
-      "Zero-Time Pot Interest Accumulation" |-> zeroTimePotInterestEnd
+      "Zero-Time Pot Interest Accumulation" |-> zeroTimePotInterest
     </properties>
   </kmcd-properties>
   <kmcd-gen>
