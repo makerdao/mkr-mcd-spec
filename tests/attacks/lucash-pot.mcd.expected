@@ -748,7 +748,7 @@
     <properties>
       "Pot Interest Accumulation After End" |-> potEndInterest
       "PotChi PotPie VatPot" |-> potChiPieDai
-      "Total Bound on Debt" |-> totalDebtBounded ( 20 , 5 )
+      "Total Bound on Debt" |-> totalDebtBoundedRun ( 20 , 5 )
       "Unauthorized Flap Kick" |-> unAuthFlapKick
       "Unauthorized Flip Kick" |-> unAuthFlipKick
       "Zero-Time Pot Interest Accumulation" |-> zeroTimePotInterest
