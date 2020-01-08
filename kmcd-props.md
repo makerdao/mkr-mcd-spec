@@ -21,12 +21,15 @@ Measurables
 ### Measure Event
 
 ```k
-    syntax Event ::= Measure ( debt: Rat , controlDai: Map , potChi: Rat , potPie: Rat )
+    syntax Event ::= Measure ( debt: Rat , controlDai: Map , potChi: Rat , potPie: Rat , sumOfScaledArts: Rat, vice: Rat )
  // ------------------------------------------------------------------------------------
     rule <k> measure => . ... </k>
-         <events> ... (.List => ListItem(Measure(... debt: DEBT, controlDai: controlDais(keys_list(VAT_DAIS)), potChi: POT_CHI, potPie: POT_PIE))) </events>
+         <events> ... (.List => ListItem(Measure(... debt: DEBT, controlDai: controlDais(keys_list(VAT_DAIS)), potChi: POT_CHI, potPie: POT_PIE, sumOfScaledArts: calcSumOfScaledArts(VAT_ILKS, VAT_URNS), vice: VAT_VICE))) </events>
          <vat-debt> DEBT </vat-debt>
          <vat-dai> VAT_DAIS </vat-dai>
+         <vat-ilks> VAT_ILKS </vat-ilks>
+         <vat-urns> VAT_URNS </vat-urns>
+         <vat-vice> VAT_VICE </vat-vice>
          <pot-chi> POT_CHI </pot-chi>
          <pot-pie> POT_PIE </pot-pie>
 ```
@@ -132,6 +135,18 @@ Total dai of all users = CDP debt for all users and gem + system debt (vice)
     rule sumOfAllUserDebt(.Map, _, SUM) => SUM
 ```
 
+Total backed debt (sum over each CDP's art times corresponding ilk's rate)
+
+```k
+    syntax Rat ::= calcSumOfScaledArts(Map, Map) [function]
+                   | calcSumOfScaledArtsAux(List, Map, Map, Rat) [function]
+ // ------------------------------------------------------------------------------------
+    rule calcSumOfScaledArts(VAT_ILKS, VAT_URNS) => calcSumOfScaledArtsAux(keys_list(VAT_ILKS), VAT_ILKS, VAT_URNS, 0)
+    rule calcSumOfScaledArtsAux(.List, _, _, TOTAL) => TOTAL
+    rule calcSumOfScaledArtsAux(ListItem(ILK_ID) VAT_ILK_IDS, VAT_ILKS, VAT_URNS, TOTAL) 
+        => calcSumOfScaledArtsAux(VAT_ILK_IDS, VAT_ILKS, VAT_URNS, TOTAL +Rat (sumOfUrnArt(VAT_URNS, ILK_ID, 0) *Rat rate({VAT_ILKS[ILK_ID]}:>VatIlk)))
+```
+
 Violations
 ----------
 
@@ -140,12 +155,13 @@ A violation occurs if any of the properties above holds.
 ```k
     syntax Map ::= "#violationFSMs" [function]
  // ------------------------------------------
-    rule #violationFSMs => ( "Zero-Time Pot Interest Accumulation" |-> zeroTimePotInterest )
-                           ( "Pot Interest Accumulation After End" |-> potEndInterest      )
-                           ( "Unauthorized Flip Kick"              |-> unAuthFlipKick      )
-                           ( "Unauthorized Flap Kick"              |-> unAuthFlapKick      )
-                           ( "Total Bound on Debt"                 |-> totalDebtBounded(1) )
-                           ( "PotChi PotPie VatPot"                |-> potChiPieDai        )
+    rule #violationFSMs => ( "Zero-Time Pot Interest Accumulation" |-> zeroTimePotInterest        )
+                           ( "Pot Interest Accumulation After End" |-> potEndInterest             )
+                           ( "Unauthorized Flip Kick"              |-> unAuthFlipKick             )
+                           ( "Unauthorized Flap Kick"              |-> unAuthFlapKick             )
+                           ( "Total Bound on Debt"                 |-> totalDebtBounded(1)        )
+                           ( "PotChi PotPie VatPot"                |-> potChiPieDai               )
+                           ( "Total Backed Debt Consistency"       |-> totalBackedDebtConsistency )
 ```
 
 A violation can be checked using the Admin step `assert`. If a violation is detected,
@@ -205,6 +221,16 @@ A default `owise` rule is added which leaves the FSM state unchanged.
     rule <k> deriveVFSM(.List                 , E) => .                   ... </k>
     rule <k> deriveVFSM(ListItem(VFSMID) REST , E) => deriveVFSM(REST, E) ... </k>
          <properties> ... VFSMID |-> (VFSM => derive(VFSM, E)) ... </properties>
+```
+
+### Total Backed Debt Consistency
+
+Vat.debt minus Vat.vice should equal the sum over all ilks and CDP accounts of the CDP's art times the ilk's rate.
+
+```k
+    syntax ViolationFSM ::= "totalBackedDebtConsistency"
+ // --------------------------------------------------------------------
+    rule derive(totalBackedDebtConsistency, Measure(... debt: DEBT, sumOfScaledArts: SUM, vice: VICE)) => Violated requires SUM =/=Rat (DEBT -Rat VICE)
 ```
 
 ### Bounded Debt Growth
