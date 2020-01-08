@@ -296,7 +296,6 @@ module KMCD-GEN
          <generator-next> N </generator-next>
          <generator-current> _ => head(BS) modInt N </generator-current>
          <generator-remainder> GSS => .GenStep </generator-remainder>
-         <violation> false </violation>
       requires lengthBytes(BS) >Int 0
        andBool N >Int 0
 
