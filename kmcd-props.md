@@ -142,9 +142,9 @@ Total backed debt (sum over each CDP's art times corresponding ilk's rate)
                    | calcSumOfScaledArtsAux(List, Map, Map, Rat) [function]
  // ------------------------------------------------------------------------------------
     rule calcSumOfScaledArts(VAT_ILKS, VAT_URNS) => calcSumOfScaledArtsAux(keys_list(VAT_ILKS), VAT_ILKS, VAT_URNS, 0)
-    rule calcSumOfScaledArtsAux(.List, _, _, TOTAL) => TOTAL
-    rule calcSumOfScaledArtsAux(ListItem(ILK_ID) VAT_ILK_IDS, VAT_ILKS, VAT_URNS, TOTAL) 
-        => calcSumOfScaledArtsAux(VAT_ILK_IDS, VAT_ILKS, VAT_URNS, TOTAL +Rat (sumOfUrnArt(VAT_URNS, ILK_ID, 0) *Rat rate({VAT_ILKS[ILK_ID]}:>VatIlk)))
+
+    rule calcSumOfScaledArtsAux(                        .List ,        _ ,        _ , TOTAL ) => TOTAL
+    rule calcSumOfScaledArtsAux( ListItem(ILK_ID) VAT_ILK_IDS , VAT_ILKS , VAT_URNS , TOTAL ) => calcSumOfScaledArtsAux(VAT_ILK_IDS, VAT_ILKS, VAT_URNS, TOTAL +Rat (sumOfUrnArt(VAT_URNS, ILK_ID, 0) *Rat rate({VAT_ILKS[ILK_ID]}:>VatIlk)))
 ```
 
 Violations
