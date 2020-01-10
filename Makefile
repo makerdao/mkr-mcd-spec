@@ -29,7 +29,7 @@ export LUA_PATH
 .PHONY: all clean                                 \
         deps deps-k deps-tangle deps-media        \
         defn defn-llvm defn-haskell               \
-        build build-llvm build-haskell build-java \
+        build build-llvm build-haskell            \
         test test-execution test-python-generator \
         update-test-execution
 .SECONDARY:
@@ -71,27 +71,22 @@ k_files := $(MAIN_DEFN_FILE).k kmcd-prelude.k kmcd-props.k kmcd.k kmcd-driver.k 
 
 llvm_dir    := $(DEFN_DIR)/llvm
 haskell_dir := $(DEFN_DIR)/haskell
-java_dir    := $(DEFN_DIR)/java
 
 llvm_files    := $(patsubst %,$(llvm_dir)/%,$(k_files))
 haskell_files := $(patsubst %,$(haskell_dir)/%,$(k_files))
-java_files    := $(patsubst %,$(java_dir)/%,$(k_files))
 
 llvm_kompiled    := $(llvm_dir)/$(MAIN_DEFN_FILE)-kompiled/interpreter
 haskell_kompiled := $(haskell_dir)/$(MAIN_DEFN_FILE)-kompiled/definition.kore
-java_kompiled    := $(java_dir)/$(MAIN_DEFN_FILE)-kompiled/timestamp
 
-build: build-llvm build-haskell build-java
+build: build-llvm build-haskell
 build-llvm:    $(llvm_kompiled)
 build-haskell: $(haskell_kompiled)
-build-java:    $(java_kompiled)
 
 # Generate definitions from source files
 
-defn: defn-llvm defn-haskell defn-java
+defn: defn-llvm defn-haskell
 defn-llvm:    $(llvm_files)
 defn-haskell: $(haskell_files)
-defn-java:    $(java_files)
 
 concrete_tangle := .k:not(.symbolic),.concrete
 symbolic_tangle := .k:not(.concrete),.symbolic
@@ -102,10 +97,6 @@ $(llvm_dir)/%.k: %.md
 
 $(haskell_dir)/%.k: %.md
 	@mkdir -p $(haskell_dir)
-	pandoc --from markdown --to "$(TANGLER)" --metadata=code:"$(symbolic_tangle)" $< > $@
-
-$(java_dir)/%.k: %.md
-	@mkdir -p $(java_dir)
 	pandoc --from markdown --to "$(TANGLER)" --metadata=code:"$(symbolic_tangle)" $< > $@
 
 # LLVM Backend
@@ -124,15 +115,6 @@ $(haskell_kompiled): $(haskell_files)
 	                 --syntax-module $(SYNTAX_MODULE) $(haskell_dir)/$(MAIN_DEFN_FILE).k \
 	                 --directory $(haskell_dir) -I $(haskell_dir)                        \
 	                 --emit-json                                                         \
-	                 $(KOMPILE_OPTS)
-
-# Java Backend
-
-$(java_kompiled): $(java_files)
-	$(K_BIN)/kompile --debug --main-module $(MAIN_MODULE) --backend java              \
-	                 --syntax-module $(SYNTAX_MODULE) $(java_dir)/$(MAIN_DEFN_FILE).k \
-	                 --directory $(java_dir) -I $(java_dir)							  \
-	                 --emit-json                                                      \
 	                 $(KOMPILE_OPTS)
 
 # Test
@@ -156,9 +138,6 @@ KMCD         := ./kmcd
 CHECK        := git --no-pager diff --no-index --ignore-all-space -R
 
 TEST_KOMPILED := $(llvm_kompiled)
-ifeq ($(TEST_BACKEND), java)
-    TEST_KOMPILED := $(java_kompiled)
-endif
 ifeq ($(TEST_BACKEND), haskell)
     TEST_KOMPILED := $(haskell_kompiled)
 endif
