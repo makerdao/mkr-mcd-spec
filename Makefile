@@ -143,7 +143,7 @@ endif
 
 tests/attacks/lucash-pot-end.random.mcd.%:  KMCD_RANDOMSEED="aaaaaaaaaaaaaaaa"
 tests/attacks/lucash-pot.random.mcd.%:      KMCD_RANDOMSEED="aaaaaaaa"
-tests/attacks/lucash-flap-end.random.mcd.%: KMCD_RANDOMSEED="a0a3ao0Zaaa"
+tests/attacks/lucash-flap-end.random.mcd.%: KMCD_RANDOMSEED="b0b3bb0Zbba"
 tests/attacks/lucash-flip-end.random.mcd.%: KMCD_RANDOMSEED="aaaaaaaaaaaaaaaaa"
 
 ### Testing Harnesses
