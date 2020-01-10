@@ -124,10 +124,11 @@ KMCD_RANDOMSEED := ""
 
 test: test-execution test-python-generator
 
+execution_tests_random := $(wildcard tests/*/*.random.mcd)
 execution_tests := $(wildcard tests/*/*.mcd)
 
 test-execution: $(execution_tests:=.run)
-test-python-generator: tests/attacks/lucash-pot.random.mcd.python-out
+test-python-generator: $(execution_tests_random:=.python-out)
 
 ### Testing Parameters
 
