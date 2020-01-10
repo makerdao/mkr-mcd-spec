@@ -714,7 +714,7 @@
       Pot |-> 0
       Vow |-> 0 , 1 , 0 , 20 , 0 ) )
       ListItem ( LogNote ( ADMIN , End . initOut "gold" "Bobby" ) )
-      ListItem ( GenStep ( b"aa" , transact "Bobby" GemJoin "gold" . join "Bobby" 97 /Rat 10 ) )
+      ListItem ( GenStep ( b"ca" , transact "Bobby" GemJoin "gold" . join "Bobby" 97 /Rat 10 ) )
       ListItem ( Measure ( 20 , "Alice" |-> 10
       "Bobby" |-> 10
       End |-> 0
@@ -724,7 +724,7 @@
       ListItem ( LogNote ( "Bobby" , Vat . slip "gold" "Bobby" 97 /Rat 10 ) )
       ListItem ( LogNote ( "Bobby" , Gem "gold" . transferFrom "Bobby" GemJoin "gold" 97 /Rat 10 ) )
       ListItem ( LogNote ( "Bobby" , GemJoin "gold" . join "Bobby" 97 /Rat 10 ) )
-      ListItem ( GenStep ( b"a" , transact ADMIN End . cage ) )
+      ListItem ( GenStep ( b"c" , transact ADMIN End . cage ) )
       ListItem ( Measure ( 20 , "Alice" |-> 10
       "Bobby" |-> 10
       End |-> 0
@@ -740,7 +740,7 @@
       ListItem ( LogNote ( ADMIN , Vow . cage ) )
       ListItem ( LogNote ( ADMIN , Pot . cage ) )
       ListItem ( LogNote ( ADMIN , End . cage ) )
-      ListItem ( GenStep ( b"aa" , transact ANYONE End . cage "gold" ) )
+      ListItem ( GenStep ( b"ca" , transact ANYONE End . cage "gold" ) )
       ListItem ( Measure ( 20 , "Alice" |-> 10
       "Bobby" |-> 10
       End |-> 0
@@ -748,9 +748,9 @@
       Pot |-> 0
       Vow |-> 0 , 1 , 0 , 20 , 0 ) )
       ListItem ( LogNote ( ANYONE , End . cage "gold" ) )
-      ListItem ( GenStep ( b"aa" , TimeStep 2 ) )
+      ListItem ( GenStep ( b"ca" , TimeStep 2 ) )
       ListItem ( TimeStep ( 2 , 2 ) )
-      ListItem ( GenStep ( b"a" , transact ANYONE End . thaw ) )
+      ListItem ( GenStep ( b"c" , transact ANYONE End . thaw ) )
       ListItem ( Measure ( 20 , "Alice" |-> 10
       "Bobby" |-> 10
       End |-> 0
@@ -758,7 +758,7 @@
       Pot |-> 0
       Vow |-> 0 , 1 , 0 , 20 , 0 ) )
       ListItem ( LogNote ( ANYONE , End . thaw ) )
-      ListItem ( GenStep ( b"aa" , transact ANYONE End . flow "gold" ) )
+      ListItem ( GenStep ( b"ca" , transact ANYONE End . flow "gold" ) )
       ListItem ( Measure ( 20 , "Alice" |-> 10
       "Bobby" |-> 10
       End |-> 0
@@ -766,7 +766,7 @@
       Pot |-> 0
       Vow |-> 0 , 1 , 0 , 20 , 0 ) )
       ListItem ( LogNote ( ANYONE , End . flow "gold" ) )
-      ListItem ( GenStep ( b"aaa" , transact "Bobby" Flip "gold" . kick End Flap 1000 9409 /Rat 1000 970 ) )
+      ListItem ( GenStep ( b"caa" , transact "Bobby" Flip "gold" . kick End Flap 1000 9409 /Rat 1000 970 ) )
       ListItem ( Measure ( 20 , "Alice" |-> 10
       "Bobby" |-> 10
       End |-> 0
@@ -774,7 +774,7 @@
       Pot |-> 0
       Vow |-> 0 , 1 , 0 , 20 , 0 ) )
       ListItem ( Exception ( Flip "gold" . kick End Flap 1000 9409 /Rat 1000 970 ) )
-      ListItem ( GenStepFailed ( b"a" , GenEndSkip "gold" ) )
+      ListItem ( GenStepFailed ( b"c" , GenEndSkip "gold" ) )
     </processed-events>
     <properties>
       "Pot Interest Accumulation After End" |-> potEndInterestEnd

@@ -124,14 +124,13 @@ KMCD_RANDOMSEED := ""
 
 test: test-execution test-python-generator
 
-### Python Generator Test
+execution_tests_random := $(wildcard tests/*/*.random.mcd)
+execution_tests := $(wildcard tests/*/*.mcd)
 
-test-python-generator: mcd-pyk.py.out
+test-execution: $(execution_tests:=.run)
+test-python-generator: $(execution_tests_random:=.python-out)
 
-mcd-pyk.py.out: mcd-pyk.py $(llvm_kompiled)
-	python3 $< 5 &> $@
-
-### Execution tests
+### Testing Parameters
 
 TEST_BACKEND := llvm
 KMCD         := ./kmcd
@@ -142,18 +141,18 @@ ifeq ($(TEST_BACKEND), haskell)
     TEST_KOMPILED := $(haskell_kompiled)
 endif
 
-tests/attacks/lucash-pot-end.random.mcd.out:  KMCD_RANDOMSEED="aaaaaaaaaaaaaaaa"
-tests/attacks/lucash-pot.random.mcd.out:      KMCD_RANDOMSEED="aaaaaaaa"
-tests/attacks/lucash-flap-end.random.mcd.out: KMCD_RANDOMSEED="a0a3ao0Zaaa"
-tests/attacks/lucash-flip-end.random.mcd.out: KMCD_RANDOMSEED="aaaaaaaaaaaaaaaaa"
+tests/attacks/lucash-pot-end.random.mcd.%:  KMCD_RANDOMSEED="ddaddddadadadadd"
+tests/attacks/lucash-pot.random.mcd.%:      KMCD_RANDOMSEED="aaaaaaaa"
+tests/attacks/lucash-flap-end.random.mcd.%: KMCD_RANDOMSEED="b0b3bb0Zbba"
+tests/attacks/lucash-flip-end.random.mcd.%: KMCD_RANDOMSEED="caccacaccacaaca"
+
+### Testing Harnesses
 
 tests/%.mcd.out: tests/%.mcd $(TEST_KOMPILED)
-	RANDOMSEED=$(KMCD_RANDOMSEED) $(KMCD) run --backend $(TEST_BACKEND) $< > $<.out
+	RANDOMSEED=$(KMCD_RANDOMSEED) $(KMCD) run --backend $(TEST_BACKEND) $< > $@
+
+tests/%.mcd.python-out: mcd-pyk.py $(TEST_KOMPILED)
+	python3 $< $(KMCD_RANDOMSEED) 0 1 2>&1 > $@
 
 tests/%.mcd.run: tests/%.mcd.out
 	$(CHECK) tests/$*.mcd.out tests/$*.mcd.expected
-
-execution_tests := $(wildcard tests/*/*.mcd)
-
-test-execution: $(execution_tests:=.run)
-update-test-execution: $(execution_tests:=.update)
