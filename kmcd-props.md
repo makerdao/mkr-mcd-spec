@@ -22,7 +22,7 @@ Measurables
 
 ```k
     syntax Event ::= Measure ( debt: Rat , controlDai: Map , potChi: Rat , potPie: Rat , sumOfScaledArts: Rat, vice: Rat )
- // ------------------------------------------------------------------------------------
+ // ----------------------------------------------------------------------------------------------------------------------
     rule <k> measure => . ... </k>
          <events> ... (.List => ListItem(Measure(... debt: DEBT, controlDai: controlDais(keys_list(VAT_DAIS)), potChi: POT_CHI, potPie: POT_PIE, sumOfScaledArts: calcSumOfScaledArts(VAT_ILKS, VAT_URNS), vice: VAT_VICE))) </events>
          <vat-debt> DEBT </vat-debt>
@@ -139,8 +139,8 @@ Total backed debt (sum over each CDP's art times corresponding ilk's rate)
 
 ```k
     syntax Rat ::= calcSumOfScaledArts(Map, Map) [function]
-                   | calcSumOfScaledArtsAux(List, Map, Map, Rat) [function]
- // ------------------------------------------------------------------------------------
+                 | calcSumOfScaledArtsAux(List, Map, Map, Rat) [function]
+ // ---------------------------------------------------------------------
     rule calcSumOfScaledArts(VAT_ILKS, VAT_URNS) => calcSumOfScaledArtsAux(keys_list(VAT_ILKS), VAT_ILKS, VAT_URNS, 0)
 
     rule calcSumOfScaledArtsAux(                        .List ,        _ ,        _ , TOTAL ) => TOTAL
@@ -229,7 +229,7 @@ Vat.debt minus Vat.vice should equal the sum over all ilks and CDP accounts of t
 
 ```k
     syntax ViolationFSM ::= "totalBackedDebtConsistency"
- // --------------------------------------------------------------------
+ // ----------------------------------------------------
     rule derive(totalBackedDebtConsistency, Measure(... debt: DEBT, sumOfScaledArts: SUM, vice: VICE)) => Violated requires SUM =/=Rat (DEBT -Rat VICE)
 ```
 
