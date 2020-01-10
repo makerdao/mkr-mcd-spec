@@ -715,7 +715,7 @@
       Pot |-> 0
       Vow |-> 0 , 1 , 0 , 20 , 0 ) )
       ListItem ( LogNote ( ADMIN , End . initOut "gold" "Bobby" ) )
-      ListItem ( GenStep ( b"a0" , transact "Alice" Vat . move "Alice" Vow 24 /Rat 5 ) )
+      ListItem ( GenStep ( b"b0" , transact "Alice" Vat . move "Alice" Vow 24 /Rat 5 ) )
       ListItem ( Measure ( 20 , "Alice" |-> 10
       "Bobby" |-> 10
       End |-> 0
@@ -723,7 +723,7 @@
       Pot |-> 0
       Vow |-> 0 , 1 , 0 , 20 , 0 ) )
       ListItem ( LogNote ( "Alice" , Vat . move "Alice" Vow 24 /Rat 5 ) )
-      ListItem ( GenStep ( b"a3" , transact "Bobby" GemJoin "gold" . join "Bobby" 51 /Rat 10 ) )
+      ListItem ( GenStep ( b"b3" , transact "Bobby" GemJoin "gold" . join "Bobby" 51 /Rat 10 ) )
       ListItem ( Measure ( 20 , "Alice" |-> 26 /Rat 5
       "Bobby" |-> 10
       End |-> 0
@@ -733,7 +733,7 @@
       ListItem ( LogNote ( "Bobby" , Vat . slip "gold" "Bobby" 51 /Rat 10 ) )
       ListItem ( LogNote ( "Bobby" , Gem "gold" . transferFrom "Bobby" GemJoin "gold" 51 /Rat 10 ) )
       ListItem ( LogNote ( "Bobby" , GemJoin "gold" . join "Bobby" 51 /Rat 10 ) )
-      ListItem ( GenStep ( b"a" , transact "Alice" Vat . hope Flap ) )
+      ListItem ( GenStep ( b"b" , transact "Alice" Vat . hope Flap ) )
       ListItem ( Measure ( 20 , "Alice" |-> 26 /Rat 5
       "Bobby" |-> 10
       End |-> 0
@@ -741,7 +741,7 @@
       Pot |-> 0
       Vow |-> 24 /Rat 5 , 1 , 0 , 20 , 0 ) )
       ListItem ( LogNote ( "Alice" , Vat . hope Flap ) )
-      ListItem ( GenStep ( b"o0Z" , transact "Alice" Flap . kick 312 /Rat 125 18 ) )
+      ListItem ( GenStep ( b"b0Z" , transact "Alice" Flap . kick 312 /Rat 125 18 ) )
       ListItem ( Measure ( 20 , "Alice" |-> 26 /Rat 5
       "Bobby" |-> 10
       End |-> 0
@@ -749,7 +749,7 @@
       Pot |-> 0
       Vow |-> 24 /Rat 5 , 1 , 0 , 20 , 0 ) )
       ListItem ( Exception ( Flap . kick 312 /Rat 125 18 ) )
-      ListItem ( GenStep ( b"a" , transact ADMIN End . cage ) )
+      ListItem ( GenStep ( b"b" , transact ADMIN End . cage ) )
       ListItem ( Measure ( 20 , "Alice" |-> 26 /Rat 5
       "Bobby" |-> 10
       End |-> 0
@@ -765,7 +765,7 @@
       ListItem ( LogNote ( ADMIN , Vow . cage ) )
       ListItem ( LogNote ( ADMIN , Pot . cage ) )
       ListItem ( LogNote ( ADMIN , End . cage ) )
-      ListItem ( GenStepFailed ( b"a" , GenFlapYank ) )
+      ListItem ( GenStepFailed ( b"b" , GenFlapYank ) )
     </processed-events>
     <properties>
       "Pot Interest Accumulation After End" |-> potEndInterestEnd
