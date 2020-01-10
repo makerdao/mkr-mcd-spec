@@ -126,10 +126,7 @@ test: test-execution test-python-generator
 
 ### Python Generator Test
 
-test-python-generator: mcd-pyk.py.out
-
-mcd-pyk.py.out: mcd-pyk.py $(llvm_kompiled)
-	python3 $< 5 &> $@
+test-python-generator: tests/attacks/lucash-pot.random.mcd.python-out
 
 ### Execution tests
 
@@ -142,13 +139,16 @@ ifeq ($(TEST_BACKEND), haskell)
     TEST_KOMPILED := $(haskell_kompiled)
 endif
 
-tests/attacks/lucash-pot-end.random.mcd.out:  KMCD_RANDOMSEED="aaaaaaaaaaaaaaaa"
-tests/attacks/lucash-pot.random.mcd.out:      KMCD_RANDOMSEED="aaaaaaaa"
-tests/attacks/lucash-flap-end.random.mcd.out: KMCD_RANDOMSEED="a0a3ao0Zaaa"
-tests/attacks/lucash-flip-end.random.mcd.out: KMCD_RANDOMSEED="aaaaaaaaaaaaaaaaa"
+tests/attacks/lucash-pot-end.random.mcd.%:  KMCD_RANDOMSEED="aaaaaaaaaaaaaaaa"
+tests/attacks/lucash-pot.random.mcd.%:      KMCD_RANDOMSEED="aaaaaaaa"
+tests/attacks/lucash-flap-end.random.mcd.%: KMCD_RANDOMSEED="a0a3ao0Zaaa"
+tests/attacks/lucash-flip-end.random.mcd.%: KMCD_RANDOMSEED="aaaaaaaaaaaaaaaaa"
 
 tests/%.mcd.out: tests/%.mcd $(TEST_KOMPILED)
-	RANDOMSEED=$(KMCD_RANDOMSEED) $(KMCD) run --backend $(TEST_BACKEND) $< > $<.out
+	RANDOMSEED=$(KMCD_RANDOMSEED) $(KMCD) run --backend $(TEST_BACKEND) $< > $@
+
+tests/%.mcd.python-out: mcd-pyk.py $(TEST_KOMPILED)
+	python3 $< $(KMCD_RANDOMSEED) 0 1 2>&1 > $@
 
 tests/%.mcd.run: tests/%.mcd.out
 	$(CHECK) tests/$*.mcd.out tests/$*.mcd.expected
