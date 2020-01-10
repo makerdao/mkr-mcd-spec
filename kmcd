@@ -58,30 +58,6 @@ run_search() {
     run_krun --search --pattern "$search_pattern" "$@"
 }
 
-run_klab() {
-    local run_mode klab_log
-
-    run_mode="$1" ; shift
-    klab_log="$(basename "${run_file%-spec.k}")"
-
-    "$0" "$run_mode" --backend java "$run_file" \
-        --state-log --state-log-path "$KLAB_OUT/data" --state-log-id "$klab_log" \
-        --state-log-events OPEN,EXECINIT,SEARCHINIT,REACHINIT,REACHTARGET,REACHPROVED,NODE,RULE,SRULE,RULEATTEMPT,IMPLICATION,Z3QUERY,Z3RESULT,CLOSE \
-        --no-alpha-renaming --restore-original-names --no-sort-collections \
-        --output json \
-        "$@"
-}
-
-view_klab() {
-    local klab_log
-
-    klab_log="$(basename "${run_file%-spec.k}")"
-
-    # klab often runs out of stack space when running long-running KMCD programs
-    # klab debug "$klab_log"
-    node --stack-size=$KLAB_NODE_STACK_SIZE $(dirname $(which klab))/../libexec/klab-debug "$klab_log"
-}
-
 # Main
 # ----
 
@@ -89,13 +65,13 @@ run_command="$1" ; shift
 
 if [[ "$run_command" == 'help' ]]; then
     echo "
-        usage: $0 run        [--backend (java|llvm|haskell)] <pgm>  <K arg>*
-               $0 kast       [--backend (java|llvm|haskell)] <pgm>  <output format> <K arg>*
-               $0 prove      [--backend (java|haskell)]      <spec> <K arg>* -m <def_module>
-               $0 search     [--backend (java|haskell)]      <pgm>  <pattern> <K arg>*
-               $0 klab-run                                   <pgm>  <K arg>*
-               $0 klab-prove                                 <spec> <K arg>* -m <def_module>
-               $0 klab-view                                  <spec>
+        usage: $0 run        [--backend (llvm|haskell)] <pgm>  <K arg>*
+               $0 kast       [--backend (llvm|haskell)] <pgm>  <output format> <K arg>*
+               $0 prove      [--backend (haskell)]      <spec> <K arg>* -m <def_module>
+               $0 search     [--backend (haskell)]      <pgm>  <pattern> <K arg>*
+               $0 klab-run                              <pgm>  <K arg>*
+               $0 klab-prove                            <spec> <K arg>* -m <def_module>
+               $0 klab-view                             <spec>
 
            $0 run       : Run a single MCD simulation
            $0 kast      : Parse an MCD simulation and output it in a supported format
@@ -119,7 +95,6 @@ fi
 backend="llvm"
 debug=false
 [[ ! "$run_command" == 'prove' ]] || backend='haskell'
-[[ ! "$run_command" =~ klab*   ]] || backend='java'
 while [[ $# -gt 0 ]]; do
     arg="$1"
     case $arg in
@@ -142,13 +117,9 @@ fi
 cRANDOMSEED="#token(\"${RANDOMSEED:-}\",\"Bytes\")"
 
 case "$run_command-$backend" in
-
-    # Running
-    run-@(java|llvm|haskell)  ) run_krun                        "$@" ;;
-    kast-@(java|llvm|haskell) ) run_kast                        "$@" ;;
-    prove-@(java|haskell)     ) run_prove                       "$@" ;;
-    search-@(java|haskell)    ) run_search                      "$@" ;;
-    klab-@(run|prove)-java    ) run_klab "${run_command#klab-}" "$@" ;;
-    klab-view-java            ) view_klab                       "$@" ;;
+    run-@(llvm|haskell)    ) run_krun   "$@" ;;
+    kast-@(llvm|haskell)   ) run_kast   "$@" ;;
+    prove-@(haskell)       ) run_prove  "$@" ;;
+    search-@(haskell)      ) run_search "$@" ;;
     *) $0 help ; fatal "Unknown command on backend: $run_command $backend" ;;
 esac
