@@ -141,10 +141,10 @@ ifeq ($(TEST_BACKEND), haskell)
     TEST_KOMPILED := $(haskell_kompiled)
 endif
 
-tests/attacks/lucash-pot-end.random.mcd.%:  KMCD_RANDOMSEED="aaaaaaaaaaaaaaaa"
+tests/attacks/lucash-pot-end.random.mcd.%:  KMCD_RANDOMSEED="ddaddddadadadadd"
 tests/attacks/lucash-pot.random.mcd.%:      KMCD_RANDOMSEED="aaaaaaaa"
 tests/attacks/lucash-flap-end.random.mcd.%: KMCD_RANDOMSEED="b0b3bb0Zbba"
-tests/attacks/lucash-flip-end.random.mcd.%: KMCD_RANDOMSEED="aaaaaaaaaaaaaaaaa"
+tests/attacks/lucash-flip-end.random.mcd.%: KMCD_RANDOMSEED="caccacaccacaaca"
 
 ### Testing Harnesses
 
