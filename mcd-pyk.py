@@ -42,7 +42,7 @@ def kastJSON_haskell(inputJSON, *kastArgs):
     return pyk.kastJSON(MCD_definition_haskell_dir, inputJSON, kastArgs = list(kastArgs))
 
 def krunJSON_llvm(inputJSON, *krunArgs):
-    return pyk.krunJSON(MCD_definition_llvm_dir, inputJSON, krunArgs = list(krunArgs), keepTemp = True)
+    return pyk.krunJSON(MCD_definition_llvm_dir, inputJSON, krunArgs = list(krunArgs))
 
 def krunJSON_haskell(inputJSON, *krunArgs):
     return pyk.krunJSON(MCD_definition_haskell_dir, inputJSON, krunArgs = list(krunArgs))
@@ -104,6 +104,18 @@ def get_init_config(init_term):
     kast_json = { 'format': 'KAST', 'version': 1, 'term': init_term }
     (_, init_config, _) = krunJSON_llvm(kast_json, *randomSeedArgs())
     return pyk.splitConfigFrom(init_config)
+
+def detect_violations(config):
+    (_, configSubst) = pyk.splitConfigFrom(config)
+    properties = configSubst['PROPERTIES_CELL']
+    violations = []
+    def _gatherViolations(fsmMap):
+        if pyk.isKApply(fsmMap) and fsmMap['label'] == '_|->_':
+            if fsmMap['args'][1] == pyk.KConstant('Violated_KMCD-PROPS_ViolationFSM'):
+                violations.append(fsmMap['args'][0]['token'])
+        return fsmMap
+    pyk.traverseTopDown(properties, _gatherViolations)
+    return violations
 
 def steps(step):
     return KApply('STEPS(_)_KMCD-PRELUDE_MCDStep_MCDSteps', [step])
@@ -257,15 +269,29 @@ if __name__ == '__main__':
                             )
 
     (symbolic_configuration, init_cells) = get_init_config(config_loader)
+    print()
 
-    outputs = []
+    all_violations = []
     for i in range(numruns):
-        init_cells['RANDOM_CELL'] = bytesToken(bytearray(randseed, 'utf-8') + randombytes(gendepth))
+        curRandSeed = bytearray(randseed, 'utf-8') + randombytes(gendepth)
+
+        init_cells['RANDOM_CELL'] = bytesToken(curRandSeed)
         init_cells['K_CELL']      = genSteps
 
         initial_configuration = sanitizeBytes(pyk.substitute(symbolic_configuration, init_cells))
-        print(pyk.prettyPrintKast(initial_configuration, MCD_definition_llvm_symbols))
+        # print(pyk.prettyPrintKast(initial_configuration, MCD_definition_llvm_symbols))
         (_, output, _) = krunJSON_llvm({ 'format': 'KAST' , 'version': 1 , 'term': initial_configuration }, '--term')
-        outputs.append(output)
-        print(pyk.prettyPrintKast(output, MCD_definition_llvm_symbols))
-        sys.stdout.flush()
+        print()
+        violations = detect_violations(output)
+        if len(violations) > 0:
+            all_violations.append({ 'properties': violations , 'seed': str(curRandSeed), 'output': output })
+
+    if len(all_violations) > 0:
+        print('\n\nViolations Found!')
+        print('=================')
+        for violation in all_violations:
+            print('\nViolation:')
+            print('    Seed: ' + violation['seed'])
+            print('    Properties: ' + str(violation['properties']))
+    sys.stdout.flush()
+    sys.exit(len(all_violations))
