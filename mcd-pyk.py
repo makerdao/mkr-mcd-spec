@@ -292,6 +292,6 @@ if __name__ == '__main__':
         for violation in all_violations:
             print('\nViolation:')
             print('    Seed: ' + violation['seed'])
-            print('    Properties: ' + str(violation['properties']))
+            print('    Properties: ' + '\n              , '.join(violation['properties']))
     sys.stdout.flush()
     sys.exit(len(all_violations))
