@@ -152,7 +152,7 @@ tests/%.mcd.out: tests/%.mcd $(TEST_KOMPILED)
 	RANDOMSEED=$(KMCD_RANDOMSEED) $(KMCD) run --backend $(TEST_BACKEND) $< > $@
 
 tests/%.mcd.python-out: mcd-pyk.py $(TEST_KOMPILED)
-	python3 $< $(KMCD_RANDOMSEED) 0 1 2>&1 > $@
+	python3 $< 0 1 $(KMCD_RANDOMSEED) 2>&1 > $@
 
 tests/%.mcd.run: tests/%.mcd.out
 	$(CHECK) tests/$*.mcd.out tests/$*.mcd.expected

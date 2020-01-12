@@ -257,9 +257,12 @@ generator_lucash_flap_end = generatorSequence( [ KApply( 'GenVatMove___KMCD-GEN_
                                              )
 
 if __name__ == '__main__':
-    randseed = sys.argv[1]
-    gendepth = int(sys.argv[2])
-    numruns  = int(sys.argv[3])
+    gendepth = int(sys.argv[1])
+    numruns  = int(sys.argv[2])
+
+    randseeds = [""]
+    if len(sys.argv) > 3:
+        randseeds = sys.argv[3:]
 
     config_loader = mcdSteps( [ steps(KConstant('ATTACK-PRELUDE'))
                               , addGenerator(generator_lucash_pot_end)
@@ -274,19 +277,20 @@ if __name__ == '__main__':
 
     startTime = time.time()
     all_violations = []
-    for i in range(numruns):
-        curRandSeed = bytearray(randseed, 'utf-8') + randombytes(gendepth)
+    for randseed in randseeds:
+        for i in range(numruns):
+            curRandSeed = bytearray(randseed, 'utf-8') + randombytes(gendepth)
 
-        init_cells['RANDOM_CELL'] = bytesToken(curRandSeed)
-        init_cells['K_CELL']      = genSteps
+            init_cells['RANDOM_CELL'] = bytesToken(curRandSeed)
+            init_cells['K_CELL']      = genSteps
 
-        initial_configuration = sanitizeBytes(pyk.substitute(symbolic_configuration, init_cells))
-        # print(pyk.prettyPrintKast(initial_configuration, MCD_definition_llvm_symbols))
-        (_, output, _) = krunJSON_llvm({ 'format': 'KAST' , 'version': 1 , 'term': initial_configuration }, '--term')
-        print()
-        violations = detect_violations(output)
-        if len(violations) > 0:
-            all_violations.append({ 'properties': violations , 'seed': str(curRandSeed), 'output': output })
+            initial_configuration = sanitizeBytes(pyk.substitute(symbolic_configuration, init_cells))
+            # print(pyk.prettyPrintKast(initial_configuration, MCD_definition_llvm_symbols))
+            (_, output, _) = krunJSON_llvm({ 'format': 'KAST' , 'version': 1 , 'term': initial_configuration }, '--term')
+            print()
+            violations = detect_violations(output)
+            if len(violations) > 0:
+                all_violations.append({ 'properties': violations , 'seed': str(curRandSeed), 'output': output })
     stopTime = time.time()
 
     elapsedTime = stopTime - startTime
