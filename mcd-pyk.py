@@ -3,9 +3,10 @@
 import difflib
 import json
 import random
+import os
 import sys
 import tempfile
-import os
+import time
 
 from functools import reduce
 
@@ -271,6 +272,7 @@ if __name__ == '__main__':
     (symbolic_configuration, init_cells) = get_init_config(config_loader)
     print()
 
+    startTime = time.time()
     all_violations = []
     for i in range(numruns):
         curRandSeed = bytearray(randseed, 'utf-8') + randombytes(gendepth)
@@ -285,9 +287,15 @@ if __name__ == '__main__':
         violations = detect_violations(output)
         if len(violations) > 0:
             all_violations.append({ 'properties': violations , 'seed': str(curRandSeed), 'output': output })
+    stopTime = time.time()
+
+    elapsedTime = stopTime - startTime
+    perRunTime  = elapsedTime / numruns
+    print('\n\nTime Elapsed: ' + str(elapsedTime))
+    print('\nTime Per Run: ' + str(perRunTime))
 
     if len(all_violations) > 0:
-        print('\n\nViolations Found!')
+        print('\nViolations Found!')
         print('=================')
         for violation in all_violations:
             print('\nViolation:')
