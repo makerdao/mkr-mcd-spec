@@ -160,7 +160,7 @@ module KMCD-RANDOM-CHOICES
     rule randIntBounded(RAND, BOUND) => RAND modInt (BOUND +Int 1) requires BOUND =/=Int 0
 ```
 
-```{.k .symbolic}
+```
     rule randIntBounded(_, BOUND) => ?I:Int ensures 0 <=Int ?I andBool ?I <=Int BOUND
 ```
 
@@ -173,7 +173,7 @@ module KMCD-RANDOM-CHOICES
     rule randRat(I) => (I modInt 101) /Rat 100
 ```
 
-```{.k .symbolic}
+```
     rule randRat(_) => ?R:Rat ensures 0 <=Rat ?R andBool ?R <=Rat 100
 ```
 
@@ -186,7 +186,7 @@ module KMCD-RANDOM-CHOICES
     rule randRatBounded(I, BOUND) => BOUND *Rat randRat(I)
 ```
 
-```{.k .symbolic}
+```
     rule randRatBounded(_, BOUND) => ?R:Rat ensures 0 <=Rat ?R andBool ?R <=Rat BOUND
 ```
 
@@ -205,7 +205,7 @@ module KMCD-RANDOM-CHOICES
     rule chooseCDPID  (I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>CDPID
 ```
 
-```{.k .symbolic}
+```
     rule chooseInt    (_, ITEMS) => ?I:Int     ensures ?I in ITEMS
     rule chooseString (_, ITEMS) => ?S:String  ensures ?S in ITEMS
     rule chooseAddress(_, ITEMS) => ?A:Address ensures ?A in ITEMS
