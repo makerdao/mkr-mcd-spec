@@ -294,7 +294,7 @@ if __name__ == '__main__':
     stopTime = time.time()
 
     elapsedTime = stopTime - startTime
-    perRunTime  = elapsedTime / (numruns * len(numruns))
+    perRunTime  = elapsedTime / (numruns * len(randseeds))
     print('\n\nTime Elapsed: ' + str(elapsedTime))
     print('\nTime Per Run: ' + str(perRunTime))
 
