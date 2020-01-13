@@ -206,27 +206,10 @@ module KMCD-RANDOM-CHOICES
 ```
 
 ```{.k .symbolic}
-    rule chooseInt    (_, ITEMS) => ?I:Int     ensures isChoiceInt    (?I, ITEMS)
-    rule chooseString (_, ITEMS) => ?S:String  ensures isChoiceString (?S, ITEMS)
-    rule chooseAddress(_, ITEMS) => ?A:Address ensures isChoiceAddress(?A, ITEMS)
-    rule chooseCDPID  (_, ITEMS) => ?C:CDPID   ensures isChoiceCDPID  (?C, ITEMS)
-
-    syntax Bool ::= isChoiceInt     ( Int     , List ) [function, functional]
-                  | isChoiceString  ( String  , List ) [function, functional]
-                  | isChoiceAddress ( Address , List ) [function, functional]
-                  | isChoiceCDPID   ( CDPID   , List ) [function, functional]
- // -------------------------------------------------------------------------
-    rule isChoiceInt(_, .List)             => false
-    rule isChoiceInt(I, ListItem(I') REST) => I ==Int I' orBool isChoiceInt(I, REST)
-
-    rule isChoiceString(_, .List)             => false
-    rule isChoiceString(S, ListItem(S') REST) => S ==String S' orBool isChoiceString(S, REST)
-
-    rule isChoiceAddress(_, .List)                     => false
-    rule isChoiceAddress(A, ListItem(A':Address) REST) => A ==K A' orBool isChoiceAddress(A, REST)
-
-    rule isChoiceCDPID(_    , .List)                       => false
-    rule isChoiceCDPID(CDPID, ListItem(CDPID':CDPID) REST) => CDPID ==K CDPID' orBool isChoiceCDPID(CDPID, REST)
+    rule chooseInt    (_, ITEMS) => ?I:Int     ensures ?I in ITEMS
+    rule chooseString (_, ITEMS) => ?S:String  ensures ?S in ITEMS
+    rule chooseAddress(_, ITEMS) => ?A:Address ensures ?A in ITEMS
+    rule chooseCDPID  (_, ITEMS) => ?C:CDPID   ensures ?C in ITEMS
 ```
 
 ```k
