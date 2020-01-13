@@ -147,6 +147,13 @@ module KMCD-PRELUDE
 endmodule
 ```
 
+Random Choices
+--------------
+
+**TODO**: Currently the Haskell backend doesn't support ?VAR variables.
+          For now, we don't give the implementations of these choice functions for the Haskell backend, which gives to broad of semantics.
+          The functions do implement "choice", but completely arbitrary choice in the relevant sorts, instead of bounded choices.
+
 ```k
 module KMCD-RANDOM-CHOICES
     imports KMCD-PRELUDE
