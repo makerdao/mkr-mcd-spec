@@ -30,7 +30,7 @@ export LUA_PATH
         deps deps-k deps-tangle deps-media                    \
         defn defn-llvm defn-haskell                           \
         build build-llvm build-haskell                        \
-        test test-execution test-python-generator test-random \
+        test test-execution test-python-generator test-random
 .SECONDARY:
 
 all: build
