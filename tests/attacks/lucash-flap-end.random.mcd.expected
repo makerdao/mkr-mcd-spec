@@ -9,10 +9,10 @@
           .
         </return-value>
         <msg-sender>
-          "Alice"
+          ADMIN
         </msg-sender>
         <this>
-          "Alice"
+          ADMIN
         </this>
         <current-time>
           0
@@ -39,7 +39,7 @@
             .Map
           </cat-ilks>
           <cat-live>
-            true
+            false
           </cat-live>
           <cat-vow>
             0
@@ -74,7 +74,7 @@
               .Set
             </end-wards>
             <end-live>
-              true
+              false
             </end-live>
             <end-when>
               0
@@ -118,7 +118,7 @@
             0
           </flap-kicks>
           <flap-live>
-            true
+            false
           </flap-live>
           <flap-beg>
             21 /Rat 20
@@ -166,7 +166,7 @@
             0
           </flop-kicks>
           <flop-live>
-            true
+            false
           </flop-live>
           <flop-beg>
             21 /Rat 20
@@ -284,7 +284,7 @@
             0
           </pot-rho>
           <pot-live>
-            true
+            false
           </pot-live>
         </pot>
         <spot>
@@ -360,7 +360,7 @@
             1000000000000
           </vat-Line>
           <vat-live>
-            true
+            false
           </vat-live>
         </vat>
         <vow>
@@ -393,7 +393,7 @@
             0
           </vow-hump>
           <vow-live>
-            true
+            false
           </vow-live>
         </vow>
       </kmcd-state>
@@ -749,12 +749,29 @@
       Pot |-> 0
       Vow |-> 24 /Rat 5 , 1 , 0 , 20 , 0 ) )
       ListItem ( Exception ( Flap . kick 312 /Rat 125 18 ) )
+      ListItem ( GenStep ( b"b" , transact ADMIN End . cage ) )
+      ListItem ( Measure ( 20 , "Alice" |-> 26 /Rat 5
+      "Bobby" |-> 10
+      End |-> 0
+      Flap |-> 0
+      Pot |-> 0
+      Vow |-> 24 /Rat 5 , 1 , 0 , 20 , 0 ) )
+      ListItem ( LogNote ( ADMIN , Vat . cage ) )
+      ListItem ( LogNote ( ADMIN , Cat . cage ) )
+      ListItem ( LogNote ( Vow , Vat . move Flap Vow 0 ) )
+      ListItem ( LogNote ( End , Flap . cage 0 ) )
+      ListItem ( LogNote ( End , Flop . cage ) )
+      ListItem ( LogNote ( End , Vat . heal 0 ) )
+      ListItem ( LogNote ( ADMIN , Vow . cage ) )
+      ListItem ( LogNote ( ADMIN , Pot . cage ) )
+      ListItem ( LogNote ( ADMIN , End . cage ) )
+      ListItem ( GenStepFailed ( b"b" , GenFlapYank ) )
     </processed-events>
     <properties>
-      "Pot Interest Accumulation After End" |-> potEndInterest
+      "Pot Interest Accumulation After End" |-> potEndInterestEnd
       "PotChi PotPie VatPot" |-> potChiPieDai
       "Total Backed Debt Consistency" |-> totalBackedDebtConsistency
-      "Total Bound on Debt" |-> totalDebtBoundedRun ( 20 , 1 )
+      "Total Bound on Debt" |-> totalDebtBoundedEnd ( 20 )
       "Unauthorized Flap Kick" |-> unAuthFlapKick
       "Unauthorized Flip Kick" |-> unAuthFlipKick
       "Zero-Time Pot Interest Accumulation" |-> zeroTimePotInterest
@@ -765,7 +782,7 @@
       b""
     </random>
     <used-random>
-      b""
+      b"a"
     </used-random>
     <generator-next>
       1
@@ -782,7 +799,7 @@
           0
         </generator-id>
         <generator-steps>
-          ( GenEndCage ; GenFlapYank ) ; .GenStep
+          .GenStep
         </generator-steps>
       </generator>
     </generators>

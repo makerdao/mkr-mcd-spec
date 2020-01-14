@@ -774,6 +774,7 @@
       Pot |-> 0
       Vow |-> 0 , 1 , 0 , 20 , 0 ) )
       ListItem ( Exception ( Flip "gold" . kick End Flap 1000 9409 /Rat 1000 970 ) )
+      ListItem ( GenStepFailed ( b"c" , GenEndSkip "gold" ) )
     </processed-events>
     <properties>
       "Pot Interest Accumulation After End" |-> potEndInterestEnd
@@ -790,7 +791,7 @@
       b""
     </random>
     <used-random>
-      b""
+      b"a"
     </used-random>
     <generator-next>
       1
@@ -807,7 +808,7 @@
           0
         </generator-id>
         <generator-steps>
-          GenEndSkip "gold" ; .GenStep
+          .GenStep
         </generator-steps>
       </generator>
     </generators>
