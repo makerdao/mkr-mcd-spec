@@ -26,12 +26,11 @@ LUA_PATH:=$(PANDOC_TANGLE_SUBMODULE)/?.lua;;
 export TANGLER
 export LUA_PATH
 
-.PHONY: all clean                                 \
-        deps deps-k deps-tangle deps-media        \
-        defn defn-llvm defn-haskell               \
-        build build-llvm build-haskell            \
-        test test-execution test-python-generator \
-        update-test-execution
+.PHONY: all clean                                             \
+        deps deps-k deps-tangle deps-media                    \
+        defn defn-llvm defn-haskell                           \
+        build build-llvm build-haskell                        \
+        test test-execution test-python-generator test-random
 .SECONDARY:
 
 all: build
@@ -130,6 +129,11 @@ execution_tests := $(wildcard tests/*/*.mcd)
 test-execution: $(execution_tests:=.run)
 test-python-generator: $(execution_tests_random:=.python-out)
 
+init_random_seeds := ddaddddadadadad aaaaaaa b0b3b caccacacca
+
+test-random: mcd-pyk.py
+	python3 $< 3 10 $(init_random_seeds)
+
 ### Testing Parameters
 
 TEST_BACKEND := llvm
@@ -152,7 +156,7 @@ tests/%.mcd.out: tests/%.mcd $(TEST_KOMPILED)
 	RANDOMSEED=$(KMCD_RANDOMSEED) $(KMCD) run --backend $(TEST_BACKEND) $< > $@
 
 tests/%.mcd.python-out: mcd-pyk.py $(TEST_KOMPILED)
-	python3 $< $(KMCD_RANDOMSEED) 0 1 2>&1 > $@
+	python3 $< 0 1 $(KMCD_RANDOMSEED) 2>&1 > $@
 
 tests/%.mcd.run: tests/%.mcd.out
 	$(CHECK) tests/$*.mcd.out tests/$*.mcd.expected
