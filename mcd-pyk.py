@@ -286,7 +286,7 @@ if __name__ == '__main__':
 
             initial_configuration = sanitizeBytes(pyk.substitute(symbolic_configuration, init_cells))
             # print(pyk.prettyPrintKast(initial_configuration, MCD_definition_llvm_symbols))
-            (_, output, _) = krunJSON_llvm({ 'format': 'KAST' , 'version': 1 , 'term': initial_configuration }, '--term')
+            (_, output, _) = krunJSON_llvm({ 'format': 'KAST' , 'version': 1 , 'term': initial_configuration }, '--term', '--no-sort-collections')
             print()
             violations = detect_violations(output)
             if len(violations) > 0:
