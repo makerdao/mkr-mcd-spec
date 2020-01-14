@@ -172,9 +172,9 @@ def addGenerator(generator):
 #             )
 generator_lucash_pot = generatorSequence( [ KConstant('GenPotFileDSR_KMCD-GEN_GenPotStep')
                                           , KConstant('GenTimeStep_KMCD-GEN_GenTimeStep')
-                                          , KApply( 'GenPotJoin__KMCD-GEN_GenPotStep_Address' , [ KToken('"Alice"', "String") ] )
+                                          , KConstant('GenPotJoin_KMCD-GEN_GenPotStep')
                                           , KConstant('GenPotDrip_KMCD-GEN_GenPotStep')
-                                          , KApply( 'GenPotExit__KMCD-GEN_GenPotStep_Address' , [ KToken('"Alice"', "String") ] )
+                                          , KConstant('GenPotExit_KMCD-GEN_GenPotStep')
                                           ]
                                         )
 
@@ -192,15 +192,15 @@ generator_lucash_pot = generatorSequence( [ KConstant('GenPotFileDSR_KMCD-GEN_Ge
 #             )
 generator_lucash_pot_end = generatorSequence( [ KConstant('GenEndCage_KMCD-GEN_GenEndStep')
                                               , KConstant('GenEndCageIlk_KMCD-GEN_GenEndStep')
-                                              , KApply( 'GenEndSkim__KMCD-GEN_GenEndStep_CDPID' , [ KApply( '{_,_}_VAT_CDPID_String_Address' , [ KToken('"gold"', "String") , KToken('"Alice"', "String") ] ) ] )
-                                              , KApply( 'GenEndSkim__KMCD-GEN_GenEndStep_CDPID' , [ KApply( '{_,_}_VAT_CDPID_String_Address' , [ KToken('"gold"', "String") , KToken('"Bobby"', "String") ] ) ] )
+                                              , KConstant('GenEndSkim_KMCD-GEN_GenEndStep')
+                                              , KConstant('GenEndSkim_KMCD-GEN_GenEndStep')
                                               , KConstant('GenEndThaw_KMCD-GEN_GenEndStep')
                                               , KConstant('GenEndFlow_KMCD-GEN_GenEndStep')
-                                              , KApply('GenPotJoin__KMCD-GEN_GenPotStep_Address' , [ KToken('"Alice"', "String") ] )
+                                              , KConstant('GenPotJoin_KMCD-GEN_GenPotStep')
                                               , KConstant('GenPotFileDSR_KMCD-GEN_GenPotStep')
                                               , KConstant('GenTimeStep_KMCD-GEN_GenTimeStep')
                                               , KConstant('GenPotDrip_KMCD-GEN_GenPotStep')
-                                              , KApply('GenPotExit__KMCD-GEN_GenPotStep_Address' , [ KToken('"Alice"', "String") ] )
+                                              , KConstant('GenPotExit_KMCD-GEN_GenPotStep')
                                               ]
                                             )
 
@@ -213,14 +213,14 @@ generator_lucash_pot_end = generatorSequence( [ KConstant('GenEndCage_KMCD-GEN_G
 #             ; GenFlipKick { "gold" , "Bobby" } End Flap
 #             ; GenEndSkip "gold"
 #             )
-generator_lucash_flip_end = generatorSequence( [ KApply( 'GenGemJoinJoin__KMCD-GEN_GenGemJoinStep_String' , [ KToken('"gold"', 'String') ] )
+generator_lucash_flip_end = generatorSequence( [ KConstant('GenGemJoinJoin_KMCD-GEN_GenGemJoinStep')
                                                , KConstant('GenEndCage_KMCD-GEN_GenEndStep')
                                                , KConstant('GenEndCageIlk_KMCD-GEN_GenEndStep')
                                                , KConstant('GenTimeStep_KMCD-GEN_GenTimeStep')
                                                , KConstant('GenEndThaw_KMCD-GEN_GenEndStep')
                                                , KConstant('GenEndFlow_KMCD-GEN_GenEndStep')
-                                               , KApply( 'GenFlipKick__KMCD-GEN_GenFlipStep_CDPID' , [ KApply('{_,_}_VAT_CDPID_String_Address', [ KToken('"gold"', 'String'), KToken('"Bobby"', 'String') ]) ] )
-                                               , KApply( 'GenEndSkip__KMCD-GEN_GenEndStep_String', [ KToken('"gold"', 'String') ] )
+                                               , KConstant('GenFlipKick_KMCD-GEN_GenFlipStep')
+                                               , KConstant('GenEndSkip_KMCD-GEN_GenEndStep')
                                                ]
                                              )
 
@@ -231,10 +231,10 @@ generator_lucash_flip_end = generatorSequence( [ KApply( 'GenGemJoinJoin__KMCD-G
 #             ; GenEndCage
 #             ; GenFlapYank
 #             )
-generator_lucash_flap_end = generatorSequence( [ KApply( 'GenVatMove__KMCD-GEN_GenVatStep_Address', [ KToken('"Alice"', "String") ] )
-                                               , KApply( 'GenGemJoinJoin__KMCD-GEN_GenGemJoinStep_String' , [ KToken('"gold"', "String") ] )
-                                               , KApply( 'GenVatHope__KMCD-GEN_GenVatStep_Address' , [ KToken('"Alice"', "String") ] )
-                                               , KApply( 'GenFlapKick__KMCD-GEN_GenFlapStep_Address' , [ KToken('"Alice"', "String") ] )
+generator_lucash_flap_end = generatorSequence( [ KConstant('GenVatMove_KMCD-GEN_GenVatStep')
+                                               , KConstant('GenGemJoinJoin_KMCD-GEN_GenGemJoinStep')
+                                               , KConstant('GenVatHope_KMCD-GEN_GenVatStep')
+                                               , KConstant('GenFlapKick_KMCD-GEN_GenFlapStep')
                                                , KConstant('GenEndCage_KMCD-GEN_GenEndStep')
                                                , KConstant('GenFlapYank_KMCD-GEN_GenFlapStep')
                                                ]
