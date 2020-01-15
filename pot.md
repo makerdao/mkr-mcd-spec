@@ -112,25 +112,25 @@ Pot Semantics
 
     syntax PotStep ::= "join" Wad
  // -----------------------------
-    rule <k> Pot . join PORTION => call Vat . move MSGSENDER THIS ( CHI *Rat PORTION ) ... </k>
+    rule <k> Pot . join WAD => call Vat . move MSGSENDER THIS ( CHI *Rat WAD ) ... </k>
          <this> THIS </this>
          <current-time> NOW </current-time>
          <msg-sender> MSGSENDER </msg-sender>
-         <pot-pies> ... MSGSENDER |-> ( MSGSENDER_PIE => MSGSENDER_PIE +Rat PORTION ) ... </pot-pies>
-         <pot-pie> PIE => PIE +Rat PORTION </pot-pie>
+         <pot-pies> ... MSGSENDER |-> ( MSGSENDER_PIE => MSGSENDER_PIE +Rat WAD ) ... </pot-pies>
+         <pot-pie> PIE => PIE +Rat WAD </pot-pie>
          <pot-chi> CHI </pot-chi>
          <pot-rho> RHO </pot-rho>
       requires NOW ==Int RHO
 
     syntax PotStep ::= "exit" Wad
  // -----------------------------
-    rule <k> Pot . exit PORTION => call Vat . move THIS MSGSENDER ( CHI *Rat PORTION ) ... </k>
+    rule <k> Pot . exit WAD => call Vat . move THIS MSGSENDER ( CHI *Rat WAD ) ... </k>
          <this> THIS </this>
          <msg-sender> MSGSENDER </msg-sender>
-         <pot-pies> ... MSGSENDER |-> ( MSGSENDER_PIE => MSGSENDER_PIE -Rat PORTION ) ... </pot-pies>
-         <pot-pie> PIE => PIE -Rat PORTION </pot-pie>
+         <pot-pies> ... MSGSENDER |-> ( MSGSENDER_PIE => MSGSENDER_PIE -Rat WAD ) ... </pot-pies>
+         <pot-pie> PIE => PIE -Rat WAD </pot-pie>
          <pot-chi> CHI </pot-chi>
-      requires MSGSENDER_PIE >=Rat PORTION
+      requires MSGSENDER_PIE >=Rat WAD
 
     syntax PotAuthStep ::= "cage"
  // -----------------------------
