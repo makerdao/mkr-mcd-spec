@@ -147,6 +147,13 @@ module KMCD-PRELUDE
 endmodule
 ```
 
+Random Choices
+--------------
+
+**TODO**: Currently the Haskell backend doesn't support ?VAR variables.
+          For now, we don't give the implementations of these choice functions for the Haskell backend, which gives to broad of semantics.
+          The functions do implement "choice", but completely arbitrary choice in the relevant sorts, instead of bounded choices.
+
 ```k
 module KMCD-RANDOM-CHOICES
     imports KMCD-PRELUDE
@@ -160,7 +167,7 @@ module KMCD-RANDOM-CHOICES
     rule randIntBounded(RAND, BOUND) => RAND modInt (BOUND +Int 1) requires BOUND =/=Int 0
 ```
 
-```{.k .symbolic}
+```
     rule randIntBounded(_, BOUND) => ?I:Int ensures 0 <=Int ?I andBool ?I <=Int BOUND
 ```
 
@@ -173,7 +180,7 @@ module KMCD-RANDOM-CHOICES
     rule randRat(I) => (I modInt 101) /Rat 100
 ```
 
-```{.k .symbolic}
+```
     rule randRat(_) => ?R:Rat ensures 0 <=Rat ?R andBool ?R <=Rat 100
 ```
 
@@ -186,7 +193,7 @@ module KMCD-RANDOM-CHOICES
     rule randRatBounded(I, BOUND) => BOUND *Rat randRat(I)
 ```
 
-```{.k .symbolic}
+```
     rule randRatBounded(_, BOUND) => ?R:Rat ensures 0 <=Rat ?R andBool ?R <=Rat BOUND
 ```
 
@@ -205,28 +212,11 @@ module KMCD-RANDOM-CHOICES
     rule chooseCDPID  (I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>CDPID
 ```
 
-```{.k .symbolic}
-    rule chooseInt    (_, ITEMS) => ?I:Int     ensures isChoiceInt    (?I, ITEMS)
-    rule chooseString (_, ITEMS) => ?S:String  ensures isChoiceString (?S, ITEMS)
-    rule chooseAddress(_, ITEMS) => ?A:Address ensures isChoiceAddress(?A, ITEMS)
-    rule chooseCDPID  (_, ITEMS) => ?C:CDPID   ensures isChoiceCDPID  (?C, ITEMS)
-
-    syntax Bool ::= isChoiceInt     ( Int     , List ) [function, functional]
-                  | isChoiceString  ( String  , List ) [function, functional]
-                  | isChoiceAddress ( Address , List ) [function, functional]
-                  | isChoiceCDPID   ( CDPID   , List ) [function, functional]
- // -------------------------------------------------------------------------
-    rule isChoiceInt(_, .List)             => false
-    rule isChoiceInt(I, ListItem(I') REST) => I ==Int I' orBool isChoiceInt(I, REST)
-
-    rule isChoiceString(_, .List)             => false
-    rule isChoiceString(S, ListItem(S') REST) => S ==String S' orBool isChoiceString(S, REST)
-
-    rule isChoiceAddress(_, .List)                     => false
-    rule isChoiceAddress(A, ListItem(A':Address) REST) => A ==K A' orBool isChoiceAddress(A, REST)
-
-    rule isChoiceCDPID(_    , .List)                       => false
-    rule isChoiceCDPID(CDPID, ListItem(CDPID':CDPID) REST) => CDPID ==K CDPID' orBool isChoiceCDPID(CDPID, REST)
+```
+    rule chooseInt    (_, ITEMS) => ?I:Int     ensures ?I in ITEMS
+    rule chooseString (_, ITEMS) => ?S:String  ensures ?S in ITEMS
+    rule chooseAddress(_, ITEMS) => ?A:Address ensures ?A in ITEMS
+    rule chooseCDPID  (_, ITEMS) => ?C:CDPID   ensures ?C in ITEMS
 ```
 
 ```k
