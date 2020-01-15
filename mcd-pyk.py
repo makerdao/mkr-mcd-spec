@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import argparse
 import difflib
 import json
 import random
@@ -240,13 +241,24 @@ generator_lucash_flap_end = generatorSequence( [ KConstant('GenVatMove_KMCD-GEN_
                                                ]
                                              )
 
-if __name__ == '__main__':
-    gendepth = int(sys.argv[1])
-    numruns  = int(sys.argv[2])
+mcdArgs = argparse.ArgumentParser()
 
-    randseeds = [""]
-    if len(sys.argv) > 3:
-        randseeds = sys.argv[3:]
+mcdCommands = mcdArgs.add_subparsers()
+
+mcdRandomTestArgs = mcdCommands.add_parser('random-test', help = 'Run random tester and check for property violations.')
+mcdRandomTestArgs.add_argument( 'depth'     , type = int ,               help = 'Number of bytes to feed as random input into each run' )
+mcdRandomTestArgs.add_argument( 'numRuns'   , type = int ,               help = 'Number of runs per random seed.'                       )
+mcdRandomTestArgs.add_argument( 'initSeeds' , type = str , nargs = '*' , help = 'Random seeds to use as run prefixes.'                  )
+
+if __name__ == '__main__':
+    args = vars(mcdArgs.parse_args())
+
+    gendepth  = args['depth']
+    numruns   = args['numRuns']
+    randseeds = args['initSeeds']
+
+    if len(randseeds) == 0:
+        randseeds = [""]
 
     config_loader = mcdSteps( [ steps(KConstant('ATTACK-PRELUDE'))
                               , addGenerator(generator_lucash_pot_end)

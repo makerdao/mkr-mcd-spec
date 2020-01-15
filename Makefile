@@ -132,7 +132,7 @@ test-python-generator: $(execution_tests_random:=.python-out)
 init_random_seeds :=
 
 test-random: mcd-pyk.py
-	python3 $< 100 1000 $(init_random_seeds)
+	python3 $< random-test 1 1 $(init_random_seeds)
 
 ### Testing Parameters
 
