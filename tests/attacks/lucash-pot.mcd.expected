@@ -743,7 +743,7 @@
       Flap |-> 0
       Pot |-> 0
       Vow |-> 0 , 5 , 0 , 20 , 0 , 0 ) )
-      ListItem ( Exception ( Vat . move Pot "Alice" 50 ) )
+      ListItem ( Exception ( Pot . exit 10 ) )
     </processed-events>
     <properties>
       "Debt Constant After Thaw" |-> debtConstantAfterThaw
