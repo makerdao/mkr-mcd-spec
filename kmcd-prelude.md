@@ -158,12 +158,12 @@ module KMCD-RANDOM-CHOICES
 ```k
     syntax Int ::= randIntBounded ( Int , Int ) [function]
  // ------------------------------------------------------
-    rule randIntBounded(RAND, 0)     => 0
-    rule randIntBounded(RAND, BOUND) => RAND modInt (BOUND +Int 1) requires BOUND =/=Int 0
+    rule randIntBounded(RAND, BOUND) => 0                          requires         BOUND <Int 0
+    rule randIntBounded(RAND, BOUND) => RAND modInt (BOUND +Int 1) requires notBool BOUND <Int 0
 
     syntax Rat ::= randRat ( Int ) [function]
  // -----------------------------------------
-    rule randRat(I) => (I modInt 101) /Rat 100
+    rule randRat(I) => I /Rat 256
 
     syntax Rat ::= randRatBounded ( Int , Rat ) [function]
  // ------------------------------------------------------
