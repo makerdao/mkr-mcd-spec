@@ -162,7 +162,7 @@ A violation occurs if any of the properties above holds.
                            ( "Unauthorized Flip Kick"              |-> unAuthFlipKick             )
                            ( "Unauthorized Flap Kick"              |-> unAuthFlapKick             )
                            ( "Total Bound on Debt"                 |-> totalDebtBounded(1)        )
-                           ( "PotChi PotPie VatPot"                |-> potChiPieDai               )
+                           ( "PotChi PotPie VatPot"                |-> potChiPieDai(0)            )
                            ( "Total Backed Debt Consistency"       |-> totalBackedDebtConsistency )
                            ( "Debt Constant After Thaw"            |-> debtConstantAfterThaw      )
 ```
@@ -271,9 +271,10 @@ The Debt growth should be bounded in principle by the interest rates available i
 The Pot Chi multiplied by Pot Pie should equal the Vat Dai for the Pot
 
 ```k
-    syntax ViolationFSM ::= "potChiPieDai"
- // --------------------------------------
-    rule derive(potChiPieDai, Measure(... controlDai: CONTROL_DAI, potChi: POT_CHI, potPie: POT_PIE)) => Violated(potChiPieDai) requires POT_CHI *Rat POT_PIE =/=Rat #lookup(CONTROL_DAI, Pot)
+    syntax ViolationFSM ::= potChiPieDai ( offset: Rat )
+ // ----------------------------------------------------
+    rule derive(potChiPieDai(... offset: OFFSET)         , LogNote(_, Vat . move _ Pot WAD)                                      ) => potChiPieDai(... offset: OFFSET +Rat WAD)
+    rule derive(potChiPieDai(... offset: OFFSET) #as PREV, Measure(... controlDai: CONTROL_DAI, potChi: POT_CHI, potPie: POT_PIE)) => Violated(PREV) requires POT_CHI *Rat POT_PIE =/=Rat #lookup(CONTROL_DAI, Pot) -Rat OFFSET
 ```
 
 ### Kicking off a fake `flip` auction (inspired by lucash-flip)
