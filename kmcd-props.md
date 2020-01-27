@@ -282,8 +282,7 @@ The property checks if `flip . kick` is ever called by an unauthorized user (alt
 ```k
     syntax ViolationFSM ::= "unAuthFlipKick"
  // ----------------------------------------
-    rule derive(unAuthFlipKick, FlipKick(ADDR, ILK, _, _, _, _, _, _))
-      => #if isAuthorized(ADDR, Flip ILK) #then unAuthFlipKick #else Violated(unAuthFlipKick) #fi
+    rule derive(unAuthFlipKick, FlipKick(ADDR, ILK, _, _, _, _, _, _)) => Violated(unAuthFlipKick) requires notBool isAuthorized(ADDR, Flip ILK)
 ```
 
 ### Kicking off a fake `flap` auction (inspired by lucash-flap)
@@ -293,8 +292,7 @@ The property checks if `flap . kick` is ever called by an unauthorized user (alt
 ```k
     syntax ViolationFSM ::= "unAuthFlapKick"
  // ----------------------------------------
-    rule derive(unAuthFlapKick, FlapKick(ADDR, _, _, _))
-      => #if isAuthorized(ADDR, Flap) #then unAuthFlapKick #else Violated(unAuthFlapKick) #fi
+    rule derive(unAuthFlapKick, FlapKick(ADDR, _, _, _)) => Violated(unAuthFlapKick) requires notBool isAuthorized(ADDR, Flap)
 ```
 
 ### Earning interest from a pot after End is deactivated (inspired by the lucash-pot-end attack)
