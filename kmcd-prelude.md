@@ -569,10 +569,11 @@ module KMCD-GEN
       requires lengthBytes(BS) >Int 0
        andBool size(POT_PIES) >Int 0
 
-    rule <k> GenPotJoin ADDRESS => LogGen ( transact ADDRESS Pot . join randRatBounded(head(BS), VAT_DAI) ) ... </k>
+    rule <k> GenPotJoin ADDRESS => LogGen ( transact ADDRESS Pot . join randRatBounded(head(BS), VAT_DAI /Rat POT_CHI) ) ... </k>
          <random> BS => tail(BS) </random>
          <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
          <vat-dai> ... ADDRESS |-> VAT_DAI ... </vat-dai>
+         <pot-chi> POT_CHI </pot-chi>
       requires lengthBytes(BS) >Int 0
 
     rule <k> GenPotFileDSR => LogGen ( transact ADMIN Pot . file dsr (randRatBounded(head(BS), #dsrSpread() /Rat 100) +Rat 1) ) ... </k>
