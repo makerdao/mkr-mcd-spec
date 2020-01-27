@@ -215,7 +215,7 @@ We simulate that here.
  // ---------------------------------
     rule <k> TimeStep => TimeStep 1 ... </k>
 
-    rule <k> TimeStep N => . ... </k>
+    rule <k> TimeStep N => assert ... </k>
          <current-time> TIME => TIME +Int N </current-time>
          <events> ... (.List => ListItem(TimeStep(N, TIME +Int N))) </events>
       requires N >Int 0
