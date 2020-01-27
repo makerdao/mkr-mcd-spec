@@ -255,15 +255,15 @@ The Debt growth should be bounded in principle by the interest rates available i
                           | totalDebtBoundedRun ( debt: Rat , dsr: Rat )
                           | totalDebtBoundedEnd ( debt: Rat            )
  // --------------------------------------------------------------------
-    rule derive(totalDebtBounded(DSR), Measure(... debt: DEBT)) => totalDebtBoundedRun(DEBT, DSR)
+    rule derive(totalDebtBounded(... dsr: DSR), Measure(... debt: DEBT)) => totalDebtBoundedRun(... debt: DEBT, dsr: DSR)
 
-    rule derive( totalDebtBoundedRun(DEBT, _  ) #as PREV , Measure(... debt: DEBT')            ) => Violated(PREV) requires DEBT' >Rat DEBT
-    rule derive( totalDebtBoundedRun(DEBT, DSR)          , TimeStep(TIME, _)                   ) => totalDebtBoundedRun(DEBT +Rat (vatDaiForUser(Pot) *Rat ((DSR ^Rat TIME) -Rat 1)) , DSR )
-    rule derive( totalDebtBoundedRun(DEBT, DSR)          , LogNote(_ , Vat . frob _ _ _ _ _ _) ) => totalDebtBounded(DSR)
-    rule derive( totalDebtBoundedRun(DEBT, DSR)          , LogNote(_ , Pot . file dsr DSR')    ) => totalDebtBoundedRun(DEBT , DSR')
-    rule derive( totalDebtBoundedRun(DEBT, _  )          , LogNote(_ , End . cage         )    ) => totalDebtBoundedEnd(DEBT)
+    rule derive( totalDebtBoundedRun(... debt: DEBT, dsr: _  ) #as PREV , Measure(... debt: DEBT')            ) => Violated(PREV) requires DEBT' >Rat DEBT
+    rule derive( totalDebtBoundedRun(... debt: DEBT, dsr: DSR)          , TimeStep(TIME, _)                   ) => totalDebtBoundedRun(... debt: DEBT +Rat (vatDaiForUser(Pot) *Rat ((DSR ^Rat TIME) -Rat 1)), dsr: DSR)
+    rule derive( totalDebtBoundedRun(... debt: DEBT, dsr: DSR)          , LogNote(_ , Vat . frob _ _ _ _ _ _) ) => totalDebtBounded(... dsr: DSR)
+    rule derive( totalDebtBoundedRun(... debt: DEBT, dsr: DSR)          , LogNote(_ , Pot . file dsr DSR')    ) => totalDebtBoundedRun(... debt: DEBT, dsr: DSR')
+    rule derive( totalDebtBoundedRun(... debt: DEBT, dsr: _  )          , LogNote(_ , End . cage         )    ) => totalDebtBoundedEnd(... debt: DEBT)
 
-    rule derive(totalDebtBoundedEnd(DEBT) #as PREV, Measure(... debt: DEBT')) => Violated(PREV) requires DEBT' =/=Rat DEBT
+    rule derive(totalDebtBoundedEnd(... debt: DEBT) #as PREV, Measure(... debt: DEBT')) => Violated(PREV) requires DEBT' =/=Rat DEBT
 ```
 
 ### Pot Chi * Pot Pie == Vat Dai(Pot)
