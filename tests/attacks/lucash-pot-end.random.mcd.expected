@@ -398,7 +398,6 @@
       </kmcd-state>
     </kmcd>
     <processed-events>
-      ListItem ( Measure ( 0 , .Map , 1 , 0 , 0 , 0 , 0 ) )
       ListItem ( LogNote ( ADMIN , Vat . rely Pot ) )
       ListItem ( Measure ( 0 , .Map , 1 , 0 , 0 , 0 , 0 ) )
       ListItem ( LogNote ( ADMIN , Vat . rely End ) )
@@ -714,13 +713,13 @@
       Pot |-> 0
       Vow |-> 0 , 1 , 0 , 20 , 0 , 0 ) )
       ListItem ( LogNote ( ADMIN , End . initOut "gold" "Bobby" ) )
-      ListItem ( GenStep ( b"d" , transact ADMIN End . cage ) )
       ListItem ( Measure ( 20 , "Alice" |-> 10
       "Bobby" |-> 10
       End |-> 0
       Flap |-> 0
       Pot |-> 0
       Vow |-> 0 , 1 , 0 , 20 , 0 , 0 ) )
+      ListItem ( GenStep ( b"d" , transact ADMIN End . cage ) )
       ListItem ( LogNote ( ADMIN , Vat . cage ) )
       ListItem ( LogNote ( ADMIN , Cat . cage ) )
       ListItem ( LogNote ( Vow , Vat . move Flap Vow 0 ) )
@@ -730,85 +729,97 @@
       ListItem ( LogNote ( ADMIN , Vow . cage ) )
       ListItem ( LogNote ( ADMIN , Pot . cage ) )
       ListItem ( LogNote ( ADMIN , End . cage ) )
+      ListItem ( Measure ( 20 , "Alice" |-> 10
+      "Bobby" |-> 10
+      End |-> 0
+      Flap |-> 0
+      Pot |-> 0
+      Vow |-> 0 , 1 , 0 , 20 , 0 , 0 ) )
       ListItem ( GenStep ( b"da" , transact ANYONE End . cage "gold" ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 20 , 0 , 0 ) )
       ListItem ( LogNote ( ANYONE , End . cage "gold" ) )
-      ListItem ( GenStep ( b"d" , transact ANYONE End . skim "gold" "Alice" ) )
       ListItem ( Measure ( 20 , "Alice" |-> 10
       "Bobby" |-> 10
       End |-> 0
       Flap |-> 0
       Pot |-> 0
       Vow |-> 0 , 1 , 0 , 20 , 0 , 0 ) )
+      ListItem ( GenStep ( b"d" , transact ANYONE End . skim "gold" "Alice" ) )
       ListItem ( LogNote ( ANYONE , Vat . grab "gold" "Alice" End Vow -10 -10 ) )
       ListItem ( LogNote ( ANYONE , End . skim "gold" "Alice" ) )
-      ListItem ( GenStep ( b"d" , transact ANYONE End . skim "gold" "Bobby" ) )
       ListItem ( Measure ( 20 , "Alice" |-> 10
       "Bobby" |-> 10
       End |-> 0
       Flap |-> 0
       Pot |-> 0
       Vow |-> 0 , 1 , 0 , 10 , 10 , 0 ) )
+      ListItem ( GenStep ( b"d" , transact ANYONE End . skim "gold" "Bobby" ) )
       ListItem ( LogNote ( ANYONE , Vat . grab "gold" "Bobby" End Vow -10 -10 ) )
       ListItem ( LogNote ( ANYONE , End . skim "gold" "Bobby" ) )
-      ListItem ( GenStep ( b"d" , transact ANYONE End . thaw ) )
       ListItem ( Measure ( 20 , "Alice" |-> 10
       "Bobby" |-> 10
       End |-> 0
       Flap |-> 0
       Pot |-> 0
       Vow |-> 0 , 1 , 0 , 0 , 20 , 0 ) )
+      ListItem ( GenStep ( b"d" , transact ANYONE End . thaw ) )
       ListItem ( LogNote ( ANYONE , End . thaw ) )
+      ListItem ( Measure ( 20 , "Alice" |-> 10
+      "Bobby" |-> 10
+      End |-> 0
+      Flap |-> 0
+      Pot |-> 0
+      Vow |-> 0 , 1 , 0 , 0 , 20 , 20 ) )
       ListItem ( GenStep ( b"da" , transact ANYONE End . flow "gold" ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 20 , 20 ) )
       ListItem ( LogNote ( ANYONE , End . flow "gold" ) )
-      ListItem ( GenStep ( b"da" , transact "Alice" Pot . join 97 /Rat 10 ) )
       ListItem ( Measure ( 20 , "Alice" |-> 10
       "Bobby" |-> 10
       End |-> 0
       Flap |-> 0
       Pot |-> 0
       Vow |-> 0 , 1 , 0 , 0 , 20 , 20 ) )
-      ListItem ( LogNote ( "Alice" , Vat . move "Alice" Pot 97 /Rat 10 ) )
-      ListItem ( LogNote ( "Alice" , Pot . join 97 /Rat 10 ) )
-      ListItem ( GenStep ( b"da" , transact ADMIN Pot . file dsr 597 /Rat 500 ) )
+      ListItem ( GenStep ( b"da" , transact "Alice" Pot . join 485 /Rat 128 ) )
+      ListItem ( LogNote ( "Alice" , Vat . move "Alice" Pot 485 /Rat 128 ) )
+      ListItem ( LogNote ( "Alice" , Pot . join 485 /Rat 128 ) )
       ListItem ( Measure ( 20 , "Alice" |-> 10
       "Bobby" |-> 10
       End |-> 0
       Flap |-> 0
-      Pot |-> 97 /Rat 10
-      Vow |-> 0 , 1 , 97 /Rat 10 , 0 , 20 , 20 ) )
-      ListItem ( Exception ( Pot . file dsr 597 /Rat 500 ) )
+      Pot |-> 485 /Rat 128
+      Vow |-> 0 , 1 , 485 /Rat 128 , 0 , 20 , 20 ) )
+      ListItem ( GenStep ( b"da" , transact ADMIN Pot . file dsr 1377 /Rat 1280 ) )
+      ListItem ( Exception ( Pot . file dsr 1377 /Rat 1280 ) )
       ListItem ( GenStep ( b"da" , TimeStep 2 ) )
       ListItem ( TimeStep ( 2 , 2 ) )
-      ListItem ( GenStep ( b"d" , transact ANYONE Pot . drip ) )
       ListItem ( Measure ( 20 , "Alice" |-> 10
       "Bobby" |-> 10
       End |-> 0
       Flap |-> 0
-      Pot |-> 97 /Rat 10
-      Vow |-> 0 , 1 , 97 /Rat 10 , 0 , 20 , 20 ) )
+      Pot |-> 485 /Rat 128
+      Vow |-> 0 , 1 , 485 /Rat 128 , 0 , 20 , 20 ) )
+      ListItem ( GenStep ( b"d" , transact ANYONE Pot . drip ) )
       ListItem ( LogNote ( ANYONE , Vat . suck Vow Pot 0 ) )
       ListItem ( LogNote ( ANYONE , Pot . drip ) )
-      ListItem ( GenStep ( b"d" , transact "Alice" Pot . exit 97 /Rat 10 ) )
       ListItem ( Measure ( 20 , "Alice" |-> 10
       "Bobby" |-> 10
       End |-> 0
       Flap |-> 0
-      Pot |-> 97 /Rat 10
-      Vow |-> 0 , 1 , 97 /Rat 10 , 0 , 20 , 20 ) )
-      ListItem ( LogNote ( "Alice" , Vat . move Pot "Alice" 97 /Rat 10 ) )
-      ListItem ( LogNote ( "Alice" , Pot . exit 97 /Rat 10 ) )
+      Pot |-> 485 /Rat 128
+      Vow |-> 0 , 1 , 485 /Rat 128 , 0 , 20 , 20 ) )
+      ListItem ( GenStep ( b"d" , transact "Alice" Pot . exit 485 /Rat 128 ) )
+      ListItem ( LogNote ( "Alice" , Vat . move Pot "Alice" 485 /Rat 128 ) )
+      ListItem ( LogNote ( "Alice" , Pot . exit 485 /Rat 128 ) )
+      ListItem ( Measure ( 20 , "Alice" |-> 10
+      "Bobby" |-> 10
+      End |-> 0
+      Flap |-> 0
+      Pot |-> 0
+      Vow |-> 0 , 1 , 0 , 0 , 20 , 20 ) )
+      ListItem ( Measure ( 20 , "Alice" |-> 10
+      "Bobby" |-> 10
+      End |-> 0
+      Flap |-> 0
+      Pot |-> 0
+      Vow |-> 0 , 1 , 0 , 0 , 20 , 20 ) )
     </processed-events>
     <properties>
       "Debt Constant After Thaw" |-> debtConstantAfterThaw
