@@ -25,7 +25,7 @@ Measurables
     syntax Measure ::= Measure () [function]
                      | Measure ( debt: Rat , controlDai: Map , potChi: Rat , potPie: Rat , sumOfScaledArts: Rat, vice: Rat, endDebt: Rat )
  // --------------------------------------------------------------------------------------------------------------------------------------
-    rule [[ Measure => Measure(... debt: DEBT, controlDai: controlDais(keys_list(VAT_DAIS)), potChi: POT_CHI, potPie: POT_PIE, sumOfScaledArts: calcSumOfScaledArts(VAT_ILKS, VAT_URNS), vice: VAT_VICE, endDebt: END_DEBT) ]]
+    rule [[ Measure() => Measure(... debt: DEBT, controlDai: controlDais(keys_list(VAT_DAIS)), potChi: POT_CHI, potPie: POT_PIE, sumOfScaledArts: calcSumOfScaledArts(VAT_ILKS, VAT_URNS), vice: VAT_VICE, endDebt: END_DEBT) ]]
          <vat-debt> DEBT     </vat-debt>
          <vat-dai>  VAT_DAIS </vat-dai>
          <vat-ilks> VAT_ILKS </vat-ilks>
