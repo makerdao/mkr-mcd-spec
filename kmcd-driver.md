@@ -90,7 +90,7 @@ Use `transact ...` for initiating top-level calls from a given user.
 ```k
     syntax AdminStep ::= "transact" Address MCDStep
  // -----------------------------------------------
-    rule <k> transact ADDR:Address MCD:MCDStep => measure ~> pushState ~> call MCD ~> dropState ... </k>
+    rule <k> transact ADDR:Address MCD:MCDStep => pushState ~> call MCD ~> assert ~> dropState ... </k>
          <this> _ => ADDR </this>
          <msg-sender> _ => ADDR </msg-sender>
          <call-stack> _ => .List </call-stack>
@@ -98,8 +98,8 @@ Use `transact ...` for initiating top-level calls from a given user.
          <frame-events> _ => .List </frame-events>
          <return-value> _ => .K </return-value>
 
-    syntax AdminStep ::= "pushState" | "dropState" | "popState" | "measure"
- // -----------------------------------------------------------------------
+    syntax AdminStep ::= "pushState" | "dropState" | "popState" | "assert"
+ // ----------------------------------------------------------------------
 ```
 
 Function Calls
@@ -145,12 +145,14 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
     rule <k> exception E ~> _ => exception E ~> CONT </k>
          <msg-sender> MSGSENDER => PREVSENDER </msg-sender>
          <this> THIS => MSGSENDER </this>
-         <call-stack> ListItem(frame(PREVSENDER, PREVEVENTS, CONT)) => .List ...</call-stack>
+         <call-stack> ListItem(frame(PREVSENDER, PREVEVENTS, CONT)) => .List ... </call-stack>
          <frame-events> _ => PREVEVENTS </frame-events>
 
     rule <k> exception MCDSTEP ~> dropState => popState ... </k>
          <call-stack> .List </call-stack>
          <events> ... (.List => ListItem(Exception(MCDSTEP))) </events>
+
+    rule <k> exception _ ~> (assert => .) ... </k>
 ```
 
 Log Events
