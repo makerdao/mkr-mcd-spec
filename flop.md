@@ -65,7 +65,7 @@ Flop Data
     -   `end`: global expiration date of an auction.
 
 ```k
-    syntax Bid ::= FlopBid ( bid: Rad, lot: Wad, guy: Address, tic: Int, end: Int )
+    syntax FlopBid ::= FlopBid ( bid: Rad, lot: Wad, guy: Address, tic: Int, end: Int )
  // -------------------------------------------------------------------------------
 ```
 

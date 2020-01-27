@@ -66,7 +66,7 @@ Flap Data
     -   `end`: global expiration time of auction (set at start).
 
 ```k
-    syntax Bid ::= FlapBid ( bid: Wad, lot: Rad, guy: Address, tic: Int, end: Int )
+    syntax FlapBid ::= FlapBid ( bid: Wad, lot: Rad, guy: Address, tic: Int, end: Int )
  // -------------------------------------------------------------------------------
 ```
 

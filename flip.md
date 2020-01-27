@@ -74,7 +74,7 @@ Flip Data
     -   `tab`: total Dai wanted for auction.
 
 ```k
-    syntax Bid ::= FlipBid ( bid: Rad, lot: Wad, guy: Address, tic: Int, end: Int, usr: Address, gal: Address, tab: Rad )
+    syntax FlipBid ::= FlipBid ( bid: Rad, lot: Wad, guy: Address, tic: Int, end: Int, usr: Address, gal: Address, tab: Rad )
  // ---------------------------------------------------------------------------------------------------------------------
 ```
 
