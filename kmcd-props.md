@@ -184,11 +184,11 @@ it is recorded in the state and execution is immediately terminated.
 ### Violation Finite State Machines (FSMs)
 
 These Finite State Machines help track whether certain properties of the system are violated or not.
-Every FSM is equipped with two states, `Violated` and `NoViolation`.
+Every FSM is equipped one special state, `Violated`, which holds the prior state to being violated.
 
 ```k
-    syntax ViolationFSM ::= "Violated" | "NoViolation"
- // --------------------------------------------------
+    syntax ViolationFSM ::= Violated ( ViolationFSM )
+ // -------------------------------------------------
 ```
 
 You can inject `checkViolated(_)` steps to each FSM to see whether we should halt because that FSM has a violation.
@@ -197,8 +197,8 @@ You can inject `checkViolated(_)` steps to each FSM to see whether we should hal
     syntax Bool ::= anyViolation ( List ) [function]
  // ------------------------------------------------
     rule anyViolation(.List)                   => false
-    rule anyViolation(ListItem(Violated) _   ) => true
-    rule anyViolation(ListItem(VFSM)     REST) => anyViolation(REST) requires VFSM =/=K Violated
+    rule anyViolation(ListItem(Violated(_)) _) => true
+    rule anyViolation(ListItem(VFSM)     REST) => anyViolation(REST) [owise]
 ```
 
 For each FSM, the user must define the `derive` function, which dictates how that FSM behaves.
@@ -232,7 +232,7 @@ Vat.debt minus Vat.vice should equal the sum over all ilks and CDP accounts of t
 ```k
     syntax ViolationFSM ::= "totalBackedDebtConsistency"
  // ----------------------------------------------------
-    rule derive(totalBackedDebtConsistency, Measure(... debt: DEBT, sumOfScaledArts: SUM, vice: VICE)) => Violated requires SUM =/=Rat (DEBT -Rat VICE)
+    rule derive(totalBackedDebtConsistency, Measure(... debt: DEBT, sumOfScaledArts: SUM, vice: VICE)) => Violated(totalBackedDebtConsistency) requires SUM =/=Rat (DEBT -Rat VICE)
 ```
 
 ### Debt Constant After Thaw
@@ -242,7 +242,7 @@ Vat.debt should not change after End.thaw is called, as this implies the creatio
 ```k
     syntax ViolationFSM ::= "debtConstantAfterThaw"
  // -----------------------------------------------
-    rule derive(debtConstantAfterThaw, Measure(... debt: DEBT, endDebt: END_DEBT)) => Violated requires (END_DEBT =/=Rat 0) andBool (DEBT =/=Rat END_DEBT)
+    rule derive(debtConstantAfterThaw, Measure(... debt: DEBT, endDebt: END_DEBT)) => Violated(debtConstantAfterThaw) requires (END_DEBT =/=Rat 0) andBool (DEBT =/=Rat END_DEBT)
 ```
 
 ### Bounded Debt Growth
@@ -256,13 +256,13 @@ The Debt growth should be bounded in principle by the interest rates available i
  // --------------------------------------------------------------------
     rule derive(totalDebtBounded(DSR), Measure(... debt: DEBT)) => totalDebtBoundedRun(DEBT, DSR)
 
-    rule derive( totalDebtBoundedRun(DEBT, _  ) , Measure(... debt: DEBT')            ) => Violated requires DEBT' >Rat DEBT
-    rule derive( totalDebtBoundedRun(DEBT, DSR) , TimeStep(TIME, _)                   ) => totalDebtBoundedRun(DEBT +Rat (vatDaiForUser(Pot) *Rat ((DSR ^Rat TIME) -Rat 1)) , DSR )
-    rule derive( totalDebtBoundedRun(DEBT, DSR) , LogNote(_ , Vat . frob _ _ _ _ _ _) ) => totalDebtBounded(DSR)
-    rule derive( totalDebtBoundedRun(DEBT, DSR) , LogNote(_ , Pot . file dsr DSR')    ) => totalDebtBoundedRun(DEBT , DSR')
-    rule derive( totalDebtBoundedRun(DEBT, _  ) , LogNote(_ , End . cage         )    ) => totalDebtBoundedEnd(DEBT)
+    rule derive( totalDebtBoundedRun(DEBT, _  ) #as PREV , Measure(... debt: DEBT')            ) => Violated(PREV) requires DEBT' >Rat DEBT
+    rule derive( totalDebtBoundedRun(DEBT, DSR)          , TimeStep(TIME, _)                   ) => totalDebtBoundedRun(DEBT +Rat (vatDaiForUser(Pot) *Rat ((DSR ^Rat TIME) -Rat 1)) , DSR )
+    rule derive( totalDebtBoundedRun(DEBT, DSR)          , LogNote(_ , Vat . frob _ _ _ _ _ _) ) => totalDebtBounded(DSR)
+    rule derive( totalDebtBoundedRun(DEBT, DSR)          , LogNote(_ , Pot . file dsr DSR')    ) => totalDebtBoundedRun(DEBT , DSR')
+    rule derive( totalDebtBoundedRun(DEBT, _  )          , LogNote(_ , End . cage         )    ) => totalDebtBoundedEnd(DEBT)
 
-    rule derive(totalDebtBoundedEnd(DEBT), Measure(... debt: DEBT')) => Violated requires DEBT' =/=Rat DEBT
+    rule derive(totalDebtBoundedEnd(DEBT) #as PREV, Measure(... debt: DEBT')) => Violated(PREV) requires DEBT' =/=Rat DEBT
 ```
 
 ### Pot Chi * Pot Pie == Vat Dai(Pot)
@@ -272,7 +272,7 @@ The Pot Chi multiplied by Pot Pie should equal the Vat Dai for the Pot
 ```k
     syntax ViolationFSM ::= "potChiPieDai"
  // --------------------------------------
-    rule derive(potChiPieDai, Measure(... controlDai: CONTROL_DAI, potChi: POT_CHI, potPie: POT_PIE)) => Violated requires POT_CHI *Rat POT_PIE =/=Rat #lookup(CONTROL_DAI, Pot)
+    rule derive(potChiPieDai, Measure(... controlDai: CONTROL_DAI, potChi: POT_CHI, potPie: POT_PIE)) => Violated(potChiPieDai) requires POT_CHI *Rat POT_PIE =/=Rat #lookup(CONTROL_DAI, Pot)
 ```
 
 ### Kicking off a fake `flip` auction (inspired by lucash-flip)
@@ -283,7 +283,7 @@ The property checks if `flip . kick` is ever called by an unauthorized user (alt
     syntax ViolationFSM ::= "unAuthFlipKick"
  // ----------------------------------------
     rule derive(unAuthFlipKick, FlipKick(ADDR, ILK, _, _, _, _, _, _))
-      => #if isAuthorized(ADDR, Flip ILK) #then unAuthFlipKick #else Violated #fi
+      => #if isAuthorized(ADDR, Flip ILK) #then unAuthFlipKick #else Violated(unAuthFlipKick) #fi
 ```
 
 ### Kicking off a fake `flap` auction (inspired by lucash-flap)
@@ -294,7 +294,7 @@ The property checks if `flap . kick` is ever called by an unauthorized user (alt
     syntax ViolationFSM ::= "unAuthFlapKick"
  // ----------------------------------------
     rule derive(unAuthFlapKick, FlapKick(ADDR, _, _, _))
-      => #if isAuthorized(ADDR, Flap) #then unAuthFlapKick #else Violated #fi
+      => #if isAuthorized(ADDR, Flap) #then unAuthFlapKick #else Violated(unAuthFlapKick) #fi
 ```
 
 ### Earning interest from a pot after End is deactivated (inspired by the lucash-pot-end attack)
@@ -305,7 +305,7 @@ The property checks if an `End . cage` is eventually followed by a successful `P
     syntax ViolationFSM ::= "potEndInterest" | "potEndInterestEnd"
  // --------------------------------------------------------------
     rule derive(potEndInterest   , LogNote( _ , End . cage       )) => potEndInterestEnd
-    rule derive(potEndInterestEnd, LogNote( _ , Pot . file dsr _ )) => Violated
+    rule derive(potEndInterestEnd, LogNote( _ , Pot . file dsr _ )) => Violated(potEndInterestEnd)
 ```
 
 ### Earning interest from a pot in zero time (inspired by the lucash-pot attack)
@@ -318,7 +318,7 @@ The property checks if a successful `Pot . join` is preceded by a `TimeStep` mor
     rule derive(zeroTimePotInterest, TimeStep(N,_)) => zeroTimePotInterestEnd
       requires N >Int 0
 
-    rule derive(zeroTimePotInterestEnd, LogNote( _ , Pot . join _ )) => Violated
+    rule derive(zeroTimePotInterestEnd, LogNote( _ , Pot . join _ )) => Violated(zeroTimePotInterestEnd)
     rule derive(zeroTimePotInterestEnd, LogNote( _ , Pot . drip   )) => zeroTimePotInterest
 ```
 
