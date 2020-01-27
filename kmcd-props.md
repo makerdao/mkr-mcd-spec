@@ -157,14 +157,14 @@ A violation occurs if any of the properties above holds.
 ```k
     syntax Map ::= "#violationFSMs" [function]
  // ------------------------------------------
-    rule #violationFSMs => ( "Zero-Time Pot Interest Accumulation" |-> zeroTimePotInterest                         )
-                           ( "Pot Interest Accumulation After End" |-> potEndInterest                              )
-                           ( "Unauthorized Flip Kick"              |-> unAuthFlipKick                              )
-                           ( "Unauthorized Flap Kick"              |-> unAuthFlapKick                              )
-                           ( "Total Bound on Debt"                 |-> totalDebtBounded(... dsr: 1)                )
-                           ( "PotChi PotPie VatPot"                |-> potChiPieDai(... offset: 0, joining: false) )
-                           ( "Total Backed Debt Consistency"       |-> totalBackedDebtConsistency                  )
-                           ( "Debt Constant After Thaw"            |-> debtConstantAfterThaw                       )
+    rule #violationFSMs => ( "Zero-Time Pot Interest Accumulation" |-> zeroTimePotInterest                     )
+                           ( "Pot Interest Accumulation After End" |-> potEndInterest                          )
+                           ( "Unauthorized Flip Kick"              |-> unAuthFlipKick                          )
+                           ( "Unauthorized Flap Kick"              |-> unAuthFlapKick                          )
+                           ( "Total Bound on Debt"                 |-> totalDebtBounded(... dsr: 1)            )
+                           ( "PotChi PotPie VatPot"                |-> potChiPieDai(... offset: 0, joining: 0) )
+                           ( "Total Backed Debt Consistency"       |-> totalBackedDebtConsistency              )
+                           ( "Debt Constant After Thaw"            |-> debtConstantAfterThaw                   )
 ```
 
 A violation can be checked using the Admin step `assert`. If a violation is detected,
@@ -271,13 +271,14 @@ The Debt growth should be bounded in principle by the interest rates available i
 The Pot Chi multiplied by Pot Pie should equal the Vat Dai for the Pot
 
 ```k
-    syntax ViolationFSM ::= potChiPieDai ( offset: Rat , joining: Bool )
- // --------------------------------------------------------------------
-    rule derive( potChiPieDai(... offset: OFFSET, joining: _     ) , LogNote(_, Pot . join _)         ) => potChiPieDai(... offset: OFFSET          , joining: true )
-    rule derive( potChiPieDai(... offset: OFFSET, joining: false ) , LogNote(_, Vat . move _ Pot WAD) ) => potChiPieDai(... offset: OFFSET +Rat WAD , joining: false)
-    rule derive( potChiPieDai(... offset: OFFSET, joining: true  ) , LogNote(_, Vat . move _ _   _  ) ) => potChiPieDai(... offset: OFFSET          , joining: false)
+    syntax ViolationFSM ::= potChiPieDai ( offset: Rat , joining: Rat )
+ // -------------------------------------------------------------------
+    rule derive( potChiPieDai(... offset: OFFSET, joining: JOINING ) , LogNote(_, Pot . join WAD)       ) => potChiPieDai(... offset: OFFSET          , joining: JOINING +Rat WAD )
+    rule derive( potChiPieDai(... offset: OFFSET, joining: JOINING ) , LogNote(_, Vat . move _ Pot WAD) ) => potChiPieDai(... offset: OFFSET +Rat WAD , joining: JOINING          )
 
-    rule derive(potChiPieDai(... offset: OFFSET) #as PREV, Measure(... controlDai: CONTROL_DAI, potChi: POT_CHI, potPie: POT_PIE)) => Violated(PREV) requires POT_CHI *Rat POT_PIE =/=Rat #lookup(CONTROL_DAI, Pot) -Rat OFFSET
+    rule derive(potChiPieDai(... offset: OFFSET => OFFSET -Rat (JOINING *Rat POT_CHI), joining: JOINING => 0), Measure(... potChi: POT_CHI)) requires JOINING =/=Rat 0
+
+    rule derive(potChiPieDai(... offset: OFFSET, joining: 0) #as PREV, Measure(... controlDai: CONTROL_DAI, potChi: POT_CHI, potPie: POT_PIE)) => Violated(PREV) requires POT_CHI *Rat POT_PIE =/=Rat #lookup(CONTROL_DAI, Pot) -Rat OFFSET
 ```
 
 ### Kicking off a fake `flip` auction (inspired by lucash-flip)
