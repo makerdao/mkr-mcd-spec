@@ -1105,7 +1105,6 @@
       Flap |-> 0
       Pot |-> 985 /Rat 128
       Vow |-> 0 , 1 , 0 , 20 , 0 , 0 ) )
-      ListItem ( Exception ( Vat . slip "MKR" Flap 35 /Rat 16 ) )
       ListItem ( LogNote ( ADMIN , Vat . cage ) )
       ListItem ( LogNote ( ADMIN , Cat . cage ) )
       ListItem ( LogNote ( Vow , Vat . move Flap Vow 0 ) )
