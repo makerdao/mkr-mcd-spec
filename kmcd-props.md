@@ -149,6 +149,32 @@ Total backed debt (sum over each CDP's art times corresponding ilk's rate)
     rule calcSumOfScaledArtsAux( ListItem(ILK_ID) VAT_ILK_IDS , VAT_ILKS , VAT_URNS , TOTAL ) => calcSumOfScaledArtsAux(VAT_ILK_IDS, VAT_ILKS, VAT_URNS, TOTAL +Rat (sumOfUrnArt(VAT_URNS, ILK_ID, 0) *Rat rate({VAT_ILKS[ILK_ID]}:>VatIlk)))
 ```
 
+### Flap Measures
+
+Sum of all lot values (i.e. total surplus dai up for auction).
+
+```k
+    syntax Rat ::= sumOfAllFlapLots(Map) [function]
+                 | sumOfAllFlapLotsAux(List, Map, Rat) [function]
+ // -------------------------------------------------------------
+    rule sumOfAllFlapLots(FLAP_BIDS) => sumOfAllFlapLotsAux(keys_list(FLAP_BIDS), FLAP_BIDS, 0)
+
+    rule sumOfAllFlapLotsAux(                          .List ,         _ , SUM ) => SUM
+    rule sumOfAllFlapLotsAux( ListItem(BID_ID) FLAP_BIDS_IDS , FLAP_BIDS , SUM ) => sumOfAllFlapLotsAux(FLAP_BIDS_IDS, FLAP_BIDS, SUM +Rat lot({FLAP_BIDS[BID_ID]}:>Bid))
+```
+
+Sum of all bid values (i.e. total amount of MKR that's been bid on dai currently up for auction).
+
+```k
+    syntax Rat ::= sumOfAllFlapBids(Map) [function]
+                 | sumOfAllFlapBidsAux(List, Map, Rat) [function]
+ // -------------------------------------------------------------
+    rule sumOfAllFlapBids(FLAP_BIDS) => sumOfAllFlapBidsAux(keys_list(FLAP_BIDS), FLAP_BIDS, 0)
+
+    rule sumOfAllFlapBidsAux(                          .List ,         _ , SUM ) => SUM
+    rule sumOfAllFlapBidsAux( ListItem(BID_ID) FLAP_BIDS_IDS , FLAP_BIDS , SUM ) => sumOfAllFlapBidsAux(FLAP_BIDS_IDS, FLAP_BIDS, SUM +Rat bid({FLAP_BIDS[BID_ID]}:>FlapBid))
+```
+
 Violations
 ----------
 
@@ -324,6 +350,44 @@ The property checks if a successful `Pot . join` is preceded by a `TimeStep` mor
 
     rule derive(zeroTimePotInterestEnd, LogNote( _ , Pot . join _ )) => Violated(zeroTimePotInterestEnd)
     rule derive(zeroTimePotInterestEnd, LogNote( _ , Pot . drip   )) => zeroTimePotInterest
+```
+
+### Flap dai consistency
+
+```k
+    syntax ViolationFSM ::= "flapDaiConsistency"
+ // --------------------------------------------
+    rule derive(flapDaiConsistency) => Violated requires notBool(flapDaiGtOrEtSumOfFlapLots())
+```
+
+### Flap MKR consistency
+
+```k
+    syntax ViolationFSM ::= "flapMkrConsistency"
+ // --------------------------------------------
+    rule derive(flapMkrConsistency) => Violated requires notBool(flapMkrGtOrEtSumOfFlapBids())
+```
+
+### Flap Invariants
+
+```k
+    syntax Bool ::= flapDaiGtOrEtSumOfFlapLots() [function, functional]
+ // -------------------------------------------------------------------
+    rule [[ flapDaiGtOrEtSumOfFlapLots() =>
+              USERDAI[FLAP] >=Rat sumOfAllFlapLots(FLAP_BIDS)
+         ]]
+      <flap-bids> FLAP_BIDS </flap-bids>
+      <vat-dai> USERDAI </vat-dai>
+```
+
+```k
+    syntax Bool ::= flapMkrGtOrEtSumOfFlapBids() [function, functional]
+ // -------------------------------------------------------------------
+    rule [[ flapMkrGtOrEtSumOfFlapBids() =>
+              BALS[FLAP] >=Rat sumOfAllFlapBids(FLAP_BIDS)
+         ]]
+      <flap-bids> FLAP_BIDS </flap-bids>
+      <gem-balances> BALS </gem-balances>
 ```
 
 ```k
