@@ -272,10 +272,10 @@
             0
           </pot-pie>
           <pot-dsr>
-            597 /Rat 500
+            1377 /Rat 1280
           </pot-dsr>
           <pot-chi>
-            356409 /Rat 250000
+            1896129 /Rat 1638400
           </pot-chi>
           <pot-vow>
             Vow
@@ -398,7 +398,6 @@
       </kmcd-state>
     </kmcd>
     <processed-events>
-      ListItem ( Measure ( 0 , .Map , 1 , 0 , 0 , 0 , 0 ) )
       ListItem ( LogNote ( ADMIN , Vat . rely Pot ) )
       ListItem ( Measure ( 0 , .Map , 1 , 0 , 0 , 0 , 0 ) )
       ListItem ( LogNote ( ADMIN , Vat . rely End ) )
@@ -714,49 +713,61 @@
       Pot |-> 0
       Vow |-> 0 , 1 , 0 , 20 , 0 , 0 ) )
       ListItem ( LogNote ( ADMIN , End . initOut "gold" "Bobby" ) )
-      ListItem ( GenStep ( b"aa" , transact ADMIN Pot . file dsr 597 /Rat 500 ) )
       ListItem ( Measure ( 20 , "Alice" |-> 10
       "Bobby" |-> 10
       End |-> 0
       Flap |-> 0
       Pot |-> 0
       Vow |-> 0 , 1 , 0 , 20 , 0 , 0 ) )
-      ListItem ( LogNote ( ADMIN , Pot . file dsr 597 /Rat 500 ) )
+      ListItem ( GenStep ( b"aa" , transact ADMIN Pot . file dsr 1377 /Rat 1280 ) )
+      ListItem ( LogNote ( ADMIN , Pot . file dsr 1377 /Rat 1280 ) )
+      ListItem ( Measure ( 20 , "Alice" |-> 10
+      "Bobby" |-> 10
+      End |-> 0
+      Flap |-> 0
+      Pot |-> 0
+      Vow |-> 0 , 1 , 0 , 20 , 0 , 0 ) )
       ListItem ( GenStep ( b"aa" , TimeStep 2 ) )
       ListItem ( TimeStep ( 2 , 2 ) )
-      ListItem ( GenStep ( b"aa" , transact "Alice" Pot . join 97 /Rat 10 ) )
       ListItem ( Measure ( 20 , "Alice" |-> 10
       "Bobby" |-> 10
       End |-> 0
       Flap |-> 0
       Pot |-> 0
       Vow |-> 0 , 1 , 0 , 20 , 0 , 0 ) )
-      ListItem ( Exception ( Pot . join 97 /Rat 10 ) )
+      ListItem ( GenStep ( b"aa" , transact "Alice" Pot . join 485 /Rat 128 ) )
+      ListItem ( Exception ( Pot . join 485 /Rat 128 ) )
       ListItem ( GenStep ( b"a" , transact ANYONE Pot . drip ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 20 , 0 , 0 ) )
       ListItem ( LogNote ( ANYONE , Vat . suck Vow Pot 0 ) )
       ListItem ( LogNote ( ANYONE , Pot . drip ) )
-      ListItem ( GenStep ( b"a" , transact "Alice" Pot . exit 0 ) )
       ListItem ( Measure ( 20 , "Alice" |-> 10
       "Bobby" |-> 10
       End |-> 0
       Flap |-> 0
       Pot |-> 0
-      Vow |-> 0 , 356409 /Rat 250000 , 0 , 20 , 0 , 0 ) )
+      Vow |-> 0 , 1896129 /Rat 1638400 , 0 , 20 , 0 , 0 ) )
+      ListItem ( GenStep ( b"a" , transact "Alice" Pot . exit 0 ) )
       ListItem ( LogNote ( "Alice" , Vat . move Pot "Alice" 0 ) )
       ListItem ( LogNote ( "Alice" , Pot . exit 0 ) )
+      ListItem ( Measure ( 20 , "Alice" |-> 10
+      "Bobby" |-> 10
+      End |-> 0
+      Flap |-> 0
+      Pot |-> 0
+      Vow |-> 0 , 1896129 /Rat 1638400 , 0 , 20 , 0 , 0 ) )
+      ListItem ( Measure ( 20 , "Alice" |-> 10
+      "Bobby" |-> 10
+      End |-> 0
+      Flap |-> 0
+      Pot |-> 0
+      Vow |-> 0 , 1896129 /Rat 1638400 , 0 , 20 , 0 , 0 ) )
     </processed-events>
     <properties>
       "Debt Constant After Thaw" |-> debtConstantAfterThaw
       "Pot Interest Accumulation After End" |-> potEndInterest
       "PotChi PotPie VatPot" |-> potChiPieDai
       "Total Backed Debt Consistency" |-> totalBackedDebtConsistency
-      "Total Bound on Debt" |-> totalDebtBoundedRun ( 20 , 597 /Rat 500 )
+      "Total Bound on Debt" |-> totalDebtBoundedRun ( 20 , 1377 /Rat 1280 )
       "Unauthorized Flap Kick" |-> unAuthFlapKick
       "Unauthorized Flip Kick" |-> unAuthFlipKick
       "Zero-Time Pot Interest Accumulation" |-> zeroTimePotInterest

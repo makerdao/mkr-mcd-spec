@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import argparse
 import difflib
 import json
 import random
@@ -240,13 +241,24 @@ generator_lucash_flap_end = generatorSequence( [ KConstant('GenVatMove_KMCD-GEN_
                                                ]
                                              )
 
-if __name__ == '__main__':
-    gendepth = int(sys.argv[1])
-    numruns  = int(sys.argv[2])
+mcdArgs = argparse.ArgumentParser()
 
-    randseeds = [""]
-    if len(sys.argv) > 3:
-        randseeds = sys.argv[3:]
+mcdCommands = mcdArgs.add_subparsers()
+
+mcdRandomTestArgs = mcdCommands.add_parser('random-test', help = 'Run random tester and check for property violations.')
+mcdRandomTestArgs.add_argument( 'depth'     , type = int ,               help = 'Number of bytes to feed as random input into each run' )
+mcdRandomTestArgs.add_argument( 'numRuns'   , type = int ,               help = 'Number of runs per random seed.'                       )
+mcdRandomTestArgs.add_argument( 'initSeeds' , type = str , nargs = '*' , help = 'Random seeds to use as run prefixes.'                  )
+
+if __name__ == '__main__':
+    args = vars(mcdArgs.parse_args())
+
+    gendepth  = args['depth']
+    numruns   = args['numRuns']
+    randseeds = args['initSeeds']
+
+    if len(randseeds) == 0:
+        randseeds = [""]
 
     config_loader = mcdSteps( [ steps(KConstant('ATTACK-PRELUDE'))
                               , addGenerator(generator_lucash_pot_end)
@@ -259,8 +271,8 @@ if __name__ == '__main__':
     (symbolic_configuration, init_cells) = get_init_config(config_loader)
     print()
 
-    startTime = time.time()
     all_violations = []
+    startTime = time.time()
     for randseed in randseeds:
         for i in range(numruns):
             curRandSeed = bytearray(randseed, 'utf-8') + randombytes(gendepth)
@@ -273,7 +285,12 @@ if __name__ == '__main__':
             print()
             violations = detect_violations(output)
             if len(violations) > 0:
-                all_violations.append({ 'properties': violations , 'seed': str(curRandSeed), 'output': output })
+                violation = { 'properties': violations , 'seed': str(curRandSeed), 'output': output }
+                all_violations.append(violation)
+                print('\n### Violation Found!')
+                print('    Seed: ' + violation['seed'])
+                print('    Properties: ' + '\n              , '.join(violation['properties']))
+                print(pyk.prettyPrintKast(violation['output'], MCD_definition_llvm_symbols))
     stopTime = time.time()
 
     elapsedTime = stopTime - startTime
@@ -281,12 +298,5 @@ if __name__ == '__main__':
     print('\n\nTime Elapsed: ' + str(elapsedTime))
     print('\nTime Per Run: ' + str(perRunTime))
 
-    if len(all_violations) > 0:
-        print('\nViolations Found!')
-        print('=================')
-        for violation in all_violations:
-            print('\nViolation:')
-            print('    Seed: ' + violation['seed'])
-            print('    Properties: ' + '\n              , '.join(violation['properties']))
     sys.stdout.flush()
     sys.exit(len(all_violations))

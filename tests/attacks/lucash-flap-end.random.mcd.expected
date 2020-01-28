@@ -208,8 +208,8 @@
             </gem-wards>
             <gem-balances>
               "Alice" |-> 10
-              "Bobby" |-> 49 /Rat 10
-              GemJoin "gold" |-> 251 /Rat 10
+              "Bobby" |-> 1025 /Rat 128
+              GemJoin "gold" |-> 2815 /Rat 128
             </gem-balances>
           </gem>
         </gems>
@@ -330,17 +330,17 @@
           </vat-urns>
           <vat-gem>
             { "gold" , "Alice" } |-> 0
-            { "gold" , "Bobby" } |-> 51 /Rat 10
+            { "gold" , "Bobby" } |-> 255 /Rat 128
             { "gold" , End } |-> 0
             { "gold" , Flip "gold" } |-> 0
           </vat-gem>
           <vat-dai>
-            "Alice" |-> 26 /Rat 5
+            "Alice" |-> 65 /Rat 8
             "Bobby" |-> 10
             End |-> 0
             Flap |-> 0
             Pot |-> 0
-            Vow |-> 24 /Rat 5
+            Vow |-> 15 /Rat 8
           </vat-dai>
           <vat-sin>
             "Alice" |-> 0
@@ -399,7 +399,6 @@
       </kmcd-state>
     </kmcd>
     <processed-events>
-      ListItem ( Measure ( 0 , .Map , 1 , 0 , 0 , 0 , 0 ) )
       ListItem ( LogNote ( ADMIN , Vat . rely Pot ) )
       ListItem ( Measure ( 0 , .Map , 1 , 0 , 0 , 0 , 0 ) )
       ListItem ( LogNote ( ADMIN , Vat . rely End ) )
@@ -715,47 +714,41 @@
       Pot |-> 0
       Vow |-> 0 , 1 , 0 , 20 , 0 , 0 ) )
       ListItem ( LogNote ( ADMIN , End . initOut "gold" "Bobby" ) )
-      ListItem ( GenStep ( b"b0" , transact "Alice" Vat . move "Alice" Vow 24 /Rat 5 ) )
       ListItem ( Measure ( 20 , "Alice" |-> 10
       "Bobby" |-> 10
       End |-> 0
       Flap |-> 0
       Pot |-> 0
       Vow |-> 0 , 1 , 0 , 20 , 0 , 0 ) )
-      ListItem ( LogNote ( "Alice" , Vat . move "Alice" Vow 24 /Rat 5 ) )
-      ListItem ( GenStep ( b"b3" , transact "Bobby" GemJoin "gold" . join "Bobby" 51 /Rat 10 ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 26 /Rat 5
+      ListItem ( GenStep ( b"b0" , transact "Alice" Vat . move "Alice" Vow 15 /Rat 8 ) )
+      ListItem ( LogNote ( "Alice" , Vat . move "Alice" Vow 15 /Rat 8 ) )
+      ListItem ( Measure ( 20 , "Alice" |-> 65 /Rat 8
       "Bobby" |-> 10
       End |-> 0
       Flap |-> 0
       Pot |-> 0
-      Vow |-> 24 /Rat 5 , 1 , 0 , 20 , 0 , 0 ) )
-      ListItem ( LogNote ( "Bobby" , Vat . slip "gold" "Bobby" 51 /Rat 10 ) )
-      ListItem ( LogNote ( "Bobby" , Gem "gold" . transferFrom "Bobby" GemJoin "gold" 51 /Rat 10 ) )
-      ListItem ( LogNote ( "Bobby" , GemJoin "gold" . join "Bobby" 51 /Rat 10 ) )
+      Vow |-> 15 /Rat 8 , 1 , 0 , 20 , 0 , 0 ) )
+      ListItem ( GenStep ( b"b3" , transact "Bobby" GemJoin "gold" . join "Bobby" 255 /Rat 128 ) )
+      ListItem ( LogNote ( "Bobby" , Vat . slip "gold" "Bobby" 255 /Rat 128 ) )
+      ListItem ( LogNote ( "Bobby" , Gem "gold" . transferFrom "Bobby" GemJoin "gold" 255 /Rat 128 ) )
+      ListItem ( LogNote ( "Bobby" , GemJoin "gold" . join "Bobby" 255 /Rat 128 ) )
+      ListItem ( Measure ( 20 , "Alice" |-> 65 /Rat 8
+      "Bobby" |-> 10
+      End |-> 0
+      Flap |-> 0
+      Pot |-> 0
+      Vow |-> 15 /Rat 8 , 1 , 0 , 20 , 0 , 0 ) )
       ListItem ( GenStep ( b"b" , transact "Alice" Vat . hope Flap ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 26 /Rat 5
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 24 /Rat 5 , 1 , 0 , 20 , 0 , 0 ) )
       ListItem ( LogNote ( "Alice" , Vat . hope Flap ) )
-      ListItem ( GenStep ( b"b0Z" , transact "Alice" Flap . kick 312 /Rat 125 18 ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 26 /Rat 5
+      ListItem ( Measure ( 20 , "Alice" |-> 65 /Rat 8
       "Bobby" |-> 10
       End |-> 0
       Flap |-> 0
       Pot |-> 0
-      Vow |-> 24 /Rat 5 , 1 , 0 , 20 , 0 , 0 ) )
-      ListItem ( Exception ( Flap . kick 312 /Rat 125 18 ) )
+      Vow |-> 15 /Rat 8 , 1 , 0 , 20 , 0 , 0 ) )
+      ListItem ( GenStep ( b"b0Z" , transact "Alice" Flap . kick 195 /Rat 128 225 /Rat 32 ) )
+      ListItem ( Exception ( Flap . kick 195 /Rat 128 225 /Rat 32 ) )
       ListItem ( GenStep ( b"b" , transact ADMIN End . cage ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 26 /Rat 5
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 24 /Rat 5 , 1 , 0 , 20 , 0 , 0 ) )
       ListItem ( LogNote ( ADMIN , Vat . cage ) )
       ListItem ( LogNote ( ADMIN , Cat . cage ) )
       ListItem ( LogNote ( Vow , Vat . move Flap Vow 0 ) )
@@ -765,7 +758,19 @@
       ListItem ( LogNote ( ADMIN , Vow . cage ) )
       ListItem ( LogNote ( ADMIN , Pot . cage ) )
       ListItem ( LogNote ( ADMIN , End . cage ) )
+      ListItem ( Measure ( 20 , "Alice" |-> 65 /Rat 8
+      "Bobby" |-> 10
+      End |-> 0
+      Flap |-> 0
+      Pot |-> 0
+      Vow |-> 15 /Rat 8 , 1 , 0 , 20 , 0 , 0 ) )
       ListItem ( GenStepFailed ( b"b" , GenFlapYank ) )
+      ListItem ( Measure ( 20 , "Alice" |-> 65 /Rat 8
+      "Bobby" |-> 10
+      End |-> 0
+      Flap |-> 0
+      Pot |-> 0
+      Vow |-> 15 /Rat 8 , 1 , 0 , 20 , 0 , 0 ) )
     </processed-events>
     <properties>
       "Debt Constant After Thaw" |-> debtConstantAfterThaw

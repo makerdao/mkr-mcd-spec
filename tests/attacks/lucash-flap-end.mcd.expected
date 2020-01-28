@@ -399,7 +399,6 @@
       </kmcd-state>
     </kmcd>
     <processed-events>
-      ListItem ( Measure ( 0 , .Map , 1 , 0 , 0 , 0 , 0 ) )
       ListItem ( LogNote ( ADMIN , Vat . rely Pot ) )
       ListItem ( Measure ( 0 , .Map , 1 , 0 , 0 , 0 , 0 ) )
       ListItem ( LogNote ( ADMIN , Vat . rely End ) )
@@ -745,12 +744,6 @@
       Pot |-> 0
       Vow |-> 1 , 1 , 0 , 20 , 0 , 0 ) )
       ListItem ( Exception ( Flap . kick 1 20 ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 9
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 1 , 1 , 0 , 20 , 0 , 0 ) )
       ListItem ( LogNote ( ADMIN , Vat . cage ) )
       ListItem ( LogNote ( ADMIN , Cat . cage ) )
       ListItem ( LogNote ( Vow , Vat . move Flap Vow 0 ) )
@@ -767,6 +760,12 @@
       Pot |-> 0
       Vow |-> 1 , 1 , 0 , 20 , 0 , 0 ) )
       ListItem ( Exception ( Flap . yank 1 ) )
+      ListItem ( Measure ( 20 , "Alice" |-> 9
+      "Bobby" |-> 10
+      End |-> 0
+      Flap |-> 0
+      Pot |-> 0
+      Vow |-> 1 , 1 , 0 , 20 , 0 , 0 ) )
     </processed-events>
     <properties>
       "Debt Constant After Thaw" |-> debtConstantAfterThaw

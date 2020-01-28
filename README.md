@@ -73,3 +73,21 @@ If you want to run all the attack tests (and check their output), run:
 ```sh
 make test-execution -j4
 ```
+
+Running Random Tester
+---------------------
+
+Make sure that `pyk` library is on `PYTHONPATH`, and `krun` is on `PATH`:
+
+```sh
+export PYTHONPATH=./deps/k/k-distribution/target/release/k/lib
+export PATH=./deps/k/k-distribution/target/release/k/bin:$PATH
+```
+
+Then you can start the random tester running, with depth 100, up to 3000 times:
+
+```sh
+./mcd-pyk.py random-test 100 3000 &> random-test.out
+```
+
+Then you can watch `random-test.out` for assertion violations it finds.
