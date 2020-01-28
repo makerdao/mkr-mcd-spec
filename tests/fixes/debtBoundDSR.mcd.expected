@@ -1126,7 +1126,7 @@
       "Pot Interest Accumulation After End" |-> potEndInterestEnd
       "PotChi PotPie VatPot" |-> potChiPieDai ( 985 /Rat 128 , 0 )
       "Total Backed Debt Consistency" |-> totalBackedDebtConsistency
-      "Total Bound on Debt" |-> Violated
+      "Total Bound on Debt" |-> Violated ( totalDebtBoundedEnd ( 21465 /Rat 1024 ) )
       "Unauthorized Flap Kick" |-> unAuthFlapKick
       "Unauthorized Flip Kick" |-> unAuthFlipKick
       "Zero-Time Pot Interest Accumulation" |-> zeroTimePotInterestEnd
