@@ -763,7 +763,12 @@
       Vow |-> 0 , 1896129 /Rat 1638400 , 0 , 20 , 0 , 0 ) )
     </processed-events>
     <properties>
+<<<<<<< HEAD
       "Debt Constant After Thaw" |-> debtConstantAfterThaw
+=======
+      "Flap Dai Consistency" |-> flapDaiConsistency
+      "Flap MKR Consistency" |-> flapMkrConsistency
+>>>>>>> integrate new Flap VFSMs
       "Pot Interest Accumulation After End" |-> potEndInterest
       "PotChi PotPie VatPot" |-> potChiPieDai ( 0 , 0 )
       "Total Backed Debt Consistency" |-> totalBackedDebtConsistency

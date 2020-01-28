@@ -105,6 +105,11 @@ Flap Events
  // -------------------------------------------------
 ```
 
+```k
+    syntax Event ::= FlapYank(Int)
+ // ------------------------------
+```
+
 Flap Semantics
 --------------
 
@@ -208,6 +213,7 @@ Flap Semantics
          <this> THIS </this>
          <flap-bids> ... ID |-> FlapBid(... bid: BID, guy: GUY) => .Map ... </flap-bids>
          <flap-live> false </flap-live>
+         <frame-events> _ => ListItem(FlapYank(ID)) </frame-events>
 ```
 
 ```k

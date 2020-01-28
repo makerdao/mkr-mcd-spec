@@ -191,6 +191,8 @@ A violation occurs if any of the properties above holds.
                            ( "PotChi PotPie VatPot"                |-> potChiPieDai(... offset: 0, joining: 0) )
                            ( "Total Backed Debt Consistency"       |-> totalBackedDebtConsistency              )
                            ( "Debt Constant After Thaw"            |-> debtConstantAfterThaw                   )
+                           ( "Flap Dai Consistency"                |-> flapDaiConsistency         )
+                           ( "Flap MKR Consistency"                |-> flapMkrConsistency         )
 ```
 
 A violation can be checked using the Admin step `assert`. If a violation is detected,
@@ -360,6 +362,7 @@ TODO: add events for tend, deal, yank and enforce consistency for those as well.
     syntax ViolationFSM ::= "flapDaiConsistency"
  // --------------------------------------------
     rule derive(flapDaiConsistency, FlapKick(_, _, _, _)) => Violated requires notBool(flapDaiGtOrEtSumOfFlapLots())
+    rule derive(flapDaiConsistency, FlapYank(_))          => Violated requires notBool(flapDaiGtOrEtSumOfFlapLots())
 ```
 
 ### Flap MKR consistency
@@ -370,6 +373,7 @@ TODO: add events for tend, deal, yank and enforce consistency for those as well.
     syntax ViolationFSM ::= "flapMkrConsistency"
  // --------------------------------------------
     rule derive(flapMkrConsistency, FlapKick(_, _, _, _)) => Violated requires notBool(flapMkrGtOrEtSumOfFlapBids())
+    rule derive(flapMkrConsistency, FlapYank(_))          => Violated requires notBool(flapMkrGtOrEtSumOfFlapBids())
 ```
 
 ### Flap Invariants
