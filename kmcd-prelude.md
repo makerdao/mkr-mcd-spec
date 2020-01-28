@@ -150,78 +150,42 @@ endmodule
 Random Choices
 --------------
 
-**TODO**: Currently the Haskell backend doesn't support ?VAR variables.
-          For now, we don't give the implementations of these choice functions for the Haskell backend, which gives to broad of semantics.
-          The functions do implement "choice", but completely arbitrary choice in the relevant sorts, instead of bounded choices.
-
 ```k
 module KMCD-RANDOM-CHOICES
     imports KMCD-PRELUDE
+```
 
+```k
     syntax Int ::= randIntBounded ( Int , Int ) [function]
  // ------------------------------------------------------
-```
+    rule randIntBounded(RAND, BOUND) => 0                          requires         BOUND <Int 0
+    rule randIntBounded(RAND, BOUND) => RAND modInt (BOUND +Int 1) requires notBool BOUND <Int 0
 
-```{.k .concrete}
-    rule randIntBounded(RAND, 0)     => 0
-    rule randIntBounded(RAND, BOUND) => RAND modInt (BOUND +Int 1) requires BOUND =/=Int 0
-```
-
-```
-    rule randIntBounded(_, BOUND) => ?I:Int ensures 0 <=Int ?I andBool ?I <=Int BOUND
-```
-
-```k
     syntax Rat ::= randRat ( Int ) [function]
  // -----------------------------------------
-```
+    rule randRat(I) => I /Rat 256
 
-```{.k .concrete}
-    rule randRat(I) => (I modInt 101) /Rat 100
-```
-
-```
-    rule randRat(_) => ?R:Rat ensures 0 <=Rat ?R andBool ?R <=Rat 100
-```
-
-```k
     syntax Rat ::= randRatBounded ( Int , Rat ) [function]
  // ------------------------------------------------------
-```
-
-```{.k .concrete}
     rule randRatBounded(I, BOUND) => BOUND *Rat randRat(I)
-```
 
-```
-    rule randRatBounded(_, BOUND) => ?R:Rat ensures 0 <=Rat ?R andBool ?R <=Rat BOUND
-```
-
-```k
     syntax Int     ::= chooseInt     ( Int , List ) [function]
     syntax String  ::= chooseString  ( Int , List ) [function]
     syntax Address ::= chooseAddress ( Int , List ) [function]
     syntax CDPID   ::= chooseCDPID   ( Int , List ) [function]
  // ----------------------------------------------------------
-```
-
-```{.k .concrete}
     rule chooseInt    (I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>Int
     rule chooseString (I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>String
     rule chooseAddress(I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>Address
     rule chooseCDPID  (I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>CDPID
 ```
 
-```
-    rule chooseInt    (_, ITEMS) => ?I:Int     ensures ?I in ITEMS
-    rule chooseString (_, ITEMS) => ?S:String  ensures ?S in ITEMS
-    rule chooseAddress(_, ITEMS) => ?A:Address ensures ?A in ITEMS
-    rule chooseCDPID  (_, ITEMS) => ?C:CDPID   ensures ?C in ITEMS
-```
-
 ```k
 endmodule
 ```
+
+Random Sequence Generation
+--------------------------
 
 ```k
 module KMCD-GEN

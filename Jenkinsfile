@@ -44,10 +44,17 @@ pipeline {
                 '''
               }
             }
-            stage('Python Generator') {
+            stage('Python Generator (Lucash Attacks)') {
               steps {
                 sh '''
                   make test-python-generator
+                '''
+              }
+            }
+            stage('Python Generator') {
+              steps {
+                sh '''
+                  make test-random
                 '''
               }
             }
