@@ -1,0 +1,10 @@
+STEPS ( ATTACK-PRELUDE )
+
+transact "Bobby" Vat . move "Bobby" Pot 985 /Rat 128
+transact ADMIN Pot . file dsr 9 /Rat 8
+TimeStep 1
+transact ADMIN End . cage
+
+assert
+
+.MCDSteps

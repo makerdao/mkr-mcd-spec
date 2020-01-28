@@ -157,14 +157,14 @@ A violation occurs if any of the properties above holds.
 ```k
     syntax Map ::= "#violationFSMs" [function]
  // ------------------------------------------
-    rule #violationFSMs => ( "Zero-Time Pot Interest Accumulation" |-> zeroTimePotInterest        )
-                           ( "Pot Interest Accumulation After End" |-> potEndInterest             )
-                           ( "Unauthorized Flip Kick"              |-> unAuthFlipKick             )
-                           ( "Unauthorized Flap Kick"              |-> unAuthFlapKick             )
-                           ( "Total Bound on Debt"                 |-> totalDebtBounded(1)        )
-                           ( "PotChi PotPie VatPot"                |-> potChiPieDai               )
-                           ( "Total Backed Debt Consistency"       |-> totalBackedDebtConsistency )
-                           ( "Debt Constant After Thaw"            |-> debtConstantAfterThaw      )
+    rule #violationFSMs => ( "Zero-Time Pot Interest Accumulation" |-> zeroTimePotInterest                     )
+                           ( "Pot Interest Accumulation After End" |-> potEndInterest                          )
+                           ( "Unauthorized Flip Kick"              |-> unAuthFlipKick                          )
+                           ( "Unauthorized Flap Kick"              |-> unAuthFlapKick                          )
+                           ( "Total Bound on Debt"                 |-> totalDebtBounded(... dsr: 1)            )
+                           ( "PotChi PotPie VatPot"                |-> potChiPieDai(... offset: 0, joining: 0) )
+                           ( "Total Backed Debt Consistency"       |-> totalBackedDebtConsistency              )
+                           ( "Debt Constant After Thaw"            |-> debtConstantAfterThaw                   )
 ```
 
 A violation can be checked using the Admin step `assert`. If a violation is detected,
@@ -255,15 +255,15 @@ The Debt growth should be bounded in principle by the interest rates available i
                           | totalDebtBoundedRun ( debt: Rat , dsr: Rat )
                           | totalDebtBoundedEnd ( debt: Rat            )
  // --------------------------------------------------------------------
-    rule derive(totalDebtBounded(DSR), Measure(... debt: DEBT)) => totalDebtBoundedRun(DEBT, DSR)
+    rule derive(totalDebtBounded(... dsr: DSR), Measure(... debt: DEBT)) => totalDebtBoundedRun(... debt: DEBT, dsr: DSR)
 
-    rule derive( totalDebtBoundedRun(DEBT, _  ) #as PREV , Measure(... debt: DEBT')            ) => Violated(PREV) requires DEBT' >Rat DEBT
-    rule derive( totalDebtBoundedRun(DEBT, DSR)          , TimeStep(TIME, _)                   ) => totalDebtBoundedRun(DEBT +Rat (vatDaiForUser(Pot) *Rat ((DSR ^Rat TIME) -Rat 1)) , DSR )
-    rule derive( totalDebtBoundedRun(DEBT, DSR)          , LogNote(_ , Vat . frob _ _ _ _ _ _) ) => totalDebtBounded(DSR)
-    rule derive( totalDebtBoundedRun(DEBT, DSR)          , LogNote(_ , Pot . file dsr DSR')    ) => totalDebtBoundedRun(DEBT , DSR')
-    rule derive( totalDebtBoundedRun(DEBT, _  )          , LogNote(_ , End . cage         )    ) => totalDebtBoundedEnd(DEBT)
+    rule derive( totalDebtBoundedRun(... debt: DEBT, dsr: _  ) #as PREV , Measure(... debt: DEBT')            ) => Violated(PREV) requires DEBT' >Rat DEBT
+    rule derive( totalDebtBoundedRun(... debt: DEBT, dsr: DSR)          , TimeStep(TIME, _)                   ) => totalDebtBoundedRun(... debt: DEBT +Rat (vatDaiForUser(Pot) *Rat ((DSR ^Rat TIME) -Rat 1)), dsr: DSR)
+    rule derive( totalDebtBoundedRun(... debt: DEBT, dsr: DSR)          , LogNote(_ , Vat . frob _ _ _ _ _ _) ) => totalDebtBounded(... dsr: DSR)
+    rule derive( totalDebtBoundedRun(... debt: DEBT, dsr: DSR)          , LogNote(_ , Pot . file dsr DSR')    ) => totalDebtBoundedRun(... debt: DEBT, dsr: DSR')
+    rule derive( totalDebtBoundedRun(... debt: DEBT, dsr: _  )          , LogNote(_ , End . cage         )    ) => totalDebtBoundedEnd(... debt: DEBT)
 
-    rule derive(totalDebtBoundedEnd(DEBT) #as PREV, Measure(... debt: DEBT')) => Violated(PREV) requires DEBT' =/=Rat DEBT
+    rule derive(totalDebtBoundedEnd(... debt: DEBT) #as PREV, Measure(... debt: DEBT')) => Violated(PREV) requires DEBT' =/=Rat DEBT
 ```
 
 ### Pot Chi * Pot Pie == Vat Dai(Pot)
@@ -271,9 +271,14 @@ The Debt growth should be bounded in principle by the interest rates available i
 The Pot Chi multiplied by Pot Pie should equal the Vat Dai for the Pot
 
 ```k
-    syntax ViolationFSM ::= "potChiPieDai"
- // --------------------------------------
-    rule derive(potChiPieDai, Measure(... controlDai: CONTROL_DAI, potChi: POT_CHI, potPie: POT_PIE)) => Violated(potChiPieDai) requires POT_CHI *Rat POT_PIE =/=Rat #lookup(CONTROL_DAI, Pot)
+    syntax ViolationFSM ::= potChiPieDai ( offset: Rat , joining: Rat )
+ // -------------------------------------------------------------------
+    rule derive( potChiPieDai(... offset: OFFSET, joining: JOINING ) , LogNote(_, Pot . join WAD)       ) => potChiPieDai(... offset: OFFSET          , joining: JOINING +Rat WAD )
+    rule derive( potChiPieDai(... offset: OFFSET, joining: JOINING ) , LogNote(_, Vat . move _ Pot WAD) ) => potChiPieDai(... offset: OFFSET +Rat WAD , joining: JOINING          )
+
+    rule derive(potChiPieDai(... offset: OFFSET => OFFSET -Rat (JOINING *Rat POT_CHI), joining: JOINING => 0), Measure(... potChi: POT_CHI)) requires JOINING =/=Rat 0
+
+    rule derive(potChiPieDai(... offset: OFFSET, joining: 0) #as PREV, Measure(... controlDai: CONTROL_DAI, potChi: POT_CHI, potPie: POT_PIE)) => Violated(PREV) requires POT_CHI *Rat POT_PIE =/=Rat #lookup(CONTROL_DAI, Pot) -Rat OFFSET
 ```
 
 ### Kicking off a fake `flip` auction (inspired by lucash-flip)

@@ -765,7 +765,7 @@
     <properties>
       "Debt Constant After Thaw" |-> debtConstantAfterThaw
       "Pot Interest Accumulation After End" |-> potEndInterest
-      "PotChi PotPie VatPot" |-> potChiPieDai
+      "PotChi PotPie VatPot" |-> potChiPieDai ( 0 , 0 )
       "Total Backed Debt Consistency" |-> totalBackedDebtConsistency
       "Total Bound on Debt" |-> totalDebtBoundedRun ( 20 , 1377 /Rat 1280 )
       "Unauthorized Flap Kick" |-> unAuthFlapKick
