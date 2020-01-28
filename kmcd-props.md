@@ -160,7 +160,7 @@ Sum of all lot values (i.e. total surplus dai up for auction).
     rule sumOfAllFlapLots(FLAP_BIDS) => sumOfAllFlapLotsAux(keys_list(FLAP_BIDS), FLAP_BIDS, 0)
 
     rule sumOfAllFlapLotsAux(                          .List ,         _ , SUM ) => SUM
-    rule sumOfAllFlapLotsAux( ListItem(BID_ID) FLAP_BIDS_IDS , FLAP_BIDS , SUM ) => sumOfAllFlapLotsAux(FLAP_BIDS_IDS, FLAP_BIDS, SUM +Rat lot({FLAP_BIDS[BID_ID]}:>Bid))
+    rule sumOfAllFlapLotsAux( ListItem(BID_ID) FLAP_BIDS_IDS , FLAP_BIDS , SUM ) => sumOfAllFlapLotsAux(FLAP_BIDS_IDS, FLAP_BIDS, SUM +Rat lot({FLAP_BIDS[BID_ID]}:>FlapBid))
 ```
 
 Sum of all bid values (i.e. total amount of MKR that's been bid on dai currently up for auction).
@@ -354,18 +354,22 @@ The property checks if a successful `Pot . join` is preceded by a `TimeStep` mor
 
 ### Flap dai consistency
 
+TODO: add events for tend, deal, yank and enforce consistency for those as well.
+
 ```k
     syntax ViolationFSM ::= "flapDaiConsistency"
  // --------------------------------------------
-    rule derive(flapDaiConsistency) => Violated requires notBool(flapDaiGtOrEtSumOfFlapLots())
+    rule derive(flapDaiConsistency, FlapKick(_, _, _, _)) => Violated requires notBool(flapDaiGtOrEtSumOfFlapLots())
 ```
 
 ### Flap MKR consistency
 
+TODO: add events for tend, deal, yank and enforce consistency for those as well.
+
 ```k
     syntax ViolationFSM ::= "flapMkrConsistency"
  // --------------------------------------------
-    rule derive(flapMkrConsistency) => Violated requires notBool(flapMkrGtOrEtSumOfFlapBids())
+    rule derive(flapMkrConsistency, FlapKick(_, _, _, _)) => Violated requires notBool(flapMkrGtOrEtSumOfFlapBids())
 ```
 
 ### Flap Invariants
@@ -374,7 +378,7 @@ The property checks if a successful `Pot . join` is preceded by a `TimeStep` mor
     syntax Bool ::= flapDaiGtOrEtSumOfFlapLots() [function, functional]
  // -------------------------------------------------------------------
     rule [[ flapDaiGtOrEtSumOfFlapLots() =>
-              USERDAI[FLAP] >=Rat sumOfAllFlapLots(FLAP_BIDS)
+              #lookup(USERDAI, Flap) >=Rat sumOfAllFlapLots(FLAP_BIDS)
          ]]
       <flap-bids> FLAP_BIDS </flap-bids>
       <vat-dai> USERDAI </vat-dai>
@@ -384,7 +388,7 @@ The property checks if a successful `Pot . join` is preceded by a `TimeStep` mor
     syntax Bool ::= flapMkrGtOrEtSumOfFlapBids() [function, functional]
  // -------------------------------------------------------------------
     rule [[ flapMkrGtOrEtSumOfFlapBids() =>
-              BALS[FLAP] >=Rat sumOfAllFlapBids(FLAP_BIDS)
+              #lookup(BALS, Flap) >=Rat sumOfAllFlapBids(FLAP_BIDS)
          ]]
       <flap-bids> FLAP_BIDS </flap-bids>
       <gem-balances> BALS </gem-balances>
