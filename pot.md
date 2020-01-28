@@ -130,6 +130,7 @@ Pot Semantics
          <pot-pies> ... MSGSENDER |-> ( MSGSENDER_PIE => MSGSENDER_PIE -Rat WAD ) ... </pot-pies>
          <pot-pie> PIE => PIE -Rat WAD </pot-pie>
          <pot-chi> CHI </pot-chi>
+      requires MSGSENDER_PIE >=Rat WAD
 
     syntax PotAuthStep ::= "cage"
  // -----------------------------

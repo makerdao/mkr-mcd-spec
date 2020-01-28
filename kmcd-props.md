@@ -21,10 +21,10 @@ Measurables
 ### Measure Event
 
 ```k
-    syntax Event ::= Measure ( debt: Rat , controlDai: Map , potChi: Rat , potPie: Rat , sumOfScaledArts: Rat, vice: Rat )
- // ----------------------------------------------------------------------------------------------------------------------
+    syntax Event ::= Measure ( debt: Rat , controlDai: Map , potChi: Rat , potPie: Rat , sumOfScaledArts: Rat, vice: Rat, endDebt: Rat )
+ // ------------------------------------------------------------------------------------------------------------------------------------
     rule <k> measure => . ... </k>
-         <events> ... (.List => ListItem(Measure(... debt: DEBT, controlDai: controlDais(keys_list(VAT_DAIS)), potChi: POT_CHI, potPie: POT_PIE, sumOfScaledArts: calcSumOfScaledArts(VAT_ILKS, VAT_URNS), vice: VAT_VICE))) </events>
+         <events> ... (.List => ListItem(Measure(... debt: DEBT, controlDai: controlDais(keys_list(VAT_DAIS)), potChi: POT_CHI, potPie: POT_PIE, sumOfScaledArts: calcSumOfScaledArts(VAT_ILKS, VAT_URNS), vice: VAT_VICE, endDebt: END_DEBT))) </events>
          <vat-debt> DEBT </vat-debt>
          <vat-dai> VAT_DAIS </vat-dai>
          <vat-ilks> VAT_ILKS </vat-ilks>
@@ -32,6 +32,7 @@ Measurables
          <vat-vice> VAT_VICE </vat-vice>
          <pot-chi> POT_CHI </pot-chi>
          <pot-pie> POT_PIE </pot-pie>
+         <end-debt> END_DEBT </end-debt>
 ```
 
 ### Dai in Circulation
@@ -162,6 +163,7 @@ A violation occurs if any of the properties above holds.
                            ( "Total Bound on Debt"                 |-> totalDebtBounded(1)        )
                            ( "PotChi PotPie VatPot"                |-> potChiPieDai               )
                            ( "Total Backed Debt Consistency"       |-> totalBackedDebtConsistency )
+                           ( "Debt Constant After Thaw"            |-> debtConstantAfterThaw      )
 ```
 
 A violation can be checked using the Admin step `assert`. If a violation is detected,
@@ -231,6 +233,16 @@ Vat.debt minus Vat.vice should equal the sum over all ilks and CDP accounts of t
     syntax ViolationFSM ::= "totalBackedDebtConsistency"
  // ----------------------------------------------------
     rule derive(totalBackedDebtConsistency, Measure(... debt: DEBT, sumOfScaledArts: SUM, vice: VICE)) => Violated requires SUM =/=Rat (DEBT -Rat VICE)
+```
+
+### Debt Constant After Thaw
+
+Vat.debt should not change after End.thaw is called, as this implies the creation or destruction of dai which would mess up the End's accounting.
+
+```k
+    syntax ViolationFSM ::= "debtConstantAfterThaw"
+ // -----------------------------------------------
+    rule derive(debtConstantAfterThaw, Measure(... debt: DEBT, endDebt: END_DEBT)) => Violated requires (END_DEBT =/=Rat 0) andBool (DEBT =/=Rat END_DEBT)
 ```
 
 ### Bounded Debt Growth
