@@ -132,7 +132,7 @@ test-python-generator: $(execution_tests_random:=.python-out)
 init_random_seeds :=
 
 test-random: mcd-pyk.py
-	python3 $< 100 1000 $(init_random_seeds)
+	python3 $< random-test 1 1 $(init_random_seeds)
 
 ### Testing Parameters
 
@@ -156,7 +156,7 @@ tests/%.mcd.out: tests/%.mcd $(TEST_KOMPILED)
 	RANDOMSEED=$(KMCD_RANDOMSEED) $(KMCD) run --backend $(TEST_BACKEND) $< > $@
 
 tests/%.mcd.python-out: mcd-pyk.py $(TEST_KOMPILED)
-	python3 $< 0 1 $(KMCD_RANDOMSEED) 2>&1 > $@
+	python3 $< random-test 0 1 $(KMCD_RANDOMSEED) 2>&1 > $@
 
 tests/%.mcd.run: tests/%.mcd.out
 	$(CHECK) tests/$*.mcd.out tests/$*.mcd.expected

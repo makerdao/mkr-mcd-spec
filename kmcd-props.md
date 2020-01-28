@@ -21,17 +21,18 @@ Measurables
 ### Measure Event
 
 ```k
-    syntax Event ::= Measure ( debt: Rat , controlDai: Map , potChi: Rat , potPie: Rat , sumOfScaledArts: Rat, vice: Rat, endDebt: Rat )
- // ------------------------------------------------------------------------------------------------------------------------------------
-    rule <k> measure => . ... </k>
-         <events> ... (.List => ListItem(Measure(... debt: DEBT, controlDai: controlDais(keys_list(VAT_DAIS)), potChi: POT_CHI, potPie: POT_PIE, sumOfScaledArts: calcSumOfScaledArts(VAT_ILKS, VAT_URNS), vice: VAT_VICE, endDebt: END_DEBT))) </events>
-         <vat-debt> DEBT </vat-debt>
-         <vat-dai> VAT_DAIS </vat-dai>
+    syntax Event ::= Measure
+    syntax Measure ::= Measure () [function]
+                     | Measure ( debt: Rat , controlDai: Map , potChi: Rat , potPie: Rat , sumOfScaledArts: Rat, vice: Rat, endDebt: Rat )
+ // --------------------------------------------------------------------------------------------------------------------------------------
+    rule [[ Measure() => Measure(... debt: DEBT, controlDai: controlDais(keys_list(VAT_DAIS)), potChi: POT_CHI, potPie: POT_PIE, sumOfScaledArts: calcSumOfScaledArts(VAT_ILKS, VAT_URNS), vice: VAT_VICE, endDebt: END_DEBT) ]]
+         <vat-debt> DEBT     </vat-debt>
+         <vat-dai>  VAT_DAIS </vat-dai>
          <vat-ilks> VAT_ILKS </vat-ilks>
          <vat-urns> VAT_URNS </vat-urns>
          <vat-vice> VAT_VICE </vat-vice>
-         <pot-chi> POT_CHI </pot-chi>
-         <pot-pie> POT_PIE </pot-pie>
+         <pot-chi>  POT_CHI  </pot-chi>
+         <pot-pie>  POT_PIE  </pot-pie>
          <end-debt> END_DEBT </end-debt>
 ```
 
@@ -170,9 +171,9 @@ A violation can be checked using the Admin step `assert`. If a violation is dete
 it is recorded in the state and execution is immediately terminated.
 
 ```k
-    syntax AdminStep ::= "assert" | "#assert"
- // -----------------------------------------
-    rule <k> assert => deriveAll(keys_list(VFSMS), EVENTS) ~> #assert ... </k>
+    syntax AdminStep ::= "#assert"
+ // ------------------------------
+    rule <k> assert => deriveAll(keys_list(VFSMS), EVENTS ListItem(Measure())) ~> #assert ... </k>
          <events> EVENTS => .List </events>
          <properties> VFSMS </properties>
 

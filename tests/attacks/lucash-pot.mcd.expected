@@ -398,7 +398,6 @@
       </kmcd-state>
     </kmcd>
     <processed-events>
-      ListItem ( Measure ( 0 , .Map , 1 , 0 , 0 , 0 , 0 ) )
       ListItem ( LogNote ( ADMIN , Vat . rely Pot ) )
       ListItem ( Measure ( 0 , .Map , 1 , 0 , 0 , 0 , 0 ) )
       ListItem ( LogNote ( ADMIN , Vat . rely End ) )
@@ -721,6 +720,12 @@
       Pot |-> 0
       Vow |-> 0 , 1 , 0 , 20 , 0 , 0 ) )
       ListItem ( LogNote ( ADMIN , Pot . file dsr 5 ) )
+      ListItem ( Measure ( 20 , "Alice" |-> 10
+      "Bobby" |-> 10
+      End |-> 0
+      Flap |-> 0
+      Pot |-> 0
+      Vow |-> 0 , 1 , 0 , 20 , 0 , 0 ) )
       ListItem ( TimeStep ( 1 , 1 ) )
       ListItem ( Measure ( 20 , "Alice" |-> 10
       "Bobby" |-> 10
@@ -729,12 +734,6 @@
       Pot |-> 0
       Vow |-> 0 , 1 , 0 , 20 , 0 , 0 ) )
       ListItem ( Exception ( Pot . join 10 ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 20 , 0 , 0 ) )
       ListItem ( LogNote ( "Alice" , Vat . suck Vow Pot 0 ) )
       ListItem ( LogNote ( "Alice" , Pot . drip ) )
       ListItem ( Measure ( 20 , "Alice" |-> 10
@@ -744,6 +743,12 @@
       Pot |-> 0
       Vow |-> 0 , 5 , 0 , 20 , 0 , 0 ) )
       ListItem ( Exception ( Pot . exit 10 ) )
+      ListItem ( Measure ( 20 , "Alice" |-> 10
+      "Bobby" |-> 10
+      End |-> 0
+      Flap |-> 0
+      Pot |-> 0
+      Vow |-> 0 , 5 , 0 , 20 , 0 , 0 ) )
     </processed-events>
     <properties>
       "Debt Constant After Thaw" |-> debtConstantAfterThaw
