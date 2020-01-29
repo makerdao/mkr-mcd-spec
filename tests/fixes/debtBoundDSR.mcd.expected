@@ -3,25 +3,390 @@
     <kmcd>
       <kmcd-driver>
         <k>
-          .
+          #assert ~> dropState ~> assert .MCDSteps
         </k>
         <return-value>
           .
         </return-value>
         <msg-sender>
-          "Alice"
+          ADMIN
         </msg-sender>
         <this>
-          "Alice"
+          ADMIN
         </this>
         <current-time>
-          2
+          1
         </current-time>
         <call-stack>
           .List
         </call-stack>
         <pre-state>
-          .
+          <kmcd-state>
+            <cat>
+              <cat-wards>
+                SetItem ( End )
+              </cat-wards>
+              <cat-ilks>
+                .Map
+              </cat-ilks>
+              <cat-live>
+                true
+              </cat-live>
+              <cat-vow>
+                0
+              </cat-vow>
+            </cat>
+            <dai>
+              <dai-wards>
+                .Set
+              </dai-wards>
+              <dai-totalSupply>
+                0
+              </dai-totalSupply>
+              <dai-account-id>
+                0
+              </dai-account-id>
+              <dai-balance>
+                .Map
+              </dai-balance>
+              <dai-allowance>
+                .Map
+              </dai-allowance>
+              <dai-nonce>
+                .Map
+              </dai-nonce>
+            </dai>
+            <end-state>
+              <endPhase>
+                false
+              </endPhase>
+              <end>
+                <end-wards>
+                  .Set
+                </end-wards>
+                <end-live>
+                  true
+                </end-live>
+                <end-when>
+                  0
+                </end-when>
+                <end-wait>
+                  0
+                </end-wait>
+                <end-debt>
+                  0
+                </end-debt>
+                <end-tag>
+                  .Map
+                </end-tag>
+                <end-gap>
+                  "gold" |-> 0
+                </end-gap>
+                <end-art>
+                  .Map
+                </end-art>
+                <end-fix>
+                  .Map
+                </end-fix>
+                <end-bag>
+                  "Alice" |-> 0
+                  "Bobby" |-> 0
+                </end-bag>
+                <end-out>
+                  { "gold" , "Alice" } |-> 0
+                  { "gold" , "Bobby" } |-> 0
+                </end-out>
+              </end>
+            </end-state>
+            <flap-state>
+              <flap-wards>
+                SetItem ( Vow )
+              </flap-wards>
+              <flap-bids>
+                .Map
+              </flap-bids>
+              <flap-kicks>
+                0
+              </flap-kicks>
+              <flap-live>
+                true
+              </flap-live>
+              <flap-beg>
+                21 /Rat 20
+              </flap-beg>
+              <flap-ttl>
+                10800
+              </flap-ttl>
+              <flap-tau>
+                172800
+              </flap-tau>
+            </flap-state>
+            <flips>
+              <flip>
+                <flip-ilk>
+                  "gold"
+                </flip-ilk>
+                <flip-wards>
+                  SetItem ( End )
+                </flip-wards>
+                <flip-bids>
+                  .Map
+                </flip-bids>
+                <flip-beg>
+                  21 /Rat 20
+                </flip-beg>
+                <flip-ttl>
+                  10800
+                </flip-ttl>
+                <flip-tau>
+                  172800
+                </flip-tau>
+                <flip-kicks>
+                  0
+                </flip-kicks>
+              </flip>
+            </flips>
+            <flop-state>
+              <flop-wards>
+                SetItem ( Vow )
+              </flop-wards>
+              <flop-bids>
+                .Map
+              </flop-bids>
+              <flop-kicks>
+                0
+              </flop-kicks>
+              <flop-live>
+                true
+              </flop-live>
+              <flop-beg>
+                21 /Rat 20
+              </flop-beg>
+              <flop-pad>
+                3 /Rat 2
+              </flop-pad>
+              <flop-ttl>
+                10800
+              </flop-ttl>
+              <flop-tau>
+                172800
+              </flop-tau>
+              <flop-vow>
+                0
+              </flop-vow>
+            </flop-state>
+            <gems>
+              <gem>
+                <gem-id>
+                  "MKR"
+                </gem-id>
+                <gem-wards>
+                  .Set
+                </gem-wards>
+                <gem-balances>
+                  "Alice" |-> 0
+                  "Bobby" |-> 0
+                  Flap |-> 20
+                  GemJoin "MKR" |-> 0
+                  Vow |-> 0
+                </gem-balances>
+              </gem> <gem>
+                <gem-id>
+                  "gold"
+                </gem-id>
+                <gem-wards>
+                  .Set
+                </gem-wards>
+                <gem-balances>
+                  "Alice" |-> 10
+                  "Bobby" |-> 10
+                  GemJoin "gold" |-> 20
+                </gem-balances>
+              </gem>
+            </gems>
+            <join-state>
+              <gem-joins>
+                <gem-join>
+                  <gem-join-gem>
+                    "MKR"
+                  </gem-join-gem>
+                  <gem-join-wards>
+                    .Set
+                  </gem-join-wards>
+                  <gem-join-live>
+                    true
+                  </gem-join-live>
+                </gem-join> <gem-join>
+                  <gem-join-gem>
+                    "gold"
+                  </gem-join-gem>
+                  <gem-join-wards>
+                    .Set
+                  </gem-join-wards>
+                  <gem-join-live>
+                    true
+                  </gem-join-live>
+                </gem-join>
+              </gem-joins>
+              <dai-join>
+                <dai-join-wards>
+                  .Set
+                </dai-join-wards>
+                <dai-join-live>
+                  true
+                </dai-join-live>
+              </dai-join>
+            </join-state>
+            <jug>
+              <jug-wards>
+                .Set
+              </jug-wards>
+              <jug-ilks>
+                .Map
+              </jug-ilks>
+              <jug-vow>
+                0
+              </jug-vow>
+              <jug-base>
+                0
+              </jug-base>
+            </jug>
+            <pot>
+              <pot-wards>
+                SetItem ( End )
+              </pot-wards>
+              <pot-pies>
+                "Alice" |-> 0
+                "Bobby" |-> 0
+              </pot-pies>
+              <pot-pie>
+                0
+              </pot-pie>
+              <pot-dsr>
+                9 /Rat 8
+              </pot-dsr>
+              <pot-chi>
+                1
+              </pot-chi>
+              <pot-vow>
+                Vow
+              </pot-vow>
+              <pot-rho>
+                0
+              </pot-rho>
+              <pot-live>
+                true
+              </pot-live>
+            </pot>
+            <spot>
+              <spot-wards>
+                .Set
+              </spot-wards>
+              <spot-ilks>
+                "gold" |-> SpotIlk ( 1 , 1 )
+              </spot-ilks>
+              <spot-par>
+                1
+              </spot-par>
+              <spot-live>
+                true
+              </spot-live>
+            </spot>
+            <vat>
+              <vat-wards>
+                SetItem ( End )
+                SetItem ( GemJoin "gold" )
+                SetItem ( Pot )
+              </vat-wards>
+              <vat-can>
+                "Alice" |-> SetItem ( End )
+                SetItem ( Flip "gold" )
+                SetItem ( Pot )
+                "Bobby" |-> SetItem ( End )
+                SetItem ( Flip "gold" )
+                SetItem ( Pot )
+                End |-> .Set
+                Flap |-> .Set
+                Pot |-> .Set
+                Vow |-> .Set
+              </vat-can>
+              <vat-ilks>
+                "gold" |-> Ilk ( 20 , 1 , 3000000000 , 1000000000000 , 0 )
+              </vat-ilks>
+              <vat-urns>
+                { "gold" , "Alice" } |-> Urn ( 10 , 10 )
+                { "gold" , "Bobby" } |-> Urn ( 10 , 10 )
+                { "gold" , End } |-> Urn ( 0 , 0 )
+              </vat-urns>
+              <vat-gem>
+                { "gold" , "Alice" } |-> 0
+                { "gold" , "Bobby" } |-> 0
+                { "gold" , End } |-> 0
+                { "gold" , Flip "gold" } |-> 0
+              </vat-gem>
+              <vat-dai>
+                "Alice" |-> 10
+                "Bobby" |-> 295 /Rat 128
+                End |-> 0
+                Flap |-> 0
+                Pot |-> 985 /Rat 128
+                Vow |-> 0
+              </vat-dai>
+              <vat-sin>
+                "Alice" |-> 0
+                "Bobby" |-> 0
+                End |-> 0
+                Flap |-> 0
+                Pot |-> 0
+                Vow |-> 0
+              </vat-sin>
+              <vat-debt>
+                20
+              </vat-debt>
+              <vat-vice>
+                0
+              </vat-vice>
+              <vat-Line>
+                1000000000000
+              </vat-Line>
+              <vat-live>
+                true
+              </vat-live>
+            </vat>
+            <vow>
+              <vow-wards>
+                SetItem ( End )
+                SetItem ( Pot )
+              </vow-wards>
+              <vow-sins>
+                .Map
+              </vow-sins>
+              <vow-sin>
+                0
+              </vow-sin>
+              <vow-ash>
+                0
+              </vow-ash>
+              <vow-wait>
+                0
+              </vow-wait>
+              <vow-dump>
+                0
+              </vow-dump>
+              <vow-sump>
+                0
+              </vow-sump>
+              <vow-bump>
+                1000000000
+              </vow-bump>
+              <vow-hump>
+                0
+              </vow-hump>
+              <vow-live>
+                true
+              </vow-live>
+            </vow>
+          </kmcd-state>
         </pre-state>
         <events>
           .List
@@ -77,25 +442,25 @@
               false
             </end-live>
             <end-when>
-              0
+              1
             </end-when>
             <end-wait>
               0
             </end-wait>
             <end-debt>
-              20
+              0
             </end-debt>
             <end-tag>
-              "gold" |-> 1
+              .Map
             </end-tag>
             <end-gap>
               "gold" |-> 0
             </end-gap>
             <end-art>
-              "gold" |-> 20
+              .Map
             </end-art>
             <end-fix>
-              "gold" |-> 1
+              .Map
             </end-fix>
             <end-bag>
               "Alice" |-> 0
@@ -281,7 +646,7 @@
             Vow
           </pot-vow>
           <pot-rho>
-            2
+            0
           </pot-rho>
           <pot-live>
             false
@@ -320,25 +685,25 @@
             Vow |-> .Set
           </vat-can>
           <vat-ilks>
-            "gold" |-> Ilk ( 0 , 1 , 3000000000 , 1000000000000 , 0 )
+            "gold" |-> Ilk ( 20 , 1 , 3000000000 , 1000000000000 , 0 )
           </vat-ilks>
           <vat-urns>
-            { "gold" , "Alice" } |-> Urn ( 0 , 0 )
-            { "gold" , "Bobby" } |-> Urn ( 0 , 0 )
+            { "gold" , "Alice" } |-> Urn ( 10 , 10 )
+            { "gold" , "Bobby" } |-> Urn ( 10 , 10 )
             { "gold" , End } |-> Urn ( 0 , 0 )
           </vat-urns>
           <vat-gem>
             { "gold" , "Alice" } |-> 0
             { "gold" , "Bobby" } |-> 0
-            { "gold" , End } |-> 20
+            { "gold" , End } |-> 0
             { "gold" , Flip "gold" } |-> 0
           </vat-gem>
           <vat-dai>
             "Alice" |-> 10
-            "Bobby" |-> 10
+            "Bobby" |-> 295 /Rat 128
             End |-> 0
             Flap |-> 0
-            Pot |-> 0
+            Pot |-> 985 /Rat 128
             Vow |-> 0
           </vat-dai>
           <vat-sin>
@@ -347,13 +712,13 @@
             End |-> 0
             Flap |-> 0
             Pot |-> 0
-            Vow |-> 20
+            Vow |-> 0
           </vat-sin>
           <vat-debt>
             20
           </vat-debt>
           <vat-vice>
-            20
+            0
           </vat-vice>
           <vat-Line>
             1000000000000
@@ -719,7 +1084,27 @@
       Flap |-> 0
       Pot |-> 0
       Vow |-> 0 , 1 , 0 , 20 , 0 , 0 ) )
-      ListItem ( GenStep ( b"d" , transact ADMIN End . cage ) )
+      ListItem ( LogNote ( "Bobby" , Vat . move "Bobby" Pot 985 /Rat 128 ) )
+      ListItem ( Measure ( 20 , "Alice" |-> 10
+      "Bobby" |-> 295 /Rat 128
+      End |-> 0
+      Flap |-> 0
+      Pot |-> 985 /Rat 128
+      Vow |-> 0 , 1 , 0 , 20 , 0 , 0 ) )
+      ListItem ( LogNote ( ADMIN , Pot . file dsr 9 /Rat 8 ) )
+      ListItem ( Measure ( 20 , "Alice" |-> 10
+      "Bobby" |-> 295 /Rat 128
+      End |-> 0
+      Flap |-> 0
+      Pot |-> 985 /Rat 128
+      Vow |-> 0 , 1 , 0 , 20 , 0 , 0 ) )
+      ListItem ( TimeStep ( 1 , 1 ) )
+      ListItem ( Measure ( 20 , "Alice" |-> 10
+      "Bobby" |-> 295 /Rat 128
+      End |-> 0
+      Flap |-> 0
+      Pot |-> 985 /Rat 128
+      Vow |-> 0 , 1 , 0 , 20 , 0 , 0 ) )
       ListItem ( LogNote ( ADMIN , Vat . cage ) )
       ListItem ( LogNote ( ADMIN , Cat . cage ) )
       ListItem ( LogNote ( Vow , Vat . move Flap Vow 0 ) )
@@ -730,106 +1115,21 @@
       ListItem ( LogNote ( ADMIN , Pot . cage ) )
       ListItem ( LogNote ( ADMIN , End . cage ) )
       ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
+      "Bobby" |-> 295 /Rat 128
       End |-> 0
       Flap |-> 0
-      Pot |-> 0
+      Pot |-> 985 /Rat 128
       Vow |-> 0 , 1 , 0 , 20 , 0 , 0 ) )
-      ListItem ( GenStep ( b"da" , transact ANYONE End . cage "gold" ) )
-      ListItem ( LogNote ( ANYONE , End . cage "gold" ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 20 , 0 , 0 ) )
-      ListItem ( GenStep ( b"d" , transact ANYONE End . skim "gold" "Alice" ) )
-      ListItem ( LogNote ( ANYONE , Vat . grab "gold" "Alice" End Vow -10 -10 ) )
-      ListItem ( LogNote ( ANYONE , End . skim "gold" "Alice" ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 10 , 10 , 0 ) )
-      ListItem ( GenStep ( b"d" , transact ANYONE End . skim "gold" "Bobby" ) )
-      ListItem ( LogNote ( ANYONE , Vat . grab "gold" "Bobby" End Vow -10 -10 ) )
-      ListItem ( LogNote ( ANYONE , End . skim "gold" "Bobby" ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 20 , 0 ) )
-      ListItem ( GenStep ( b"d" , transact ANYONE End . thaw ) )
-      ListItem ( LogNote ( ANYONE , End . thaw ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 20 , 20 ) )
-      ListItem ( GenStep ( b"da" , transact ANYONE End . flow "gold" ) )
-      ListItem ( LogNote ( ANYONE , End . flow "gold" ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 20 , 20 ) )
-      ListItem ( GenStep ( b"da" , transact "Alice" Pot . join 485 /Rat 128 ) )
-      ListItem ( LogNote ( "Alice" , Vat . move "Alice" Pot 485 /Rat 128 ) )
-      ListItem ( LogNote ( "Alice" , Pot . join 485 /Rat 128 ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 485 /Rat 128
-      Vow |-> 0 , 1 , 485 /Rat 128 , 0 , 20 , 20 ) )
-      ListItem ( GenStep ( b"da" , transact ADMIN Pot . file dsr 1377 /Rat 1280 ) )
-      ListItem ( Exception ( Pot . file dsr 1377 /Rat 1280 ) )
-      ListItem ( GenStep ( b"da" , TimeStep 2 ) )
-      ListItem ( TimeStep ( 2 , 2 ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 485 /Rat 128
-      Vow |-> 0 , 1 , 485 /Rat 128 , 0 , 20 , 20 ) )
-      ListItem ( GenStep ( b"d" , transact ANYONE Pot . drip ) )
-      ListItem ( LogNote ( ANYONE , Vat . suck Vow Pot 0 ) )
-      ListItem ( LogNote ( ANYONE , Pot . drip ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 485 /Rat 128
-      Vow |-> 0 , 1 , 485 /Rat 128 , 0 , 20 , 20 ) )
-      ListItem ( GenStep ( b"d" , transact "Alice" Pot . exit 485 /Rat 128 ) )
-      ListItem ( LogNote ( "Alice" , Vat . move Pot "Alice" 485 /Rat 128 ) )
-      ListItem ( LogNote ( "Alice" , Pot . exit 485 /Rat 128 ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 20 , 20 ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 20 , 20 ) )
     </processed-events>
     <properties>
       "Debt Constant After Thaw" |-> debtConstantAfterThaw
       "Pot Interest Accumulation After End" |-> potEndInterestEnd
-      "PotChi PotPie VatPot" |-> potChiPieDai ( 0 , 0 )
+      "PotChi PotPie VatPot" |-> potChiPieDai ( 985 /Rat 128 , 0 )
       "Total Backed Debt Consistency" |-> totalBackedDebtConsistency
-      "Total Bound on Debt" |-> totalDebtBoundedEnd ( 20 )
+      "Total Bound on Debt" |-> Violated ( totalDebtBoundedEnd ( 21465 /Rat 1024 ) )
       "Unauthorized Flap Kick" |-> unAuthFlapKick
       "Unauthorized Flip Kick" |-> unAuthFlipKick
-      "Zero-Time Pot Interest Accumulation" |-> zeroTimePotInterest
+      "Zero-Time Pot Interest Accumulation" |-> zeroTimePotInterestEnd
     </properties>
   </kmcd-properties>
   <kmcd-gen>
@@ -840,7 +1140,7 @@
       b""
     </used-random>
     <generator-next>
-      1
+      0
     </generator-next>
     <generator-current>
       0
@@ -849,14 +1149,7 @@
       .GenStep
     </generator-remainder>
     <generators>
-      <generator>
-        <generator-id>
-          0
-        </generator-id>
-        <generator-steps>
-          .GenStep
-        </generator-steps>
-      </generator>
+      .GeneratorCellMap
     </generators>
   </kmcd-gen>
 </kmcd-random>
