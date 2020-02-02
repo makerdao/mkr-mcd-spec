@@ -356,23 +356,23 @@ The property checks if a successful `Pot . join` is preceded by a `TimeStep` mor
 
 ### Flap dai consistency
 
-TODO: add events for tend, deal, yank and enforce consistency for those as well.
-
 ```k
     syntax ViolationFSM ::= "flapDaiConsistency"
  // --------------------------------------------
     rule derive(flapDaiConsistency, FlapKick(_, _, _, _)) => Violated(flapDaiConsistency) requires notBool(flapDaiGtOrEtSumOfFlapLots())
+    rule derive(flapDaiConsistency, FlapTend(_, _, _))    => Violated(flapDaiConsistency) requires notBool(flapDaiGtOrEtSumOfFlapLots())
+    rule derive(flapDaiConsistency, FlapDeal(_))          => Violated(flapDaiConsistency) requires notBool(flapDaiGtOrEtSumOfFlapLots())
     rule derive(flapDaiConsistency, FlapYank(_))          => Violated(flapDaiConsistency) requires notBool(flapDaiGtOrEtSumOfFlapLots())
 ```
 
 ### Flap MKR consistency
 
-TODO: add events for tend, deal, yank and enforce consistency for those as well.
-
 ```k
     syntax ViolationFSM ::= "flapMkrConsistency"
  // --------------------------------------------
     rule derive(flapMkrConsistency, FlapKick(_, _, _, _)) => Violated(flapMkrConsistency) requires notBool(flapMkrGtOrEtSumOfFlapBids())
+    rule derive(flapMkrConsistency, FlapTend(_, _, _))    => Violated(flapMkrConsistency) requires notBool(flapMkrGtOrEtSumOfFlapBids())
+    rule derive(flapMkrConsistency, FlapDeal(_))          => Violated(flapMkrConsistency) requires notBool(flapMkrGtOrEtSumOfFlapBids())
     rule derive(flapMkrConsistency, FlapYank(_))          => Violated(flapMkrConsistency) requires notBool(flapMkrGtOrEtSumOfFlapBids())
 ```
 
