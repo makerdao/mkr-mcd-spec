@@ -1123,6 +1123,8 @@
     </processed-events>
     <properties>
       "Debt Constant After Thaw" |-> debtConstantAfterThaw
+      "Flap Dai Consistency" |-> flapDaiConsistency
+      "Flap MKR Consistency" |-> flapMkrConsistency
       "Pot Interest Accumulation After End" |-> potEndInterestEnd
       "PotChi PotPie VatPot" |-> potChiPieDai ( 985 /Rat 128 , 0 )
       "Total Backed Debt Consistency" |-> totalBackedDebtConsistency
