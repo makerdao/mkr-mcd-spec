@@ -191,8 +191,8 @@ A violation occurs if any of the properties above holds.
                            ( "PotChi PotPie VatPot"                |-> potChiPieDai(... offset: 0, joining: 0) )
                            ( "Total Backed Debt Consistency"       |-> totalBackedDebtConsistency              )
                            ( "Debt Constant After Thaw"            |-> debtConstantAfterThaw                   )
-                           ( "Flap Dai Consistency"                |-> flapDaiConsistency         )
-                           ( "Flap MKR Consistency"                |-> flapMkrConsistency         )
+                           ( "Flap Dai Consistency"                |-> flapDaiConsistency                      )
+                           ( "Flap MKR Consistency"                |-> flapMkrConsistency                      )
 ```
 
 A violation can be checked using the Admin step `assert`. If a violation is detected,
