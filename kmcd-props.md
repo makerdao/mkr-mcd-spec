@@ -361,8 +361,8 @@ TODO: add events for tend, deal, yank and enforce consistency for those as well.
 ```k
     syntax ViolationFSM ::= "flapDaiConsistency"
  // --------------------------------------------
-    rule derive(flapDaiConsistency, FlapKick(_, _, _, _)) => Violated requires notBool(flapDaiGtOrEtSumOfFlapLots())
-    rule derive(flapDaiConsistency, FlapYank(_))          => Violated requires notBool(flapDaiGtOrEtSumOfFlapLots())
+    rule derive(flapDaiConsistency, FlapKick(_, _, _, _)) => Violated(flapDaiConsistency) requires notBool(flapDaiGtOrEtSumOfFlapLots())
+    rule derive(flapDaiConsistency, FlapYank(_))          => Violated(flapDaiConsistency) requires notBool(flapDaiGtOrEtSumOfFlapLots())
 ```
 
 ### Flap MKR consistency
@@ -372,8 +372,8 @@ TODO: add events for tend, deal, yank and enforce consistency for those as well.
 ```k
     syntax ViolationFSM ::= "flapMkrConsistency"
  // --------------------------------------------
-    rule derive(flapMkrConsistency, FlapKick(_, _, _, _)) => Violated requires notBool(flapMkrGtOrEtSumOfFlapBids())
-    rule derive(flapMkrConsistency, FlapYank(_))          => Violated requires notBool(flapMkrGtOrEtSumOfFlapBids())
+    rule derive(flapMkrConsistency, FlapKick(_, _, _, _)) => Violated(flapMkrConsistency) requires notBool(flapMkrGtOrEtSumOfFlapBids())
+    rule derive(flapMkrConsistency, FlapYank(_))          => Violated(flapMkrConsistency) requires notBool(flapMkrGtOrEtSumOfFlapBids())
 ```
 
 ### Flap Invariants
