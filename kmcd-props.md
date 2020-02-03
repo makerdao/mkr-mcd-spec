@@ -381,9 +381,7 @@ The property checks if a successful `Pot . join` is preceded by a `TimeStep` mor
 ```k
     syntax Bool ::= flapDaiGtOrEtSumOfFlapLots() [function, functional]
  // -------------------------------------------------------------------
-    rule [[ flapDaiGtOrEtSumOfFlapLots() =>
-              #lookup(USERDAI, Flap) >=Rat sumOfAllFlapLots(FLAP_BIDS)
-         ]]
+    rule [[ flapDaiGtOrEtSumOfFlapLots() => #lookup(USERDAI, Flap) >=Rat sumOfAllFlapLots(FLAP_BIDS) ]]
       <flap-bids> FLAP_BIDS </flap-bids>
       <vat-dai> USERDAI </vat-dai>
 ```
@@ -391,9 +389,7 @@ The property checks if a successful `Pot . join` is preceded by a `TimeStep` mor
 ```k
     syntax Bool ::= flapMkrGtOrEtSumOfFlapBids() [function, functional]
  // -------------------------------------------------------------------
-    rule [[ flapMkrGtOrEtSumOfFlapBids() =>
-              #lookup(BALS, Flap) >=Rat sumOfAllFlapBids(FLAP_BIDS)
-         ]]
+    rule [[ flapMkrGtOrEtSumOfFlapBids() => #lookup(BALS, Flap) >=Rat sumOfAllFlapBids(FLAP_BIDS) ]]
       <flap-bids> FLAP_BIDS </flap-bids>
       <gem-balances> BALS </gem-balances>
 ```
