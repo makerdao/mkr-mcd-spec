@@ -25,7 +25,7 @@ Measurables
     syntax Measure ::= Measure () [function]
                      | Measure ( debt: Rat , controlDai: Map , potChi: Rat , potPie: Rat , sumOfScaledArts: Rat , vice: Rat , endDebt: Rat , sumOfAllFlapLots: Rat , dai: Map , sumOfAllFlapBids: Rat , mkrBalances: Map )
  // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    rule [[ Measure() => Measure(... debt: DEBT, controlDai: controlDais(keys_list(VAT_DAIS)), potChi: POT_CHI, potPie: POT_PIE, sumOfScaledArts: calcSumOfScaledArts(VAT_ILKS, VAT_URNS), vice: VAT_VICE, endDebt: END_DEBT, sumOfAllFlapLots: sumOfAllFlapLots(FLAP_BIDS), dai: VAT_DAIS, sumOfAllFlapBids: sumOfAllFlapBids(FLAP_BIDS), mkrBalances: MKR_BALS) ]]
+    rule [[ Measure() => Measure(... debt: DEBT, controlDai: controlDais(keys_list(VAT_DAIS)), potChi: POT_CHI, potPie: POT_PIE, sumOfScaledArts: calcSumOfScaledArts(VAT_ILKS, VAT_URNS), vice: VAT_VICE, endDebt: END_DEBT, sumOfAllFlapLots: sumOfAllFlapLots(FLAP_BIDS), dai: VAT_DAIS, sumOfAllFlapBids: sumOfAllFlapBids(FLAP_BIDS), mkrBalances: makerBalances()) ]]
          <vat-debt>     DEBT      </vat-debt>
          <vat-dai>      VAT_DAIS  </vat-dai>
          <vat-ilks>     VAT_ILKS  </vat-ilks>
@@ -35,11 +35,6 @@ Measurables
          <pot-pie>      POT_PIE   </pot-pie>
          <end-debt>     END_DEBT  </end-debt>
          <flap-bids>    FLAP_BIDS </flap-bids>
-         <gem>
-           <gem-id>       "MKR"     </gem-id>
-           <gem-balances> MKR_BALS  </gem-balances>
-           ...
-         </gem>
 ```
 
 ### Dai in Circulation
@@ -80,6 +75,22 @@ State predicates that capture undesirable states in the system (representing vio
          <pot-pie> PIE </pot-pie>
       requires PIE =/=Rat 0
        andBool ADDR =/=K Pot
+```
+
+### MKR Balances
+
+By default, we assume the MKR balances are negative, but otherwise just grab the `<gem-balances>` cell for MKR.
+
+```k
+    syntax Map ::= mkrBalances() [function]
+ // ---------------------------------------
+    rule    mkrBalances() => .Map            [owise]
+    rule [[ mkrBalances() => MKR_BALANCES ]]
+         <gem>
+           <gem-id> "MKR" </gem-id>
+           <gem-balances> MKR_BALANCES </gem-balances>
+           ...
+         </gem>
 ```
 
 ### Vat Measures
