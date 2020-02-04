@@ -35,7 +35,11 @@ Measurables
          <pot-pie>      POT_PIE   </pot-pie>
          <end-debt>     END_DEBT  </end-debt>
          <flap-bids>    FLAP_BIDS </flap-bids>
-         <gem-balances> MKR_BALS  </gem-balances>
+         <gem>
+           <gem-id>       "MKR"     </gem-id>
+           <gem-balances> MKR_BALS  </gem-balances>
+           ...
+         </gem>
 ```
 
 ### Dai in Circulation
