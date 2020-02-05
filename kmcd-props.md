@@ -23,17 +23,18 @@ Measurables
 ```k
     syntax Event ::= Measure
     syntax Measure ::= Measure () [function]
-                     | Measure ( debt: Rat , controlDai: Map , potChi: Rat , potPie: Rat , sumOfScaledArts: Rat, vice: Rat, endDebt: Rat )
- // --------------------------------------------------------------------------------------------------------------------------------------
-    rule [[ Measure() => Measure(... debt: DEBT, controlDai: controlDais(keys_list(VAT_DAIS)), potChi: POT_CHI, potPie: POT_PIE, sumOfScaledArts: calcSumOfScaledArts(VAT_ILKS, VAT_URNS), vice: VAT_VICE, endDebt: END_DEBT) ]]
-         <vat-debt> DEBT     </vat-debt>
-         <vat-dai>  VAT_DAIS </vat-dai>
-         <vat-ilks> VAT_ILKS </vat-ilks>
-         <vat-urns> VAT_URNS </vat-urns>
-         <vat-vice> VAT_VICE </vat-vice>
-         <pot-chi>  POT_CHI  </pot-chi>
-         <pot-pie>  POT_PIE  </pot-pie>
-         <end-debt> END_DEBT </end-debt>
+                     | Measure ( debt: Rat , controlDai: Map , potChi: Rat , potPie: Rat , sumOfScaledArts: Rat , vice: Rat , endDebt: Rat , sumOfAllFlapLots: Rat , dai: Map , sumOfAllFlapBids: Rat , mkrBalances: Map )
+ // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    rule [[ Measure() => Measure(... debt: DEBT, controlDai: controlDais(keys_list(VAT_DAIS)), potChi: POT_CHI, potPie: POT_PIE, sumOfScaledArts: calcSumOfScaledArts(VAT_ILKS, VAT_URNS), vice: VAT_VICE, endDebt: END_DEBT, sumOfAllFlapLots: sumOfAllFlapLots(FLAP_BIDS), dai: VAT_DAIS, sumOfAllFlapBids: sumOfAllFlapBids(FLAP_BIDS), mkrBalances: mkrBalances()) ]]
+         <vat-debt>     DEBT      </vat-debt>
+         <vat-dai>      VAT_DAIS  </vat-dai>
+         <vat-ilks>     VAT_ILKS  </vat-ilks>
+         <vat-urns>     VAT_URNS  </vat-urns>
+         <vat-vice>     VAT_VICE  </vat-vice>
+         <pot-chi>      POT_CHI   </pot-chi>
+         <pot-pie>      POT_PIE   </pot-pie>
+         <end-debt>     END_DEBT  </end-debt>
+         <flap-bids>    FLAP_BIDS </flap-bids>
 ```
 
 ### Dai in Circulation
@@ -74,6 +75,22 @@ State predicates that capture undesirable states in the system (representing vio
          <pot-pie> PIE </pot-pie>
       requires PIE =/=Rat 0
        andBool ADDR =/=K Pot
+```
+
+### MKR Balances
+
+By default, we assume the MKR balances are negative, but otherwise just grab the `<gem-balances>` cell for MKR.
+
+```k
+    syntax Map ::= mkrBalances() [function]
+ // ---------------------------------------
+    rule    mkrBalances() => .Map            [owise]
+    rule [[ mkrBalances() => MKR_BALANCES ]]
+         <gem>
+           <gem-id> "MKR" </gem-id>
+           <gem-balances> MKR_BALANCES </gem-balances>
+           ...
+         </gem>
 ```
 
 ### Vat Measures
@@ -149,6 +166,32 @@ Total backed debt (sum over each CDP's art times corresponding ilk's rate)
     rule calcSumOfScaledArtsAux( ListItem(ILK_ID) VAT_ILK_IDS , VAT_ILKS , VAT_URNS , TOTAL ) => calcSumOfScaledArtsAux(VAT_ILK_IDS, VAT_ILKS, VAT_URNS, TOTAL +Rat (sumOfUrnArt(VAT_URNS, ILK_ID, 0) *Rat rate({VAT_ILKS[ILK_ID]}:>VatIlk)))
 ```
 
+### Flap Measures
+
+Sum of all lot values (i.e. total surplus dai up for auction).
+
+```k
+    syntax Rat ::= sumOfAllFlapLots(Map) [function]
+                 | sumOfAllFlapLotsAux(List, Map, Rat) [function]
+ // -------------------------------------------------------------
+    rule sumOfAllFlapLots(FLAP_BIDS) => sumOfAllFlapLotsAux(keys_list(FLAP_BIDS), FLAP_BIDS, 0)
+
+    rule sumOfAllFlapLotsAux(                          .List ,         _ , SUM ) => SUM
+    rule sumOfAllFlapLotsAux( ListItem(BID_ID) FLAP_BIDS_IDS , FLAP_BIDS , SUM ) => sumOfAllFlapLotsAux(FLAP_BIDS_IDS, FLAP_BIDS, SUM +Rat lot({FLAP_BIDS[BID_ID]}:>FlapBid))
+```
+
+Sum of all bid values (i.e. total amount of MKR that's been bid on dai currently up for auction).
+
+```k
+    syntax Rat ::= sumOfAllFlapBids(Map) [function]
+                 | sumOfAllFlapBidsAux(List, Map, Rat) [function]
+ // -------------------------------------------------------------
+    rule sumOfAllFlapBids(FLAP_BIDS) => sumOfAllFlapBidsAux(keys_list(FLAP_BIDS), FLAP_BIDS, 0)
+
+    rule sumOfAllFlapBidsAux(                          .List ,         _ , SUM ) => SUM
+    rule sumOfAllFlapBidsAux( ListItem(BID_ID) FLAP_BIDS_IDS , FLAP_BIDS , SUM ) => sumOfAllFlapBidsAux(FLAP_BIDS_IDS, FLAP_BIDS, SUM +Rat bid({FLAP_BIDS[BID_ID]}:>FlapBid))
+```
+
 Violations
 ----------
 
@@ -165,6 +208,8 @@ A violation occurs if any of the properties above holds.
                            ( "PotChi PotPie VatPot"                |-> potChiPieDai(... offset: 0, joining: 0) )
                            ( "Total Backed Debt Consistency"       |-> totalBackedDebtConsistency              )
                            ( "Debt Constant After Thaw"            |-> debtConstantAfterThaw                   )
+                           ( "Flap Dai Consistency"                |-> flapDaiConsistency                      )
+                           ( "Flap MKR Consistency"                |-> flapMkrConsistency                      )
 ```
 
 A violation can be checked using the Admin step `assert`. If a violation is detected,
@@ -324,6 +369,22 @@ The property checks if a successful `Pot . join` is preceded by a `TimeStep` mor
 
     rule derive(zeroTimePotInterestEnd, LogNote( _ , Pot . join _ )) => Violated(zeroTimePotInterestEnd)
     rule derive(zeroTimePotInterestEnd, LogNote( _ , Pot . drip   )) => zeroTimePotInterest
+```
+
+### Flap dai consistency
+
+```k
+    syntax ViolationFSM ::= "flapDaiConsistency"
+ // --------------------------------------------
+    rule derive(flapDaiConsistency, Measure(... sumOfAllFlapLots: SUM, dai: VAT_DAI)) => Violated(flapDaiConsistency) requires (SUM >Rat #lookup(VAT_DAI, Flap))
+```
+
+### Flap MKR consistency
+
+```k
+    syntax ViolationFSM ::= "flapMkrConsistency"
+ // --------------------------------------------
+    rule derive(flapMkrConsistency, Measure(... sumOfAllFlapBids: SUM, mkrBalances: BALS)) => Violated(flapMkrConsistency) requires (SUM >Rat #lookup(BALS, Flap))
 ```
 
 ```k
