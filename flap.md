@@ -103,15 +103,6 @@ Flap Events
 ```k
     syntax Event ::= FlapKick(Address, Int, Rad, Wad)
  // -------------------------------------------------
-
-    syntax Event ::= FlapTend(Int, Rad, Wad)
- // ----------------------------------------
-
-    syntax Event ::= FlapDeal(Int)
- // ------------------------------
-
-    syntax Event ::= FlapYank(Int)
- // ------------------------------
 ```
 
 Flap Semantics
@@ -169,7 +160,6 @@ Flap Semantics
          <flap-live> true </flap-live>
          <flap-ttl> TTL </flap-ttl>
          <flap-beg> BEG </flap-beg>
-         <frame-events> _ => ListItem(FlapTend(ID, LOT, BID)) </frame-events>
       requires (TIC >Int NOW orBool TIC ==Int 0)
        andBool END  >Int NOW
        andBool LOT ==Rat LOT'
@@ -192,7 +182,6 @@ Flap Semantics
          <current-time> NOW </current-time>
          <flap-bids> ... ID |-> FlapBid(... bid: BID, lot: LOT, guy: GUY, tic: TIC, end: END) => .Map ... </flap-bids>
          <flap-live> true </flap-live>
-         <frame-events> _ => ListItem(FlapDeal(ID)) </frame-events>
       requires TIC =/=Int 0
        andBool (TIC <Int NOW orBool END <Int NOW)
 ```
@@ -219,7 +208,6 @@ Flap Semantics
          <this> THIS </this>
          <flap-bids> ... ID |-> FlapBid(... bid: BID, guy: GUY) => .Map ... </flap-bids>
          <flap-live> false </flap-live>
-         <frame-events> _ => ListItem(FlapYank(ID)) </frame-events>
 ```
 
 ```k
