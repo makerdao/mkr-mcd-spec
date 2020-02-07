@@ -252,9 +252,17 @@ def extractCallEvent(logEvent):
             contract = printIt(item['args'][1]['args'][0]).replace(' ', '').replace('"', '')
             functionCall = item['args'][1]['args'][1]
             function = functionCall['label'].split('_')[0]
-            args = [ printIt(arg) for arg in functionCall['args'] ]
             if function.startswith('init'):
                 return []
+            args = []
+            if function.endswith('file'):
+                fileable = functionCall['args'][0]['label']
+                fileargs = functionCall['args'][0]['args']
+                args.append('"' + fileable.split('_')[0] + '"')
+                for arg in fileargs:
+                    args.append(printIt(arg).replace(' ', '').replace('"', ''))
+            else:
+                args = [ printIt(arg) for arg in functionCall['args'] ]
             return [ caller + '.' + contract + function + '(' + ', '.join(args) + ');' ]
         elif pyk.isKApply(item) and item['label'] == 'TimeStep(_,_)_KMCD-DRIVER_Event_Int_Int':
             return 'hevm.warp(' + printIt(item['args'][0]) + ');'
