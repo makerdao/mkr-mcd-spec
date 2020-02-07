@@ -29,6 +29,43 @@ def krun(inputJSON, *krunArgs):
 def randomSeedArgs(seedbytes = b''):
     return [ '-cRANDOMSEED=' + '#token("' + seedbytes.decode('latin-1') + '", "Bytes")', '-pRANDOMSEED=printf %s' ]
 
+def get_init_config(init_term):
+    kast_json = { 'format': 'KAST', 'version': 1, 'term': init_term }
+    (_, init_config, _) = krun(kast_json, *randomSeedArgs())
+    return pyk.splitConfigFrom(init_config)
+
+# Misc Utilities
+# --------------
+
+def randombytes(size):
+    return bytearray(random.getrandbits(8) for _ in range(size))
+
+def sanitizeBytes(kast):
+    def _sanitizeBytes(_kast):
+        if pyk.isKToken(_kast) and _kast['sort'] == 'Bytes':
+            if len(_kast['token']) > 2 and _kast['token'][0:2] == 'b"' and _kast['token'][-1] == '"':
+                return KToken(_kast['token'][2:-1], 'Bytes')
+        return _kast
+    return pyk.traverseBottomUp(kast, _sanitizeBytes)
+
+def fromListItem(input):
+    if pyk.isKApply(input) and input['label'] == 'ListItem':
+        return input['args'][0]
+    return input
+
+def flattenList(input):
+    if not (pyk.isKApply(input) and input['label'] == '_List_'):
+        return [fromListItem(input)]
+    output = []
+    work = input['args']
+    while len(work) > 0:
+        first = work.pop(0)
+        if pyk.isKApply(first) and first['label'] == '_List_':
+            work.extend(first['args'])
+        else:
+            output.append(fromListItem(first))
+    return output
+
 # Symbol Table (for Unparsing)
 # ----------------------------
 
@@ -64,8 +101,6 @@ def depthBound(step, bound):
     else:
         _fatal('Unknown depth bound: ' + str(bound))
     return KApply('___KMCD-GEN_GenStep_GenStep_DepthBound', [step, bound])
-
-unimplimentedToken = lambda x: KToken('UNIMPLEMENTED << ' + str(x) + ' >>', 'K')
 
 def consJoin(elements, join, unit, assoc = False):
     if len(elements) == 0:
@@ -166,10 +201,8 @@ generator_lucash_flap_end = generatorSequence( [ KConstant('GenVatMove_KMCD-GEN_
                                                ]
                                              )
 
-def get_init_config(init_term):
-    kast_json = { 'format': 'KAST', 'version': 1, 'term': init_term }
-    (_, init_config, _) = krun(kast_json, *randomSeedArgs())
-    return pyk.splitConfigFrom(init_config)
+# Violation Detection
+# -------------------
 
 def detect_violations(config):
     (_, configSubst) = pyk.splitConfigFrom(config)
@@ -183,34 +216,8 @@ def detect_violations(config):
     pyk.traverseTopDown(properties, _gatherViolations)
     return violations
 
-def randombytes(size):
-    return bytearray(random.getrandbits(8) for _ in range(size))
-
-def sanitizeBytes(kast):
-    def _sanitizeBytes(_kast):
-        if pyk.isKToken(_kast) and _kast['sort'] == 'Bytes':
-            if len(_kast['token']) > 2 and _kast['token'][0:2] == 'b"' and _kast['token'][-1] == '"':
-                return KToken(_kast['token'][2:-1], 'Bytes')
-        return _kast
-    return pyk.traverseBottomUp(kast, _sanitizeBytes)
-
-def fromListItem(input):
-    if pyk.isKApply(input) and input['label'] == 'ListItem':
-        return input['args'][0]
-    return input
-
-def flattenList(input):
-    if not (pyk.isKApply(input) and input['label'] == '_List_'):
-        return [fromListItem(input)]
-    output = []
-    work = input['args']
-    while len(work) > 0:
-        first = work.pop(0)
-        if pyk.isKApply(first) and first['label'] == '_List_':
-            work.extend(first['args'])
-        else:
-            output.append(fromListItem(first))
-    return output
+# Solidity Generation
+# -------------------
 
 def solidify(input):
     return input.replace(' ', '_').replace('"', '')
@@ -267,6 +274,9 @@ def extractTrace(config):
                 call_events.extend(extractCallEvent(last_event))
         last_event = event
     return call_events
+
+# Main Functionality
+# ------------------
 
 mcdArgs = argparse.ArgumentParser()
 
