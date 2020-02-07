@@ -53,25 +53,6 @@ stringToken  = lambda x: KToken('"' + str(x) + '"', 'String')
 hexIntToken  = lambda x: intToken(int(x, 16))
 addressToken = lambda x: hexIntToken(x) if x[0:2] == '0x' else stringToken(x)
 
-unimplimentedToken = lambda x: KToken('UNIMPLEMENTED << ' + str(x) + ' >>', 'K')
-
-def get_init_config(init_term):
-    kast_json = { 'format': 'KAST', 'version': 1, 'term': init_term }
-    (_, init_config, _) = krun(kast_json, *randomSeedArgs())
-    return pyk.splitConfigFrom(init_config)
-
-def detect_violations(config):
-    (_, configSubst) = pyk.splitConfigFrom(config)
-    properties = configSubst['PROPERTIES_CELL']
-    violations = []
-    def _gatherViolations(fsmMap):
-        if pyk.isKApply(fsmMap) and fsmMap['label'] == '_|->_':
-            if fsmMap['args'][1] == pyk.KConstant('Violated_KMCD-PROPS_ViolationFSM'):
-                violations.append(fsmMap['args'][0]['token'])
-        return fsmMap
-    pyk.traverseTopDown(properties, _gatherViolations)
-    return violations
-
 def steps(step):
     return KApply('STEPS(_)_KMCD-PRELUDE_MCDStep_MCDSteps', [step])
 
@@ -84,16 +65,7 @@ def depthBound(step, bound):
         _fatal('Unknown depth bound: ' + str(bound))
     return KApply('___KMCD-GEN_GenStep_GenStep_DepthBound', [step, bound])
 
-def randombytes(size):
-    return bytearray(random.getrandbits(8) for _ in range(size))
-
-def sanitizeBytes(kast):
-    def _sanitizeBytes(_kast):
-        if pyk.isKToken(_kast) and _kast['sort'] == 'Bytes':
-            if len(_kast['token']) > 2 and _kast['token'][0:2] == 'b"' and _kast['token'][-1] == '"':
-                return KToken(_kast['token'][2:-1], 'Bytes')
-        return _kast
-    return pyk.traverseBottomUp(kast, _sanitizeBytes)
+unimplimentedToken = lambda x: KToken('UNIMPLEMENTED << ' + str(x) + ' >>', 'K')
 
 def consJoin(elements, join, unit, assoc = False):
     if len(elements) == 0:
@@ -193,6 +165,34 @@ generator_lucash_flap_end = generatorSequence( [ KConstant('GenVatMove_KMCD-GEN_
                                                , KConstant('GenFlapYank_KMCD-GEN_GenFlapStep')
                                                ]
                                              )
+
+def get_init_config(init_term):
+    kast_json = { 'format': 'KAST', 'version': 1, 'term': init_term }
+    (_, init_config, _) = krun(kast_json, *randomSeedArgs())
+    return pyk.splitConfigFrom(init_config)
+
+def detect_violations(config):
+    (_, configSubst) = pyk.splitConfigFrom(config)
+    properties = configSubst['PROPERTIES_CELL']
+    violations = []
+    def _gatherViolations(fsmMap):
+        if pyk.isKApply(fsmMap) and fsmMap['label'] == '_|->_':
+            if fsmMap['args'][1] == pyk.KConstant('Violated_KMCD-PROPS_ViolationFSM'):
+                violations.append(fsmMap['args'][0]['token'])
+        return fsmMap
+    pyk.traverseTopDown(properties, _gatherViolations)
+    return violations
+
+def randombytes(size):
+    return bytearray(random.getrandbits(8) for _ in range(size))
+
+def sanitizeBytes(kast):
+    def _sanitizeBytes(_kast):
+        if pyk.isKToken(_kast) and _kast['sort'] == 'Bytes':
+            if len(_kast['token']) > 2 and _kast['token'][0:2] == 'b"' and _kast['token'][-1] == '"':
+                return KToken(_kast['token'][2:-1], 'Bytes')
+        return _kast
+    return pyk.traverseBottomUp(kast, _sanitizeBytes)
 
 def fromListItem(input):
     if pyk.isKApply(input) and input['label'] == 'ListItem':
