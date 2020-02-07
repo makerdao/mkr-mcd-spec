@@ -207,6 +207,7 @@ module KMCD-GEN
     configuration
       <kmcd-random>
         <kmcd-properties/>
+        <kmcd-snapshots> .List </kmcd-snapshots>
         <kmcd-gen>
           <random> $RANDOMSEED:Bytes </random>
           <used-random> .Bytes </used-random>
@@ -221,6 +222,12 @@ module KMCD-GEN
           </generators>
         </kmcd-gen>
       </kmcd-random>
+
+    syntax AdminStep ::= "snapshot"
+ // -------------------------------
+    rule <k> snapshot => . ... </k>
+         <kmcd-state> STATE </kmcd-state>
+         <kmcd-snapshots> ... (.List => ListItem(<kmcd-state> STATE </kmcd-state>)) </kmcd-snapshots>
 
     syntax Int ::= #timeStepMax() [function]
                  | #dsrSpread()   [function]
