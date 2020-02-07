@@ -241,14 +241,34 @@ generator_lucash_flap_end = generatorSequence( [ KConstant('GenVatMove_KMCD-GEN_
                                                ]
                                              )
 
+def extractCallEvent(logEvent):
+    return [pyk.prettyPrintKast(logEvent, MCD_definition_llvm_symbols)]
+
+def extractTrace(config):
+    (_, subst) = pyk.splitConfigFrom(config)
+    pEvents = subst['PROCESSED_EVENTS_CELL']
+    if not (pyk.isKApply(pEvents) and pEvents['label'] == '_List_'):
+        return extractCallEvent(pEvents)
+    callevents = []
+    worklist = pEvents['args']
+    while len(worklist) > 0:
+        first = worklist.pop(0)
+        if pyk.isKApply(first) and first['label'] == '_List_':
+            worklist.extend(first['args'])
+        else:
+            callevents.extend(extractCallEvent(first))
+    return callevents
+
 mcdArgs = argparse.ArgumentParser()
 
 mcdCommands = mcdArgs.add_subparsers()
 
 mcdRandomTestArgs = mcdCommands.add_parser('random-test', help = 'Run random tester and check for property violations.')
-mcdRandomTestArgs.add_argument( 'depth'     , type = int ,               help = 'Number of bytes to feed as random input into each run' )
-mcdRandomTestArgs.add_argument( 'numRuns'   , type = int ,               help = 'Number of runs per random seed.'                       )
-mcdRandomTestArgs.add_argument( 'initSeeds' , type = str , nargs = '*' , help = 'Random seeds to use as run prefixes.'                  )
+mcdRandomTestArgs.add_argument( 'depth'           , type = int  ,               help = 'Number of bytes to feed as random input into each run' )
+mcdRandomTestArgs.add_argument( 'numRuns'         , type = int  ,               help = 'Number of runs per random seed.'                       )
+mcdRandomTestArgs.add_argument( 'initSeeds'       , type = str  , nargs = '*' , help = 'Random seeds to use as run prefixes.'                  )
+mcdRandomTestArgs.add_argument( '--emit-solidity' , action = 'store_true'     , help = 'Emit Solidity code reproducing the trace.'             )
+mcdRandomTestArgs.set_defaults(emit_solidity = False)
 
 if __name__ == '__main__':
     args = vars(mcdArgs.parse_args())
@@ -256,6 +276,7 @@ if __name__ == '__main__':
     gendepth  = args['depth']
     numruns   = args['numRuns']
     randseeds = args['initSeeds']
+    emitSol   = args['emit_solidity']
 
     if len(randseeds) == 0:
         randseeds = [""]
@@ -291,6 +312,10 @@ if __name__ == '__main__':
                 print('    Seed: ' + violation['seed'])
                 print('    Properties: ' + '\n              , '.join(violation['properties']))
                 print(pyk.prettyPrintKast(violation['output'], MCD_definition_llvm_symbols))
+            if emitSol:
+                print('\n### Solidity')
+                print('------------')
+                print('  ' + '\n  '.join(extractTrace(output)))
     stopTime = time.time()
 
     elapsedTime = stopTime - startTime
