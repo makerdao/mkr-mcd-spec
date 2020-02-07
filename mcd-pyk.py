@@ -244,23 +244,28 @@ generator_lucash_flap_end = generatorSequence( [ KConstant('GenVatMove_KMCD-GEN_
 def printIt(k):
     return pyk.prettyPrintKast(k, MCD_definition_llvm_symbols)
 
+def solidify(input):
+    return input.replace(' ', '_').replace('"', '')
+
 def extractCallEvent(logEvent):
     if pyk.isKApply(logEvent) and logEvent['label'] == 'ListItem':
         item = logEvent['args'][0]
         if pyk.isKApply(item) and item['label'] == 'LogNote(_,_)_KMCD-DRIVER_Event_Address_MCDStep':
-            caller = 'account' + printIt(item['args'][0]).strip('"').upper()
-            contract = printIt(item['args'][1]['args'][0]).replace(' ', '').replace('"', '')
+            caller = 'account' + solidify(printIt(item['args'][0])).upper()
+            contract = solidify(printIt(item['args'][1]['args'][0]))
             functionCall = item['args'][1]['args'][1]
             function = functionCall['label'].split('_')[0]
             if function.startswith('init'):
                 return []
             args = []
             if function.endswith('file'):
-                fileable = functionCall['args'][0]['label']
+                fileable = functionCall['args'][0]['label'].split('_')[0]
+                if fileable.endswith('-file'):
+                    fileable = fileable[0:-5]
                 fileargs = functionCall['args'][0]['args']
-                args.append('"' + fileable.split('_')[0] + '"')
+                args.append('"' + fileable + '"')
                 for arg in fileargs:
-                    args.append(printIt(arg).replace(' ', '').replace('"', ''))
+                    args.append(solidify(printIt(arg)))
             else:
                 args = [ printIt(arg) for arg in functionCall['args'] ]
             return [ caller + '.' + contract + function + '(' + ', '.join(args) + ');' ]
