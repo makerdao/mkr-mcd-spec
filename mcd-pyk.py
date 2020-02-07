@@ -260,7 +260,7 @@ def extractCallEvent(logEvent):
     if pyk.isKApply(logEvent) and logEvent['label'] == 'ListItem':
         item = logEvent['args'][0]
         if pyk.isKApply(item) and item['label'] == 'LogNote(_,_)_KMCD-DRIVER_Event_Address_MCDStep':
-            caller = 'account' + solidify(printIt(item['args'][0]))
+            caller = solidify(printIt(item['args'][0]))
             contract = solidify(printIt(item['args'][1]['args'][0]))
             functionCall = item['args'][1]['args'][1]
             function = functionCall['label'].split('_')[0]
