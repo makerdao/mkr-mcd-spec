@@ -303,7 +303,7 @@ module KMCD-GEN
 
     syntax MCDSteps ::= "GenSteps"
  // ------------------------------
-    rule <k> GenSteps => #if lengthBytes(BS) >Int 0 #then GenStep ~> GenSteps #else assert #fi </k>
+    rule <k> GenSteps => #if lengthBytes(BS) >Int 0 #then GenStep ~> GenSteps #else assert #fi ... </k>
          <random> BS </random>
 
     syntax AdminStep ::= LogGen ( MCDStep )
