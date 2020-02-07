@@ -14,43 +14,31 @@ from functools import reduce
 import pyk
 from pyk import KApply, KConstant, KSequence, KVariable, KToken, _notif, _warning, _fatal
 
-def printerr(msg):
-    sys.stderr.write(msg + '\n')
+# Definition Loading
+# ------------------
 
 MCD_main_file_name = 'kmcd-prelude'
 
-MCD_definition_llvm_dir    = '.build/defn/llvm'
-MCD_definition_haskell_dir = '.build/defn/haskell'
-
-MCD_definition_llvm_kompiled    = MCD_definition_llvm_dir    + '/' + MCD_main_file_name + '-kompiled/compiled.json'
-MCD_definition_haskell_kompiled = MCD_definition_haskell_dir + '/' + MCD_main_file_name + '-kompiled/compiled.json'
-
-def kast_llvm(inputFile, *kastArgs):
-    return pyk.kast(MCD_definition_llvm_dir, inputFile, kastArgs = list(kastArgs))
-
-def kast_haskell(inputFile, *kastArgs):
-    return pyk.kast(MCD_definition_haskell_dir, inputFile, kastArgs = list(kastArgs))
-
-def krun_llvm(inputFile, *krunArgs):
-    return pyk.krun(MCD_definition_llvm_dir, inputFile, krunArgs = list(krunArgs))
-
-def krun_haskell(inputFile, *krunArgs):
-    return pyk.krun(MCD_definition_haskell_dir, inputFile, krunArgs = list(krunArgs))
-
-def kastJSON_llvm(inputJSON, *kastArgs):
-    return pyk.kastJSON(MCD_definition_llvm_dir, inputJSON, kastArgs = list(kastArgs))
-
-def kastJSON_haskell(inputJSON, *kastArgs):
-    return pyk.kastJSON(MCD_definition_haskell_dir, inputJSON, kastArgs = list(kastArgs))
+MCD_definition_llvm_dir      = '.build/defn/llvm'
+MCD_definition_llvm_kompiled = MCD_definition_llvm_dir    + '/' + MCD_main_file_name + '-kompiled/compiled.json'
+MCD_definition_llvm          = pyk.readKastTerm(MCD_definition_llvm_kompiled)
 
 def krunJSON_llvm(inputJSON, *krunArgs):
     return pyk.krunJSON(MCD_definition_llvm_dir, inputJSON, krunArgs = list(krunArgs))
 
-def krunJSON_haskell(inputJSON, *krunArgs):
-    return pyk.krunJSON(MCD_definition_haskell_dir, inputJSON, krunArgs = list(krunArgs))
+# Symbol Table (for Unparsing)
+# ----------------------------
 
-MCD_definition_llvm    = pyk.readKastTerm(MCD_definition_llvm_kompiled)
-MCD_definition_haskell = pyk.readKastTerm(MCD_definition_haskell_kompiled)
+MCD_definition_llvm_symbols = pyk.buildSymbolTable(MCD_definition_llvm)
+
+MCD_definition_llvm_symbols [ '<_,_>Rat_RAT-COMMON_Rat_Int_Int' ]          = pyk.underbarUnparsing('_/Rat_')
+MCD_definition_llvm_symbols [ '_List_' ]                                   = lambda l1, l2: pyk.newLines([l1, l2])
+MCD_definition_llvm_symbols [ '_Set_' ]                                    = lambda s1, s2: pyk.newLines([s1, s2])
+MCD_definition_llvm_symbols [ '_Map_' ]                                    = lambda m1, m2: pyk.newLines([m1, m2])
+MCD_definition_llvm_symbols [ '___KMCD-DRIVER_MCDSteps_MCDStep_MCDSteps' ] = lambda s1, s2: pyk.newLines([s1, s2])
+
+# Building KAST MCD Terms
+# -----------------------
 
 bytesToken   = lambda x: KToken(x.decode('latin-1'), 'Bytes')
 intToken     = lambda x: KToken(str(x), 'Int')
@@ -60,44 +48,6 @@ hexIntToken  = lambda x: intToken(int(x, 16))
 addressToken = lambda x: hexIntToken(x) if x[0:2] == '0x' else stringToken(x)
 
 unimplimentedToken = lambda x: KToken('UNIMPLEMENTED << ' + str(x) + ' >>', 'K')
-
-def buildArgument(arg):
-    if arg['type'] == 'address':
-        return addressToken(arg['value'])
-    if arg['type'] == 'bytes32':
-        return hexIntToken(arg['value'])
-    if arg['type'] == 'string':
-        return stringToken(arg['value'])
-    if arg['type'] == 'uint256':
-        # TODO: Investigate rounding issues caused by casting large floats to int
-        return intToken(int(arg['value']))
-    else:
-        return unimplimentedToken('buildArgument: ' + str(arg))
-
-def buildStep(inputCall):
-    contract_name = inputCall['contract_name']
-    function_name = inputCall['function_name']
-    arguments = [buildArgument(arg) for arg in inputCall['inputs']]
-    function_klabel = function_name + '_'.join(['' for i in arguments]) + '_MKR-MCD_'
-    return KApply(contract_name + 'Step', [KApply(function_klabel, arguments)])
-
-MCD_definition_llvm_symbols    = pyk.buildSymbolTable(MCD_definition_llvm)
-MCD_definition_haskell_symbols = pyk.buildSymbolTable(MCD_definition_haskell)
-
-MCD_definition_llvm_symbols    [ '<_,_>Rat_RAT-COMMON_Rat_Int_Int' ] = pyk.underbarUnparsing('_/Rat_')
-MCD_definition_haskell_symbols [ '<_,_>Rat_RAT-COMMON_Rat_Int_Int' ] = pyk.underbarUnparsing('_/Rat_')
-
-MCD_definition_llvm_symbols    [ '_List_' ] = lambda l1, l2: pyk.newLines([l1, l2])
-MCD_definition_haskell_symbols [ '_List_' ] = lambda l1, l2: pyk.newLines([l1, l2])
-
-MCD_definition_llvm_symbols    [ '_Set_' ] = lambda s1, s2: pyk.newLines([s1, s2])
-MCD_definition_haskell_symbols [ '_Set_' ] = lambda s1, s2: pyk.newLines([s1, s2])
-
-MCD_definition_llvm_symbols    [ '_Map_' ] = lambda m1, m2: pyk.newLines([m1, m2])
-MCD_definition_haskell_symbols [ '_Map_' ] = lambda m1, m2: pyk.newLines([m1, m2])
-
-MCD_definition_llvm_symbols    [ '___KMCD-DRIVER_MCDSteps_MCDStep_MCDSteps' ] = lambda s1, s2: pyk.newLines([s1, s2])
-MCD_definition_haskell_symbols [ '___KMCD-DRIVER_MCDSteps_MCDStep_MCDSteps' ] = lambda s1, s2: pyk.newLines([s1, s2])
 
 def randomSeedArgs(seedbytes = b''):
     return [ '-cRANDOMSEED=' + '#token("' + seedbytes.decode('latin-1') + '", "Bytes")', '-pRANDOMSEED=printf %s' ]
