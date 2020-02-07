@@ -249,9 +249,11 @@ def solidify(input):
 
 def argify(arg):
     newArg = solidify(arg)
-    if    newArg in ['Alice', 'Bobby', 'ADMIN', 'ANYONE', 'Cat', 'Dai', 'End', 'Flap', 'Flop', 'Jug', 'Pot', 'Spot', 'Vat', 'Vow'] \
-       or newArg.startswith('Flip_') or newArg.startswith('Gem_') or newArg.startswith('GemJoin_'):
-        newArg = 'address(' + newArg + ')'
+    if newArg in ['Alice', 'Bobby', 'ADMIN', 'ANYONE']:
+        newArg = 'UserLike(' + newArg + ')'
+    if     newArg in ['Cat', 'Dai', 'End', 'Flap', 'Flop', 'Jug', 'Pot', 'Spot', 'Vat', 'Vow'] \
+        or newArg.startswith('Flip_') or newArg.startswith('Gem_') or newArg.startswith('GemJoin_'):
+        newArg = newArg.replace('_', '') + "Like(" + newArg + ')'
     if newArg in ['gold']:
         newArg = '"' + newArg + '"'
     return newArg
