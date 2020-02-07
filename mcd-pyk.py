@@ -37,6 +37,9 @@ MCD_definition_llvm_symbols [ '_Set_' ]                                    = lam
 MCD_definition_llvm_symbols [ '_Map_' ]                                    = lambda m1, m2: pyk.newLines([m1, m2])
 MCD_definition_llvm_symbols [ '___KMCD-DRIVER_MCDSteps_MCDStep_MCDSteps' ] = lambda s1, s2: pyk.newLines([s1, s2])
 
+def printMCD(k):
+    return pyk.prettyPrintKast(k, MCD_definition_llvm_symbols)
+
 # Building KAST MCD Terms
 # -----------------------
 
@@ -209,9 +212,6 @@ def flattenList(input):
             output.append(fromListItem(first))
     return output
 
-def printIt(k):
-    return pyk.prettyPrintKast(k, MCD_definition_llvm_symbols)
-
 def solidify(input):
     return input.replace(' ', '_').replace('"', '')
 
@@ -228,8 +228,8 @@ def argify(arg):
 
 def extractCallEvent(logEvent):
     if pyk.isKApply(logEvent) and logEvent['label'] == 'LogNote(_,_)_KMCD-DRIVER_Event_Address_MCDStep':
-        caller = solidify(printIt(logEvent['args'][0]))
-        contract = solidify(printIt(logEvent['args'][1]['args'][0]))
+        caller = solidify(printMCD(logEvent['args'][0]))
+        contract = solidify(printMCD(logEvent['args'][1]['args'][0]))
         functionCall = logEvent['args'][1]['args'][1]
         function = functionCall['label'].split('_')[0]
         if function.startswith('init'):
@@ -244,16 +244,16 @@ def extractCallEvent(logEvent):
             fileargs = functionCall['args'][0]['args']
             args.append('"' + fileable + '"')
             for arg in fileargs:
-                args.append(argify(printIt(arg)))
+                args.append(argify(printMCD(arg)))
         else:
-            args = [ argify(printIt(arg)) for arg in functionCall['args'] ]
+            args = [ argify(printMCD(arg)) for arg in functionCall['args'] ]
         return [ caller + '.' + contract + '_' + function + '(' + ', '.join(args) + ');' ]
     elif pyk.isKApply(logEvent) and logEvent['label'] == 'TimeStep(_,_)_KMCD-DRIVER_Event_Int_Int':
-        return [ 'hevm.warp(' + printIt(logEvent['args'][0]) + ');' ]
+        return [ 'hevm.warp(' + printMCD(logEvent['args'][0]) + ');' ]
     elif pyk.isKApply(logEvent) and logEvent['label'] == 'Measure(_,_,_,_,_,_,_,_,_,_,_)_KMCD-PROPS_Measure_Rat_Map_Rat_Rat_Rat_Rat_Rat_Rat_Map_Rat_Map':
         return []
     else:
-        return [ 'UNIMPLEMENTED << ' + printIt(logEvent) + ' >>' ]
+        return [ 'UNIMPLEMENTED << ' + printMCD(logEvent) + ' >>' ]
 
 def extractTrace(config):
     (_, subst) = pyk.splitConfigFrom(config)
@@ -320,7 +320,7 @@ if __name__ == '__main__':
                 print('\n### Violation Found!')
                 print('    Seed: ' + violation['seed'])
                 print('    Properties: ' + '\n              , '.join(violation['properties']))
-                print(printIt(violation['output']))
+                print(printMCD(violation['output']))
             if emitSol:
                 print('\n### Solidity')
                 print('------------')
