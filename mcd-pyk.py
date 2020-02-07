@@ -253,7 +253,7 @@ def argify(arg):
         newArg = 'UserLike(' + newArg + ')'
     if     newArg in ['Cat', 'Dai', 'End', 'Flap', 'Flop', 'Jug', 'Pot', 'Spot', 'Vat', 'Vow'] \
         or newArg.startswith('Flip_') or newArg.startswith('Gem_') or newArg.startswith('GemJoin_'):
-        newArg = newArg.replace('_', '') + "Like(" + newArg + ')'
+        newArg = newArg.split('_')[0] + "Like(" + newArg + ')'
     if newArg in ['gold']:
         newArg = '"' + newArg + '"'
     return newArg
