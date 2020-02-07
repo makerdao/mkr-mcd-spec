@@ -355,7 +355,7 @@ if __name__ == '__main__':
             if emitSol:
                 print('\n### Solidity')
                 print('------------')
-                print('  ' + '\n  '.join(extractTrace(output)))
+                print('    ' + '\n    '.join(extractTrace(output)))
             sys.stdout.flush()
     stopTime = time.time()
 
