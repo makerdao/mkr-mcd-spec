@@ -241,8 +241,24 @@ generator_lucash_flap_end = generatorSequence( [ KConstant('GenVatMove_KMCD-GEN_
                                                ]
                                              )
 
+def printIt(k):
+    return pyk.prettyPrintKast(k, MCD_definition_llvm_symbols)
+
 def extractCallEvent(logEvent):
-    return [pyk.prettyPrintKast(logEvent, MCD_definition_llvm_symbols)]
+    if pyk.isKApply(logEvent) and logEvent['label'] == 'ListItem':
+        item = logEvent['args'][0]
+        if pyk.isKApply(item) and item['label'] == 'LogNote(_,_)_KMCD-DRIVER_Event_Address_MCDStep':
+            caller = 'account' + printIt(item['args'][0]).strip('"').upper()
+            contract = printIt(item['args'][1]['args'][0]).replace(' ', '').replace('"', '')
+            functionCall = item['args'][1]['args'][1]
+            function = functionCall['label'].split('_')[0]
+            args = [ printIt(arg) for arg in functionCall['args'] ]
+            if function.startswith('init'):
+                return []
+            return [ caller + '.' + contract + function + '(' + ', '.join(args) + ');' ]
+        elif pyk.isKApply(item) and item['label'] == 'TimeStep(_,_)_KMCD-DRIVER_Event_Int_Int':
+            return 'hevm.warp(' + printIt(item['args'][0]) + ');'
+    return []
 
 def extractTrace(config):
     (_, subst) = pyk.splitConfigFrom(config)
@@ -311,11 +327,12 @@ if __name__ == '__main__':
                 print('\n### Violation Found!')
                 print('    Seed: ' + violation['seed'])
                 print('    Properties: ' + '\n              , '.join(violation['properties']))
-                print(pyk.prettyPrintKast(violation['output'], MCD_definition_llvm_symbols))
+                print(printIt(violation['output']))
             if emitSol:
                 print('\n### Solidity')
                 print('------------')
                 print('  ' + '\n  '.join(extractTrace(output)))
+            sys.stdout.flush()
     stopTime = time.time()
 
     elapsedTime = stopTime - startTime
