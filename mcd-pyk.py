@@ -14,8 +14,8 @@ from functools import reduce
 import pyk
 from pyk import KApply, KConstant, KSequence, KVariable, KToken, _notif, _warning, _fatal
 
-# Definition Loading
-# ------------------
+# Definition Loading/Running
+# --------------------------
 
 MCD_main_file_name = 'kmcd-prelude'
 
@@ -23,8 +23,11 @@ MCD_definition_llvm_dir      = '.build/defn/llvm'
 MCD_definition_llvm_kompiled = MCD_definition_llvm_dir    + '/' + MCD_main_file_name + '-kompiled/compiled.json'
 MCD_definition_llvm          = pyk.readKastTerm(MCD_definition_llvm_kompiled)
 
-def krunJSON_llvm(inputJSON, *krunArgs):
+def krun(inputJSON, *krunArgs):
     return pyk.krunJSON(MCD_definition_llvm_dir, inputJSON, krunArgs = list(krunArgs))
+
+def randomSeedArgs(seedbytes = b''):
+    return [ '-cRANDOMSEED=' + '#token("' + seedbytes.decode('latin-1') + '", "Bytes")', '-pRANDOMSEED=printf %s' ]
 
 # Symbol Table (for Unparsing)
 # ----------------------------
@@ -52,12 +55,9 @@ addressToken = lambda x: hexIntToken(x) if x[0:2] == '0x' else stringToken(x)
 
 unimplimentedToken = lambda x: KToken('UNIMPLEMENTED << ' + str(x) + ' >>', 'K')
 
-def randomSeedArgs(seedbytes = b''):
-    return [ '-cRANDOMSEED=' + '#token("' + seedbytes.decode('latin-1') + '", "Bytes")', '-pRANDOMSEED=printf %s' ]
-
 def get_init_config(init_term):
     kast_json = { 'format': 'KAST', 'version': 1, 'term': init_term }
-    (_, init_config, _) = krunJSON_llvm(kast_json, *randomSeedArgs())
+    (_, init_config, _) = krun(kast_json, *randomSeedArgs())
     return pyk.splitConfigFrom(init_config)
 
 def detect_violations(config):
@@ -311,7 +311,7 @@ if __name__ == '__main__':
             init_cells['K_CELL']      = genSteps
 
             initial_configuration = sanitizeBytes(pyk.substitute(symbolic_configuration, init_cells))
-            (_, output, _) = krunJSON_llvm({ 'format': 'KAST' , 'version': 1 , 'term': initial_configuration }, '--term', '--no-sort-collections')
+            (_, output, _) = krun({ 'format': 'KAST' , 'version': 1 , 'term': initial_configuration }, '--term', '--no-sort-collections')
             print()
             violations = detect_violations(output)
             if len(violations) > 0:
