@@ -112,6 +112,7 @@ def consJoin(elements, join, unit, assoc = False):
 
 genStep  = KConstant('GenStep_KMCD-GEN_GenStep')
 genSteps = KConstant('GenSteps_KMCD-GEN_MCDSteps')
+snapshot = KConstant('snapshot_KMCD-GEN_AdminStep')
 
 def mcdSteps(steps):
     return consJoin(steps, '___KMCD-DRIVER_MCDSteps_MCDStep_MCDSteps', '.MCDSteps_KMCD-DRIVER_MCDSteps')
@@ -318,7 +319,7 @@ if __name__ == '__main__':
             curRandSeed = bytearray(randseed, 'utf-8') + randombytes(gendepth)
 
             init_cells['RANDOM_CELL'] = bytesToken(curRandSeed)
-            init_cells['K_CELL']      = genSteps
+            init_cells['K_CELL']      = KSequence([snapshot, genSteps, snapshot])
 
             initial_configuration = sanitizeBytes(pyk.substitute(symbolic_configuration, init_cells))
             (_, output, _) = krun({ 'format': 'KAST' , 'version': 1 , 'term': initial_configuration }, '--term', '--no-sort-collections')
