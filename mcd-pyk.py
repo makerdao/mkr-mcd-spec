@@ -247,16 +247,27 @@ def printIt(k):
 def solidify(input):
     return input.replace(' ', '_').replace('"', '')
 
+def argify(arg):
+    newArg = solidify(arg)
+    if    newArg in ['Alice', 'Bobby', 'ADMIN', 'ANYONE', 'Cat', 'Dai', 'End', 'Flap', 'Flop', 'Jug', 'Pot', 'Spot', 'Vat', 'Vow'] \
+       or newArg.startswith('Flip_') or newArg.startswith('Gem_') or newArg.startswith('GemJoin_'):
+        newArg = 'address(' + newArg + ')'
+    if newArg in ['gold']:
+        newArg = '"' + newArg + '"'
+    return newArg
+
 def extractCallEvent(logEvent):
     if pyk.isKApply(logEvent) and logEvent['label'] == 'ListItem':
         item = logEvent['args'][0]
         if pyk.isKApply(item) and item['label'] == 'LogNote(_,_)_KMCD-DRIVER_Event_Address_MCDStep':
-            caller = 'account' + solidify(printIt(item['args'][0])).upper()
+            caller = 'account' + solidify(printIt(item['args'][0]))
             contract = solidify(printIt(item['args'][1]['args'][0]))
             functionCall = item['args'][1]['args'][1]
             function = functionCall['label'].split('_')[0]
             if function.startswith('init'):
                 return []
+            if function.endswith('Cage'):
+                function = 'cage'
             args = []
             if function.endswith('file'):
                 fileable = functionCall['args'][0]['label'].split('_')[0]
@@ -265,10 +276,10 @@ def extractCallEvent(logEvent):
                 fileargs = functionCall['args'][0]['args']
                 args.append('"' + fileable + '"')
                 for arg in fileargs:
-                    args.append(solidify(printIt(arg)))
+                    args.append(argify(printIt(arg)))
             else:
-                args = [ printIt(arg) for arg in functionCall['args'] ]
-            return [ caller + '.' + contract + function + '(' + ', '.join(args) + ');' ]
+                args = [ argify(printIt(arg)) for arg in functionCall['args'] ]
+            return [ caller + '.' + contract + '_' + function + '(' + ', '.join(args) + ');' ]
         elif pyk.isKApply(item) and item['label'] == 'TimeStep(_,_)_KMCD-DRIVER_Event_Int_Int':
             return 'hevm.warp(' + printIt(item['args'][0]) + ');'
     return []
