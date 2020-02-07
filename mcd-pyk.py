@@ -300,6 +300,8 @@ def extractCallEvent(logEvent):
         return [ caller + '.' + contract + '_' + function + '(' + ', '.join(args) + ');' ]
     elif pyk.isKApply(logEvent) and logEvent['label'] == 'TimeStep(_,_)_KMCD-DRIVER_Event_Int_Int':
         return [ 'hevm.warp(' + printIt(logEvent['args'][0]) + ');' ]
+    elif pyk.isKApply(logEvent) and logEvent['label'] == 'Measure(_,_,_,_,_,_,_,_,_,_,_)_KMCD-PROPS_Measure_Rat_Map_Rat_Rat_Rat_Rat_Rat_Rat_Map_Rat_Map':
+        return []
     else:
         return [ 'UNIMPLEMENTED << ' + printIt(logEvent) + ' >>' ]
 
