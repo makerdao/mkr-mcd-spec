@@ -300,7 +300,8 @@ def extractCallEvent(logEvent):
         return [ caller + '.' + contract + '_' + function + '(' + ', '.join(args) + ');' ]
     elif pyk.isKApply(logEvent) and logEvent['label'] == 'TimeStep(_,_)_KMCD-DRIVER_Event_Int_Int':
         return [ 'hevm.warp(' + printIt(logEvent['args'][0]) + ');' ]
-    return []
+    else:
+        return [ 'UNIMPLEMENTED << ' + printIt(logEvent) + ' >>' ]
 
 def extractTrace(config):
     (_, subst) = pyk.splitConfigFrom(config)
