@@ -249,9 +249,11 @@ def solidify(input):
 
 def argify(arg):
     newArg = solidify(arg)
-    if    newArg in ['Alice', 'Bobby', 'ADMIN', 'ANYONE', 'Cat', 'Dai', 'End', 'Flap', 'Flop', 'Jug', 'Pot', 'Spot', 'Vat', 'Vow'] \
-       or newArg.startswith('Flip_') or newArg.startswith('Gem_') or newArg.startswith('GemJoin_'):
-        newArg = 'address(' + newArg + ')'
+    if newArg in ['Alice', 'Bobby', 'ADMIN', 'ANYONE']:
+        newArg = 'UserLike(' + newArg + ')'
+    if     newArg in ['Cat', 'Dai', 'End', 'Flap', 'Flop', 'Jug', 'Pot', 'Spot', 'Vat', 'Vow']
+        or newArg.startswith('Flip_') or newArg.startswith('Gem_') or newArg.startswith('GemJoin_'):
+        newArg = newArg.lower().replace('_', '') + "Like(" + newArg + ')'
     if newArg in ['gold']:
         newArg = '"' + newArg + '"'
     return newArg
@@ -260,7 +262,7 @@ def extractCallEvent(logEvent):
     if pyk.isKApply(logEvent) and logEvent['label'] == 'ListItem':
         item = logEvent['args'][0]
         if pyk.isKApply(item) and item['label'] == 'LogNote(_,_)_KMCD-DRIVER_Event_Address_MCDStep':
-            caller = 'account' + solidify(printIt(item['args'][0]))
+            caller = solidify(printIt(item['args'][0]))
             contract = solidify(printIt(item['args'][1]['args'][0]))
             functionCall = item['args'][1]['args'][1]
             function = functionCall['label'].split('_')[0]
