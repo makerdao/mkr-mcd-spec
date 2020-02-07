@@ -307,8 +307,12 @@ def extractTrace(config):
     pEvents = subst['PROCESSED_EVENTS_CELL']
     log_events = flattenList(pEvents)
     call_events = []
+    last_event = None
     for event in log_events:
-        call_events.extend(extractCallEvent(event))
+        if pyk.isKApply(event) and event['label'] == 'Measure(_,_,_,_,_,_,_,_,_,_,_)_KMCD-PROPS_Measure_Rat_Map_Rat_Rat_Rat_Rat_Rat_Rat_Map_Rat_Map':
+            if last_event is not None:
+                call_events.extend(extractCallEvent(last_event))
+        last_event = event
     return call_events
 
 mcdArgs = argparse.ArgumentParser()
