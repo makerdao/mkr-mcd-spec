@@ -307,9 +307,9 @@ module KMCD-GEN
          <random> BS </random>
 
     syntax AdminStep ::= LogGen ( MCDStep )
-    syntax Event ::= GenStep       ( Bytes , MCDStep )
-                   | GenStepFailed ( Bytes , GenStep )
- // --------------------------------------------------
+    syntax Event ::= GenStep       ( Bytes , MCDStep ) [klabel(LogGenStep)      , symbol]
+                   | GenStepFailed ( Bytes , GenStep ) [klabel(LogGenStepFailed), symbol]
+ // -------------------------------------------------------------------------------------
     rule <k> LogGen(MCDSTEP) => MCDSTEP ... </k>
          <used-random> BS => .Bytes </used-random>
          <events> ... (.List => ListItem(GenStep(BS, MCDSTEP))) </events>
