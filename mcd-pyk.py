@@ -235,7 +235,7 @@ def argify(arg):
     return newArg
 
 def extractCallEvent(logEvent):
-    if pyk.isKApply(logEvent) and logEvent['label'] == 'LogNote(_,_)_KMCD-DRIVER_Event_Address_MCDStep':
+    if pyk.isKApply(logEvent) and logEvent['label'] == 'LogNote':
         caller = solidify(printMCD(logEvent['args'][0]))
         contract = solidify(printMCD(logEvent['args'][1]['args'][0]))
         functionCall = logEvent['args'][1]['args'][1]
@@ -256,9 +256,9 @@ def extractCallEvent(logEvent):
         else:
             args = [ argify(printMCD(arg)) for arg in functionCall['args'] ]
         return [ caller + '.' + contract + '_' + function + '(' + ', '.join(args) + ');' ]
-    elif pyk.isKApply(logEvent) and logEvent['label'] == 'TimeStep(_,_)_KMCD-DRIVER_Event_Int_Int':
+    elif pyk.isKApply(logEvent) and logEvent['label'] == 'LogTimeStep':
         return [ 'hevm.warp(' + printMCD(logEvent['args'][0]) + ');' ]
-    elif pyk.isKApply(logEvent) and logEvent['label'] == 'Measure(_,_,_,_,_,_,_,_,_,_,_)_KMCD-PROPS_Measure_Rat_Map_Rat_Rat_Rat_Rat_Rat_Rat_Map_Rat_Map':
+    elif pyk.isKApply(logEvent) and logEvent['label'] == 'LogMeasure':
         return []
     else:
         return [ 'UNIMPLEMENTED << ' + printMCD(logEvent) + ' >>' ]
@@ -270,7 +270,7 @@ def extractTrace(config):
     call_events = []
     last_event = None
     for event in log_events:
-        if pyk.isKApply(event) and event['label'] == 'Measure(_,_,_,_,_,_,_,_,_,_,_)_KMCD-PROPS_Measure_Rat_Map_Rat_Rat_Rat_Rat_Rat_Rat_Map_Rat_Map':
+        if pyk.isKApply(event) and event['label'] == 'LogMeasure':
             if last_event is not None:
                 call_events.extend(extractCallEvent(last_event))
         last_event = event
