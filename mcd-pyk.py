@@ -276,6 +276,22 @@ def extractTrace(config):
         last_event = event
     return call_events
 
+def noRewriteToDots(config):
+    (cfg, subst) = pyk.splitConfigFrom(config)
+    for cell in subst.keys():
+        if not pyk.isKRewrite(subst[cell]):
+            subst[cell] = pyk.ktokenDots
+    return pyk.substitute(cfg, subst)
+
+def extractStateDelta(config):
+    (_, subst) = pyk.splitConfigFrom(config)
+    snapshots = subst['KMCD_SNAPSHOTS_CELL']
+    [preState, postState] = flattenList(snapshots)
+    stateDelta = pyk.pushDownRewrites(pyk.KRewrite(preState, postState))
+    stateDelta = noRewriteToDots(stateDelta)
+    stateDelta = pyk.collapseDots(stateDelta)
+    return printMCD(stateDelta)
+
 # Main Functionality
 # ------------------
 
@@ -328,17 +344,26 @@ if __name__ == '__main__':
             if len(violations) > 0:
                 violation = { 'properties': violations , 'seed': str(curRandSeed), 'output': output }
                 all_violations.append(violation)
-                print('\n### Violation Found!')
+                print()
+                print('### Violation Found')
+                print('-------------------')
                 print('    Seed: ' + violation['seed'])
                 print('    Properties: ' + '\n              , '.join(violation['properties']))
                 print(printMCD(violation['output']))
             if emitSol:
-                print('\n### Solidity')
+                print()
+                print('### Solidity')
                 print('#### ID:'+str(i))
                 print('------------')
                 print('    ' + '\n    '.join(extractTrace(output)))
-                print('\n------------')
+                print()
+                print('------------')
                 print('### /Solidity')
+                print()
+                print('### State Delta')
+                print('---------------')
+                print()
+                print(extractStateDelta(output))
             sys.stdout.flush()
     stopTime = time.time()
 
