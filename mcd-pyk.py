@@ -241,6 +241,24 @@ generator_lucash_flap_end = generatorSequence( [ KConstant('GenVatMove_KMCD-GEN_
                                                ]
                                              )
 
+def fromListItem(input):
+    if pyk.isKApply(input) and input['label'] == 'ListItem':
+        return input['args'][0]
+    return input
+
+def flattenList(input):
+    if not (pyk.isKApply(input) and input['label'] == '_List_'):
+        return [fromListItem(input)]
+    output = []
+    work = input['args']
+    while len(work) > 0:
+        first = work.pop(0)
+        if pyk.isKApply(first) and first['label'] == '_List_':
+            work.extend(first['args'])
+        else:
+            output.append(fromListItem(first))
+    return output
+
 def printIt(k):
     return pyk.prettyPrintKast(k, MCD_definition_llvm_symbols)
 
@@ -259,47 +277,39 @@ def argify(arg):
     return newArg
 
 def extractCallEvent(logEvent):
-    if pyk.isKApply(logEvent) and logEvent['label'] == 'ListItem':
-        item = logEvent['args'][0]
-        if pyk.isKApply(item) and item['label'] == 'LogNote(_,_)_KMCD-DRIVER_Event_Address_MCDStep':
-            caller = solidify(printIt(item['args'][0]))
-            contract = solidify(printIt(item['args'][1]['args'][0]))
-            functionCall = item['args'][1]['args'][1]
-            function = functionCall['label'].split('_')[0]
-            if function.startswith('init'):
-                return []
-            if function.endswith('Cage'):
-                function = 'cage'
-            args = []
-            if function.endswith('file'):
-                fileable = functionCall['args'][0]['label'].split('_')[0]
-                if fileable.endswith('-file'):
-                    fileable = fileable[0:-5]
-                fileargs = functionCall['args'][0]['args']
-                args.append('"' + fileable + '"')
-                for arg in fileargs:
-                    args.append(argify(printIt(arg)))
-            else:
-                args = [ argify(printIt(arg)) for arg in functionCall['args'] ]
-            return [ caller + '.' + contract + '_' + function + '(' + ', '.join(args) + ');' ]
-        elif pyk.isKApply(item) and item['label'] == 'TimeStep(_,_)_KMCD-DRIVER_Event_Int_Int':
-            return [ 'hevm.warp(' + printIt(item['args'][0]) + ');' ]
+    if pyk.isKApply(logEvent) and logEvent['label'] == 'LogNote(_,_)_KMCD-DRIVER_Event_Address_MCDStep':
+        caller = solidify(printIt(logEvent['args'][0]))
+        contract = solidify(printIt(logEvent['args'][1]['args'][0]))
+        functionCall = logEvent['args'][1]['args'][1]
+        function = functionCall['label'].split('_')[0]
+        if function.startswith('init'):
+            return []
+        if function.endswith('Cage'):
+            function = 'cage'
+        args = []
+        if function.endswith('file'):
+            fileable = functionCall['args'][0]['label'].split('_')[0]
+            if fileable.endswith('-file'):
+                fileable = fileable[0:-5]
+            fileargs = functionCall['args'][0]['args']
+            args.append('"' + fileable + '"')
+            for arg in fileargs:
+                args.append(argify(printIt(arg)))
+        else:
+            args = [ argify(printIt(arg)) for arg in functionCall['args'] ]
+        return [ caller + '.' + contract + '_' + function + '(' + ', '.join(args) + ');' ]
+    elif pyk.isKApply(logEvent) and logEvent['label'] == 'TimeStep(_,_)_KMCD-DRIVER_Event_Int_Int':
+        return [ 'hevm.warp(' + printIt(logEvent['args'][0]) + ');' ]
     return []
 
 def extractTrace(config):
     (_, subst) = pyk.splitConfigFrom(config)
     pEvents = subst['PROCESSED_EVENTS_CELL']
-    if not (pyk.isKApply(pEvents) and pEvents['label'] == '_List_'):
-        return extractCallEvent(pEvents)
-    callevents = []
-    worklist = pEvents['args']
-    while len(worklist) > 0:
-        first = worklist.pop(0)
-        if pyk.isKApply(first) and first['label'] == '_List_':
-            worklist.extend(first['args'])
-        else:
-            callevents.extend(extractCallEvent(first))
-    return callevents
+    log_events = flattenList(pEvents)
+    call_events = []
+    for event in log_events:
+        call_events.extend(extractCallEvent(event))
+    return call_events
 
 mcdArgs = argparse.ArgumentParser()
 
