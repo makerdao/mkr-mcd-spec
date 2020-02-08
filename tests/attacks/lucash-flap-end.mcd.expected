@@ -112,10 +112,10 @@
             SetItem ( Vow )
           </flap-wards>
           <flap-bids>
-            .Map
+            1 |-> FlapBid ( 20 , 1000000000 , "Bobby" , 10800 , 172800 )
           </flap-bids>
           <flap-kicks>
-            0
+            1
           </flap-kicks>
           <flap-live>
             false
@@ -208,8 +208,8 @@
             </gem-wards>
             <gem-balances>
               "Alice" |-> 10
-              "Bobby" |-> 9
-              GemJoin "gold" |-> 21
+              "Bobby" |-> 10
+              GemJoin "gold" |-> 20
             </gem-balances>
           </gem>
         </gems>
@@ -330,31 +330,31 @@
           </vat-urns>
           <vat-gem>
             { "gold" , "Alice" } |-> 0
-            { "gold" , "Bobby" } |-> 1
+            { "gold" , "Bobby" } |-> 0
             { "gold" , End } |-> 0
             { "gold" , Flip "gold" } |-> 0
           </vat-gem>
           <vat-dai>
-            "Alice" |-> 9
+            "Alice" |-> 10
             "Bobby" |-> 10
             End |-> 0
             Flap |-> 0
             Pot |-> 0
-            Vow |-> 1
+            Vow |-> 1000000000
           </vat-dai>
           <vat-sin>
             "Alice" |-> 0
             "Bobby" |-> 0
-            End |-> 0
+            End |-> 1000000000
             Flap |-> 0
             Pot |-> 0
             Vow |-> 0
           </vat-sin>
           <vat-debt>
-            20
+            1000000020
           </vat-debt>
           <vat-vice>
-            0
+            1000000000
           </vat-vice>
           <vat-Line>
             1000000000000
@@ -600,16 +600,6 @@
       Vow |-> 0 , 0 , Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
-      ListItem ( LogNote ( ADMIN , Gem "MKR" . mint Flap 20 ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 20
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 ) )
       ListItem ( LogNote ( ADMIN , Vat . file Line 1000000000000 ) )
       ListItem ( Measure ( 0 , End |-> 0
       Flap |-> 0
@@ -617,7 +607,7 @@
       Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
       Flap |-> 0
       Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 20
+      Vow |-> 0 , 0 , Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
       ListItem ( LogNote ( ADMIN , Vat . initIlk "gold" ) )
@@ -627,7 +617,7 @@
       Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
       Flap |-> 0
       Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 20
+      Vow |-> 0 , 0 , Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
       ListItem ( LogNote ( ADMIN , Vat . file spot "gold" 3000000000 ) )
@@ -637,7 +627,7 @@
       Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
       Flap |-> 0
       Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 20
+      Vow |-> 0 , 0 , Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
       ListItem ( LogNote ( ADMIN , Vat . file line "gold" 1000000000000 ) )
@@ -647,7 +637,7 @@
       Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
       Flap |-> 0
       Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 20
+      Vow |-> 0 , 0 , Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
       ListItem ( LogNote ( ADMIN , Vow . file bump 1000000000 ) )
@@ -657,7 +647,17 @@
       Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
       Flap |-> 0
       Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 20
+      Vow |-> 0 , 0 , Flap |-> 0
+      GemJoin "MKR" |-> 0
+      Vow |-> 0 ) )
+      ListItem ( LogNote ( ADMIN , Vow . file hump 0 ) )
+      ListItem ( Measure ( 0 , End |-> 0
+      Flap |-> 0
+      Pot |-> 0
+      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
+      Flap |-> 0
+      Pot |-> 0
+      Vow |-> 0 , 0 , Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
       ListItem ( LogNote ( ADMIN , Gem "gold" . initUser "Alice" ) )
@@ -667,7 +667,7 @@
       Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
       Flap |-> 0
       Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 20
+      Vow |-> 0 , 0 , Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
       ListItem ( LogNote ( ADMIN , Gem "gold" . initUser "Bobby" ) )
@@ -677,7 +677,7 @@
       Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
       Flap |-> 0
       Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 20
+      Vow |-> 0 , 0 , Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
       ListItem ( LogNote ( ADMIN , Gem "gold" . mint "Alice" 20 ) )
@@ -687,7 +687,7 @@
       Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
       Flap |-> 0
       Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 20
+      Vow |-> 0 , 0 , Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
       ListItem ( LogNote ( ADMIN , Gem "gold" . mint "Bobby" 20 ) )
@@ -697,7 +697,7 @@
       Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
       Flap |-> 0
       Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 20
+      Vow |-> 0 , 0 , Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
       ListItem ( LogNote ( ADMIN , Gem "MKR" . initUser "Alice" ) )
@@ -708,7 +708,7 @@
       Flap |-> 0
       Pot |-> 0
       Vow |-> 0 , 0 , "Alice" |-> 0
-      Flap |-> 20
+      Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
       ListItem ( LogNote ( ADMIN , Gem "MKR" . initUser "Bobby" ) )
@@ -720,7 +720,7 @@
       Pot |-> 0
       Vow |-> 0 , 0 , "Alice" |-> 0
       "Bobby" |-> 0
-      Flap |-> 20
+      Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
       ListItem ( LogNote ( ADMIN , Pot . initUser "Alice" ) )
@@ -732,7 +732,7 @@
       Pot |-> 0
       Vow |-> 0 , 0 , "Alice" |-> 0
       "Bobby" |-> 0
-      Flap |-> 20
+      Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
       ListItem ( LogNote ( ADMIN , Pot . initUser "Bobby" ) )
@@ -744,7 +744,7 @@
       Pot |-> 0
       Vow |-> 0 , 0 , "Alice" |-> 0
       "Bobby" |-> 0
-      Flap |-> 20
+      Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
       ListItem ( LogNote ( ADMIN , Vat . initUser "Alice" ) )
@@ -758,7 +758,7 @@
       Pot |-> 0
       Vow |-> 0 , 0 , "Alice" |-> 0
       "Bobby" |-> 0
-      Flap |-> 20
+      Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
       ListItem ( LogNote ( ADMIN , Vat . initGem "gold" "Alice" ) )
@@ -772,7 +772,7 @@
       Pot |-> 0
       Vow |-> 0 , 0 , "Alice" |-> 0
       "Bobby" |-> 0
-      Flap |-> 20
+      Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
       ListItem ( LogNote ( ADMIN , Vat . initCDP "gold" "Alice" ) )
@@ -786,7 +786,7 @@
       Pot |-> 0
       Vow |-> 0 , 0 , "Alice" |-> 0
       "Bobby" |-> 0
-      Flap |-> 20
+      Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
       ListItem ( LogNote ( ADMIN , Vat . initUser "Bobby" ) )
@@ -802,7 +802,7 @@
       Pot |-> 0
       Vow |-> 0 , 0 , "Alice" |-> 0
       "Bobby" |-> 0
-      Flap |-> 20
+      Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
       ListItem ( LogNote ( ADMIN , Vat . initGem "gold" "Bobby" ) )
@@ -818,7 +818,7 @@
       Pot |-> 0
       Vow |-> 0 , 0 , "Alice" |-> 0
       "Bobby" |-> 0
-      Flap |-> 20
+      Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
       ListItem ( LogNote ( ADMIN , Vat . initCDP "gold" "Bobby" ) )
@@ -834,7 +834,7 @@
       Pot |-> 0
       Vow |-> 0 , 0 , "Alice" |-> 0
       "Bobby" |-> 0
-      Flap |-> 20
+      Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
       ListItem ( LogNote ( "Alice" , Vat . hope Pot ) )
@@ -850,7 +850,7 @@
       Pot |-> 0
       Vow |-> 0 , 0 , "Alice" |-> 0
       "Bobby" |-> 0
-      Flap |-> 20
+      Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
       ListItem ( LogNote ( "Alice" , Vat . hope Flip "gold" ) )
@@ -866,7 +866,7 @@
       Pot |-> 0
       Vow |-> 0 , 0 , "Alice" |-> 0
       "Bobby" |-> 0
-      Flap |-> 20
+      Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
       ListItem ( LogNote ( "Alice" , Vat . hope End ) )
@@ -882,7 +882,7 @@
       Pot |-> 0
       Vow |-> 0 , 0 , "Alice" |-> 0
       "Bobby" |-> 0
-      Flap |-> 20
+      Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
       ListItem ( LogNote ( "Bobby" , Vat . hope Pot ) )
@@ -898,7 +898,7 @@
       Pot |-> 0
       Vow |-> 0 , 0 , "Alice" |-> 0
       "Bobby" |-> 0
-      Flap |-> 20
+      Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
       ListItem ( LogNote ( "Bobby" , Vat . hope Flip "gold" ) )
@@ -914,7 +914,7 @@
       Pot |-> 0
       Vow |-> 0 , 0 , "Alice" |-> 0
       "Bobby" |-> 0
-      Flap |-> 20
+      Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
       ListItem ( LogNote ( "Bobby" , Vat . hope End ) )
@@ -930,7 +930,7 @@
       Pot |-> 0
       Vow |-> 0 , 0 , "Alice" |-> 0
       "Bobby" |-> 0
-      Flap |-> 20
+      Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
       ListItem ( LogNote ( "Alice" , Vat . slip "gold" "Alice" 10 ) )
@@ -948,7 +948,7 @@
       Pot |-> 0
       Vow |-> 0 , 0 , "Alice" |-> 0
       "Bobby" |-> 0
-      Flap |-> 20
+      Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
       ListItem ( LogNote ( "Bobby" , Vat . slip "gold" "Bobby" 10 ) )
@@ -966,7 +966,7 @@
       Pot |-> 0
       Vow |-> 0 , 0 , "Alice" |-> 0
       "Bobby" |-> 0
-      Flap |-> 20
+      Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
       ListItem ( LogNote ( "Alice" , Vat . frob "gold" "Alice" "Alice" "Alice" 10 10 ) )
@@ -982,7 +982,7 @@
       Pot |-> 0
       Vow |-> 0 , 0 , "Alice" |-> 0
       "Bobby" |-> 0
-      Flap |-> 20
+      Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
       ListItem ( LogNote ( "Bobby" , Vat . frob "gold" "Bobby" "Bobby" "Bobby" 10 10 ) )
@@ -998,7 +998,7 @@
       Pot |-> 0
       Vow |-> 0 , 0 , "Alice" |-> 0
       "Bobby" |-> 0
-      Flap |-> 20
+      Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
       ListItem ( LogNote ( ADMIN , End . initBag "Alice" ) )
@@ -1014,7 +1014,7 @@
       Pot |-> 0
       Vow |-> 0 , 0 , "Alice" |-> 0
       "Bobby" |-> 0
-      Flap |-> 20
+      Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
       ListItem ( LogNote ( ADMIN , End . initBag "Bobby" ) )
@@ -1030,7 +1030,7 @@
       Pot |-> 0
       Vow |-> 0 , 0 , "Alice" |-> 0
       "Bobby" |-> 0
-      Flap |-> 20
+      Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
       ListItem ( LogNote ( ADMIN , End . initOut "gold" "Alice" ) )
@@ -1046,7 +1046,7 @@
       Pot |-> 0
       Vow |-> 0 , 0 , "Alice" |-> 0
       "Bobby" |-> 0
-      Flap |-> 20
+      Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
       ListItem ( LogNote ( ADMIN , End . initOut "gold" "Bobby" ) )
@@ -1062,55 +1062,89 @@
       Pot |-> 0
       Vow |-> 0 , 0 , "Alice" |-> 0
       "Bobby" |-> 0
-      Flap |-> 20
+      Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
-      ListItem ( LogNote ( "Alice" , Vat . move "Alice" Vow 1 ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 9
+      ListItem ( LogNote ( ADMIN , Gem "MKR" . mint "Bobby" 20 ) )
+      ListItem ( Measure ( 20 , "Alice" |-> 10
       "Bobby" |-> 10
       End |-> 0
       Flap |-> 0
       Pot |-> 0
-      Vow |-> 1 , 1 , 0 , 20 , 0 , 0 , 0 , "Alice" |-> 9
+      Vow |-> 0 , 1 , 0 , 20 , 0 , 0 , 0 , "Alice" |-> 10
       "Bobby" |-> 10
       End |-> 0
       Flap |-> 0
       Pot |-> 0
-      Vow |-> 1 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      Flap |-> 20
+      Vow |-> 0 , 0 , "Alice" |-> 0
+      "Bobby" |-> 20
+      Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
-      ListItem ( LogNote ( "Bobby" , Vat . slip "gold" "Bobby" 1 ) )
-      ListItem ( LogNote ( "Bobby" , Gem "gold" . transferFrom "Bobby" GemJoin "gold" 1 ) )
-      ListItem ( LogNote ( "Bobby" , GemJoin "gold" . join "Bobby" 1 ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 9
+      ListItem ( LogNote ( ADMIN , Vat . suck End Vow 1000000000 ) )
+      ListItem ( Measure ( 1000000020 , "Alice" |-> 10
       "Bobby" |-> 10
       End |-> 0
       Flap |-> 0
       Pot |-> 0
-      Vow |-> 1 , 1 , 0 , 20 , 0 , 0 , 0 , "Alice" |-> 9
+      Vow |-> 1000000000 , 1 , 0 , 20 , 1000000000 , 0 , 0 , "Alice" |-> 10
       "Bobby" |-> 10
       End |-> 0
       Flap |-> 0
       Pot |-> 0
-      Vow |-> 1 , 0 , "Alice" |-> 0
+      Vow |-> 1000000000 , 0 , "Alice" |-> 0
+      "Bobby" |-> 20
+      Flap |-> 0
+      GemJoin "MKR" |-> 0
+      Vow |-> 0 ) )
+      ListItem ( LogNote ( Vow , Vat . move Vow Flap 1000000000 ) )
+      ListItem ( FlapKick ( Vow , 1 , 1000000000 , 0 ) )
+      ListItem ( LogNote ( ADMIN , Vow . flap ) )
+      ListItem ( Measure ( 1000000020 , "Alice" |-> 10
+      "Bobby" |-> 10
+      End |-> 0
+      Flap |-> 1000000000
+      Pot |-> 0
+      Vow |-> 0 , 1 , 0 , 20 , 1000000000 , 0 , 1000000000 , "Alice" |-> 10
+      "Bobby" |-> 10
+      End |-> 0
+      Flap |-> 1000000000
+      Pot |-> 0
+      Vow |-> 0 , 0 , "Alice" |-> 0
+      "Bobby" |-> 20
+      Flap |-> 0
+      GemJoin "MKR" |-> 0
+      Vow |-> 0 ) )
+      ListItem ( LogNote ( "Bobby" , Gem "MKR" . move "Bobby" Vow 0 ) )
+      ListItem ( LogNote ( "Bobby" , Gem "MKR" . move "Bobby" Flap 20 ) )
+      ListItem ( LogNote ( "Bobby" , Flap . tend 1 1000000000 20 ) )
+      ListItem ( Measure ( 1000000020 , "Alice" |-> 10
+      "Bobby" |-> 10
+      End |-> 0
+      Flap |-> 1000000000
+      Pot |-> 0
+      Vow |-> 0 , 1 , 0 , 20 , 1000000000 , 0 , 1000000000 , "Alice" |-> 10
+      "Bobby" |-> 10
+      End |-> 0
+      Flap |-> 1000000000
+      Pot |-> 0
+      Vow |-> 0 , 20 , "Alice" |-> 0
       "Bobby" |-> 0
       Flap |-> 20
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
       ListItem ( LogNote ( "Alice" , Vat . hope Flap ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 9
+      ListItem ( Measure ( 1000000020 , "Alice" |-> 10
       "Bobby" |-> 10
       End |-> 0
-      Flap |-> 0
+      Flap |-> 1000000000
       Pot |-> 0
-      Vow |-> 1 , 1 , 0 , 20 , 0 , 0 , 0 , "Alice" |-> 9
+      Vow |-> 0 , 1 , 0 , 20 , 1000000000 , 0 , 1000000000 , "Alice" |-> 10
       "Bobby" |-> 10
       End |-> 0
-      Flap |-> 0
+      Flap |-> 1000000000
       Pot |-> 0
-      Vow |-> 1 , 0 , "Alice" |-> 0
+      Vow |-> 0 , 20 , "Alice" |-> 0
       "Bobby" |-> 0
       Flap |-> 20
       GemJoin "MKR" |-> 0
@@ -1118,40 +1152,40 @@
       ListItem ( Exception ( Flap . kick 1 20 ) )
       ListItem ( LogNote ( ADMIN , Vat . cage ) )
       ListItem ( LogNote ( ADMIN , Cat . cage ) )
-      ListItem ( LogNote ( Vow , Vat . move Flap Vow 0 ) )
-      ListItem ( LogNote ( End , Flap . cage 0 ) )
+      ListItem ( LogNote ( Vow , Vat . move Flap Vow 1000000000 ) )
+      ListItem ( LogNote ( End , Flap . cage 1000000000 ) )
       ListItem ( LogNote ( End , Flop . cage ) )
       ListItem ( LogNote ( End , Vat . heal 0 ) )
       ListItem ( LogNote ( ADMIN , Vow . cage ) )
       ListItem ( LogNote ( ADMIN , Pot . cage ) )
       ListItem ( LogNote ( ADMIN , End . cage ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 9
+      ListItem ( Measure ( 1000000020 , "Alice" |-> 10
       "Bobby" |-> 10
       End |-> 0
       Flap |-> 0
       Pot |-> 0
-      Vow |-> 1 , 1 , 0 , 20 , 0 , 0 , 0 , "Alice" |-> 9
+      Vow |-> 1000000000 , 1 , 0 , 20 , 1000000000 , 0 , 1000000000 , "Alice" |-> 10
       "Bobby" |-> 10
       End |-> 0
       Flap |-> 0
       Pot |-> 0
-      Vow |-> 1 , 0 , "Alice" |-> 0
+      Vow |-> 1000000000 , 20 , "Alice" |-> 0
       "Bobby" |-> 0
       Flap |-> 20
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
-      ListItem ( Exception ( Flap . yank 1 ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 9
+      ListItem ( Exception ( Flap . yank 2 ) )
+      ListItem ( Measure ( 1000000020 , "Alice" |-> 10
       "Bobby" |-> 10
       End |-> 0
       Flap |-> 0
       Pot |-> 0
-      Vow |-> 1 , 1 , 0 , 20 , 0 , 0 , 0 , "Alice" |-> 9
+      Vow |-> 1000000000 , 1 , 0 , 20 , 1000000000 , 0 , 1000000000 , "Alice" |-> 10
       "Bobby" |-> 10
       End |-> 0
       Flap |-> 0
       Pot |-> 0
-      Vow |-> 1 , 0 , "Alice" |-> 0
+      Vow |-> 1000000000 , 20 , "Alice" |-> 0
       "Bobby" |-> 0
       Flap |-> 20
       GemJoin "MKR" |-> 0
@@ -1159,12 +1193,12 @@
     </processed-events>
     <properties>
       "Debt Constant After Thaw" |-> debtConstantAfterThaw
-      "Flap Dai Consistency" |-> flapDaiConsistency
+      "Flap Dai Consistency" |-> flapDaiConsistencyEnd
       "Flap MKR Consistency" |-> flapMkrConsistency
       "Pot Interest Accumulation After End" |-> potEndInterestEnd
       "PotChi PotPie VatPot" |-> potChiPieDai ( 0 , 0 )
       "Total Backed Debt Consistency" |-> totalBackedDebtConsistency
-      "Total Bound on Debt" |-> totalDebtBoundedEnd ( 20 )
+      "Total Bound on Debt" |-> totalDebtBoundedEnd ( 1000000020 )
       "Unauthorized Flap Kick" |-> unAuthFlapKick
       "Unauthorized Flip Kick" |-> unAuthFlipKick
       "Zero-Time Pot Interest Accumulation" |-> zeroTimePotInterest
