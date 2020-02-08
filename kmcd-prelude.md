@@ -39,13 +39,30 @@ module KMCD-PRELUDE
          // Authorize Vow for Flop
          transact ADMIN Flop . rely Vow
 
+         // Account Initializations
+         // -----------------------
+
          // Initialize Vat accounts for Vow/Pot/Flap/End
          transact ADMIN Vat . initUser Vow
          transact ADMIN Vat . initUser Pot
          transact ADMIN Vat . initUser Flap
          transact ADMIN Vat . initUser End
 
-         // File Vow contract for Pot (since Pot doesn't depend on Vow?)
+         // MKR Token Setup
+         // ---------------
+
+         // "MKR" collateral and joiner
+         transact ADMIN Gem "MKR" . init
+         transact ADMIN GemJoin "MKR" . init
+
+         // Setup Flap account on MKR
+         transact ADMIN Gem "MKR" . initUser Vow
+         transact ADMIN Gem "MKR" . initUser Flap
+
+         // Miscellaneous Setup
+         // -------------------
+
+         // File Vow contract for Pot
          transact ADMIN Pot . file vow-file Vow
 
          // Allow the Flap to manipulate the Vow's balances
@@ -56,10 +73,6 @@ module KMCD-PRELUDE
 
     rule ATTACK-PRELUDE
       =>
-         // Account Initializations
-         // -----------------------
-
-
          // Collateral Setup
          // ----------------
 
@@ -84,16 +97,9 @@ module KMCD-PRELUDE
          // Initialize "gold" for End
          transact ADMIN End . initGap "gold"
 
-         // MKR Collateral Setup
-         // --------------------
+         // MKR Balances Setup
+         // ------------------
 
-         // "MKR" collateral and joiner
-         transact ADMIN Gem "MKR" . init
-         transact ADMIN GemJoin "MKR" . init
-
-         // Setup Flap account on MKR
-         transact ADMIN Gem "MKR" . initUser Vow
-         transact ADMIN Gem "MKR" . initUser Flap
          transact ADMIN Gem "MKR" . mint Flap 20
 
          // File Parameters
