@@ -97,11 +97,6 @@ module KMCD-PRELUDE
          // Initialize "gold" for End
          transact ADMIN End . initGap "gold"
 
-         // MKR Balances Setup
-         // ------------------
-
-         transact ADMIN Gem "MKR" . mint Flap 20
-
          // File Parameters
          // ---------------
 
@@ -113,6 +108,7 @@ module KMCD-PRELUDE
 
          // Setup Vow
          transact ADMIN Vow . file bump 1 ether
+         transact ADMIN Vow . file hump 0
 
          // User Setup
          // ----------

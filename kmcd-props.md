@@ -305,6 +305,7 @@ The Debt growth should be bounded in principle by the interest rates available i
     rule derive( totalDebtBoundedRun(... debt: DEBT, dsr: _  ) #as PREV , Measure(... debt: DEBT')            ) => Violated(PREV) requires DEBT' >Rat DEBT
     rule derive( totalDebtBoundedRun(... debt: DEBT, dsr: DSR)          , TimeStep(TIME, _)                   ) => totalDebtBoundedRun(... debt: DEBT +Rat (vatDaiForUser(Pot) *Rat ((DSR ^Rat TIME) -Rat 1)), dsr: DSR)
     rule derive( totalDebtBoundedRun(... debt: DEBT, dsr: DSR)          , LogNote(_ , Vat . frob _ _ _ _ _ _) ) => totalDebtBounded(... dsr: DSR)
+    rule derive( totalDebtBoundedRun(... debt: DEBT, dsr: DSR)          , LogNote(_ , Vat . suck _ _ _      ) ) => totalDebtBounded(... dsr: DSR)
     rule derive( totalDebtBoundedRun(... debt: DEBT, dsr: DSR)          , LogNote(_ , Pot . file dsr DSR')    ) => totalDebtBoundedRun(... debt: DEBT, dsr: DSR')
     rule derive( totalDebtBoundedRun(... debt: DEBT, dsr: _  )          , LogNote(_ , End . cage         )    ) => totalDebtBoundedEnd(... debt: DEBT)
 
@@ -374,9 +375,10 @@ The property checks if a successful `Pot . join` is preceded by a `TimeStep` mor
 ### Flap dai consistency
 
 ```k
-    syntax ViolationFSM ::= "flapDaiConsistency"
+    syntax ViolationFSM ::= "flapDaiConsistency" | "flapDaiConsistencyEnd"
  // --------------------------------------------
     rule derive(flapDaiConsistency, Measure(... sumOfAllFlapLots: SUM, dai: VAT_DAI)) => Violated(flapDaiConsistency) requires (SUM >Rat #lookup(VAT_DAI, Flap))
+    rule derive(flapDaiConsistency, LogNote(_ , End . cage)                         ) => flapDaiConsistencyEnd
 ```
 
 ### Flap MKR consistency

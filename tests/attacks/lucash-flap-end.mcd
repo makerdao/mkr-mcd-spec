@@ -4,14 +4,22 @@ STEPS ( ATTACK-PRELUDE )
 // Attack Sequence
 // ---------------
 
-transact "Alice" Vat . move "Alice" Vow 1
-transact "Bobby" GemJoin "gold" . join "Bobby" 1
+// Give Bobby some MKR
+transact ADMIN Gem "MKR" . mint "Bobby" 20
+
+// Cheat a little to get a Flap auction started w/o going through full surplus generation cycle
+// (dump sin into the End, out-of-sight of the accounting logic)
+transact ADMIN Vat . suck End Vow 1 ether
+transact ADMIN Vow . flap
+
+// Bobby bids on flap auction
+transact "Bobby" Flap . tend 1 1 ether 20
 
 transact "Alice" Vat . hope Flap
 transact "Alice" Flap . kick 1 20 // step that shouldn't go through
 
 transact ADMIN End . cage
-transact "Alice" Flap . yank 1
+transact "Alice" Flap . yank 2
 
 // Now Alice has 20 MKR, at the cost of 1 Dai
 
