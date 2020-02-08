@@ -1,3 +1,4 @@
+STEPS ( DEPLOY-PRELUDE )
 STEPS ( ATTACK-PRELUDE )
 
 AddGenerator ( GenEndCage

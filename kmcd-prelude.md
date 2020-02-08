@@ -12,8 +12,9 @@ module KMCD-PRELUDE
     rule <k> STEPS ( MCDSTEPS ) => MCDSTEPS ... </k>
 
     syntax MCDSteps ::= "ATTACK-PRELUDE" [klabel(ATTACK-PRELUDE), symbol]
+                      | "DEPLOY-PRELUDE" [klabel(DEPLOY-PRELUDE), symbol]
  // ---------------------------------------------------------------------
-    rule ATTACK-PRELUDE
+    rule DEPLOY-PRELUDE
       =>
          // Contract Authorizations
          // -----------------------
@@ -38,9 +39,6 @@ module KMCD-PRELUDE
          // Authorize Vow for Flop
          transact ADMIN Flop . rely Vow
 
-         // Account Initializations
-         // -----------------------
-
          // Initialize Vat accounts for Vow/Pot/Flap/End
          transact ADMIN Vat . initUser Vow
          transact ADMIN Vat . initUser Pot
@@ -49,6 +47,18 @@ module KMCD-PRELUDE
 
          // File Vow contract for Pot (since Pot doesn't depend on Vow?)
          transact ADMIN Pot . file vow-file Vow
+
+         // Allow the Flap to manipulate the Vow's balances
+         transact Vow Vat . hope Flap
+
+         .MCDSteps
+      [macro]
+
+    rule ATTACK-PRELUDE
+      =>
+         // Account Initializations
+         // -----------------------
+
 
          // Collateral Setup
          // ----------------
