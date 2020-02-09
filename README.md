@@ -87,12 +87,16 @@ make test-execution -j4
 Running Random Tester
 ---------------------
 
+### Environment Setup
+
 Make sure that `pyk` library is on `PYTHONPATH`, and `krun` is on `PATH`:
 
 ```sh
 export PYTHONPATH=./deps/k/k-distribution/target/release/k/lib
 export PATH=./deps/k/k-distribution/target/release/k/bin:$PATH
 ```
+
+### `mcd-pyk.py` Usage
 
 You can ask the random tester for help:
 
@@ -115,3 +119,30 @@ Additionally, the option `--emit-solidity` is supported, which will make best-ef
 ```
 
 This emitted Solidity code can be used for conformance testing the Solidity implementation.
+
+### Speed up with `kserver`
+
+By running KServer while working with `mcd-pyk.py`, you will see about 4x the throughput in simulations.
+This basically keeps a "warmed up" JVM around, so that we don't have to start over each time.
+
+To start the KServer run:
+
+```sh
+spawn-kserver kserver.log
+```
+
+And to stop the KServer, run:
+
+```sh
+stop-kserver
+```
+
+You can make sure that the KServer is being used by running `tail -F kserver.log`.
+As `mcd-pyk.py` is running, you should see entries like this being added:
+
+```kserver.log
+NGSession 10: org.kframework.main.Main exited with status 0
+NGSession 12: org.kframework.main.Main exited with status 0
+NGSession 14: org.kframework.main.Main exited with status 0
+NGSession 16: org.kframework.main.Main exited with status 0
+```
