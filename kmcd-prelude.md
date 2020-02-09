@@ -12,8 +12,9 @@ module KMCD-PRELUDE
     rule <k> STEPS ( MCDSTEPS ) => MCDSTEPS ... </k>
 
     syntax MCDSteps ::= "ATTACK-PRELUDE" [klabel(ATTACK-PRELUDE), symbol]
+                      | "DEPLOY-PRELUDE" [klabel(DEPLOY-PRELUDE), symbol]
  // ---------------------------------------------------------------------
-    rule ATTACK-PRELUDE
+    rule DEPLOY-PRELUDE
       =>
          // Contract Authorizations
          // -----------------------
@@ -47,9 +48,31 @@ module KMCD-PRELUDE
          transact ADMIN Vat . initUser Flap
          transact ADMIN Vat . initUser End
 
-         // File Vow contract for Pot (since Pot doesn't depend on Vow?)
+         // MKR Token Setup
+         // ---------------
+
+         // "MKR" collateral and joiner
+         transact ADMIN Gem "MKR" . init
+         transact ADMIN GemJoin "MKR" . init
+
+         // Setup Flap account on MKR
+         transact ADMIN Gem "MKR" . initUser Vow
+         transact ADMIN Gem "MKR" . initUser Flap
+
+         // Miscellaneous Setup
+         // -------------------
+
+         // File Vow contract for Pot
          transact ADMIN Pot . file vow-file Vow
 
+         // Allow the Flap to manipulate the Vow's balances
+         transact Vow Vat . hope Flap
+
+         .MCDSteps
+      [macro]
+
+    rule ATTACK-PRELUDE
+      =>
          // Collateral Setup
          // ----------------
 
@@ -74,18 +97,6 @@ module KMCD-PRELUDE
          // Initialize "gold" for End
          transact ADMIN End . initGap "gold"
 
-         // MKR Collateral Setup
-         // --------------------
-
-         // "MKR" collateral and joiner
-         transact ADMIN Gem "MKR" . init
-         transact ADMIN GemJoin "MKR" . init
-
-         // Setup Flap account on MKR
-         transact ADMIN Gem "MKR" . initUser Vow
-         transact ADMIN Gem "MKR" . initUser Flap
-         transact ADMIN Gem "MKR" . mint Flap 20
-
          // File Parameters
          // ---------------
 
@@ -97,6 +108,7 @@ module KMCD-PRELUDE
 
          // Setup Vow
          transact ADMIN Vow . file bump 1 ether
+         transact ADMIN Vow . file hump 0
 
          // User Setup
          // ----------

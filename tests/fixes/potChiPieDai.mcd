@@ -1,3 +1,4 @@
+STEPS ( DEPLOY-PRELUDE )
 STEPS ( ATTACK-PRELUDE )
 
 transact ADMIN Pot . file dsr 23 /Rat 20
