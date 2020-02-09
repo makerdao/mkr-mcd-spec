@@ -376,7 +376,7 @@ The property checks if a successful `Pot . join` is preceded by a `TimeStep` mor
 
 ```k
     syntax ViolationFSM ::= "flapDaiConsistency" | "flapDaiConsistencyEnd"
- // --------------------------------------------
+ // ----------------------------------------------------------------------
     rule derive(flapDaiConsistency, Measure(... sumOfAllFlapLots: SUM, dai: VAT_DAI)) => Violated(flapDaiConsistency) requires (SUM >Rat #lookup(VAT_DAI, Flap))
     rule derive(flapDaiConsistency, LogNote(_ , End . cage)                         ) => flapDaiConsistencyEnd
 ```
