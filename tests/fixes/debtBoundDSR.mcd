@@ -1,3 +1,4 @@
+STEPS ( DEPLOY-PRELUDE )
 STEPS ( ATTACK-PRELUDE )
 
 transact "Bobby" Vat . move "Bobby" Pot 985 /Rat 128
