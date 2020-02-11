@@ -285,14 +285,29 @@ def noRewriteToDots(config):
             subst[cell] = pyk.ktokenDots
     return pyk.substitute(cfg, subst)
 
-def extractStateDelta(config):
+def buildAssert(contract, field, value):
+    return contract + '.get_' + field + ' == ' + printMCD(value) + ';'
+
+def extractAsserts(config):
     (_, subst) = pyk.splitConfigFrom(config)
     snapshots = subst['KMCD_SNAPSHOTS_CELL']
     [preState, postState] = flattenList(snapshots)
     stateDelta = pyk.pushDownRewrites(pyk.KRewrite(preState, postState))
+    (_, subst) = pyk.splitConfigFrom(stateDelta)
+    asserts = []
+    for cell in subst.keys():
+        if pyk.isKRewrite(subst[cell]):
+            contract = cell.split('_')[0]
+            contract = contract[0] + contract[1:].lower()
+            contract = contract + 'Like'
+            field    = cell.split('_')[1].lower()
+            if contract == 'VatLike' and field == 'line':
+                field = 'Line'
+            rhs = subst[cell]['rhs']
+            asserts.append(buildAssert(contract, field, rhs))
     stateDelta = noRewriteToDots(stateDelta)
     stateDelta = pyk.collapseDots(stateDelta)
-    return printMCD(stateDelta)
+    return (printMCD(stateDelta), asserts)
 
 # Main Functionality
 # ------------------
@@ -353,11 +368,18 @@ if __name__ == '__main__':
                 print('    Properties: ' + '\n              , '.join(violation['properties']))
                 print(printMCD(violation['output']))
             if emitSol:
+                trace = extractTrace(output)
+                (stateDelta, asserts) = extractAsserts(output)
                 print()
                 print('### Solidity')
                 print('#### ID:'+str(i))
                 print('------------')
-                print('    ' + '\n    '.join(extractTrace(output)))
+                print()
+                print('    // Test Run')
+                print('    ' + '\n    '.join(trace))
+                print()
+                print('    // Assertions')
+                print('    ' + '\n    '.join(asserts))
                 print()
                 print('------------')
                 print('### /Solidity')
@@ -365,7 +387,7 @@ if __name__ == '__main__':
                 print('### State Delta')
                 print('---------------')
                 print()
-                print(extractStateDelta(output))
+                print(stateDelta)
             sys.stdout.flush()
     stopTime = time.time()
 
