@@ -19,6 +19,8 @@ The semantics is broken into several sub-modules.
 
 -   [kmcd-driver](kmcd-driver.md) - common functionality in all modules.
 -   [kmcd](kmcd.md) - union all sub-modules.
+-   [kmcd-props](kmcd-props.md) - statement of properties that we would like to hold for the model.
+-   [kmcd-prelude](kmcd-prelude.md) - random testing harness.
 
 ### Accounting System
 
@@ -57,12 +59,20 @@ make build -j4
 
 If you are on Arch Linux, add `K_BUILD_TYPE=Release` to `make deps`, as the `Debug` and `FastBuild` versions do not work.
 
-Running Attack Tests
+Whenever you update the K submodule (which happens regularly automatically on CI), you may need to do:
+
+```sh
+rm -rf deps
+git submodule update --init --recursive
+make deps
+make build -j4
+```
+
+Running Simple Tests
 --------------------
 
-In directory `tests/attacks`, we have some example attacks on the system which should not go through.
-In the fixed version of the system, they do not go through.
-You can run an attack sequence with:
+In directory `tests/`, we have some example runs of the system.
+You can run on these simulations directly to get an idea of what the output of the system looks like.
 
 ```sh
 ./kmcd run --backend llvm tests/attacks/lucash-flip-end.mcd
@@ -77,11 +87,21 @@ make test-execution -j4
 Running Random Tester
 ---------------------
 
+### Environment Setup
+
 Make sure that `pyk` library is on `PYTHONPATH`, and `krun` is on `PATH`:
 
 ```sh
 export PYTHONPATH=./deps/k/k-distribution/target/release/k/lib
 export PATH=./deps/k/k-distribution/target/release/k/bin:$PATH
+```
+
+### `mcd-pyk.py` Usage
+
+You can ask the random tester for help:
+
+```sh
+./mcd-pyk.py random-test --help
 ```
 
 Then you can start the random tester running, with depth 100, up to 3000 times:
@@ -90,4 +110,39 @@ Then you can start the random tester running, with depth 100, up to 3000 times:
 ./mcd-pyk.py random-test 100 3000 &> random-test.out
 ```
 
-Then you can watch `random-test.out` for assertion violations it finds.
+Then you can watch `random-test.out` for assertion violations it finds (search for `Violation Found`).
+
+Additionally, the option `--emit-solidity` is supported, which will make best-effort emissions of Solidity code:
+
+```sh
+./mcd-pyk.py random-test 100 3000 --emit-solidity &> random-test.out
+```
+
+This emitted Solidity code can be used for conformance testing the Solidity implementation.
+
+### Speed up with `kserver`
+
+By running KServer while working with `mcd-pyk.py`, you will see about 4x the throughput in simulations.
+This basically keeps a "warmed up" JVM around, so that we don't have to start over each time.
+
+To start the KServer run:
+
+```sh
+spawn-kserver kserver.log
+```
+
+And to stop the KServer, run:
+
+```sh
+stop-kserver
+```
+
+You can make sure that the KServer is being used by running `tail -F kserver.log`.
+As `mcd-pyk.py` is running, you should see entries like this being added:
+
+```kserver.log
+NGSession 10: org.kframework.main.Main exited with status 0
+NGSession 12: org.kframework.main.Main exited with status 0
+NGSession 14: org.kframework.main.Main exited with status 0
+NGSession 16: org.kframework.main.Main exited with status 0
+```
