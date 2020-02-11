@@ -241,14 +241,93 @@ generator_lucash_flap_end = generatorSequence( [ KConstant('GenVatMove_KMCD-GEN_
                                                ]
                                              )
 
+def fromListItem(input):
+    if pyk.isKApply(input) and input['label'] == 'ListItem':
+        return input['args'][0]
+    return input
+
+def flattenList(input):
+    if not (pyk.isKApply(input) and input['label'] == '_List_'):
+        return [fromListItem(input)]
+    output = []
+    work = input['args']
+    while len(work) > 0:
+        first = work.pop(0)
+        if pyk.isKApply(first) and first['label'] == '_List_':
+            work.extend(first['args'])
+        else:
+            output.append(fromListItem(first))
+    return output
+
+def printIt(k):
+    return pyk.prettyPrintKast(k, MCD_definition_llvm_symbols)
+
+def solidify(input):
+    return input.replace(' ', '_').replace('"', '')
+
+def argify(arg):
+    newArg = solidify(arg)
+    if newArg in ['Alice', 'Bobby', 'ADMIN', 'ANYONE']:
+        newArg = 'UserLike(' + newArg + ')'
+    if     newArg in ['Cat', 'Dai', 'End', 'Flap', 'Flop', 'Jug', 'Pot', 'Spot', 'Vat', 'Vow'] \
+        or newArg.startswith('Flip_') or newArg.startswith('Gem_') or newArg.startswith('GemJoin_'):
+        newArg = newArg.split('_')[0] + "Like(" + newArg + ')'
+    if newArg in ['gold']:
+        newArg = '"' + newArg + '"'
+    return newArg
+
+def extractCallEvent(logEvent):
+    if pyk.isKApply(logEvent) and logEvent['label'] == 'LogNote(_,_)_KMCD-DRIVER_Event_Address_MCDStep':
+        caller = solidify(printIt(logEvent['args'][0]))
+        contract = solidify(printIt(logEvent['args'][1]['args'][0]))
+        functionCall = logEvent['args'][1]['args'][1]
+        function = functionCall['label'].split('_')[0]
+        if function.startswith('init'):
+            return []
+        if function.endswith('Cage'):
+            function = 'cage'
+        args = []
+        if function.endswith('file'):
+            fileable = functionCall['args'][0]['label'].split('_')[0]
+            if fileable.endswith('-file'):
+                fileable = fileable[0:-5]
+            fileargs = functionCall['args'][0]['args']
+            args.append('"' + fileable + '"')
+            for arg in fileargs:
+                args.append(argify(printIt(arg)))
+        else:
+            args = [ argify(printIt(arg)) for arg in functionCall['args'] ]
+        return [ caller + '.' + contract + '_' + function + '(' + ', '.join(args) + ');' ]
+    elif pyk.isKApply(logEvent) and logEvent['label'] == 'TimeStep(_,_)_KMCD-DRIVER_Event_Int_Int':
+        return [ 'hevm.warp(' + printIt(logEvent['args'][0]) + ');' ]
+    elif pyk.isKApply(logEvent) and logEvent['label'] == 'Measure(_,_,_,_,_,_,_,_,_,_,_)_KMCD-PROPS_Measure_Rat_Map_Rat_Rat_Rat_Rat_Rat_Rat_Map_Rat_Map':
+        return []
+    else:
+        return [ 'UNIMPLEMENTED << ' + printIt(logEvent) + ' >>' ]
+
+def extractTrace(config):
+    (_, subst) = pyk.splitConfigFrom(config)
+    pEvents = subst['PROCESSED_EVENTS_CELL']
+    log_events = flattenList(pEvents)
+    call_events = []
+    last_event = None
+    for event in log_events:
+        if pyk.isKApply(event) and event['label'] == 'Measure(_,_,_,_,_,_,_,_,_,_,_)_KMCD-PROPS_Measure_Rat_Map_Rat_Rat_Rat_Rat_Rat_Rat_Map_Rat_Map':
+            if last_event is not None:
+                call_events.extend(extractCallEvent(last_event))
+        last_event = event
+    return call_events
+
 mcdArgs = argparse.ArgumentParser()
 
 mcdCommands = mcdArgs.add_subparsers()
 
 mcdRandomTestArgs = mcdCommands.add_parser('random-test', help = 'Run random tester and check for property violations.')
-mcdRandomTestArgs.add_argument( 'depth'     , type = int ,               help = 'Number of bytes to feed as random input into each run' )
-mcdRandomTestArgs.add_argument( 'numRuns'   , type = int ,               help = 'Number of runs per random seed.'                       )
-mcdRandomTestArgs.add_argument( 'initSeeds' , type = str , nargs = '*' , help = 'Random seeds to use as run prefixes.'                  )
+mcdRandomTestArgs.add_argument( 'depth'           , type = int  ,               help = 'Number of bytes to feed as random input into each run' )
+mcdRandomTestArgs.add_argument( 'numRuns'         , type = int  ,               help = 'Number of runs per random seed.'                       )
+mcdRandomTestArgs.add_argument( 'initSeeds'       , type = str  , nargs = '*' , help = 'Random seeds to use as run prefixes.'                  )
+mcdRandomTestArgs.add_argument( '--emit-solidity' , action = 'store_true'     , help = 'Emit Solidity code reproducing the trace.'             )
+mcdRandomTestArgs.set_defaults(emit_solidity = False)
 
 if __name__ == '__main__':
     args = vars(mcdArgs.parse_args())
@@ -256,6 +335,7 @@ if __name__ == '__main__':
     gendepth  = args['depth']
     numruns   = args['numRuns']
     randseeds = args['initSeeds']
+    emitSol   = args['emit_solidity']
 
     if len(randseeds) == 0:
         randseeds = [""]
@@ -290,7 +370,12 @@ if __name__ == '__main__':
                 print('\n### Violation Found!')
                 print('    Seed: ' + violation['seed'])
                 print('    Properties: ' + '\n              , '.join(violation['properties']))
-                print(pyk.prettyPrintKast(violation['output'], MCD_definition_llvm_symbols))
+                print(printIt(violation['output']))
+            if emitSol:
+                print('\n### Solidity')
+                print('------------')
+                print('    ' + '\n    '.join(extractTrace(output)))
+            sys.stdout.flush()
     stopTime = time.time()
 
     elapsedTime = stopTime - startTime
