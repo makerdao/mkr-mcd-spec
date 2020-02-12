@@ -333,8 +333,11 @@ if __name__ == '__main__':
                 print(printMCD(violation['output']))
             if emitSol:
                 print('\n### Solidity')
+                print('#### ID:'+str(i))
                 print('------------')
                 print('    ' + '\n    '.join(extractTrace(output)))
+                print('\n------------')
+                print('### /Solidity')
             sys.stdout.flush()
     stopTime = time.time()
 
