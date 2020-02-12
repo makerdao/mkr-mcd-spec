@@ -14,43 +14,74 @@ from functools import reduce
 import pyk
 from pyk import KApply, KConstant, KSequence, KVariable, KToken, _notif, _warning, _fatal
 
-def printerr(msg):
-    sys.stderr.write(msg + '\n')
+# Definition Loading/Running
+# --------------------------
 
 MCD_main_file_name = 'kmcd-prelude'
 
-MCD_definition_llvm_dir    = '.build/defn/llvm'
-MCD_definition_haskell_dir = '.build/defn/haskell'
+MCD_definition_llvm_dir      = '.build/defn/llvm'
+MCD_definition_llvm_kompiled = MCD_definition_llvm_dir    + '/' + MCD_main_file_name + '-kompiled/compiled.json'
+MCD_definition_llvm          = pyk.readKastTerm(MCD_definition_llvm_kompiled)
 
-MCD_definition_llvm_kompiled    = MCD_definition_llvm_dir    + '/' + MCD_main_file_name + '-kompiled/compiled.json'
-MCD_definition_haskell_kompiled = MCD_definition_haskell_dir + '/' + MCD_main_file_name + '-kompiled/compiled.json'
-
-def kast_llvm(inputFile, *kastArgs):
-    return pyk.kast(MCD_definition_llvm_dir, inputFile, kastArgs = list(kastArgs))
-
-def kast_haskell(inputFile, *kastArgs):
-    return pyk.kast(MCD_definition_haskell_dir, inputFile, kastArgs = list(kastArgs))
-
-def krun_llvm(inputFile, *krunArgs):
-    return pyk.krun(MCD_definition_llvm_dir, inputFile, krunArgs = list(krunArgs))
-
-def krun_haskell(inputFile, *krunArgs):
-    return pyk.krun(MCD_definition_haskell_dir, inputFile, krunArgs = list(krunArgs))
-
-def kastJSON_llvm(inputJSON, *kastArgs):
-    return pyk.kastJSON(MCD_definition_llvm_dir, inputJSON, kastArgs = list(kastArgs))
-
-def kastJSON_haskell(inputJSON, *kastArgs):
-    return pyk.kastJSON(MCD_definition_haskell_dir, inputJSON, kastArgs = list(kastArgs))
-
-def krunJSON_llvm(inputJSON, *krunArgs):
+def krun(inputJSON, *krunArgs):
     return pyk.krunJSON(MCD_definition_llvm_dir, inputJSON, krunArgs = list(krunArgs))
 
-def krunJSON_haskell(inputJSON, *krunArgs):
-    return pyk.krunJSON(MCD_definition_haskell_dir, inputJSON, krunArgs = list(krunArgs))
+def randomSeedArgs(seedbytes = b''):
+    return [ '-cRANDOMSEED=' + '#token("' + seedbytes.decode('latin-1') + '", "Bytes")', '-pRANDOMSEED=printf %s' ]
 
-MCD_definition_llvm    = pyk.readKastTerm(MCD_definition_llvm_kompiled)
-MCD_definition_haskell = pyk.readKastTerm(MCD_definition_haskell_kompiled)
+def get_init_config(init_term):
+    kast_json = { 'format': 'KAST', 'version': 1, 'term': init_term }
+    (_, init_config, _) = krun(kast_json, *randomSeedArgs())
+    return pyk.splitConfigFrom(init_config)
+
+# Misc Utilities
+# --------------
+
+def randombytes(size):
+    return bytearray(random.getrandbits(8) for _ in range(size))
+
+def sanitizeBytes(kast):
+    def _sanitizeBytes(_kast):
+        if pyk.isKToken(_kast) and _kast['sort'] == 'Bytes':
+            if len(_kast['token']) > 2 and _kast['token'][0:2] == 'b"' and _kast['token'][-1] == '"':
+                return KToken(_kast['token'][2:-1], 'Bytes')
+        return _kast
+    return pyk.traverseBottomUp(kast, _sanitizeBytes)
+
+def fromListItem(input):
+    if pyk.isKApply(input) and input['label'] == 'ListItem':
+        return input['args'][0]
+    return input
+
+def flattenList(input):
+    if not (pyk.isKApply(input) and input['label'] == '_List_'):
+        return [fromListItem(input)]
+    output = []
+    work = input['args']
+    while len(work) > 0:
+        first = work.pop(0)
+        if pyk.isKApply(first) and first['label'] == '_List_':
+            work.extend(first['args'])
+        else:
+            output.append(fromListItem(first))
+    return output
+
+# Symbol Table (for Unparsing)
+# ----------------------------
+
+MCD_definition_llvm_symbols = pyk.buildSymbolTable(MCD_definition_llvm)
+
+MCD_definition_llvm_symbols [ '<_,_>Rat_RAT-COMMON_Rat_Int_Int' ]          = pyk.underbarUnparsing('_/Rat_')
+MCD_definition_llvm_symbols [ '_List_' ]                                   = lambda l1, l2: pyk.newLines([l1, l2])
+MCD_definition_llvm_symbols [ '_Set_' ]                                    = lambda s1, s2: pyk.newLines([s1, s2])
+MCD_definition_llvm_symbols [ '_Map_' ]                                    = lambda m1, m2: pyk.newLines([m1, m2])
+MCD_definition_llvm_symbols [ '___KMCD-DRIVER_MCDSteps_MCDStep_MCDSteps' ] = lambda s1, s2: pyk.newLines([s1, s2])
+
+def printMCD(k):
+    return pyk.prettyPrintKast(k, MCD_definition_llvm_symbols)
+
+# Building KAST MCD Terms
+# -----------------------
 
 bytesToken   = lambda x: KToken(x.decode('latin-1'), 'Bytes')
 intToken     = lambda x: KToken(str(x), 'Int')
@@ -58,66 +89,6 @@ boolToken    = lambda x: KToken(str(x).lower(), 'Bool')
 stringToken  = lambda x: KToken('"' + str(x) + '"', 'String')
 hexIntToken  = lambda x: intToken(int(x, 16))
 addressToken = lambda x: hexIntToken(x) if x[0:2] == '0x' else stringToken(x)
-
-unimplimentedToken = lambda x: KToken('UNIMPLEMENTED << ' + str(x) + ' >>', 'K')
-
-def buildArgument(arg):
-    if arg['type'] == 'address':
-        return addressToken(arg['value'])
-    if arg['type'] == 'bytes32':
-        return hexIntToken(arg['value'])
-    if arg['type'] == 'string':
-        return stringToken(arg['value'])
-    if arg['type'] == 'uint256':
-        # TODO: Investigate rounding issues caused by casting large floats to int
-        return intToken(int(arg['value']))
-    else:
-        return unimplimentedToken('buildArgument: ' + str(arg))
-
-def buildStep(inputCall):
-    contract_name = inputCall['contract_name']
-    function_name = inputCall['function_name']
-    arguments = [buildArgument(arg) for arg in inputCall['inputs']]
-    function_klabel = function_name + '_'.join(['' for i in arguments]) + '_MKR-MCD_'
-    return KApply(contract_name + 'Step', [KApply(function_klabel, arguments)])
-
-MCD_definition_llvm_symbols    = pyk.buildSymbolTable(MCD_definition_llvm)
-MCD_definition_haskell_symbols = pyk.buildSymbolTable(MCD_definition_haskell)
-
-MCD_definition_llvm_symbols    [ '<_,_>Rat_RAT-COMMON_Rat_Int_Int' ] = pyk.underbarUnparsing('_/Rat_')
-MCD_definition_haskell_symbols [ '<_,_>Rat_RAT-COMMON_Rat_Int_Int' ] = pyk.underbarUnparsing('_/Rat_')
-
-MCD_definition_llvm_symbols    [ '_List_' ] = lambda l1, l2: pyk.newLines([l1, l2])
-MCD_definition_haskell_symbols [ '_List_' ] = lambda l1, l2: pyk.newLines([l1, l2])
-
-MCD_definition_llvm_symbols    [ '_Set_' ] = lambda s1, s2: pyk.newLines([s1, s2])
-MCD_definition_haskell_symbols [ '_Set_' ] = lambda s1, s2: pyk.newLines([s1, s2])
-
-MCD_definition_llvm_symbols    [ '_Map_' ] = lambda m1, m2: pyk.newLines([m1, m2])
-MCD_definition_haskell_symbols [ '_Map_' ] = lambda m1, m2: pyk.newLines([m1, m2])
-
-MCD_definition_llvm_symbols    [ '___KMCD-DRIVER_MCDSteps_MCDStep_MCDSteps' ] = lambda s1, s2: pyk.newLines([s1, s2])
-MCD_definition_haskell_symbols [ '___KMCD-DRIVER_MCDSteps_MCDStep_MCDSteps' ] = lambda s1, s2: pyk.newLines([s1, s2])
-
-def randomSeedArgs(seedbytes = b''):
-    return [ '-cRANDOMSEED=' + '#token("' + seedbytes.decode('latin-1') + '", "Bytes")', '-pRANDOMSEED=printf %s' ]
-
-def get_init_config(init_term):
-    kast_json = { 'format': 'KAST', 'version': 1, 'term': init_term }
-    (_, init_config, _) = krunJSON_llvm(kast_json, *randomSeedArgs())
-    return pyk.splitConfigFrom(init_config)
-
-def detect_violations(config):
-    (_, configSubst) = pyk.splitConfigFrom(config)
-    properties = configSubst['PROPERTIES_CELL']
-    violations = []
-    def _gatherViolations(fsmMap):
-        if pyk.isKApply(fsmMap) and fsmMap['label'] == '_|->_':
-            if fsmMap['args'][1] == pyk.KConstant('Violated_KMCD-PROPS_ViolationFSM'):
-                violations.append(fsmMap['args'][0]['token'])
-        return fsmMap
-    pyk.traverseTopDown(properties, _gatherViolations)
-    return violations
 
 def steps(step):
     return KApply('STEPS(_)_KMCD-PRELUDE_MCDStep_MCDSteps', [step])
@@ -130,17 +101,6 @@ def depthBound(step, bound):
     else:
         _fatal('Unknown depth bound: ' + str(bound))
     return KApply('___KMCD-GEN_GenStep_GenStep_DepthBound', [step, bound])
-
-def randombytes(size):
-    return bytearray(random.getrandbits(8) for _ in range(size))
-
-def sanitizeBytes(kast):
-    def _sanitizeBytes(_kast):
-        if pyk.isKToken(_kast) and _kast['sort'] == 'Bytes':
-            if len(_kast['token']) > 2 and _kast['token'][0:2] == 'b"' and _kast['token'][-1] == '"':
-                return KToken(_kast['token'][2:-1], 'Bytes')
-        return _kast
-    return pyk.traverseBottomUp(kast, _sanitizeBytes)
 
 def consJoin(elements, join, unit, assoc = False):
     if len(elements) == 0:
@@ -241,26 +201,23 @@ generator_lucash_flap_end = generatorSequence( [ KConstant('GenVatMove_KMCD-GEN_
                                                ]
                                              )
 
-def fromListItem(input):
-    if pyk.isKApply(input) and input['label'] == 'ListItem':
-        return input['args'][0]
-    return input
+# Violation Detection
+# -------------------
 
-def flattenList(input):
-    if not (pyk.isKApply(input) and input['label'] == '_List_'):
-        return [fromListItem(input)]
-    output = []
-    work = input['args']
-    while len(work) > 0:
-        first = work.pop(0)
-        if pyk.isKApply(first) and first['label'] == '_List_':
-            work.extend(first['args'])
-        else:
-            output.append(fromListItem(first))
-    return output
+def detect_violations(config):
+    (_, configSubst) = pyk.splitConfigFrom(config)
+    properties = configSubst['PROPERTIES_CELL']
+    violations = []
+    def _gatherViolations(fsmMap):
+        if pyk.isKApply(fsmMap) and fsmMap['label'] == '_|->_':
+            if fsmMap['args'][1] == pyk.KConstant('Violated_KMCD-PROPS_ViolationFSM'):
+                violations.append(fsmMap['args'][0]['token'])
+        return fsmMap
+    pyk.traverseTopDown(properties, _gatherViolations)
+    return violations
 
-def printIt(k):
-    return pyk.prettyPrintKast(k, MCD_definition_llvm_symbols)
+# Solidity Generation
+# -------------------
 
 def solidify(input):
     return input.replace(' ', '_').replace('"', '')
@@ -278,8 +235,8 @@ def argify(arg):
 
 def extractCallEvent(logEvent):
     if pyk.isKApply(logEvent) and logEvent['label'] == 'LogNote(_,_)_KMCD-DRIVER_Event_Address_MCDStep':
-        caller = solidify(printIt(logEvent['args'][0]))
-        contract = solidify(printIt(logEvent['args'][1]['args'][0]))
+        caller = solidify(printMCD(logEvent['args'][0]))
+        contract = solidify(printMCD(logEvent['args'][1]['args'][0]))
         functionCall = logEvent['args'][1]['args'][1]
         function = functionCall['label'].split('_')[0]
         if function.startswith('init'):
@@ -294,16 +251,16 @@ def extractCallEvent(logEvent):
             fileargs = functionCall['args'][0]['args']
             args.append('"' + fileable + '"')
             for arg in fileargs:
-                args.append(argify(printIt(arg)))
+                args.append(argify(printMCD(arg)))
         else:
-            args = [ argify(printIt(arg)) for arg in functionCall['args'] ]
+            args = [ argify(printMCD(arg)) for arg in functionCall['args'] ]
         return [ caller + '.' + contract + '_' + function + '(' + ', '.join(args) + ');' ]
     elif pyk.isKApply(logEvent) and logEvent['label'] == 'TimeStep(_,_)_KMCD-DRIVER_Event_Int_Int':
-        return [ 'hevm.warp(' + printIt(logEvent['args'][0]) + ');' ]
+        return [ 'hevm.warp(' + printMCD(logEvent['args'][0]) + ');' ]
     elif pyk.isKApply(logEvent) and logEvent['label'] == 'Measure(_,_,_,_,_,_,_,_,_,_,_)_KMCD-PROPS_Measure_Rat_Map_Rat_Rat_Rat_Rat_Rat_Rat_Map_Rat_Map':
         return []
     else:
-        return [ 'UNIMPLEMENTED << ' + printIt(logEvent) + ' >>' ]
+        return [ 'UNIMPLEMENTED << ' + printMCD(logEvent) + ' >>' ]
 
 def extractTrace(config):
     (_, subst) = pyk.splitConfigFrom(config)
@@ -317,6 +274,9 @@ def extractTrace(config):
                 call_events.extend(extractCallEvent(last_event))
         last_event = event
     return call_events
+
+# Main Functionality
+# ------------------
 
 mcdArgs = argparse.ArgumentParser()
 
@@ -361,7 +321,7 @@ if __name__ == '__main__':
             init_cells['K_CELL']      = genSteps
 
             initial_configuration = sanitizeBytes(pyk.substitute(symbolic_configuration, init_cells))
-            (_, output, _) = krunJSON_llvm({ 'format': 'KAST' , 'version': 1 , 'term': initial_configuration }, '--term', '--no-sort-collections')
+            (_, output, _) = krun({ 'format': 'KAST' , 'version': 1 , 'term': initial_configuration }, '--term', '--no-sort-collections')
             print()
             violations = detect_violations(output)
             if len(violations) > 0:
@@ -370,7 +330,7 @@ if __name__ == '__main__':
                 print('\n### Violation Found!')
                 print('    Seed: ' + violation['seed'])
                 print('    Properties: ' + '\n              , '.join(violation['properties']))
-                print(printIt(violation['output']))
+                print(printMCD(violation['output']))
             if emitSol:
                 print('\n### Solidity')
                 print('------------')
