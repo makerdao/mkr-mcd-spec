@@ -285,7 +285,14 @@ def noRewriteToDots(config):
     return pyk.substitute(cfg, subst)
 
 def buildAssert(contract, field, value):
-    return contract + '.get_' + field + ' == ' + printMCD(value) + ';'
+    actual     = contract + '.' + field + '()'
+    comparator = '=='
+    if pyk.isKToken(value) and value['sort'] == 'Bool':
+        value = intToken(0)
+        if value['token'] == 'true':
+            comparator = '=/='
+    expected = printMCD(value)
+    return 'assertTrue( ' + actual + ' ' + comparator + ' ' + expected + ' );'
 
 def extractAsserts(config):
     (_, subst) = pyk.splitConfigFrom(config)
@@ -298,9 +305,8 @@ def extractAsserts(config):
         if pyk.isKRewrite(subst[cell]):
             contract = cell.split('_')[0]
             contract = contract[0] + contract[1:].lower()
-            contract = contract + 'Like'
             field    = cell.split('_')[1].lower()
-            if contract == 'VatLike' and field == 'line':
+            if contract == 'Vat' and field == 'line':
                 field = 'Line'
             rhs = subst[cell]['rhs']
             asserts.append(buildAssert(contract, field, rhs))
