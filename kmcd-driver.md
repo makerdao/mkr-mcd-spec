@@ -135,8 +135,8 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
          <events> L => L EVENTS </events>
          <frame-events> EVENTS => PREVEVENTS </frame-events>
 
-    syntax Event ::= Exception ( MCDStep )
- // --------------------------------------
+    syntax Event ::= Exception ( MCDStep ) [klabel(LogException), symbol]
+ // ---------------------------------------------------------------------
 
     syntax AdminStep ::= "exception" MCDStep
  // ----------------------------------------
@@ -161,8 +161,8 @@ Log Events
 Most operations add to the log, which stores the address which made the call and the step which is being logged.
 
 ```k
-    syntax Event ::= LogNote(Address, MCDStep)
- // ------------------------------------------
+    syntax Event ::= LogNote(Address, MCDStep) [klabel(LogNote), symbol]
+ // --------------------------------------------------------------------
 ```
 
 Base Data
@@ -207,8 +207,8 @@ Some methods rely on a timestamp.
 We simulate that here.
 
 ```k
-    syntax Event ::= TimeStep ( Int , Int )
- // ---------------------------------------
+    syntax Event ::= TimeStep ( Int , Int ) [klabel(LogTimeStep), symbol]
+ // ---------------------------------------------------------------------
 
     syntax MCDStep ::= "TimeStep"
                      | "TimeStep" Int

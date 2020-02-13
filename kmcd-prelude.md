@@ -207,6 +207,7 @@ module KMCD-GEN
     configuration
       <kmcd-random>
         <kmcd-properties/>
+        <kmcd-snapshots> .List </kmcd-snapshots>
         <kmcd-gen>
           <random> $RANDOMSEED:Bytes </random>
           <used-random> .Bytes </used-random>
@@ -221,6 +222,12 @@ module KMCD-GEN
           </generators>
         </kmcd-gen>
       </kmcd-random>
+
+    syntax AdminStep ::= "snapshot"
+ // -------------------------------
+    rule <k> snapshot => . ... </k>
+         <kmcd-state> STATE </kmcd-state>
+         <kmcd-snapshots> ... (.List => ListItem(<kmcd-state> STATE </kmcd-state>)) </kmcd-snapshots>
 
     syntax Int ::= #timeStepMax() [function]
                  | #dsrSpread()   [function]
@@ -296,13 +303,13 @@ module KMCD-GEN
 
     syntax MCDSteps ::= "GenSteps"
  // ------------------------------
-    rule <k> GenSteps => #if lengthBytes(BS) >Int 0 #then GenStep ~> GenSteps #else assert #fi </k>
+    rule <k> GenSteps => #if lengthBytes(BS) >Int 0 #then GenStep ~> GenSteps #else assert #fi ... </k>
          <random> BS </random>
 
     syntax AdminStep ::= LogGen ( MCDStep )
-    syntax Event ::= GenStep       ( Bytes , MCDStep )
-                   | GenStepFailed ( Bytes , GenStep )
- // --------------------------------------------------
+    syntax Event ::= GenStep       ( Bytes , MCDStep ) [klabel(LogGenStep)      , symbol]
+                   | GenStepFailed ( Bytes , GenStep ) [klabel(LogGenStepFailed), symbol]
+ // -------------------------------------------------------------------------------------
     rule <k> LogGen(MCDSTEP) => MCDSTEP ... </k>
          <used-random> BS => .Bytes </used-random>
          <events> ... (.List => ListItem(GenStep(BS, MCDSTEP))) </events>
@@ -562,10 +569,11 @@ module KMCD-GEN
       requires lengthBytes(BS) >Int 0
        andBool size(POT_PIES) >Int 0
 
-    rule <k> GenPotJoin ADDRESS => LogGen ( transact ADDRESS Pot . join randRatBounded(head(BS), VAT_DAI) ) ... </k>
+    rule <k> GenPotJoin ADDRESS => LogGen ( transact ADDRESS Pot . join randRatBounded(head(BS), VAT_DAI /Rat POT_CHI) ) ... </k>
          <random> BS => tail(BS) </random>
          <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
          <vat-dai> ... ADDRESS |-> VAT_DAI ... </vat-dai>
+         <pot-chi> POT_CHI </pot-chi>
       requires lengthBytes(BS) >Int 0
 
     rule <k> GenPotFileDSR => LogGen ( transact ADMIN Pot . file dsr (randRatBounded(head(BS), #dsrSpread() /Rat 100) +Rat 1) ) ... </k>

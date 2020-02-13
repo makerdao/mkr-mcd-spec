@@ -112,6 +112,7 @@ def consJoin(elements, join, unit, assoc = False):
 
 genStep  = KConstant('GenStep_KMCD-GEN_GenStep')
 genSteps = KConstant('GenSteps_KMCD-GEN_MCDSteps')
+snapshot = KConstant('snapshot_KMCD-GEN_AdminStep')
 
 def mcdSteps(steps):
     return consJoin(steps, '___KMCD-DRIVER_MCDSteps_MCDStep_MCDSteps', '.MCDSteps_KMCD-DRIVER_MCDSteps')
@@ -224,17 +225,16 @@ def solidify(input):
 
 def argify(arg):
     newArg = solidify(arg)
-    if newArg in ['Alice', 'Bobby', 'ADMIN', 'ANYONE']:
-        newArg = 'UserLike(' + newArg + ')'
-    if     newArg in ['Cat', 'Dai', 'End', 'Flap', 'Flop', 'Jug', 'Pot', 'Spot', 'Vat', 'Vow'] \
-        or newArg.startswith('Flip_') or newArg.startswith('Gem_') or newArg.startswith('GemJoin_'):
-        newArg = newArg.split('_')[0] + "Like(" + newArg + ')'
+    if    newArg in ['Alice', 'Bobby', 'ADMIN', 'ANYONE']                                     \
+       or newArg in ['Cat', 'Dai', 'End', 'Flap', 'Flop', 'Jug', 'Pot', 'Spot', 'Vat', 'Vow'] \
+       or newArg.startswith('Flip_') or newArg.startswith('Gem_') or newArg.startswith('GemJoin_'):
+        newArg = 'address(' + newArg + ')'
     if newArg in ['gold']:
         newArg = '"' + newArg + '"'
     return newArg
 
 def extractCallEvent(logEvent):
-    if pyk.isKApply(logEvent) and logEvent['label'] == 'LogNote(_,_)_KMCD-DRIVER_Event_Address_MCDStep':
+    if pyk.isKApply(logEvent) and logEvent['label'] == 'LogNote':
         caller = solidify(printMCD(logEvent['args'][0]))
         contract = solidify(printMCD(logEvent['args'][1]['args'][0]))
         functionCall = logEvent['args'][1]['args'][1]
@@ -255,9 +255,11 @@ def extractCallEvent(logEvent):
         else:
             args = [ argify(printMCD(arg)) for arg in functionCall['args'] ]
         return [ caller + '.' + contract + '_' + function + '(' + ', '.join(args) + ');' ]
-    elif pyk.isKApply(logEvent) and logEvent['label'] == 'TimeStep(_,_)_KMCD-DRIVER_Event_Int_Int':
+    elif pyk.isKApply(logEvent) and logEvent['label'] == 'LogTimeStep':
         return [ 'hevm.warp(' + printMCD(logEvent['args'][0]) + ');' ]
-    elif pyk.isKApply(logEvent) and logEvent['label'] == 'Measure(_,_,_,_,_,_,_,_,_,_,_)_KMCD-PROPS_Measure_Rat_Map_Rat_Rat_Rat_Rat_Rat_Rat_Map_Rat_Map':
+    elif pyk.isKApply(logEvent) and logEvent['label'] == 'LogException':
+        return [ '// assertRevert( ' + printMCD(logEvent) + ');' ]
+    elif pyk.isKApply(logEvent) and ( logEvent['label'] in [ 'LogMeasure' , 'LogGenStep' , 'LogGenStepFailed' ] ):
         return []
     else:
         return [ 'UNIMPLEMENTED << ' + printMCD(logEvent) + ' >>' ]
@@ -269,11 +271,48 @@ def extractTrace(config):
     call_events = []
     last_event = None
     for event in log_events:
-        if pyk.isKApply(event) and event['label'] == 'Measure(_,_,_,_,_,_,_,_,_,_,_)_KMCD-PROPS_Measure_Rat_Map_Rat_Rat_Rat_Rat_Rat_Rat_Map_Rat_Map':
+        if pyk.isKApply(event) and event['label'] == 'LogMeasure':
             if last_event is not None:
                 call_events.extend(extractCallEvent(last_event))
         last_event = event
     return call_events
+
+def noRewriteToDots(config):
+    (cfg, subst) = pyk.splitConfigFrom(config)
+    for cell in subst.keys():
+        if not pyk.isKRewrite(subst[cell]):
+            subst[cell] = pyk.ktokenDots
+    return pyk.substitute(cfg, subst)
+
+def buildAssert(contract, field, value):
+    actual     = contract + '.' + field + '()'
+    comparator = '=='
+    if pyk.isKToken(value) and value['sort'] == 'Bool':
+        value = intToken(0)
+        if value['token'] == 'true':
+            comparator = '=/='
+    expected = printMCD(value)
+    return 'assertTrue( ' + actual + ' ' + comparator + ' ' + expected + ' );'
+
+def extractAsserts(config):
+    (_, subst) = pyk.splitConfigFrom(config)
+    snapshots = subst['KMCD_SNAPSHOTS_CELL']
+    [preState, postState] = flattenList(snapshots)
+    stateDelta = pyk.pushDownRewrites(pyk.KRewrite(preState, postState))
+    (_, subst) = pyk.splitConfigFrom(stateDelta)
+    asserts = []
+    for cell in subst.keys():
+        if pyk.isKRewrite(subst[cell]):
+            contract = cell.split('_')[0]
+            contract = contract[0] + contract[1:].lower()
+            field    = cell.split('_')[1].lower()
+            if contract == 'Vat' and field == 'line':
+                field = 'Line'
+            rhs = subst[cell]['rhs']
+            asserts.append(buildAssert(contract, field, rhs))
+    stateDelta = noRewriteToDots(stateDelta)
+    stateDelta = pyk.collapseDots(stateDelta)
+    return (printMCD(stateDelta), asserts)
 
 # Main Functionality
 # ------------------
@@ -318,7 +357,7 @@ if __name__ == '__main__':
             curRandSeed = bytearray(randseed, 'utf-8') + randombytes(gendepth)
 
             init_cells['RANDOM_CELL'] = bytesToken(curRandSeed)
-            init_cells['K_CELL']      = genSteps
+            init_cells['K_CELL']      = KSequence([snapshot, genSteps, snapshot])
 
             initial_configuration = sanitizeBytes(pyk.substitute(symbolic_configuration, init_cells))
             (_, output, _) = krun({ 'format': 'KAST' , 'version': 1 , 'term': initial_configuration }, '--term', '--no-sort-collections')
@@ -327,17 +366,33 @@ if __name__ == '__main__':
             if len(violations) > 0:
                 violation = { 'properties': violations , 'seed': str(curRandSeed), 'output': output }
                 all_violations.append(violation)
-                print('\n### Violation Found!')
+                print()
+                print('### Violation Found')
+                print('-------------------')
                 print('    Seed: ' + violation['seed'])
                 print('    Properties: ' + '\n              , '.join(violation['properties']))
                 print(printMCD(violation['output']))
             if emitSol:
-                print('\n### Solidity')
+                trace = extractTrace(output)
+                (stateDelta, asserts) = extractAsserts(output)
+                print()
+                print('### Solidity')
                 print('#### ID:'+str(i))
                 print('------------')
-                print('    ' + '\n    '.join(extractTrace(output)))
-                print('\n------------')
+                print()
+                print('    // Test Run')
+                print('    ' + '\n    '.join(trace))
+                print()
+                print('    // Assertions')
+                print('    ' + '\n    '.join(asserts))
+                print()
+                print('------------')
                 print('### /Solidity')
+                print()
+                print('### State Delta')
+                print('---------------')
+                print()
+                print(stateDelta)
             sys.stdout.flush()
     stopTime = time.time()
 
