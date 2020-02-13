@@ -1208,6 +1208,9 @@
       "Zero-Time Pot Interest Accumulation" |-> zeroTimePotInterestEnd
     </properties>
   </kmcd-properties>
+  <kmcd-snapshots>
+    .List
+  </kmcd-snapshots>
   <kmcd-gen>
     <random>
       b""
