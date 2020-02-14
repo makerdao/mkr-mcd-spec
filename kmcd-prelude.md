@@ -89,6 +89,7 @@ module KMCD-PRELUDE
          // Initialize Spot for gold
          transact ADMIN Spot . init     "gold"
          transact ADMIN Spot . setPrice "gold" 1
+         transact ADMIN Spot . setMat   "gold" 1
 
          // Initialize Flipper for gold
          transact ADMIN Flip "gold" . init

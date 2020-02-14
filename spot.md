@@ -112,13 +112,17 @@ Because data isn't explicitely initialized to 0 in KMCD, we need explicit initia
 ```k
     syntax SpotAuthStep ::= "init"     String
                           | "setPrice" String Wad
+                          | "setMat"   String Ray
  // ---------------------------------------------
     rule <k> Spot . init ILKID => . ... </k>
-         <spot-ilks> ILKS => ILKS [ ILKID <- SpotIlk( ... pip: .Wad , mat: 1 ) ] </spot-ilks>
+         <spot-ilks> ILKS => ILKS [ ILKID <- SpotIlk( ... pip: .Wad, mat: 1 ) ] </spot-ilks>
       requires notBool ILKID in_keys(ILKS)
 
     rule <k> Spot . setPrice ILKID PRICE => . ... </k>
          <spot-ilks> ... ILKID |-> SpotIlk( ... pip: (_ => PRICE) ) ... </spot-ilks>
+
+   rule <k> Spot . setMat ILKID MAT => . ... </k>
+         <spot-ilks> ... ILKID |-> SpotIlk( ... mat: (_ => MAT) ) ... </spot-ilks>
 ```
 
 Spot Semantics
