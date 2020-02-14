@@ -108,6 +108,7 @@ Because data isn't explicitely initialized to 0 in KMCD, we need explicit initia
 
 -   `init`: Initialize the spotter for a given ilk.
 -   `setPrice`: Manually inject a value for the price feed of a given ilk.
+-   `setMat`: Manually inject a value for the collateralization ratio of a given ilk.
 
 ```k
     syntax SpotAuthStep ::= "init"     String
