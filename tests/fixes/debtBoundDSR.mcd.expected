@@ -934,6 +934,16 @@
       Vow |-> 0 , 0 , Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
+      ListItem ( LogNote ( ADMIN , Spot . setMat "gold" 1 ) )
+      ListItem ( Measure ( 0 , End |-> 0
+      Flap |-> 0
+      Pot |-> 0
+      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
+      Flap |-> 0
+      Pot |-> 0
+      Vow |-> 0 , 0 , Flap |-> 0
+      GemJoin "MKR" |-> 0
+      Vow |-> 0 ) )
       ListItem ( LogNote ( ADMIN , Flip "gold" . init ) )
       ListItem ( Measure ( 0 , End |-> 0
       Flap |-> 0
