@@ -324,14 +324,14 @@
             "gold" |-> Ilk ( 0 , 1 , 3000000000 , 1000000000000 , 0 )
           </vat-ilks>
           <vat-urns>
-            { "gold" , "Alice" } |-> Urn ( 0 , 0 )
-            { "gold" , "Bobby" } |-> Urn ( 0 , 0 )
+            { "gold" , "Alice" } |-> Urn ( 2999999999 /Rat 300000000 , 0 )
+            { "gold" , "Bobby" } |-> Urn ( 2999999999 /Rat 300000000 , 0 )
             { "gold" , End } |-> Urn ( 0 , 0 )
           </vat-urns>
           <vat-gem>
             { "gold" , "Alice" } |-> 0
             { "gold" , "Bobby" } |-> 0
-            { "gold" , End } |-> 20
+            { "gold" , End } |-> 1 /Rat 150000000
             { "gold" , Flip "gold" } |-> 0
           </vat-gem>
           <vat-dai>
@@ -642,7 +642,7 @@
       Vow |-> 0 , 0 , Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
-      ListItem ( LogNote ( ADMIN , Vat . file spot "gold" 3000000000 ) )
+      ListItem ( LogNote ( ADMIN , Vat . file line "gold" 1000000000000 ) )
       ListItem ( Measure ( 0 , End |-> 0
       Flap |-> 0
       Pot |-> 0
@@ -652,7 +652,8 @@
       Vow |-> 0 , 0 , Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
-      ListItem ( LogNote ( ADMIN , Vat . file line "gold" 1000000000000 ) )
+      ListItem ( LogNote ( ANYONE , Vat . file spot "gold" 3000000000 ) )
+      ListItem ( Poke ( "gold" , 3000000000 , 3000000000 ) )
       ListItem ( Measure ( 0 , End |-> 0
       Flap |-> 0
       Pot |-> 0
@@ -1127,7 +1128,7 @@
       Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
-      ListItem ( LogNote ( ADMIN , Vat . grab "gold" "Alice" End Vow -10 -10 ) )
+      ListItem ( LogNote ( ADMIN , Vat . grab "gold" "Alice" End Vow -1 /Rat 300000000 -10 ) )
       ListItem ( LogNote ( ADMIN , End . skim "gold" "Alice" ) )
       ListItem ( Measure ( 20 , "Alice" |-> 10
       "Bobby" |-> 10
@@ -1144,7 +1145,7 @@
       Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
-      ListItem ( LogNote ( ADMIN , Vat . grab "gold" "Bobby" End Vow -10 -10 ) )
+      ListItem ( LogNote ( ADMIN , Vat . grab "gold" "Bobby" End Vow -1 /Rat 300000000 -10 ) )
       ListItem ( LogNote ( ADMIN , End . skim "gold" "Bobby" ) )
       ListItem ( Measure ( 20 , "Alice" |-> 10
       "Bobby" |-> 10
