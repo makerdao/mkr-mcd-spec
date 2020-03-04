@@ -642,7 +642,7 @@
       Vow |-> 0 , 0 , Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
-      ListItem ( LogNote ( ADMIN , Vat . file spot "gold" 3000000000 ) )
+      ListItem ( LogNote ( ADMIN , Vat . file line "gold" 1000000000000 ) )
       ListItem ( Measure ( 0 , End |-> 0
       Flap |-> 0
       Pot |-> 0
@@ -652,7 +652,8 @@
       Vow |-> 0 , 0 , Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
-      ListItem ( LogNote ( ADMIN , Vat . file line "gold" 1000000000000 ) )
+      ListItem ( LogNote ( ANYONE , Vat . file spot "gold" 3000000000 ) )
+      ListItem ( Poke ( "gold" , 3000000000 , 3000000000 ) )
       ListItem ( Measure ( 0 , End |-> 0
       Flap |-> 0
       Pot |-> 0
