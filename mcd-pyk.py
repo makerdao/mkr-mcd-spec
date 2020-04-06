@@ -251,7 +251,7 @@ def argify(arg):
     return newArg
 
 def unimplemented(s):
-    return '// UNIMPLEMENTED << ' + '\n//'.join(s.split('\n')) + ' >>'
+    return '// UNIMPLEMENTED << ' + '\n    //'.join(s.split('\n')) + ' >>'
 
 def extractCallEvent(logEvent):
     if pyk.isKApply(logEvent) and logEvent['label'] == 'LogNote':
