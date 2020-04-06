@@ -51,7 +51,7 @@ def sanitizeBytes(kast):
 def fromItem(input):
     if pyk.isKApply(input) and input['label'] in [ 'ListItem' , 'SetItem' ]:
         return input['args'][0]
-    return input
+    return None
 
 def flattenAssoc(input, col, elemConverter = lambda x: x):
     if not (pyk.isKApply(input) and input['label'] == '_' + col + '_'):
@@ -74,13 +74,13 @@ def flattenSet(s):
 
 def flattenMap(m):
     def _fromMapItem(mi):
-        if isKApply(mi) and mi['label'] == '_|->_':
+        if pyk.isKApply(mi) and mi['label'] == '_|->_':
             return (mi['args'][0], mi['args'][1])
-        return mi
+        return None
     return flattenAssoc(m, 'Map', elemConverter = _fromMapItem)
 
 def kMapToDict(s, keyConvert = lambda x: x, valueConvert = lambda x: x):
-    return { keyConvert(k): valueConvert(v) for (k, v) in flattenmap(s) }
+    return { keyConvert(k): valueConvert(v) for (k, v) in flattenMap(s) }
 
 # Symbol Table (for Unparsing)
 # ----------------------------
@@ -225,12 +225,9 @@ def detect_violations(config):
     (_, configSubst) = pyk.splitConfigFrom(config)
     properties = configSubst['PROPERTIES_CELL']
     violations = []
-    def _gatherViolations(fsmMap):
-        if pyk.isKApply(fsmMap) and fsmMap['label'] == '_|->_':
-            if fsmMap['args'][1] == pyk.KConstant('Violated_KMCD-PROPS_ViolationFSM'):
-                violations.append(fsmMap['args'][0]['token'])
-        return fsmMap
-    pyk.traverseTopDown(properties, _gatherViolations)
+    for (prop, value) in flattenMap(properties):
+        if pyk.isKApply(value) and value['label'] == 'Violated(_)_KMCD-PROPS_ViolationFSM_ViolationFSM':
+            violations.append(prop['token'])
     return violations
 
 # Solidity Generation
