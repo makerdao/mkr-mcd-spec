@@ -275,9 +275,11 @@ def extractCallEvent(logEvent):
     elif pyk.isKApply(logEvent) and logEvent['label'] == 'LogTimeStep':
         return [ 'hevm.warp(' + printMCD(logEvent['args'][0]) + ');' ]
     elif pyk.isKApply(logEvent) and logEvent['label'] == 'LogException':
-        return [ '// assertRevert( ' + printMCD(logEvent) + ');' ]
+        return [ unimplemented('assertRevert( ' + printMCD(logEvent) + ');') ]
     elif pyk.isKApply(logEvent) and ( logEvent['label'] in [ 'LogMeasure' , 'LogGenStep' , 'LogGenStepFailed' ] ):
         return []
+    elif pyk.isKApply(logEvent) and ( logEvent['label'] in [ 'Bite' , 'Transfer' , 'Approval' , 'FlapKick' , 'FlipKick' , 'FlopKick' , 'Poke' ] ):
+        return [ unimplemented('assertEvent( ' + printMCD(logEvent) + ');') ]
     else:
         return [ 'UNIMPLEMENTED << ' + printMCD(logEvent) + ' >>' ]
 
