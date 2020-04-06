@@ -80,7 +80,7 @@ These praameters are set by governance:
  // -----------------------------
     rule <k> Vow . file wait WAIT => . ... </k>
          <vow-wait> _ => WAIT </vow-wait>
-      requires WAIT >=Rat 0
+      requires WAIT >=Int 0
 
     rule <k> Vow . file bump BUMP => . ... </k>
          <vow-bump> _ => BUMP </vow-bump>
