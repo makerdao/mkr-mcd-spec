@@ -220,14 +220,31 @@ def detect_violations(config):
 # Solidity Generation
 # -------------------
 
+def variablize(input):
+    return input.replace('Alice', 'alice')          \
+                .replace('Bobby', 'bobby')          \
+                .replace('ADMIN', 'admin')          \
+                .replace('ANYONE', 'anyone')        \
+                .replace('Vat', 'vat')              \
+                .replace('Vow', 'vow')              \
+                .replace('Cat', 'cat')              \
+                .replace('Pot', 'pot')              \
+                .replace('Flap', 'flap')            \
+                .replace('Flop', 'flop')            \
+                .replace('End', 'end')              \
+                .replace('Spot', 'spotter')         \
+                .replace('Flip_gold', 'goldFlip')   \
+                .replace('GemJoin_gold', 'goldJoin')
+
 def solidify(input):
-    return input.replace(' ', '_').replace('"', '')
+    return variablize(input.replace(' ', '_').replace('"', ''))
+
 
 def argify(arg):
     newArg = solidify(arg)
-    if    newArg in ['Alice', 'Bobby', 'ADMIN', 'ANYONE']                                     \
-       or newArg in ['Cat', 'Dai', 'End', 'Flap', 'Flop', 'Jug', 'Pot', 'Spot', 'Vat', 'Vow'] \
-       or newArg.startswith('Flip_') or newArg.startswith('Gem_') or newArg.startswith('GemJoin_'):
+    if    newArg in ['alice', 'bobby', 'admin', 'anyone']                                      \
+       or newArg in ['cat', 'dai', 'end', 'flap', 'flop', 'jug', 'pot', 'spotter', 'vat', 'vow'] \
+       or newArg.endswith('Flip') or newArg.endswith('Join'):
         newArg = 'address(' + newArg + ')'
     if newArg in ['gold']:
         newArg = '"' + newArg + '"'
@@ -292,7 +309,7 @@ def buildAssert(contract, field, value):
         if value['token'] == 'true':
             comparator = '=/='
     expected = printMCD(value)
-    return 'assertTrue( ' + actual + ' ' + comparator + ' ' + expected + ' );'
+    return variablize('assertTrue( ' + actual + ' ' + comparator + ' ' + expected + ' );')
 
 def extractAsserts(config):
     (_, subst) = pyk.splitConfigFrom(config)
