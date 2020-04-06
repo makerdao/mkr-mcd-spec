@@ -57,7 +57,7 @@ def flattenAssoc(input, col, elemConverter = lambda x: x):
     if not (pyk.isKApply(input) and input['label'] == '_' + col + '_'):
         return [elemConverter(input)]
     output = []
-    work = input['args']
+    work = [ arg for arg in input['args'] ]
     while len(work) > 0:
         first = work.pop(0)
         if pyk.isKApply(first) and first['label'] == '_' + col + '_':
