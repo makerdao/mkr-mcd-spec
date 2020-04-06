@@ -121,8 +121,8 @@ Flip Events
 -----------
 
 ```k
-    syntax Event ::= FlipKick(Address, String, Int, Wad, Rad, Rad, Address, Address)
- // --------------------------------------------------------------------------------
+    syntax Event ::= FlipKick(Address, String, Int, Wad, Rad, Rad, Address, Address) [klabel(FlipKick), symbol]
+ // -----------------------------------------------------------------------------------------------------------
 ```
 
 Flip Initialization

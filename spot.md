@@ -97,8 +97,8 @@ Spot Events
 -----------
 
 ```k
-    syntax Event ::= Poke(String, Wad, Ray)
- // ---------------------------------------
+    syntax Event ::= Poke(String, Wad, Ray) [klabel(Poke), symbol]
+ // --------------------------------------------------------------
 ```
 
 Spot Initialization
