@@ -250,6 +250,9 @@ def argify(arg):
         newArg = '"' + newArg + '"'
     return newArg
 
+def unimplemented(s):
+    return '// UNIMPLEMENTED << ' + s + ' >'
+
 def extractCallEvent(logEvent):
     if pyk.isKApply(logEvent) and logEvent['label'] == 'LogNote':
         caller = solidify(printMCD(logEvent['args'][0]))
@@ -281,7 +284,7 @@ def extractCallEvent(logEvent):
     elif pyk.isKApply(logEvent) and ( logEvent['label'] in [ 'Bite' , 'Transfer' , 'Approval' , 'FlapKick' , 'FlipKick' , 'FlopKick' , 'Poke' , 'NoPoke' ] ):
         return [ unimplemented('assertEvent( ' + printMCD(logEvent) + ');') ]
     else:
-        return [ 'UNIMPLEMENTED << ' + printMCD(logEvent) + ' >>' ]
+        return [ unimplemented(printMCD(logEvent)) ]
 
 def extractTrace(config):
     (_, subst) = pyk.splitConfigFrom(config)
@@ -328,7 +331,7 @@ def extractAsserts(config):
             if contract == 'Vat' and field == 'line':
                 field = 'Line'
             rhs = subst[cell]['rhs']
-            asserts.append(buildAssert(contract, field, rhs))
+            asserts.extend(buildAssert(contract, field, rhs))
     stateDelta = noRewriteToDots(stateDelta)
     stateDelta = pyk.collapseDots(stateDelta)
     return (printMCD(stateDelta), asserts)
