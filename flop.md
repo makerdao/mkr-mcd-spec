@@ -133,7 +133,7 @@ Flop Semantics
          <flop-bids> ... .Map => KICKS +Int 1 |-> FlopBid(... bid: BID, lot: LOT, guy: GAL, tic: 0, end: NOW +Int TAU) ... </flop-bids>
          <flop-kicks> KICKS => KICKS +Int 1 </flop-kicks>
          <flop-tau> TAU </flop-tau>
-         <frame-events> _ => ListItem(FlopKick(KICKS +Int 1, LOT, BID, GAL)) </frame-events>
+         <frame-events> ... (.List => ListItem(FlopKick(KICKS +Int 1, LOT, BID, GAL))) </frame-events>
 ```
 
 - tick(uint id)

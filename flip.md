@@ -158,7 +158,7 @@ Flip Semantics
            <flip-bids> ... .Map => KICKS +Int 1 |-> FlipBid( ... bid: BID, lot: LOT, guy: MSGSENDER, tic: 0, end: NOW +Int TAU, usr: USR, gal: GAL, tab: TAB ) ... </flip-bids>
            ...
          </flip>
-         <frame-events> _ => ListItem(FlipKick(MSGSENDER, ILK, KICKS +Int 1, LOT, BID, TAB, USR, GAL)) </frame-events>
+         <frame-events> ... (.List => ListItem(FlipKick(MSGSENDER, ILK, KICKS +Int 1, LOT, BID, TAB, USR, GAL))) </frame-events>
 
     syntax FlipStep ::= "tick" Int
  // ------------------------------

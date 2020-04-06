@@ -76,7 +76,7 @@ Cat Events
  // --------------------------------------------------------
     rule <k> emitBite ILK URN INK ART TAB => ID ... </k>
          <return-value> ID:Int </return-value>
-         <frame-events> _ => ListItem(Bite(ILK, URN, INK, ART, TAB, Flip ILK, ID)) </frame-events>
+         <frame-events> ... (.List => ListItem(Bite(ILK, URN, INK, ART, TAB, Flip ILK, ID))) </frame-events>
 ```
 
 File-able Fields
