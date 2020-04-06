@@ -80,18 +80,23 @@ These praameters are set by governance:
  // -----------------------------
     rule <k> Vow . file wait WAIT => . ... </k>
          <vow-wait> _ => WAIT </vow-wait>
+      requires WAIT >=Rat 0
 
     rule <k> Vow . file bump BUMP => . ... </k>
          <vow-bump> _ => BUMP </vow-bump>
+      requires WAIT >=Rat 0
 
     rule <k> Vow . file hump HUMP => . ... </k>
          <vow-hump> _ => HUMP </vow-hump>
+      requires WAIT >=Rat 0
 
     rule <k> Vow . file sump SUMP => . ... </k>
          <vow-sump> _ => SUMP </vow-sump>
+      requires WAIT >=Rat 0
 
     rule <k> Vow . file dump DUMP => . ... </k>
          <vow-dump> _ => DUMP </vow-dump>
+      requires WAIT >=Rat 0
 ```
 
 Vow Semantics
@@ -104,6 +109,7 @@ Vow Semantics
          <current-time> NOW </current-time>
          <vow-sins> ... NOW |-> (SIN' => SIN' +Rat TAB) ... </vow-sins>
          <vow-sin> SIN => SIN +Rat TAB </vow-sin>
+      requires TAB >=Rat 0
 
     syntax VowStep ::= "flog" Int
  // -----------------------------
@@ -112,7 +118,8 @@ Vow Semantics
          <vow-wait> WAIT </vow-wait>
          <vow-sins> ... ERA |-> (SIN' => 0) ... </vow-sins>
          <vow-sin> SIN => SIN -Rat SIN' </vow-sin>
-      requires ERA +Int WAIT <=Int NOW
+      requires ERA >=Int 0
+       andBool ERA +Int WAIT <=Int NOW
 
     syntax VowStep ::= "heal" Rad
  // -----------------------------
@@ -122,9 +129,9 @@ Vow Semantics
          <vat-sin> ... THIS |-> VATSIN ... </vat-sin>
          <vow-sin> SIN </vow-sin>
          <vow-ash> ASH </vow-ash>
-      requires AMOUNT <=Rat DAI
+      requires AMOUNT >=Rat 0
+       andBool AMOUNT <=Rat DAI
        andBool AMOUNT <=Rat VATSIN -Rat SIN -Rat ASH
-       andBool VATSIN >=Rat SIN +Rat ASH
 
     syntax VowStep ::= "kiss" Rad
  // -----------------------------
@@ -132,7 +139,8 @@ Vow Semantics
          <this> THIS </this>
          <vat-dai> ... THIS |-> DAI ... </vat-dai>
          <vow-ash> ASH => ASH -Rat AMOUNT </vow-ash>
-       requires AMOUNT <=Rat ASH
+       requires AMOUNT >=Rat 0
+        andBool AMOUNT <=Rat ASH
         andBool AMOUNT <=Rat DAI
 
     syntax VowStep ::= "flop"
@@ -140,14 +148,13 @@ Vow Semantics
     rule <k> Vow . flop => call Flop . kick THIS DUMP SUMP ... </k>
          <this> THIS </this>
          <vat-sin> ... THIS |-> VATSIN ... </vat-sin>
-         <vat-dai> ... THIS |-> DAI ... </vat-dai>
+         <vat-dai> ... THIS |-> VATDAI ... </vat-dai>
          <vow-sin> SIN </vow-sin>
          <vow-ash> ASH => ASH +Rat SUMP </vow-ash>
          <vow-sump> SUMP </vow-sump>
          <vow-dump> DUMP </vow-dump>
       requires SUMP <=Rat VATSIN -Rat SIN -Rat ASH
-       andBool VATSIN >=Rat SIN +Rat ASH
-       andBool DAI ==Int 0
+       andBool VATDAI ==Int 0
 
     syntax VowStep ::= "flap"
  // -------------------------
