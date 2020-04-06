@@ -262,6 +262,9 @@ def argify(arg):
         newArg = '"' + newArg + '"'
     return newArg
 
+def unimplemented(s):
+    return '// UNIMPLEMENTED << ' + s + ' >'
+
 def extractCallEvent(logEvent):
     if pyk.isKApply(logEvent) and logEvent['label'] == 'LogNote':
         caller = solidify(printMCD(logEvent['args'][0]))
@@ -291,7 +294,7 @@ def extractCallEvent(logEvent):
     elif pyk.isKApply(logEvent) and ( logEvent['label'] in [ 'LogMeasure' , 'LogGenStep' , 'LogGenStepFailed' ] ):
         return []
     else:
-        return [ 'UNIMPLEMENTED << ' + printMCD(logEvent) + ' >>' ]
+        return [ unimplemented(printMCD(logEvent)) ]
 
 def extractTrace(config):
     (_, subst) = pyk.splitConfigFrom(config)
@@ -314,26 +317,35 @@ def noRewriteToDots(config):
     return pyk.substitute(cfg, subst)
 
 def buildAssert(contract, field, value):
-    assertionTriples = []
+    assertionData = []
     if pyk.isKToken(value) and value['sort'] == 'Bool':
         actual     = contract + '.' + field + '()'
         comparator = '=='
-        expected   = intToken(0)
+        expected   = printMCD(intToken(0))
         if value['token'] == 'true':
             comparator = '=/='
-        assertionTriples.append((actual, comparator, expected))
+        assertionData.append((actual, comparator, expected, True))
     elif pyk.isKApply(value) and value['label'] == '_Map_':
         for (k, v) in flattenMap(value):
-            actual     = contract + '.' + field + '(' + argify(printMCD(k)) + ')'
-            comparator = '=='
-            expected   = 'UNIMPLEMENTED << ' + printMCD(v) + ' >>'
-            assertionTriples.append((actual, comparator, expected))
+            if pyk.isKApply(v) and v['label'] == '_Set_':
+                for si in flattenSet(v):
+                    actual     = contract + '.' + field + '(' + argify(printMCD(k)) + ', ' + argify(printMCD(si)) + ')'
+                    comparator = '=/='
+                    expected   = printMCD(intToken(0))
+                    assertionData.append((actual, comparator, expected, True))
+            else:
+                actual     = contract + '.' + field + '(' + argify(printMCD(k)) + ')'
+                comparator = '=='
+                expected   = printMCD(v)
+                assertionData.append((actual, comparator, expected, False))
     else:
         actual = contract + '.' + field + '()'
-        assertionTriples.append(('UNIMPLEMENTED << ' + actual + ' >>', '==', printMCD(value)))
-    assertions = [ 'assertTrue( ' + actual + ' ' + comparator + ' ' + expected + ' );' \
-                    for (actual, comparator, expected) in assertionTriples ]
-    return variablize('\n'.join(assertions))
+        assertionData.append((actual, '==', printMCD(value), False))
+    assertions = []
+    for (actual, comparator, expected, implemented) in assertionData:
+        aStr = 'assertTrue( ' + actual + ' ' + comparator + ' ' + expected + ' );'
+        assertions.append(aStr if implemented else unimplemented(aStr))
+    return [ variablize(a) for a in assertions ]
 
 def extractAsserts(config):
     (_, subst) = pyk.splitConfigFrom(config)
@@ -350,7 +362,7 @@ def extractAsserts(config):
             if contract == 'Vat' and field == 'line':
                 field = 'Line'
             rhs = subst[cell]['rhs']
-            asserts.append(buildAssert(contract, field, rhs))
+            asserts.extend(buildAssert(contract, field, rhs))
     stateDelta = noRewriteToDots(stateDelta)
     stateDelta = pyk.collapseDots(stateDelta)
     return (printMCD(stateDelta), asserts)
