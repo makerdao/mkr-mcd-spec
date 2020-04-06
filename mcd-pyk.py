@@ -278,7 +278,7 @@ def extractCallEvent(logEvent):
         return [ unimplemented('assertRevert( ' + printMCD(logEvent) + ');') ]
     elif pyk.isKApply(logEvent) and ( logEvent['label'] in [ 'LogMeasure' , 'LogGenStep' , 'LogGenStepFailed' ] ):
         return []
-    elif pyk.isKApply(logEvent) and ( logEvent['label'] in [ 'Bite' , 'Transfer' , 'Approval' , 'FlapKick' , 'FlipKick' , 'FlopKick' , 'Poke' ] ):
+    elif pyk.isKApply(logEvent) and ( logEvent['label'] in [ 'Bite' , 'Transfer' , 'Approval' , 'FlapKick' , 'FlipKick' , 'FlopKick' , 'Poke' , 'NoPoke' ] ):
         return [ unimplemented('assertEvent( ' + printMCD(logEvent) + ');') ]
     else:
         return [ 'UNIMPLEMENTED << ' + printMCD(logEvent) + ' >>' ]

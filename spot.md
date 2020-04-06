@@ -97,8 +97,9 @@ Spot Events
 -----------
 
 ```k
-    syntax Event ::= Poke(String, Wad, Ray) [klabel(Poke), symbol]
- // --------------------------------------------------------------
+    syntax Event ::= Poke(String, Wad, Ray) [klabel(Poke)   , symbol]
+                   | NoPoke(String)         [klabel(NoPoke) , symbol]
+ // -----------------------------------------------------------------
 ```
 
 Spot Initialization
@@ -135,7 +136,7 @@ Spot Semantics
 
     rule <k> Spot . poke ILK => . ... </k>
          <spot-ilks> ... ILK |-> SpotIlk (... pip: .Wad) ... </spot-ilks>
-         <frame-events> _ => .List </frame-events>
+         <frame-events> _ => ListItem(NoPoke(ILK)) </frame-events>
 ```
 Spot Deactivation
 -----------------
