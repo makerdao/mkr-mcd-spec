@@ -1098,6 +1098,7 @@
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
       ListItem ( LogNote ( Vow , Vat . move Vow Flap 1000000000 ) )
+      ListItem ( LogNote ( ADMIN , Flap . kick 1000000000 0 ) )
       ListItem ( FlapKick ( Vow , 1 , 1000000000 , 0 ) )
       ListItem ( LogNote ( ADMIN , Vow . flap ) )
       ListItem ( Measure ( 1000000020 , "Alice" |-> 10
