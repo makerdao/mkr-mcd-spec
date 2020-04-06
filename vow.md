@@ -84,19 +84,19 @@ These praameters are set by governance:
 
     rule <k> Vow . file bump BUMP => . ... </k>
          <vow-bump> _ => BUMP </vow-bump>
-      requires WAIT >=Rat 0
+      requires BUMP >=Rat 0
 
     rule <k> Vow . file hump HUMP => . ... </k>
          <vow-hump> _ => HUMP </vow-hump>
-      requires WAIT >=Rat 0
+      requires HUMP >=Rat 0
 
     rule <k> Vow . file sump SUMP => . ... </k>
          <vow-sump> _ => SUMP </vow-sump>
-      requires WAIT >=Rat 0
+      requires SUMP >=Rat 0
 
     rule <k> Vow . file dump DUMP => . ... </k>
          <vow-dump> _ => DUMP </vow-dump>
-      requires WAIT >=Rat 0
+      requires DUMP >=Rat 0
 ```
 
 Vow Semantics
