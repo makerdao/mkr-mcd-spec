@@ -316,12 +316,18 @@ def noRewriteToDots(config):
 def buildAssert(contract, field, value):
     assertionTriples = []
     if pyk.isKToken(value) and value['sort'] == 'Bool':
-        expected = contract + '.' + field + '()'
-        value = intToken(0)
+        actual     = contract + '.' + field + '()'
         comparator = '=='
+        expected   = intToken(0)
         if value['token'] == 'true':
             comparator = '=/='
-        assertionTriples.append((actual, comparator, value))
+        assertionTriples.append((actual, comparator, expected))
+    elif pyk.isKApply(value) and value['label'] == '_Map_':
+        for (k, v) in flattenMap(value):
+            actual     = contract + '.' + field + '(' + argify(printMCD(k)) + ')'
+            comparator = '=='
+            expected   = 'UNIMPLEMENTED << ' + printMCD(v) + ' >>'
+            assertionTriples.append((actual, comparator, expected))
     else:
         actual = contract + '.' + field + '()'
         assertionTriples.append(('UNIMPLEMENTED << ' + actual + ' >>', '==', printMCD(value)))
