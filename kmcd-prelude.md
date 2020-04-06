@@ -19,9 +19,10 @@ module KMCD-PRELUDE
          // Contract Authorizations
          // -----------------------
 
-         // Auhthorize Pot/End for Vat
+         // Auhthorize Pot/End/Spot for Vat
          transact ADMIN Vat . rely Pot
          transact ADMIN Vat . rely End
+         transact ADMIN Vat . rely Spot
 
          // Authorize End for Pot
          transact ADMIN Pot . rely End
@@ -88,7 +89,9 @@ module KMCD-PRELUDE
 
          // Initialize Spot for gold
          transact ADMIN Spot . init     "gold"
-         transact ADMIN Spot . setPrice "gold" 1
+         transact ADMIN Spot . setPrice "gold" 3 ether
+         transact ADMIN Spot . file       mat "gold" 1
+         transact ADMIN Spot . file       par 1
 
          // Initialize Flipper for gold
          transact ADMIN Flip "gold" . init
@@ -103,8 +106,9 @@ module KMCD-PRELUDE
          // Setup Vat
          transact ADMIN Vat . file Line 1000 ether
          transact ADMIN Vat . initIlk "gold"
-         transact ADMIN Vat . file spot "gold" 3 ether
          transact ADMIN Vat . file line "gold" 1000 ether
+
+         transact ANYONE Spot . poke "gold"
 
          // Setup Vow
          transact ADMIN Vow . file bump 1 ether

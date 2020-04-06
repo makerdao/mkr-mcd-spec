@@ -114,7 +114,7 @@ Because data isn't explicitely initialized to 0 in KMCD, we need explicit initia
                           | "setPrice" String Wad
  // ---------------------------------------------
     rule <k> Spot . init ILKID => . ... </k>
-         <spot-ilks> ILKS => ILKS [ ILKID <- SpotIlk( ... pip: .Wad , mat: 1 ) ] </spot-ilks>
+         <spot-ilks> ILKS => ILKS [ ILKID <- SpotIlk( ... pip: .Wad, mat: 0 ) ] </spot-ilks>
       requires notBool ILKID in_keys(ILKS)
 
     rule <k> Spot . setPrice ILKID PRICE => . ... </k>
