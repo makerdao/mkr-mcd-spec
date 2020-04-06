@@ -323,14 +323,14 @@ def buildAssert(contract, field, value):
         comparator = '=='
         expected   = printMCD(intToken(0))
         if value['token'] == 'true':
-            comparator = '=/='
+            comparator = '!='
         assertionData.append((actual, comparator, expected, True))
     elif pyk.isKApply(value) and value['label'] == '_Map_':
         for (k, v) in flattenMap(value):
             if pyk.isKApply(v) and v['label'] == '_Set_':
                 for si in flattenSet(v):
                     actual     = contract + '.' + field + '(' + argify(printMCD(k)) + ', ' + argify(printMCD(si)) + ')'
-                    comparator = '=/='
+                    comparator = '!='
                     expected   = printMCD(intToken(0))
                     assertionData.append((actual, comparator, expected, True))
             else:
