@@ -48,23 +48,39 @@ def sanitizeBytes(kast):
         return _kast
     return pyk.traverseBottomUp(kast, _sanitizeBytes)
 
-def fromListItem(input):
-    if pyk.isKApply(input) and input['label'] == 'ListItem':
+def fromItem(input):
+    if pyk.isKApply(input) and input['label'] in [ 'ListItem' , 'SetItem' ]:
         return input['args'][0]
     return input
 
-def flattenList(input):
-    if not (pyk.isKApply(input) and input['label'] == '_List_'):
-        return [fromListItem(input)]
+def flattenAssoc(input, col, elemConverter = lambda x: x):
+    if not (pyk.isKApply(input) and input['label'] == '_' + col + '_'):
+        return [elemConverter(input)]
     output = []
     work = input['args']
     while len(work) > 0:
         first = work.pop(0)
-        if pyk.isKApply(first) and first['label'] == '_List_':
+        if pyk.isKApply(first) and first['label'] == '_' + col + '_':
             work.extend(first['args'])
         else:
-            output.append(fromListItem(first))
+            output.append(elemConverter(first))
     return output
+
+def flattenList(l):
+    return flattenAssoc(l, 'List', elemConverter = fromItem)
+
+def flattenSet(s):
+    return flattenAssoc(s, 'Set', elemConverter = fromItem)
+
+def flattenMap(m):
+    def _fromMapItem(mi):
+        if isKApply(mi) and mi['label'] == '_|->_':
+            return (mi['args'][0], mi['args'][1])
+        return mi
+    return flattenAssoc(m, 'Map', elemConverter = _fromMapItem)
+
+def kMapToDict(s, keyConvert = lambda x: x, valueConvert = lambda x: x):
+    return { keyConvert(k): valueConvert(v) for (k, v) in flattenmap(s) }
 
 # Symbol Table (for Unparsing)
 # ----------------------------
@@ -238,7 +254,6 @@ def variablize(input):
 
 def solidify(input):
     return variablize(input.replace(' ', '_').replace('"', ''))
-
 
 def argify(arg):
     newArg = solidify(arg)
