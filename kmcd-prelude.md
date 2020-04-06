@@ -229,6 +229,9 @@ module KMCD-GEN
          <kmcd-state> STATE </kmcd-state>
          <kmcd-snapshots> ... (.List => ListItem(<kmcd-state> STATE </kmcd-state>)) </kmcd-snapshots>
 
+    rule <k> (. => snapshot) ~> #assert ... </k>
+         <kmcd-snapshots> ListItem(_) </kmcd-snapshots>
+
     syntax Int ::= #timeStepMax() [function]
                  | #dsrSpread()   [function]
  // ----------------------------------------
