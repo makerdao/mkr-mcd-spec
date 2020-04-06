@@ -125,23 +125,23 @@ Vow Semantics
  // -----------------------------
     rule <k> Vow . heal AMOUNT => call Vat . heal AMOUNT ... </k>
          <this> THIS </this>
-         <vat-dai> ... THIS |-> DAI ... </vat-dai>
+         <vat-dai> ... THIS |-> VATDAI ... </vat-dai>
          <vat-sin> ... THIS |-> VATSIN ... </vat-sin>
          <vow-sin> SIN </vow-sin>
          <vow-ash> ASH </vow-ash>
       requires AMOUNT >=Rat 0
-       andBool AMOUNT <=Rat DAI
+       andBool AMOUNT <=Rat VATDAI
        andBool AMOUNT <=Rat VATSIN -Rat SIN -Rat ASH
 
     syntax VowStep ::= "kiss" Rad
  // -----------------------------
     rule <k> Vow . kiss AMOUNT => call Vat . heal AMOUNT ... </k>
          <this> THIS </this>
-         <vat-dai> ... THIS |-> DAI ... </vat-dai>
+         <vat-dai> ... THIS |-> VATDAI ... </vat-dai>
          <vow-ash> ASH => ASH -Rat AMOUNT </vow-ash>
        requires AMOUNT >=Rat 0
         andBool AMOUNT <=Rat ASH
-        andBool AMOUNT <=Rat DAI
+        andBool AMOUNT <=Rat VATDAI
 
     syntax VowStep ::= "flop"
  // -------------------------
@@ -161,12 +161,12 @@ Vow Semantics
     rule <k> Vow . flap => call Flap . kick BUMP 0 ... </k>
          <this> THIS </this>
          <vat-sin> ... THIS |-> VATSIN ... </vat-sin>
-         <vat-dai> ... THIS |-> DAI ... </vat-dai>
+         <vat-dai> ... THIS |-> VATDAI ... </vat-dai>
          <vow-sin> SIN </vow-sin>
          <vow-ash> ASH </vow-ash>
          <vow-bump> BUMP </vow-bump>
          <vow-hump> HUMP </vow-hump>
-      requires DAI >=Rat VATSIN +Rat BUMP +Rat HUMP
+      requires VATDAI >=Rat VATSIN +Rat BUMP +Rat HUMP
        andBool VATSIN -Rat SIN -Rat ASH ==Rat 0
 
     syntax VowAuthStep ::= "cage"
@@ -174,14 +174,14 @@ Vow Semantics
     rule <k> Vow . cage
           => call Flap . cage FLAPDAI
           ~> call Flop . cage
-          ~> call Vat . heal minRat(DAI, VATSIN)
+          ~> call Vat . heal minRat(VATDAI, VATSIN)
          ...
          </k>
          <this> THIS </this>
          <vat-sin> ... THIS |-> VATSIN ... </vat-sin>
          <vat-dai>
            ...
-           THIS |-> DAI
+           THIS |-> VATDAI
            Flap |-> FLAPDAI
            ...
          </vat-dai>
