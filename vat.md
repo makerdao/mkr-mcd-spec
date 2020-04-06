@@ -196,8 +196,6 @@ Vat Semantics
 
 -   `Vat.cage` disables access to this instance of MCD.
 
-**TODO**: Should be `note`.
-
 ```k
     syntax VatAuthStep ::= "cage" [klabel(#VatCage), symbol]
  // --------------------------------------------------------
@@ -266,8 +264,6 @@ This is quite permissive, and would allow the account to drain all your locked c
 
 -   `Vat.init` creates a new `ilk` collateral type, failing if the given `ilk` already exists.
 
-**TODO**: Should be `note`.
-
 ```k
     syntax VatAuthStep ::= "init" String
  // ------------------------------------
@@ -282,7 +278,6 @@ This is quite permissive, and would allow the account to drain all your locked c
 
     **NOTE**: We assume that the given `ilk` for that user has already been initialized.
 
-    **TODO**: Should be `note`.
     **TODO**: Should `Vat.slip` use `Vat.consent` or `Vat.wish`?
     **TODO**: Should `Vat.flux` use `Vat.consent` or `Vat.wish`?
 
@@ -314,7 +309,6 @@ This is quite permissive, and would allow the account to drain all your locked c
 
 -   `Vat.move` transfers Dai between users.
 
-    **TODO**: Should be `note`.
     **TODO**: Should `Vat.move` use `Vat.consent` or `Vat.wish`?
 
 ```k
@@ -343,7 +337,7 @@ This is quite permissive, and would allow the account to drain all your locked c
 -   `Vat.fork` splits a given CDP up.
 
     **TODO**: Factor out `TABFROM == RATE *Int (ARTFROM -Int DART)` and `TABTO == RAT *Int (ARTTO +Int DART)` for requires.
-    **TODO**: Should have `note`, `safe`, non-`dusty`.
+    **TODO**: Should have `safe`, non-`dusty`.
     **TODO**: Should `Vat.fork` use `Vat.consent` or `Vat.wish`?
 
 ```k
@@ -379,7 +373,6 @@ This is quite permissive, and would allow the account to drain all your locked c
 -   `Vat.grab` uses collateral from user `V` to burn `<vat-sin>` for user `W` via one of `U`s CDPs.
 -   `Vat.frob` uses collateral from user `V` to mint `<vat-dai>` for user `W` via one of `U`s CDPs.
 
-**TODO**: Should be `note`.
 **TODO**: Factor out common step of "uses collateral from user `V` via one of `U`s CDPs"?
 **TODO**: Double-check implemented checks for `Vat.frob`.
 
@@ -428,8 +421,6 @@ This is quite permissive, and would allow the account to drain all your locked c
 -   `Vat.heal` cancels a users anticoins `<vat-sin>` using their `<vat-dai>`.
 -   `Vat.suck` mints `<vat-dai>` for user `V` via anticoins `<vat-sin>` for user `U`.
 
-**TODO**: Should have `note`.
-
 ```k
     syntax VatStep ::= "heal" Rad
  // -----------------------------
@@ -458,8 +449,6 @@ This is quite permissive, and would allow the account to drain all your locked c
 ### CDP Manipulation
 
 -   `Vat.fold` modifies the debt multiplier for a given ilk having user `U` absort the difference in `<vat-dai>`.
-
-**TODO**: Should be `note`.
 
 ```k
     syntax VatAuthStep ::= "fold" String Address Ray

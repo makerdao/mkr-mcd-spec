@@ -143,8 +143,6 @@ Spot Deactivation
 
 -   `Spot.cage` disables access to this instance of Spot.
 
-**TODO**: Should be `note`.
-
 ```k
     syntax SpotAuthStep ::= "cage" [klabel(#SpotCage), symbol]
  // --------------------------------------------------------
