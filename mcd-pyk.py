@@ -314,14 +314,20 @@ def noRewriteToDots(config):
     return pyk.substitute(cfg, subst)
 
 def buildAssert(contract, field, value):
-    actual     = contract + '.' + field + '()'
-    comparator = '=='
+    assertionTriples = []
     if pyk.isKToken(value) and value['sort'] == 'Bool':
+        expected = contract + '.' + field + '()'
         value = intToken(0)
+        comparator = '=='
         if value['token'] == 'true':
             comparator = '=/='
-    expected = printMCD(value)
-    return variablize('assertTrue( ' + actual + ' ' + comparator + ' ' + expected + ' );')
+        assertionTriples.append((actual, comparator, value))
+    else:
+        actual = contract + '.' + field + '()'
+        assertionTriples.append(('UNIMPLEMENTED << ' + actual + ' >>', '==', printMCD(value)))
+    assertions = [ 'assertTrue( ' + actual + ' ' + comparator + ' ' + expected + ' );' \
+                    for (actual, comparator, expected) in assertionTriples ]
+    return variablize('\n'.join(assertions))
 
 def extractAsserts(config):
     (_, subst) = pyk.splitConfigFrom(config)
