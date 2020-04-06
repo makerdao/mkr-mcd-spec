@@ -229,8 +229,8 @@ def variablize(input):
                 .replace('Vow', 'vow')              \
                 .replace('Cat', 'cat')              \
                 .replace('Pot', 'pot')              \
-                .replace('Flap', 'flap')             \
-                .replace('Flop', 'flop')             \
+                .replace('Flap', 'flap')            \
+                .replace('Flop', 'flop')            \
                 .replace('End', 'end')              \
                 .replace('Spot', 'spotter')         \
                 .replace('Flip_gold', 'goldFlip')   \
