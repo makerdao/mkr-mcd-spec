@@ -231,6 +231,7 @@ module KMCD-GEN
 
     rule <k> (. => snapshot) ~> #assert ... </k>
          <kmcd-snapshots> ListItem(_) </kmcd-snapshots>
+      [priority(60)]
 
     syntax Int ::= #timeStepMax() [function]
                  | #dsrSpread()   [function]
