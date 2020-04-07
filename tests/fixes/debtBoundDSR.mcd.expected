@@ -283,7 +283,7 @@
                 .Set
               </spot-wards>
               <spot-ilks>
-                "gold" |-> SpotIlk ( 1 , 1 )
+                "gold" |-> SpotIlk ( 3000000000 , 1 )
               </spot-ilks>
               <spot-par>
                 1
@@ -297,6 +297,7 @@
                 SetItem ( End )
                 SetItem ( GemJoin "gold" )
                 SetItem ( Pot )
+                SetItem ( Spot )
               </vat-wards>
               <vat-can>
                 "Alice" |-> SetItem ( End )
@@ -657,7 +658,7 @@
             .Set
           </spot-wards>
           <spot-ilks>
-            "gold" |-> SpotIlk ( 1 , 1 )
+            "gold" |-> SpotIlk ( 3000000000 , 1 )
           </spot-ilks>
           <spot-par>
             1
@@ -671,6 +672,7 @@
             SetItem ( End )
             SetItem ( GemJoin "gold" )
             SetItem ( Pot )
+            SetItem ( Spot )
           </vat-wards>
           <vat-can>
             "Alice" |-> SetItem ( End )
@@ -766,6 +768,8 @@
       ListItem ( LogNote ( ADMIN , Vat . rely Pot ) )
       ListItem ( Measure ( 0 , .Map , 1 , 0 , 0 , 0 , 0 , 0 , .Map , 0 , .Map ) )
       ListItem ( LogNote ( ADMIN , Vat . rely End ) )
+      ListItem ( Measure ( 0 , .Map , 1 , 0 , 0 , 0 , 0 , 0 , .Map , 0 , .Map ) )
+      ListItem ( LogNote ( ADMIN , Vat . rely Spot ) )
       ListItem ( Measure ( 0 , .Map , 1 , 0 , 0 , 0 , 0 , 0 , .Map , 0 , .Map ) )
       ListItem ( LogNote ( ADMIN , Pot . rely End ) )
       ListItem ( Measure ( 0 , .Map , 1 , 0 , 0 , 0 , 0 , 0 , .Map , 0 , .Map ) )
@@ -924,7 +928,27 @@
       Vow |-> 0 , 0 , Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
-      ListItem ( LogNote ( ADMIN , Spot . setPrice "gold" 1 ) )
+      ListItem ( LogNote ( ADMIN , Spot . setPrice "gold" 3000000000 ) )
+      ListItem ( Measure ( 0 , End |-> 0
+      Flap |-> 0
+      Pot |-> 0
+      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
+      Flap |-> 0
+      Pot |-> 0
+      Vow |-> 0 , 0 , Flap |-> 0
+      GemJoin "MKR" |-> 0
+      Vow |-> 0 ) )
+      ListItem ( LogNote ( ADMIN , Spot . file mat "gold" 1 ) )
+      ListItem ( Measure ( 0 , End |-> 0
+      Flap |-> 0
+      Pot |-> 0
+      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
+      Flap |-> 0
+      Pot |-> 0
+      Vow |-> 0 , 0 , Flap |-> 0
+      GemJoin "MKR" |-> 0
+      Vow |-> 0 ) )
+      ListItem ( LogNote ( ADMIN , Spot . file par 1 ) )
       ListItem ( Measure ( 0 , End |-> 0
       Flap |-> 0
       Pot |-> 0
@@ -984,7 +1008,7 @@
       Vow |-> 0 , 0 , Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
-      ListItem ( LogNote ( ADMIN , Vat . file spot "gold" 3000000000 ) )
+      ListItem ( LogNote ( ADMIN , Vat . file line "gold" 1000000000000 ) )
       ListItem ( Measure ( 0 , End |-> 0
       Flap |-> 0
       Pot |-> 0
@@ -994,7 +1018,8 @@
       Vow |-> 0 , 0 , Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
-      ListItem ( LogNote ( ADMIN , Vat . file line "gold" 1000000000000 ) )
+      ListItem ( LogNote ( ANYONE , Vat . file spot "gold" 3000000000 ) )
+      ListItem ( Poke ( "gold" , 3000000000 , 3000000000 ) )
       ListItem ( Measure ( 0 , End |-> 0
       Flap |-> 0
       Pot |-> 0
