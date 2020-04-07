@@ -1,0 +1,27 @@
+STEPS ( DEPLOY-PRELUDE )
+STEPS ( ATTACK-PRELUDE )
+
+// Attack Sequence
+// ---------------
+
+// Set sump
+transact ADMIN Vow . file sump 50
+
+// Use suck to give Bobby some DAI, which conveniently also creates enough free, unbacked debt for 2 flop auctions
+transact ADMIN Vat . suck Vow "Bobby" 100
+
+// Start a flop auction
+transact "Bobby" Vow . flop
+
+// Bobby bids (1 = auction id, 25 = MKR lot, 50 = DAI bid)
+transact "Bobby" Flop . dent 1 25 50
+
+// Bobby calls heal (should actually call kiss to avoid the bug)
+transact "Bobby" Vow . heal 50
+
+// Now we can't flop because debt is stuck as Ash
+transact "Bobby" Vow . flop
+
+assert
+
+.MCDSteps
