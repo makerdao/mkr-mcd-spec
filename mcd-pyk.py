@@ -263,7 +263,7 @@ def argify(arg):
     return newArg
 
 def unimplemented(s):
-    return '// UNIMPLEMENTED << ' + s + ' >'
+    return '// UNIMPLEMENTED << ' + '\n    //'.join(s.split('\n')) + ' >>'
 
 def extractCallEvent(logEvent):
     if pyk.isKApply(logEvent) and logEvent['label'] == 'LogNote':
@@ -290,9 +290,11 @@ def extractCallEvent(logEvent):
     elif pyk.isKApply(logEvent) and logEvent['label'] == 'LogTimeStep':
         return [ 'hevm.warp(' + printMCD(logEvent['args'][0]) + ');' ]
     elif pyk.isKApply(logEvent) and logEvent['label'] == 'LogException':
-        return [ '// assertRevert( ' + printMCD(logEvent) + ');' ]
+        return [ unimplemented('assertRevert( ' + printMCD(logEvent) + ');') ]
     elif pyk.isKApply(logEvent) and ( logEvent['label'] in [ 'LogMeasure' , 'LogGenStep' , 'LogGenStepFailed' ] ):
         return []
+    elif pyk.isKApply(logEvent) and ( logEvent['label'] in [ 'Bite' , 'Transfer' , 'Approval' , 'FlapKick' , 'FlipKick' , 'FlopKick' , 'Poke' , 'NoPoke' ] ):
+        return [ unimplemented('assertEvent( ' + printMCD(logEvent) + ');') ]
     else:
         return [ unimplemented(printMCD(logEvent)) ]
 

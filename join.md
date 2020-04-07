@@ -158,8 +158,6 @@ Join Deactivation
 -   `GemJoin.cage` disables access to this instance of GemJoin.
 -   `DaiJoin.cage` disables access to this instance of DaiJoin.
 
-**TODO**: Should be `note`.
-
 ```k
     syntax GemJoinAuthStep ::= "cage" [klabel(#GemJoinCage), symbol]
  // ----------------------------------------------------------------

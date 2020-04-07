@@ -216,8 +216,8 @@ A violation can be checked using the Admin step `assert`. If a violation is dete
 it is recorded in the state and execution is immediately terminated.
 
 ```k
-    syntax AdminStep ::= "#assert"
- // ------------------------------
+    syntax AdminStep ::= "#assert" | "#assert-failure"
+ // --------------------------------------------------
     rule <k> assert => deriveAll(keys_list(VFSMS), EVENTS ListItem(Measure())) ~> #assert ... </k>
          <events> EVENTS => .List </events>
          <properties> VFSMS </properties>
@@ -225,6 +225,8 @@ it is recorded in the state and execution is immediately terminated.
     rule <k> #assert => . ... </k>
          <properties> VFSMS </properties>
       requires notBool anyViolation(values(VFSMS))
+
+    rule <k> #assert => #assert-failure ... </k> [owise]
 ```
 
 ### Violation Finite State Machines (FSMs)
