@@ -6,7 +6,7 @@
           .
         </k>
         <return-value>
-          2
+          .
         </return-value>
         <msg-sender>
           "Bobby"
@@ -160,11 +160,10 @@
             SetItem ( Vow )
           </flop-wards>
           <flop-bids>
-            1 |-> FlopBid ( 50 , 0 , Vow , 0 , 172800 )
-            2 |-> FlopBid ( 50 , 0 , Vow , 0 , 172800 )
+            1 |-> FlopBid ( 50 , 25 , "Bobby" , 10800 , 3600 )
           </flop-bids>
           <flop-kicks>
-            2
+            1
           </flop-kicks>
           <flop-live>
             true
@@ -179,7 +178,7 @@
             10800
           </flop-ttl>
           <flop-tau>
-            172800
+            3600
           </flop-tau>
           <flop-vow>
             0
@@ -315,6 +314,7 @@
             SetItem ( Pot )
             "Bobby" |-> SetItem ( End )
             SetItem ( Flip "gold" )
+            SetItem ( Flop )
             SetItem ( Pot )
             End |-> .Set
             Flap |-> .Set
@@ -337,7 +337,7 @@
           </vat-gem>
           <vat-dai>
             "Alice" |-> 10
-            "Bobby" |-> 110
+            "Bobby" |-> 60
             End |-> 0
             Flap |-> 0
             Pot |-> 0
@@ -349,13 +349,13 @@
             End |-> 0
             Flap |-> 0
             Pot |-> 0
-            Vow |-> 100
+            Vow |-> 50
           </vat-sin>
           <vat-debt>
-            120
+            70
           </vat-debt>
           <vat-vice>
-            100
+            50
           </vat-vice>
           <vat-Line>
             1000000000000
@@ -376,13 +376,13 @@
             0
           </vow-sin>
           <vow-ash>
-            100
+            50
           </vow-ash>
           <vow-wait>
             0
           </vow-wait>
           <vow-dump>
-            0
+            30
           </vow-dump>
           <vow-sump>
             50
@@ -1106,6 +1106,38 @@
       Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
+      ListItem ( LogNote ( ADMIN , Vow . file dump 30 ) )
+      ListItem ( Measure ( 20 , "Alice" |-> 10
+      "Bobby" |-> 10
+      End |-> 0
+      Flap |-> 0
+      Pot |-> 0
+      Vow |-> 0 , 1 , 0 , 20 , 0 , 0 , 0 , "Alice" |-> 10
+      "Bobby" |-> 10
+      End |-> 0
+      Flap |-> 0
+      Pot |-> 0
+      Vow |-> 0 , 0 , "Alice" |-> 0
+      "Bobby" |-> 0
+      Flap |-> 0
+      GemJoin "MKR" |-> 0
+      Vow |-> 0 ) )
+      ListItem ( LogNote ( ADMIN , Flop . file tau 3600 ) )
+      ListItem ( Measure ( 20 , "Alice" |-> 10
+      "Bobby" |-> 10
+      End |-> 0
+      Flap |-> 0
+      Pot |-> 0
+      Vow |-> 0 , 1 , 0 , 20 , 0 , 0 , 0 , "Alice" |-> 10
+      "Bobby" |-> 10
+      End |-> 0
+      Flap |-> 0
+      Pot |-> 0
+      Vow |-> 0 , 0 , "Alice" |-> 0
+      "Bobby" |-> 0
+      Flap |-> 0
+      GemJoin "MKR" |-> 0
+      Vow |-> 0 ) )
       ListItem ( LogNote ( ADMIN , Vat . suck Vow "Bobby" 100 ) )
       ListItem ( Measure ( 120 , "Alice" |-> 10
       "Bobby" |-> 110
@@ -1122,8 +1154,8 @@
       Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
-      ListItem ( LogNote ( "Bobby" , Flop . kick Vow 0 50 ) )
-      ListItem ( FlopKick ( 1 , 0 , 50 , Vow ) )
+      ListItem ( LogNote ( "Bobby" , Flop . kick Vow 30 50 ) )
+      ListItem ( FlopKick ( 1 , 30 , 50 , Vow ) )
       ListItem ( LogNote ( "Bobby" , Vow . flop ) )
       ListItem ( Measure ( 120 , "Alice" |-> 10
       "Bobby" |-> 110
@@ -1140,11 +1172,7 @@
       Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
-      ListItem ( Exception ( Flop . dent 1 25 50 ) )
-      ListItem ( Exception ( Vow . heal 50 ) )
-      ListItem ( LogNote ( "Bobby" , Flop . kick Vow 0 50 ) )
-      ListItem ( FlopKick ( 2 , 0 , 50 , Vow ) )
-      ListItem ( LogNote ( "Bobby" , Vow . flop ) )
+      ListItem ( LogNote ( "Bobby" , Vat . hope Flop ) )
       ListItem ( Measure ( 120 , "Alice" |-> 10
       "Bobby" |-> 110
       End |-> 0
@@ -1160,13 +1188,48 @@
       Flap |-> 0
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
+      ListItem ( LogNote ( "Bobby" , Vat . move "Bobby" Vow 50 ) )
+      ListItem ( LogNote ( "Bobby" , Flop . dent 1 25 50 ) )
       ListItem ( Measure ( 120 , "Alice" |-> 10
-      "Bobby" |-> 110
+      "Bobby" |-> 60
       End |-> 0
       Flap |-> 0
       Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 20 , 100 , 0 , 0 , "Alice" |-> 10
-      "Bobby" |-> 110
+      Vow |-> 50 , 1 , 0 , 20 , 100 , 0 , 0 , "Alice" |-> 10
+      "Bobby" |-> 60
+      End |-> 0
+      Flap |-> 0
+      Pot |-> 0
+      Vow |-> 50 , 0 , "Alice" |-> 0
+      "Bobby" |-> 0
+      Flap |-> 0
+      GemJoin "MKR" |-> 0
+      Vow |-> 0 ) )
+      ListItem ( LogNote ( "Bobby" , Vat . heal 50 ) )
+      ListItem ( LogNote ( "Bobby" , Vow . heal 50 ) )
+      ListItem ( Measure ( 70 , "Alice" |-> 10
+      "Bobby" |-> 60
+      End |-> 0
+      Flap |-> 0
+      Pot |-> 0
+      Vow |-> 0 , 1 , 0 , 20 , 50 , 0 , 0 , "Alice" |-> 10
+      "Bobby" |-> 60
+      End |-> 0
+      Flap |-> 0
+      Pot |-> 0
+      Vow |-> 0 , 0 , "Alice" |-> 0
+      "Bobby" |-> 0
+      Flap |-> 0
+      GemJoin "MKR" |-> 0
+      Vow |-> 0 ) )
+      ListItem ( Exception ( Vow . flop ) )
+      ListItem ( Measure ( 70 , "Alice" |-> 10
+      "Bobby" |-> 60
+      End |-> 0
+      Flap |-> 0
+      Pot |-> 0
+      Vow |-> 0 , 1 , 0 , 20 , 50 , 0 , 0 , "Alice" |-> 10
+      "Bobby" |-> 60
       End |-> 0
       Flap |-> 0
       Pot |-> 0
