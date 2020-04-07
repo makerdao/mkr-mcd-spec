@@ -97,8 +97,9 @@ Spot Events
 -----------
 
 ```k
-    syntax Event ::= Poke(String, Wad, Ray)
- // ---------------------------------------
+    syntax Event ::= Poke(String, Wad, Ray) [klabel(Poke)   , symbol]
+                   | NoPoke(String)         [klabel(NoPoke) , symbol]
+ // -----------------------------------------------------------------
 ```
 
 Spot Initialization
@@ -130,19 +131,17 @@ Spot Semantics
     rule <k> Spot . poke ILK => call Vat . file spot ILK ((VALUE /Rat PAR) /Rat MAT) ... </k>
          <spot-ilks> ... ILK |-> SpotIlk (... pip: VALUE, mat: MAT ) ... </spot-ilks>
          <spot-par> PAR </spot-par>
-         <frame-events> _ => ListItem(Poke(ILK, VALUE, VALUE /Rat PAR /Rat MAT)) </frame-events>
+         <frame-events> ... (.List => ListItem(Poke(ILK, VALUE, VALUE /Rat PAR /Rat MAT))) </frame-events>
       requires VALUE =/=K .Wad
 
     rule <k> Spot . poke ILK => . ... </k>
          <spot-ilks> ... ILK |-> SpotIlk (... pip: .Wad) ... </spot-ilks>
-         <frame-events> _ => .List </frame-events>
+         <frame-events> ... (.List => ListItem(NoPoke(ILK))) </frame-events>
 ```
 Spot Deactivation
 -----------------
 
 -   `Spot.cage` disables access to this instance of Spot.
-
-**TODO**: Should be `note`.
 
 ```k
     syntax SpotAuthStep ::= "cage" [klabel(#SpotCage), symbol]

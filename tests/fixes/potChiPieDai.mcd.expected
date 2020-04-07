@@ -653,6 +653,7 @@
       GemJoin "MKR" |-> 0
       Vow |-> 0 ) )
       ListItem ( LogNote ( ANYONE , Vat . file spot "gold" 3000000000 ) )
+      ListItem ( LogNote ( ANYONE , Spot . poke "gold" ) )
       ListItem ( Poke ( "gold" , 3000000000 , 3000000000 ) )
       ListItem ( Measure ( 0 , End |-> 0
       Flap |-> 0
