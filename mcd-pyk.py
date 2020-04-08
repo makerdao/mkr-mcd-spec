@@ -48,23 +48,39 @@ def sanitizeBytes(kast):
         return _kast
     return pyk.traverseBottomUp(kast, _sanitizeBytes)
 
-def fromListItem(input):
-    if pyk.isKApply(input) and input['label'] == 'ListItem':
+def fromItem(input):
+    if pyk.isKApply(input) and input['label'] in [ 'ListItem' , 'SetItem' ]:
         return input['args'][0]
-    return input
+    return None
 
-def flattenList(input):
-    if not (pyk.isKApply(input) and input['label'] == '_List_'):
-        return [fromListItem(input)]
+def flattenAssoc(input, col, elemConverter = lambda x: x):
+    if not (pyk.isKApply(input) and input['label'] == '_' + col + '_'):
+        return [elemConverter(input)]
     output = []
-    work = input['args']
+    work = [ arg for arg in input['args'] ]
     while len(work) > 0:
         first = work.pop(0)
-        if pyk.isKApply(first) and first['label'] == '_List_':
+        if pyk.isKApply(first) and first['label'] == '_' + col + '_':
             work.extend(first['args'])
         else:
-            output.append(fromListItem(first))
+            output.append(elemConverter(first))
     return output
+
+def flattenList(l):
+    return flattenAssoc(l, 'List', elemConverter = fromItem)
+
+def flattenSet(s):
+    return flattenAssoc(s, 'Set', elemConverter = fromItem)
+
+def flattenMap(m):
+    def _fromMapItem(mi):
+        if pyk.isKApply(mi) and mi['label'] == '_|->_':
+            return (mi['args'][0], mi['args'][1])
+        return None
+    return flattenAssoc(m, 'Map', elemConverter = _fromMapItem)
+
+def kMapToDict(s, keyConvert = lambda x: x, valueConvert = lambda x: x):
+    return { keyConvert(k): valueConvert(v) for (k, v) in flattenMap(s) }
 
 # Symbol Table (for Unparsing)
 # ----------------------------
@@ -209,12 +225,9 @@ def detect_violations(config):
     (_, configSubst) = pyk.splitConfigFrom(config)
     properties = configSubst['PROPERTIES_CELL']
     violations = []
-    def _gatherViolations(fsmMap):
-        if pyk.isKApply(fsmMap) and fsmMap['label'] == '_|->_':
-            if fsmMap['args'][1] == pyk.KConstant('Violated_KMCD-PROPS_ViolationFSM'):
-                violations.append(fsmMap['args'][0]['token'])
-        return fsmMap
-    pyk.traverseTopDown(properties, _gatherViolations)
+    for (prop, value) in flattenMap(properties):
+        if pyk.isKApply(value) and value['label'] == 'Violated(_)_KMCD-PROPS_ViolationFSM_ViolationFSM':
+            violations.append(prop['token'])
     return violations
 
 # Solidity Generation
@@ -238,7 +251,6 @@ def variablize(input):
 
 def solidify(input):
     return variablize(input.replace(' ', '_').replace('"', ''))
-
 
 def argify(arg):
     newArg = solidify(arg)
@@ -307,14 +319,35 @@ def noRewriteToDots(config):
     return pyk.substitute(cfg, subst)
 
 def buildAssert(contract, field, value):
-    actual     = contract + '.' + field + '()'
-    comparator = '=='
+    assertionData = []
     if pyk.isKToken(value) and value['sort'] == 'Bool':
-        value = intToken(0)
+        actual     = contract + '.' + field + '()'
+        comparator = '=='
+        expected   = printMCD(intToken(0))
         if value['token'] == 'true':
-            comparator = '=/='
-    expected = printMCD(value)
-    return variablize('assertTrue( ' + actual + ' ' + comparator + ' ' + expected + ' );')
+            comparator = '!='
+        assertionData.append((actual, comparator, expected, True))
+    elif pyk.isKApply(value) and value['label'] == '_Map_':
+        for (k, v) in flattenMap(value):
+            if pyk.isKApply(v) and v['label'] == '_Set_':
+                for si in flattenSet(v):
+                    actual     = contract + '.' + field + '(' + argify(printMCD(k)) + ', ' + argify(printMCD(si)) + ')'
+                    comparator = '!='
+                    expected   = printMCD(intToken(0))
+                    assertionData.append((actual, comparator, expected, True))
+            else:
+                actual     = contract + '.' + field + '(' + argify(printMCD(k)) + ')'
+                comparator = '=='
+                expected   = printMCD(v)
+                assertionData.append((actual, comparator, expected, False))
+    else:
+        actual = contract + '.' + field + '()'
+        assertionData.append((actual, '==', printMCD(value), False))
+    assertions = []
+    for (actual, comparator, expected, implemented) in assertionData:
+        aStr = 'assertTrue( ' + actual + ' ' + comparator + ' ' + expected + ' );'
+        assertions.append(aStr if implemented else unimplemented(aStr))
+    return [ variablize(a) for a in assertions ]
 
 def extractAsserts(config):
     (_, subst) = pyk.splitConfigFrom(config)
