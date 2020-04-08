@@ -69,14 +69,14 @@ Cat Events
 ----------
 
 ```k
-    syntax Event ::= Bite(ilk: String, urn: Address, ink: Wad, art: Wad, tab: Wad, flip: Address, id: Int)
- // ------------------------------------------------------------------------------------------------------
+    syntax Event ::= Bite(ilk: String, urn: Address, ink: Wad, art: Wad, tab: Wad, flip: Address, id: Int) [klabel(Bite), symbol]
+ // -----------------------------------------------------------------------------------------------------------------------------
 
     syntax CatStep ::= "emitBite" String Address Wad Wad Wad
  // --------------------------------------------------------
     rule <k> emitBite ILK URN INK ART TAB => ID ... </k>
          <return-value> ID:Int </return-value>
-         <frame-events> _ => ListItem(Bite(ILK, URN, INK, ART, TAB, Flip ILK, ID)) </frame-events>
+         <frame-events> ... (.List => ListItem(Bite(ILK, URN, INK, ART, TAB, Flip ILK, ID))) </frame-events>
 ```
 
 File-able Fields
