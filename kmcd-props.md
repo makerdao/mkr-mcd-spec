@@ -23,9 +23,9 @@ Measurables
 ```k
     syntax Event ::= Measure
     syntax Measure ::= Measure () [function]
-                     | Measure ( debt: Rat , controlDai: Map , potChi: Rat , potPie: Rat , sumOfScaledArts: Rat , vice: Rat , endDebt: Rat , sumOfAllFlapLots: Rat , dai: Map , sumOfAllFlapBids: Rat , mkrBalances: Map ) [klabel(LogMeasure), symbol]
+                     | Measure ( debt: Rat , controlDai: Map , potChi: Rat , potPie: Rat , sumOfScaledArts: Rat , vice: Rat , endDebt: Rat , sumOfAllFlapLots: Rat , dai: Map , sumOfAllFlapBids: Rat , mkrBalances: Map, ash: Rat ) [klabel(LogMeasure), symbol]
  // ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    rule [[ Measure() => Measure(... debt: DEBT, controlDai: controlDais(keys_list(VAT_DAIS)), potChi: POT_CHI, potPie: POT_PIE, sumOfScaledArts: calcSumOfScaledArts(VAT_ILKS, VAT_URNS), vice: VAT_VICE, endDebt: END_DEBT, sumOfAllFlapLots: sumOfAllFlapLots(FLAP_BIDS), dai: VAT_DAIS, sumOfAllFlapBids: sumOfAllFlapBids(FLAP_BIDS), mkrBalances: mkrBalances()) ]]
+    rule [[ Measure() => Measure(... debt: DEBT, controlDai: controlDais(keys_list(VAT_DAIS)), potChi: POT_CHI, potPie: POT_PIE, sumOfScaledArts: calcSumOfScaledArts(VAT_ILKS, VAT_URNS), vice: VAT_VICE, endDebt: END_DEBT, sumOfAllFlapLots: sumOfAllFlapLots(FLAP_BIDS), dai: VAT_DAIS, sumOfAllFlapBids: sumOfAllFlapBids(FLAP_BIDS), mkrBalances: mkrBalances(), ash: VOW_ASH) ]]
          <vat-debt>     DEBT      </vat-debt>
          <vat-dai>      VAT_DAIS  </vat-dai>
          <vat-ilks>     VAT_ILKS  </vat-ilks>
@@ -35,6 +35,7 @@ Measurables
          <pot-pie>      POT_PIE   </pot-pie>
          <end-debt>     END_DEBT  </end-debt>
          <flap-bids>    FLAP_BIDS </flap-bids>
+         <vow-ash>      VOW_ASH   </vow-ash>
 ```
 
 ### Dai in Circulation
@@ -200,16 +201,17 @@ A violation occurs if any of the properties above holds.
 ```k
     syntax Map ::= "#violationFSMs" [function]
  // ------------------------------------------
-    rule #violationFSMs => ( "Zero-Time Pot Interest Accumulation" |-> zeroTimePotInterest                     )
-                           ( "Pot Interest Accumulation After End" |-> potEndInterest                          )
-                           ( "Unauthorized Flip Kick"              |-> unAuthFlipKick                          )
-                           ( "Unauthorized Flap Kick"              |-> unAuthFlapKick                          )
-                           ( "Total Bound on Debt"                 |-> totalDebtBounded(... dsr: 1)            )
-                           ( "PotChi PotPie VatPot"                |-> potChiPieDai(... offset: 0, joining: 0) )
-                           ( "Total Backed Debt Consistency"       |-> totalBackedDebtConsistency              )
-                           ( "Debt Constant After Thaw"            |-> debtConstantAfterThaw                   )
-                           ( "Flap Dai Consistency"                |-> flapDaiConsistency                      )
-                           ( "Flap MKR Consistency"                |-> flapMkrConsistency                      )
+    rule #violationFSMs => ( "Zero-Time Pot Interest Accumulation" |-> zeroTimePotInterest                      )
+                           ( "Pot Interest Accumulation After End" |-> potEndInterest                           )
+                           ( "Unauthorized Flip Kick"              |-> unAuthFlipKick                           )
+                           ( "Unauthorized Flap Kick"              |-> unAuthFlapKick                           )
+                           ( "Total Bound on Debt"                 |-> totalDebtBounded(... dsr: 1)             )
+                           ( "PotChi PotPie VatPot"                |-> potChiPieDai(... offset: 0, joining: 0)  )
+                           ( "Total Backed Debt Consistency"       |-> totalBackedDebtConsistency               )
+                           ( "Debt Constant After Thaw"            |-> debtConstantAfterThaw                    )
+                           ( "Flap Dai Consistency"                |-> flapDaiConsistency                       )
+                           ( "Flap MKR Consistency"                |-> flapMkrConsistency                       )
+                           ( "Flop Block Check"                    |-> flopBlockCheck(... embers: 0, dented: 0) )
 ```
 
 A violation can be checked using the Admin step `assert`. If a violation is detected,
@@ -389,6 +391,18 @@ The property checks if a successful `Pot . join` is preceded by a `TimeStep` mor
     syntax ViolationFSM ::= "flapMkrConsistency"
  // --------------------------------------------
     rule derive(flapMkrConsistency, Measure(... sumOfAllFlapBids: SUM, mkrBalances: BALS)) => Violated(flapMkrConsistency) requires (SUM >Rat #lookup(BALS, Flap))
+```
+
+### Flop Blocking
+```k
+    syntax ViolationFSM ::= flopBlockCheck(embers: Rat, dented: Int)
+ // ----------------------------------------------------------------
+    rule derive(flopBlockCheck(... embers: EMBERS, dented: DENTED), Measure(... dai: VAT_DAI, ash: ASH)) => Violated(flopBlockCheck(... embers: EMBERS, dented: DENTED))
+        requires (ASH -Rat #lookup(VAT_DAI, Vow) >Rat EMBERS)
+    rule derive(flopBlockCheck(... embers: EMBERS, dented: DENTED), LogNote(_ , Flop . kick ID _ BID)) => flopBlockCheck(... embers: EMBERS +Rat BID, dented: DENTED)
+    rule derive(flopBlockCheck(... embers: EMBERS, dented: DENTED), LogNote(_ , Flop . dent ID _ BID)) => flopBlockCheck(... embers: EMBERS -Rat BID, dented: DENTED +Int (2 ^Int ID)) 
+        requires ( ( ( DENTED /Int ( 2 ^Int ID ) ) modInt 2 ) ==Int 0 )
+    rule derive(flopBlockCheck(... embers: EMBERS, dented: DENTED), LogNote(_ , Flop . dent ID _ BID)) => flopBlockCheck(... embers: EMBERS, dented: DENTED) [owise]
 ```
 
 ```k
