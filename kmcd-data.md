@@ -39,31 +39,37 @@ We model everything with arbitrary precision rationals, but use sort information
 ```k
     syntax Wad ::= Wad "*Wad" Wad [function]
                  | Wad "/Wad" Wad [function]
+                 | Wad "^Wad" Int [function]
                  > Wad "+Wad" Wad [function]
                  | Wad "-Wad" Wad [function]
  // ----------------------------------------
     rule R1 *Wad R2 => R1 *Rat R2
     rule R1 /Wad R2 => R1 /Rat R2
+    rule R1 ^Wad R2 => R1 ^Rat R2
     rule R1 +Wad R2 => R1 +Rat R2
     rule R1 -Wad R2 => R1 -Rat R2
 
     syntax Ray ::= Ray "*Ray" Ray [function]
                  | Ray "/Ray" Ray [function]
+                 | Ray "^Ray" Int [function]
                  > Ray "+Ray" Ray [function]
                  | Ray "-Ray" Ray [function]
  // ----------------------------------------
     rule R1 *Ray R2 => R1 *Rat R2
     rule R1 /Ray R2 => R1 /Rat R2
+    rule R1 ^Ray R2 => R1 ^Rat R2
     rule R1 +Ray R2 => R1 +Rat R2
     rule R1 -Ray R2 => R1 -Rat R2
 
     syntax Rad ::= Rad "*Rad" Rad [function]
                  | Rad "/Rad" Rad [function]
+                 | Rad "^Rad" Int [function]
                  > Rad "+Rad" Rad [function]
                  | Rad "-Rad" Rad [function]
  // ----------------------------------------
     rule R1 *Rad R2 => R1 *Rat R2
     rule R1 /Rad R2 => R1 /Rat R2
+    rule R1 ^Rad R2 => R1 ^Rat R2
     rule R1 +Rad R2 => R1 +Rat R2
     rule R1 -Rad R2 => R1 -Rat R2
 ```
