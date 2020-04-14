@@ -121,7 +121,6 @@ We model everything with arbitrary precision rationals, but use sort information
  // ----------------------------------------------
     rule minRad(W1, W2) => minRat(W1, W2)
     rule maxRad(W1, W2) => maxRat(W1, W2)
-
 ```
 
 ```k
@@ -234,4 +233,3 @@ Collateral Increments
 ```k
 endmodule
 ```
-
