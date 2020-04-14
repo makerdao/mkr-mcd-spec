@@ -25,17 +25,17 @@ End Configuration
       <end-state>
         <endPhase> false </endPhase>
         <end>
-          <end-wards> .Set  </end-wards>
-          <end-live>  true  </end-live>
-          <end-when>  0     </end-when>
-          <end-wait>  0     </end-wait>
-          <end-debt>  0:Rad </end-debt>
-          <end-tag>   .Map  </end-tag>  // mapping (bytes32 => uint256)                      String  |-> Ray
-          <end-gap>   .Map  </end-gap>  // mapping (bytes32 => uint256)                      String  |-> Wad
-          <end-art>   .Map  </end-art>  // mapping (bytes32 => uint256)                      String  |-> Wad
-          <end-fix>   .Map  </end-fix>  // mapping (bytes32 => uint256)                      String  |-> Ray
-          <end-bag>   .Map  </end-bag>  // mapping (address => uint256)                      Address |-> Wad
-          <end-out>   .Map  </end-out>  // mapping (bytes32 => mapping (address => uint256)) CDPID   |-> Wad
+          <end-wards> .Set </end-wards>
+          <end-live>  true </end-live>
+          <end-when>  0    </end-when>
+          <end-wait>  0    </end-wait>
+          <end-debt>  0Rad </end-debt>
+          <end-tag>   .Map </end-tag>  // mapping (bytes32 => uint256)                      String  |-> Ray
+          <end-gap>   .Map </end-gap>  // mapping (bytes32 => uint256)                      String  |-> Wad
+          <end-art>   .Map </end-art>  // mapping (bytes32 => uint256)                      String  |-> Wad
+          <end-fix>   .Map </end-fix>  // mapping (bytes32 => uint256)                      String  |-> Ray
+          <end-bag>   .Map </end-bag>  // mapping (address => uint256)                      Address |-> Wad
+          <end-out>   .Map </end-out>  // mapping (bytes32 => mapping (address => uint256)) CDPID   |-> Wad
         </end>
       </end-state>
 ```
@@ -101,15 +101,15 @@ Because data isn't explicitely initialized to 0 in KMCD, we need explicit initia
                          | "initOut" String Address
  // -----------------------------------------------
     rule <k> End . initGap ILKID => . ... </k>
-         <end-gap> GAPS => GAPS [ ILKID <- 0 ] </end-gap>
+         <end-gap> GAPS => GAPS [ ILKID <- 0Wad ] </end-gap>
       requires notBool ILKID in_keys(GAPS)
 
     rule <k> End . initBag ADDR => . ... </k>
-         <end-bag> BAGS => BAGS [ ADDR <- 0 ] </end-bag>
+         <end-bag> BAGS => BAGS [ ADDR <- 0Wad ] </end-bag>
       requires notBool ADDR in_keys(BAGS)
 
     rule <k> End . initOut ILKID ADDR => . ... </k>
-         <end-out> OUTS => OUTS [ { ILKID , ADDR } <- 0 ] </end-out>
+         <end-out> OUTS => OUTS [ { ILKID , ADDR } <- 0Wad ] </end-out>
       requires notBool { ILKID , ADDR } in_keys(OUTS)
 ```
 
@@ -134,7 +134,7 @@ End Semantics
  // --------------------------------
     rule <k> End . cage ILK:String => . ... </k>
          <end-live> false </end-live>
-         <end-tag> TAGS => TAGS [ ILK <- PAR /Rat PIP ] </end-tag>
+         <end-tag> TAGS => TAGS [ ILK <- wdiv(PAR, PIP) ] </end-tag>
          <end-art> ARTS => ARTS [ ILK <- ART ] </end-art>
          <spot-par> PAR </spot-par>
          <spot-ilks> ... ILK |-> SpotIlk(... pip: PIP) ... </spot-ilks>
@@ -148,55 +148,55 @@ End Semantics
           ~> call Vat . suck Vow THIS BID
           ~> call Vat . hope Flip ILK
           ~> call Flip ILK . yank ID
-          ~> call Vat . grab ILK USR THIS Vow LOT (TAB /Rat RATE)
+          ~> call Vat . grab ILK USR THIS Vow LOT (TAB /Rate RATE)
          ...
          </k>
          <this> THIS </this>
          <end-tag> ... ILK |-> TAG ... </end-tag>
-         <end-art> ... ILK |-> (ART => ART +Rat (TAB /Rat RATE)) ... </end-art>
+         <end-art> ... ILK |-> (ART => ART +Wad (TAB /Rate RATE)) ... </end-art>
          <vat-ilks> ... ILK |-> Ilk(... rate: RATE)::VatIlk ... </vat-ilks>
          <flip>
            <flip-ilk> ILK </flip-ilk>
            <flip-bids> ... ID |-> FlipBid(... bid: BID, lot: LOT, usr: USR, tab: TAB) ... </flip-bids>
            ...
          </flip>
-      requires TAG =/=Rat 0
-       andBool LOT >=Rat 0
-       andBool TAB /Rat RATE >=Rat 0
+      requires TAG =/=Ray 0Ray
+       andBool LOT >=Rad 0Rad
+       andBool TAB /Rate RATE >=Wad 0Wad
 
     syntax EndStep ::= "skim" String Address
  // ----------------------------------------
     rule <k> End . skim ILK ADDR
-          => call Vat . grab ILK ADDR THIS Vow (0 -Rat minRat(INK, ART *Rat RATE *Rat TAG)) (0 -Rat ART)
+          => call Vat . grab ILK ADDR THIS Vow (0Wad -Wad minWad(INK, rmul(rmul(ART, RATE), TAG))) (0Wad -Wad ART)
          ...
          </k>
          <this> THIS </this>
          <end-tag> ... ILK |-> TAG ... </end-tag>
-         <end-gap> ... ILK |-> (GAP => GAP +Rat ((ART *Rat RATE *Rat TAG) -Rat minRat(INK, (ART *Rat RATE *Rat TAG)))) ... </end-gap>
+         <end-gap> ... ILK |-> (GAP => GAP +Wad (rmul(rmul(ART, RATE), TAG) -Wad minWad(INK, rmul(rmul(ART, RATE), TAG)))) ... </end-gap>
          <vat-ilks> ... ILK |-> Ilk(... rate: RATE)::VatIlk ... </vat-ilks>
          <vat-urns> ... {ILK, ADDR} |-> Urn(... ink: INK, art: ART) ... </vat-urns>
-      requires TAG =/=Rat 0
+      requires TAG =/=Ray 0Ray
 
     syntax EndStep ::= "free" String
  // --------------------------------
     rule <k> End . free ILK
-          => call Vat . grab ILK MSGSENDER MSGSENDER Vow (0 -Rat INK) 0
+          => call Vat . grab ILK MSGSENDER MSGSENDER Vow (0Wad -Wad INK) 0Wad
          ...
          </k>
          <msg-sender> MSGSENDER </msg-sender>
          <end-live> false </end-live>
          <vat-urns> ... {ILK, MSGSENDER} |-> Urn(... ink: INK, art: ART) ... </vat-urns>
-      requires ART ==Int 0
+      requires ART ==Wad 0Wad
 
     syntax EndStep ::= "thaw"
  // -------------------------
     rule <k> End . thaw => . ... </k>
          <current-time> NOW </current-time>
          <end-live> false </end-live>
-         <end-debt> 0 => DEBT </end-debt>
+         <end-debt> 0Rad => DEBT </end-debt>
          <end-when> WHEN </end-when>
          <end-wait> WAIT </end-wait>
-         <vat-dai> ... Vow |-> 0 ... </vat-dai>
+         <vat-dai> ... Vow |-> 0Rad ... </vat-dai>
          <vat-debt> DEBT </vat-debt>
       requires NOW >=Int WHEN +Int WAIT
 
@@ -204,13 +204,13 @@ End Semantics
  // --------------------------------
     rule <k> End . flow ILK => . ... </k>
          <end-debt> DEBT </end-debt>
-         <end-fix> FIX => FIX [ ILK <- (ART *Rat RATE *Rat TAG -Rat GAP) /Rat DEBT ] </end-fix>
+         <end-fix> FIX => FIX [ ILK <- rdiv(rmul(rmul(ART, RATE), TAG) -Wad GAP, DEBT) ] </end-fix>
          <end-tag> ... ILK |-> TAG ... </end-tag>
          <end-gap> ... ILK |-> GAP ... </end-gap>
          <end-art> ... ILK |-> ART ... </end-art>
          <vat-ilks> ... ILK |-> Ilk(... rate: RATE)::VatIlk ... </vat-ilks>
-      requires DEBT =/=Rat 0
-       andBool ART *Rat RATE *Rat TAG >=Rat GAP
+      requires DEBT =/=Rad 0Rad
+       andBool rmul(rmul(ART, RATE), TAG) >=Wad GAP
        andBool notBool ILK in_keys(FIX)
 
     syntax EndStep ::= "pack" Wad
@@ -221,24 +221,24 @@ End Semantics
          </k>
          <msg-sender> MSGSENDER </msg-sender>
          <end-debt> DEBT </end-debt>
-         <end-bag> ... MSGSENDER |-> (BAG => BAG +Rat AMOUNT) ... </end-bag>
-      requires AMOUNT >=Rat 0
-       andBool DEBT =/=Rat 0
+         <end-bag> ... MSGSENDER |-> (BAG => BAG +Wad AMOUNT) ... </end-bag>
+      requires AMOUNT >=Wad 0Wad
+       andBool DEBT =/=Rad 0Rad
 
     syntax EndStep ::= "cash" String Wad
  // ------------------------------------
     rule <k> End . cash ILK AMOUNT
-          => call Vat . flux ILK THIS MSGSENDER (AMOUNT *Rat FIX)
+          => call Vat . flux ILK THIS MSGSENDER rmul(AMOUNT, FIX)
          ...
          </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
          <end-fix> ... ILK |-> FIX ... </end-fix>
-         <end-out> ... {ILK, MSGSENDER} |-> (OUT => OUT +Rat AMOUNT) ... </end-out>
+         <end-out> ... {ILK, MSGSENDER} |-> (OUT => OUT +Wad AMOUNT) ... </end-out>
          <end-bag> ... MSGSENDER |-> BAG ... </end-bag>
-      requires AMOUNT >=Rat 0
-       andBool FIX =/=Rat 0
-       andBool OUT +Rat AMOUNT <=Rat BAG
+      requires AMOUNT >=Wad 0Wad
+       andBool FIX =/=Ray 0Ray
+       andBool OUT +Wad AMOUNT <=Wad BAG
 ```
 
 ```k
