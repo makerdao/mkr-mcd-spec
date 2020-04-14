@@ -142,10 +142,12 @@ module KMCD-PRELUDE
          transact "Alice" Vat . hope Pot
          transact "Alice" Vat . hope Flip "gold"
          transact "Alice" Vat . hope End
+         transact "Alice" Vat . hope Flop
 
          transact "Bobby" Vat . hope Pot
          transact "Bobby" Vat . hope Flip "gold"
          transact "Bobby" Vat . hope End
+         transact "Bobby" Vat . hope Flop
 
          // Setup CDPs
          transact "Alice" GemJoin "gold" . join "Alice" 10

@@ -19,9 +19,6 @@ transact ADMIN Vat . suck Vow "Bobby" 100
 // Start a flop auction
 transact "Bobby" Vow . flop
 
-// Bobby must hope on the Flop contract to be able to bid
-transact "Bobby" Vat . hope Flop
-
 // Bobby bids (1 = auction id, 25 = MKR lot, 50 = DAI bid)
 transact "Bobby" Flop . dent 1 25 50
 
