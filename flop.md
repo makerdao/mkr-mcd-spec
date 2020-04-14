@@ -17,10 +17,13 @@ module FLOP
  // --------------------------------------
     rule <k> Flop . dent ID LOT BID
           => call Vat . move MSGSENDER GUY BID
+          ~> #if TIC ==Int 0 #then call VOWADDR . kiss ( minRat(BID, ASH) ) #else . #fi
          ...
          </k>
          <msg-sender> MSGSENDER </msg-sender>
          <current-time> NOW </current-time>
+         <vow-ash> ASH </vow-ash>
+         <flop-vow> VOWADDR </flop-vow>
          <flop-bids> ... ID |-> FlopBid(... bid: BID', lot: LOT' => LOT, guy: GUY => MSGSENDER, tic: TIC => TIC +Int TTL, end: END) ... </flop-bids>
          <flop-live> true </flop-live>
          <flop-beg> BEG </flop-beg>
