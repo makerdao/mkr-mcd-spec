@@ -317,7 +317,7 @@ This is quite permissive, and would allow the account to drain all your locked c
     **TODO**: Should `Vat.move` use `Vat.consent` or `Vat.wish`?
 
 ```k
-    syntax VatStep ::= "move" Address Address Wad
+    syntax VatStep ::= "move" Address Address Rad
  // ---------------------------------------------
     rule <k> Vat . move ADDRFROM ADDRTO DAI => . ... </k>
          <vat-dai>
