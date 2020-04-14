@@ -104,6 +104,27 @@ We model everything with arbitrary precision rationals, but use sort information
 ```
 
 ```k
+    syntax Wad ::= minWad ( Wad , Wad ) [function]
+                 | maxWad ( Wad , Wad ) [function]
+ // ----------------------------------------------
+    rule minWad(W1, W2) => minRat(W1, W2)
+    rule maxWad(W1, W2) => maxRat(W1, W2)
+
+    syntax Ray ::= minRay ( Ray , Ray ) [function]
+                 | maxRay ( Ray , Ray ) [function]
+ // ----------------------------------------------
+    rule minRay(W1, W2) => minRat(W1, W2)
+    rule maxRay(W1, W2) => maxRat(W1, W2)
+
+    syntax Rad ::= minRad ( Rad , Rad ) [function]
+                 | maxRad ( Rad , Rad ) [function]
+ // ----------------------------------------------
+    rule minRad(W1, W2) => minRat(W1, W2)
+    rule maxRad(W1, W2) => maxRat(W1, W2)
+
+```
+
+```k
     syntax Bool ::= Wad  "<=Wad" Wad [function]
                   | Wad   "<Wad" Wad [function]
                   | Wad  ">=Wad" Wad [function]
