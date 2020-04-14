@@ -36,6 +36,88 @@ We model everything with arbitrary precision rationals, but use sort information
  // --------------------------------
 ```
 
+```k
+    syntax Wad ::= Wad "*Wad" Wad [function]
+                 | Wad "/Wad" Wad [function]
+                 > Wad "+Wad" Wad [function]
+                 | Wad "-Wad" Wad [function]
+ // ----------------------------------------
+    rule R1 *Wad R2 => R1 *Rat R2
+    rule R1 /Wad R2 => R1 /Rat R2
+    rule R1 +Wad R2 => R1 +Rat R2
+    rule R1 -Wad R2 => R1 -Rat R2
+
+    syntax Ray ::= Ray "*Ray" Ray [function]
+                 | Ray "/Ray" Ray [function]
+                 > Ray "+Ray" Ray [function]
+                 | Ray "-Ray" Ray [function]
+ // ----------------------------------------
+    rule R1 *Ray R2 => R1 *Rat R2
+    rule R1 /Ray R2 => R1 /Rat R2
+    rule R1 +Ray R2 => R1 +Rat R2
+    rule R1 -Ray R2 => R1 -Rat R2
+
+    syntax Rad ::= Rad "*Rad" Rad [function]
+                 | Rad "/Rad" Rad [function]
+                 > Rad "+Rad" Rad [function]
+                 | Rad "-Rad" Rad [function]
+ // ----------------------------------------
+    rule R1 *Rad R2 => R1 *Rat R2
+    rule R1 /Rad R2 => R1 /Rat R2
+    rule R1 +Rad R2 => R1 +Rat R2
+    rule R1 -Rad R2 => R1 -Rat R2
+```
+
+```k
+    syntax Bool ::= Wad  "<=Wad" Wad [function]
+                  | Wad   "<Wad" Wad [function]
+                  | Wad  ">=Wad" Wad [function]
+                  | Wad   ">Wad" Wad [function]
+                  | Wad  "==Wad" Wad [function]
+                  | Wad "=/=Wad" Wad [function]
+ // -------------------------------------------
+    rule W1  <=Wad W2 => W1  <=Rat W2
+    rule W1   <Wad W2 => W1   <Rat W2
+    rule W1  >=Wad W2 => W1  >=Rat W2
+    rule W1   >Wad W2 => W1   >Rat W2
+    rule W1  ==Wad W2 => W1  ==Rat W2
+    rule W1 =/=Wad W2 => W1 =/=Rat W2
+
+    syntax Bool ::= Ray  "<=Ray" Ray [function]
+                  | Ray   "<Ray" Ray [function]
+                  | Ray  ">=Ray" Ray [function]
+                  | Ray   ">Ray" Ray [function]
+                  | Ray  "==Ray" Ray [function]
+                  | Ray "=/=Ray" Ray [function]
+ // -------------------------------------------
+    rule W1  <=Ray W2 => W1  <=Rat W2
+    rule W1   <Ray W2 => W1   <Rat W2
+    rule W1  >=Ray W2 => W1  >=Rat W2
+    rule W1   >Ray W2 => W1   >Rat W2
+    rule W1  ==Ray W2 => W1  ==Rat W2
+    rule W1 =/=Ray W2 => W1 =/=Rat W2
+
+    syntax Bool ::= Rad  "<=Rad" Rad [function]
+                  | Rad   "<Rad" Rad [function]
+                  | Rad  ">=Rad" Rad [function]
+                  | Rad   ">Rad" Rad [function]
+                  | Rad  "==Rad" Rad [function]
+                  | Rad "=/=Rad" Rad [function]
+ // -------------------------------------------
+    rule W1  <=Rad W2 => W1  <=Rat W2
+    rule W1   <Rad W2 => W1   <Rat W2
+    rule W1  >=Rad W2 => W1  >=Rat W2
+    rule W1   >Rad W2 => W1   >Rat W2
+    rule W1  ==Rad W2 => W1  ==Rat W2
+    rule W1 =/=Rad W2 => W1 =/=Rat W2
+```
+
+```k
+    syntax Rad ::= Wad "*Rate" Ray [function]
+ // -----------------------------------------
+    rule R1 *Rate R2 => R1 *Rat R2
+```
+
 Time Increments
 ---------------
 
