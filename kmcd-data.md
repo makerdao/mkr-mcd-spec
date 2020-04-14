@@ -172,6 +172,22 @@ We model everything with arbitrary precision rationals, but use sort information
     syntax Rad ::= Wad "*Rate" Ray [function]
  // -----------------------------------------
     rule R1 *Rate R2 => R1 *Rat R2
+
+    syntax Wad ::= Rad "/Rate" Ray [function]
+ // -----------------------------------------
+    rule R1 /Rate R2 => R1 /Rat R2
+
+    syntax Wad ::= rmul ( Wad , Ray ) [function]
+ // --------------------------------------------
+    rule rmul(R1, R2) => R1 *Rat R2
+
+    syntax Ray ::= rdiv ( Ray , Rad ) [function]
+ // --------------------------------------------
+    rule rdiv(R1, R2) => R1 /Rat R2
+
+    syntax Ray ::= wdiv ( Ray , Wad ) [function]
+ // --------------------------------------------
+    rule wdiv(R1, R2) => R1 /Rat R2
 ```
 
 Time Increments
