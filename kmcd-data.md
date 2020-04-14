@@ -54,6 +54,18 @@ We model everything with arbitrary precision rationals, but use sort information
 ```
 
 ```k
+    syntax Ray ::= Wad2Ray ( Wad ) [function]
+ // -----------------------------------------
+    rule Wad2Ray(W) => W
+
+    syntax Rad ::= Wad2Rad ( Wad ) [function]
+                 | Ray2Rad ( Ray ) [function]
+ // -----------------------------------------
+    rule Wad2Rad(W) => W
+    rule Ray2Rad(R) => R
+```
+
+```k
     syntax Wad ::= Wad "*Wad" Wad [function]
                  | Wad "/Wad" Wad [function]
                  | Wad "^Wad" Int [function]
