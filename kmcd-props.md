@@ -18,6 +18,17 @@ module KMCD-PROPS
 Measurables
 -----------
 
+### Lookup Defaulting to 0
+
+Sometimes you need a lookup to default to zero, and want to cast the result as a `Rat`.
+
+```k
+    syntax Rat ::= #lookup ( Map , Address ) [function]
+ // ---------------------------------------------------
+    rule #lookup(M, A) => { M[A] }:>Rat requires A in_keys(M)
+    rule #lookup(M, A) => 0             [owise]
+```
+
 ### Measure Event
 
 ```k
