@@ -101,11 +101,11 @@ The parameters controlled by governance are:
 
     rule <k> Cat . file chop ILKID CHOP => . ... </k>
          <cat-ilks> ... ILKID |-> Ilk ( ... chop: (_ => CHOP) ) ... </cat-ilks>
-      requires CHOP >=Rat 0
+      requires CHOP >=Ray 0Ray
 
     rule <k> Cat . file lump ILKID LUMP => . ... </k>
          <cat-ilks> ... ILKID |-> Ilk ( ... lump: (_ => LUMP) ) ... </cat-ilks>
-      requires LUMP >=Rat 0
+      requires LUMP >=Wad 0Wad
 ```
 
 **NOTE**: `flip` is not fileable since we are assuming a unique liquidator for each ilk.
@@ -122,22 +122,22 @@ Cat Semantics
           => #fun(LOT
           => #fun(ART
           => #fun(TAB
-          => call Vat . grab ILK URN THIS VOWADDR (-1 *Rat LOT) (-1 *Rat ART)
+          => call Vat . grab ILK URN THIS VOWADDR (0Wad -Wad LOT) (0Wad -Wad ART)
           ~> call Vow . fess TAB
-          ~> call Flip ILK . kick URN VOWADDR (TAB *Rat CHOP) LOT 0
+          ~> call Flip ILK . kick URN VOWADDR (TAB *Rad Ray2Rad(CHOP)) LOT 0Rad
           ~> emitBite ILK URN LOT ART TAB)
-          (ART *Rat RATE))
-          (minRat(URNART, LOT *Rat URNART /Rat INK)))
-          (minRat(INK, LUMP))
+          (ART *Rate RATE))
+          (minWad(URNART, (LOT *Wad URNART) /Wad INK)))
+          (minWad(INK, LUMP))
          ...
          </k>
          <this> THIS </this>
          <cat-live> true </cat-live>
          <cat-ilks> ... ILK |-> Ilk(... chop: CHOP, lump: LUMP) ... </cat-ilks>
          <vat-ilks> ... ILK |-> Ilk(... rate: RATE, spot: SPOT) ... </vat-ilks>
-         <vat-urns> ... { ILK, URN } |-> Urn( INK, URNART ) ... </vat-urns>
+         <vat-urns> ... { ILK, URN } |-> Urn(... ink: INK, art: URNART ) ... </vat-urns>
          <cat-vow> VOWADDR </cat-vow>
-      requires (INK *Rat SPOT) <Rat (URNART *Rat RATE)
+      requires (INK *Rate SPOT) <Rad (URNART *Rate RATE)
 
     syntax CatAuthStep ::= "cage" [klabel(#CatCage), symbol]
  // --------------------------------------------------------
