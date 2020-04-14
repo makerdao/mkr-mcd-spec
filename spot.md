@@ -13,10 +13,10 @@ Spot Configuration
 ```k
     configuration
       <spot>
-        <spot-wards> .Set  </spot-wards>
-        <spot-ilks>  .Map  </spot-ilks> // mapping (bytes32 => ilk)  String  |-> SpotIlk
-        <spot-par>   1:Ray </spot-par>
-        <spot-live>  true  </spot-live>
+        <spot-wards> .Set </spot-wards>
+        <spot-ilks>  .Map </spot-ilks> // mapping (bytes32 => ilk)  String  |-> SpotIlk
+        <spot-par>   1Ray </spot-par>
+        <spot-live>  true </spot-live>
       </spot>
 ```
 
@@ -85,17 +85,17 @@ These parameters are controlled by governance/oracles:
     rule <k> Spot . file pip ILKID WAD:Wad => . ... </k>
          <spot-live> true </spot-live>
          <spot-ilks> ... ILKID |-> SpotIlk ( ... pip: (_ => WAD) ) ... </spot-ilks>
-      requires WAD >=Rat 0
+      requires WAD >=Wad 0Wad
 
     rule <k> Spot . file mat ILKID MAT => . ... </k>
          <spot-live> true </spot-live>
          <spot-ilks> ... ILKID |-> SpotIlk ( ... mat: (_ => MAT) ) ... </spot-ilks>
-      requires MAT >=Rat 0
+      requires MAT >=Ray 0Ray
 
     rule <k> Spot . file par PAR => . ... </k>
          <spot-live> true </spot-live>
          <spot-par> _ => PAR </spot-par>
-      requires PAR >=Rat 0
+      requires PAR >=Ray 0Ray
 ```
 
 **TODO**: We currently store a `MaybeWad` for `pip` instead of a contract address to call to get that data.
@@ -122,7 +122,7 @@ Because data isn't explicitely initialized to 0 in KMCD, we need explicit initia
                           | "setPrice" String Wad
  // ---------------------------------------------
     rule <k> Spot . init ILKID => . ... </k>
-         <spot-ilks> ILKS => ILKS [ ILKID <- SpotIlk( ... pip: .Wad, mat: 0 ) ] </spot-ilks>
+         <spot-ilks> ILKS => ILKS [ ILKID <- SpotIlk( ... pip: .Wad, mat: 0Ray ) ] </spot-ilks>
       requires notBool ILKID in_keys(ILKS)
 
     rule <k> Spot . setPrice ILKID PRICE => . ... </k>
@@ -135,10 +135,10 @@ Spot Semantics
 ```k
     syntax SpotStep ::= "poke" String
  // ---------------------------------
-    rule <k> Spot . poke ILK => call Vat . file spot ILK ((VALUE /Rat PAR) /Rat MAT) ... </k>
+    rule <k> Spot . poke ILK => call Vat . file spot ILK ((Wad2Ray(VALUE) /Ray PAR) /Ray MAT) ... </k>
          <spot-ilks> ... ILK |-> SpotIlk (... pip: VALUE, mat: MAT ) ... </spot-ilks>
          <spot-par> PAR </spot-par>
-         <frame-events> ... (.List => ListItem(Poke(ILK, VALUE, VALUE /Rat PAR /Rat MAT))) </frame-events>
+         <frame-events> ... (.List => ListItem(Poke(ILK, VALUE, (Wad2Ray(VALUE) /Ray PAR) /Ray MAT))) </frame-events>
       requires VALUE =/=K .Wad
 
     rule <k> Spot . poke ILK => . ... </k>
