@@ -2,8 +2,44 @@
 requires "kmcd-driver.k"
 requires "gem.k"
 requires "vat.k"
+requires "vow.k"
+```
 
+- dent(uint id, uint lot, uint bid)
+- User action to make a bid for a smaller lot.
+
+```k
 module FLOP
+    imports VOW
+    imports PRE-FLOP
+
+    syntax FlopStep ::= "dent" Int Wad Rad
+ // --------------------------------------
+    rule <k> Flop . dent ID LOT BID
+          => call Vat . move MSGSENDER GUY BID
+         ...
+         </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         <current-time> NOW </current-time>
+         <flop-bids> ... ID |-> FlopBid(... bid: BID', lot: LOT' => LOT, guy: GUY => MSGSENDER, tic: TIC => TIC +Int TTL, end: END) ... </flop-bids>
+         <flop-live> true </flop-live>
+         <flop-beg> BEG </flop-beg>
+         <flop-ttl> TTL </flop-ttl>
+      requires LOT >=Wad wad(0)
+       andBool BID >=Rad rad(0)
+       andBool (TIC >Int NOW orBool TIC ==Int 0)
+       andBool END >Int NOW
+       andBool BID ==Rad BID'
+       andBool LOT <Wad LOT'
+       andBool LOT *Wad BEG <=Wad LOT'
+```
+
+```k
+endmodule
+```
+
+```k
+module PRE-FLOP
     imports KMCD-DRIVER
     imports GEM
     imports VAT
@@ -154,31 +190,6 @@ Flop Semantics
          <flop-pad> PAD </flop-pad>
          <flop-tau> TAU </flop-tau>
       requires END <Int NOW
-```
-
-- dent(uint id, uint lot, uint bid)
-- User action to make a bid for a smaller lot.
-
-```k
-    syntax FlopStep ::= "dent" Int Wad Rad
- // --------------------------------------
-    rule <k> Flop . dent ID LOT BID
-          => call Vat . move MSGSENDER GUY BID
-         ...
-         </k>
-         <msg-sender> MSGSENDER </msg-sender>
-         <current-time> NOW </current-time>
-         <flop-bids> ... ID |-> FlopBid(... bid: BID', lot: LOT' => LOT, guy: GUY => MSGSENDER, tic: TIC => TIC +Int TTL, end: END) ... </flop-bids>
-         <flop-live> true </flop-live>
-         <flop-beg> BEG </flop-beg>
-         <flop-ttl> TTL </flop-ttl>
-      requires LOT >=Wad wad(0)
-       andBool BID >=Rad rad(0)
-       andBool (TIC >Int NOW orBool TIC ==Int 0)
-       andBool END >Int NOW
-       andBool BID ==Rad BID'
-       andBool LOT <Wad LOT'
-       andBool LOT *Wad BEG <=Wad LOT'
 ```
 
 - deal(uint id)
