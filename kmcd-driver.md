@@ -4,14 +4,12 @@ KMCD Driver
 This module defines common state and control flow between all the other KMCD modules.
 
 ```k
-requires "rat.k"
+requires "kmcd-data.k"
 
 module KMCD-DRIVER
-    imports BOOL
-    imports INT
+    imports KMCD-DATA
     imports MAP
     imports STRING
-    imports RAT
 
     configuration
         <kmcd-driver>
@@ -165,32 +163,8 @@ Most operations add to the log, which stores the address which made the call and
  // --------------------------------------------------------------------
 ```
 
-Base Data
----------
-
-### Precision Quantities
-
-We model everything with arbitrary precision rationals, but use sort information to indicate the EVM code precision.
-
--   `Wad`: basic quantities (e.g. balances). Represented in implementation as 1e18 fixed point.
--   `Ray`: precise quantities (e.g. ratios). Represented in implementation as 1e27 fixed point.
--   `Rad`: result of multiplying `Wad` and `Ray` (highest precision). Represented in implementation as 1e45 fixed point.
-
-```k
-    syntax Wad = Rat
- // ----------------
-
-    syntax Ray = Rat
- // ----------------
-
-    syntax Rad = Rat
- // ----------------
-
-    syntax MaybeWad ::= Wad | ".Wad"
- // --------------------------------
-```
-
-### Time Increments
+Time Steps
+----------
 
 Some methods rely on a timestamp.
 We simulate that here.
@@ -208,38 +182,6 @@ We simulate that here.
          <current-time> TIME => TIME +Int N </current-time>
          <events> ... (.List => ListItem(TimeStep(N, TIME +Int N))) </events>
       requires N >Int 0
-
-    syntax priorities timeUnit > _+Int_ _-Int_ _*Int_ _/Int_
- // --------------------------------------------------------
-
-    syntax Int ::= Int "second"  [timeUnit]
-                 | Int "seconds" [timeUnit]
-                 | Int "minute"  [timeUnit]
-                 | Int "minutes" [timeUnit]
-                 | Int "hour"    [timeUnit]
-                 | Int "hours"   [timeUnit]
-                 | Int "day"     [timeUnit]
-                 | Int "days"    [timeUnit]
- // ---------------------------------------
-    rule 1 second  => 1                    [macro]
-    rule N seconds => N                    [macro]
-    rule 1 minute  =>        60    seconds [macro]
-    rule N minutes => N *Int 60    seconds [macro]
-    rule 1 hour    =>        3600  seconds [macro]
-    rule N hours   => N *Int 3600  seconds [macro]
-    rule 1 day     =>        86400 seconds [macro]
-    rule N days    => N *Int 86400 seconds [macro]
-```
-
-### Collateral Increments
-
-```k
-    syntax priorities collateralUnit > _+Int_ _-Int_ _*Int_ _/Int_
- // --------------------------------------------------------------
-
-    syntax Int ::= Int "ether" [collateralUnit]
- // -------------------------------------------
-    rule N ether => N *Int 1000000000 [macro]
 ```
 
 ```k
