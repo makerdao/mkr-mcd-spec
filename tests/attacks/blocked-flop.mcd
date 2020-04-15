@@ -4,14 +4,9 @@ STEPS ( ATTACK-PRELUDE )
 // Attack Sequence
 // ---------------
 
-// Set sump (determines DAI bid size for flop auctions)
-transact ADMIN Vow . file sump 50
-
-// Set dump (determines initial MKR lot size for flop auctions)
-transact ADMIN Vow . file dump 30
-
-// Set tau (flop auction lifetime in seconds)
-transact ADMIN Flop . file tau 3600
+// Assumed parameter values:
+// Vow.sump = 50 (flop fixed bid size)
+// Vow.dump = 30 (flop initial lot size)
 
 // Use suck to give Bobby some DAI, which conveniently also creates enough free, unbacked debt for 2 flop auctions
 transact ADMIN Vat . suck Vow "Bobby" 100
