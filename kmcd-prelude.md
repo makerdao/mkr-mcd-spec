@@ -69,6 +69,19 @@ module KMCD-PRELUDE
          // Allow the Flap to manipulate the Vow's balances
          transact Vow Vat . hope Flap
 
+         // Set sane parameter defaults for stuff that starts out at zero
+         // -------------------------------------------------------------
+
+         // Vat parameters
+         transact ADMIN Vat . file Line 1000 ether
+
+         // Vow parameters
+         transact ADMIN Vow . file bump 1 ether // flap fixed lot size
+         transact ADMIN Vow . file hump 0       // surplus buffer
+         transact ADMIN Vow . file sump 50      // flop fixed bid size
+         transact ADMIN Vow . file dump 30      // flop initial lot size
+         transact ADMIN Flop . file tau 3600    // flop auction liftime (s)
+
          .MCDSteps
       [macro]
 
@@ -100,19 +113,10 @@ module KMCD-PRELUDE
          // Initialize "gold" for End
          transact ADMIN End . initGap "gold"
 
-         // File Parameters
-         // ---------------
-
-         // Setup Vat
-         transact ADMIN Vat . file Line 1000 ether
+         // Initialize "gold for Vat
          transact ADMIN Vat . initIlk "gold"
          transact ADMIN Vat . file line "gold" 1000 ether
-
          transact ANYONE Spot . poke "gold"
-
-         // Setup Vow
-         transact ADMIN Vow . file bump 1 ether
-         transact ADMIN Vow . file hump 0
 
          // User Setup
          // ----------
@@ -142,10 +146,12 @@ module KMCD-PRELUDE
          transact "Alice" Vat . hope Pot
          transact "Alice" Vat . hope Flip "gold"
          transact "Alice" Vat . hope End
+         transact "Alice" Vat . hope Flop
 
          transact "Bobby" Vat . hope Pot
          transact "Bobby" Vat . hope Flip "gold"
          transact "Bobby" Vat . hope End
+         transact "Bobby" Vat . hope Flop
 
          // Setup CDPs
          transact "Alice" GemJoin "gold" . join "Alice" 10
