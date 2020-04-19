@@ -154,7 +154,7 @@ Flap Semantics
     syntax FlapStep ::= "tend" Int Rad Wad
  // --------------------------------------
     rule <k> Flap . tend ID LOT BID
-          => call Gem "MKR" . move MSGSENDER GUY BID'
+          => #if MSGSENDER =/=K GUY #then call Gem "MKR" . move MSGSENDER GUY BID' #else . #fi
           ~> call Gem "MKR" . move MSGSENDER THIS (BID -Wad BID')
          ...
          </k>
