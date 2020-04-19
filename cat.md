@@ -101,9 +101,11 @@ The parameters controlled by governance are:
 
     rule <k> Cat . file chop ILKID CHOP => . ... </k>
          <cat-ilks> ... ILKID |-> Ilk ( ... chop: (_ => CHOP) ) ... </cat-ilks>
+      requires CHOP >=Rat 0
 
     rule <k> Cat . file lump ILKID LUMP => . ... </k>
          <cat-ilks> ... ILKID |-> Ilk ( ... lump: (_ => LUMP) ) ... </cat-ilks>
+      requires LUMP >=Rat 0
 ```
 
 **NOTE**: `flip` is not fileable since we are assuming a unique liquidator for each ilk.
