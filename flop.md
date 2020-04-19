@@ -16,7 +16,7 @@ module FLOP
     syntax FlopStep ::= "dent" Int Wad Rad
  // --------------------------------------
     rule <k> Flop . dent ID LOT BID
-          => call Vat . move MSGSENDER GUY BID
+          => #if MSGSENDER =/=K GUY #then call Vat . move MSGSENDER GUY BID #else . #fi
           ~> #if TIC ==Int 0 #then call GUY . kiss ( minRat(BID, ASH) ) #else . #fi
          ...
          </k>
