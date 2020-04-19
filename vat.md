@@ -138,18 +138,22 @@ The parameters controlled by governance are:
     rule <k> Vat . file Line LINE => . ... </k>
          <vat-live> true </vat-live>
          <vat-Line> _ => LINE </vat-Line>
+      requires LINE >=Rat 0
 
     rule <k> Vat . file spot ILKID SPOT => . ... </k>
          <vat-live> true </vat-live>
          <vat-ilks> ... ILKID |-> Ilk ( ... spot: (_ => SPOT) ) ... </vat-ilks>
+      requires SPOT >=Rat 0
 
     rule <k> Vat . file line ILKID LINE => . ... </k>
          <vat-live> true </vat-live>
          <vat-ilks> ... ILKID |-> Ilk ( ... line: (_ => LINE) ) ... </vat-ilks>
+      requires LINE >=Rat 0
 
     rule <k> Vat . file dust ILKID DUST => . ... </k>
          <vat-live> true </vat-live>
          <vat-ilks> ... ILKID |-> Ilk ( ... dust: (_ => DUST) ) ... </vat-ilks>
+      requires DUST >=Rat 0
 ```
 
 Vat Initialization
@@ -286,6 +290,7 @@ This is quite permissive, and would allow the account to drain all your locked c
  // ------------------------------------------------
     rule <k> Vat . slip ILKID ADDRTO NEWCOL => . ... </k>
          <vat-gem> ... { ILKID , ADDRTO } |-> ( COL => COL +Rat NEWCOL ) ... </vat-gem>
+      requires NEWCOL >=Rat 0
 
     syntax VatStep ::= "flux" String Address Address Wad
  // ----------------------------------------------------
