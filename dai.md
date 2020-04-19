@@ -79,7 +79,8 @@ The Dai token is a mintable/burnable ERC20 token.
          <msg-sender> ACCOUNT_SRC </msg-sender>
          <dai-balance> ... ACCOUNT_SRC |-> BALANCE_SRC ... </dai-balance>
          <frame-events> ... (.List => ListItem(Transfer(ACCOUNT_SRC, ACCOUNT_SRC, AMOUNT))) </frame-events>
-      requires BALANCE_SRC >=Rat AMOUNT
+      requires AMOUNT >=Rat 0
+       andBool BALANCE_SRC >=Rat AMOUNT
 
     rule <k> Dai . transfer ACCOUNT_DST AMOUNT => . ... </k>
          <msg-sender> ACCOUNT_SRC </msg-sender>
@@ -90,7 +91,8 @@ The Dai token is a mintable/burnable ERC20 token.
            ...
          </dai-balance>
          <frame-events> ... (.List => ListItem(Transfer(ACCOUNT_SRC, ACCOUNT_DST, AMOUNT))) </frame-events>
-      requires ACCOUNT_SRC =/=K ACCOUNT_DST
+      requires AMOUNT >=Rat 0
+       andBool ACCOUNT_SRC =/=K ACCOUNT_DST
        andBool BALANCE_SRC >=Rat AMOUNT
 
     syntax DaiStep ::= "transferFrom" Address Address Wad
@@ -98,7 +100,8 @@ The Dai token is a mintable/burnable ERC20 token.
     rule <k> Dai . transferFrom ACCOUNT_SRC ACCOUNT_SRC AMOUNT => . ... </k>
          <dai-balance> ... ACCOUNT_SRC |-> BALANCE_SRC ... </dai-balance>
          <frame-events> ... (.List => ListItem(Transfer(ACCOUNT_SRC, ACCOUNT_SRC, AMOUNT))) </frame-events>
-      requires BALANCE_SRC >=Rat AMOUNT
+      requires AMOUNT >=Rat 0
+       andBool BALANCE_SRC >=Rat AMOUNT
 
     rule <k> Dai . transferFrom ACCOUNT_SRC ACCOUNT_DST AMOUNT => . ... </k>
          <dai-allowance> ... { ACCOUNT_SRC -> ACCOUNT_DST } |-> (ALLOWANCE_SRC_DST => ALLOWANCE_SRC_DST -Rat AMOUNT) ... </dai-allowance>
@@ -109,7 +112,8 @@ The Dai token is a mintable/burnable ERC20 token.
            ...
          </dai-balance>
          <frame-events> ... (.List => ListItem(Transfer(ACCOUNT_SRC, ACCOUNT_DST, AMOUNT))) </frame-events>
-      requires ACCOUNT_SRC =/=K ACCOUNT_DST
+      requires AMOUNT >=Rat 0
+       andBool ACCOUNT_SRC =/=K ACCOUNT_DST
        andBool BALANCE_SRC >=Rat AMOUNT
        andBool ALLOWANCE_SRC_DST >=Rat AMOUNT
 
@@ -122,7 +126,8 @@ The Dai token is a mintable/burnable ERC20 token.
            ...
          </dai-balance>
          <frame-events> ... (.List => ListItem(Transfer(ACCOUNT_SRC, ACCOUNT_DST, AMOUNT))) </frame-events>
-      requires ACCOUNT_SRC =/=K ACCOUNT_DST
+      requires AMOUNT >=Rat 0
+       andBool ACCOUNT_SRC =/=K ACCOUNT_DST
        andBool BALANCE_SRC >=Rat AMOUNT
 
     syntax DaiAuthStep ::= "mint" Address Wad
@@ -131,6 +136,7 @@ The Dai token is a mintable/burnable ERC20 token.
          <dai-totalSupply> DAI_SUPPLY => DAI_SUPPLY +Rat AMOUNT </dai-totalSupply>
          <dai-balance> ... ACCOUNT_DST |-> (BALANCE_DST => BALANCE_DST +Rat AMOUNT) ... </dai-balance>
          <frame-events> ... (.List => ListItem(Transfer(0, ACCOUNT_DST, AMOUNT))) </frame-events>
+      requires AMOUNT >=Rat 0
 
     syntax DaiStep ::= "burn" Address Wad
  // -------------------------------------
@@ -138,6 +144,7 @@ The Dai token is a mintable/burnable ERC20 token.
          <dai-totalSupply> DAI_SUPPLY => DAI_SUPPLY -Rat AMOUNT </dai-totalSupply>
          <dai-balance> ... ACCOUNT_SRC |-> (AMOUNT_SRC => AMOUNT_SRC -Rat AMOUNT) ... </dai-balance>
          <frame-events> ... (.List => ListItem(Transfer(ACCOUNT_SRC, 0, AMOUNT))) </frame-events>
+      requires AMOUNT >=Rat 0
 
     syntax DaiStep ::= "approve" Address Wad
  // ----------------------------------------
@@ -145,20 +152,24 @@ The Dai token is a mintable/burnable ERC20 token.
          <msg-sender> ACCOUNT_SRC </msg-sender>
          <dai-allowance> ... { ACCOUNT_SRC -> ACCOUNT_DST } |-> (_ => AMOUNT) ... </dai-allowance>
          <frame-events> ... (.List => ListItem(Approval(ACCOUNT_SRC, ACCOUNT_DST, AMOUNT))) </frame-events>
+      requires AMOUNT >=Rat 0
 
     syntax DaiStep ::= "push" Address Wad
  // -------------------------------------
     rule <k> Dai . push ACCOUNT_DST AMOUNT => Dai . transferFrom ACCOUNT_SRC ACCOUNT_DST AMOUNT ... </k>
          <msg-sender> ACCOUNT_SRC </msg-sender>
+      requires AMOUNT >=Rat 0
 
     syntax DaiStep ::= "pull" Address Wad
  // -------------------------------------
     rule <k> Dai . pull ACCOUNT_SRC AMOUNT => Dai . transferFrom ACCOUNT_SRC ACCOUNT_DST AMOUNT ... </k>
          <msg-sender> ACCOUNT_DST </msg-sender>
+      requires AMOUNT >=Rat 0
 
     syntax DaiStep ::= "move" Address Address Wad
  // ---------------------------------------------
     rule <k> Dai . move ACCOUNT_SRC ACCOUNT_DST AMOUNT => Dai . transferFrom ACCOUNT_SRC ACCOUNT_DST AMOUNT ... </k>
+      requires AMOUNT >=Rat 0
 ```
 
 **TODO**: `permit` logic, seems to be a time-locked allowance.
