@@ -168,9 +168,11 @@ We model everything with arbitrary precision rationals, but use sort information
 ```
 
 ```k
-    syntax Rad ::= Wad "*Rate" Ray [function]
- // -----------------------------------------
-    rule R1 *Rate R2 => R1 *Rat R2
+    syntax Rad ::= Wad "*RateWad" Ray [function]
+                 | Rad "*RateRad" Ray [function]
+ // --------------------------------------------
+    rule R1 *RateWad R2 => R1 *Rat R2
+    rule R1 *RateRad R2 => R1 *Rat R2
 
     syntax Wad ::= Rad "/Rate" Ray [function]
  // -----------------------------------------
