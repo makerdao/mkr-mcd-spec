@@ -267,6 +267,18 @@ module KMCD-RANDOM-CHOICES
     rule chooseString (I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>String
     rule chooseAddress(I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>Address
     rule chooseCDPID  (I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>CDPID
+
+    syntax Wad ::= randWadBounded ( Int , Wad ) [function]
+ // ------------------------------------------------------
+    rule randWadBounded(I, W) => randRatBounded(I, W)
+
+    syntax Ray ::= randRayBounded ( Int , Ray ) [function]
+ // ------------------------------------------------------
+    rule randRayBounded(I, R) => randRatBounded(I, R)
+
+    syntax Rad ::= randRadBounded ( Int , Rad ) [function]
+ // ------------------------------------------------------
+    rule randRadBounded(I, R) => randRatBounded(I, R)
 ```
 
 ```k
