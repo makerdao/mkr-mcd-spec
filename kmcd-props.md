@@ -110,11 +110,11 @@ By default, we assume the MKR balances are negative, but otherwise just grab the
 Art of an ilk = Sum of all urn art across all users for that ilk.
 
 ```k
-    syntax Int ::= sumOfUrnArt(Map, String, Int) [function, functional]
+    syntax Rat ::= sumOfUrnArt(Map, String, Rat) [function, functional]
  // -------------------------------------------------------------------
-    rule sumOfUrnArt( {ILKID , ADDR} |-> Urn ( _ , ART) URNS, ILKID', SUM)
+    rule sumOfUrnArt( {ILKID , ADDR} |-> Urn (... art: ART) URNS, ILKID', SUM)
       => #if ILKID ==K ILKID'
-            #then sumOfUrnArt( URNS, ILKID', SUM +Int ART)
+            #then sumOfUrnArt( URNS, ILKID', SUM +Rat ART)
             #else sumOfUrnArt( URNS, ILKID', SUM)
          #fi
 
