@@ -121,7 +121,7 @@ Join Semantics
     syntax GemJoinStep ::= "exit" Address Wad
  // -----------------------------------------
     rule <k> GemJoin GEMID . exit USR AMOUNT
-          => call Vat . slip GEMID MSGSENDER (0 -Wad AMOUNT)
+          => call Vat . slip GEMID MSGSENDER (0Wad -Wad AMOUNT)
           ~> call Gem GEMID . transfer USR AMOUNT
          ...
          </k>
@@ -131,7 +131,7 @@ Join Semantics
     syntax DaiJoinStep ::= "join" Address Wad
  // -----------------------------------------
     rule <k> DaiJoin . join USR AMOUNT
-          => call Vat . move THIS USR AMOUNT
+          => call Vat . move THIS USR Wad2Rad(AMOUNT)
           ~> call Dai . burn MSGSENDER AMOUNT
          ...
          </k>
@@ -143,7 +143,7 @@ Join Semantics
     syntax DaiJoinStep ::= "exit" Address Wad
  // -----------------------------------------
     rule <k> DaiJoin . exit USR AMOUNT
-          => call Vat . move MSGSENDER THIS AMOUNT
+          => call Vat . move MSGSENDER THIS Wad2Rad(AMOUNT)
           ~> call Dai . mint USR AMOUNT
          ...
          </k>

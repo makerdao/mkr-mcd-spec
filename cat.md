@@ -69,10 +69,10 @@ Cat Events
 ----------
 
 ```k
-    syntax Event ::= Bite(ilk: String, urn: Address, ink: Wad, art: Wad, tab: Wad, flip: Address, id: Int) [klabel(Bite), symbol]
+    syntax Event ::= Bite(ilk: String, urn: Address, ink: Wad, art: Wad, tab: Rad, flip: Address, id: Int) [klabel(Bite), symbol]
  // -----------------------------------------------------------------------------------------------------------------------------
 
-    syntax CatStep ::= "emitBite" String Address Wad Wad Wad
+    syntax CatStep ::= "emitBite" String Address Wad Wad Rad
  // --------------------------------------------------------
     rule <k> emitBite ILK URN INK ART TAB => ID ... </k>
          <return-value> ID:Int </return-value>

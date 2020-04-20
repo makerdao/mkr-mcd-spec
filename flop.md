@@ -83,15 +83,15 @@ The parameters controlled by governance are:
     syntax FlopAuthStep ::= "file" FlopFile
  // ---------------------------------------
 
-    syntax FlopFile ::= "beg" Ray
+    syntax FlopFile ::= "beg" Wad
                       | "ttl" Int
                       | "tau" Int
-                      | "pad" Ray
+                      | "pad" Wad
                       | "vow-file" Address
  // --------------------------------------
     rule <k> Flop . file beg BEG => . ... </k>
          <flop-beg> _ => BEG </flop-beg>
-      requires BEG >=Ray 0Ray
+      requires BEG >=Wad 0Wad
 
     rule <k> Flop . file ttl TTL => . ... </k>
          <flop-ttl> _ => TTL </flop-ttl>
@@ -103,7 +103,7 @@ The parameters controlled by governance are:
 
     rule <k> Flop . file pad PAD => . ... </k>
          <flop-pad> _ => PAD </flop-pad>
-      requires PAD >=Ray 0Ray
+      requires PAD >=Wad 0Wad
 
     rule <k> Flop . file vow-file ADDR => . ... </k>
          <flop-vow> _ => ADDR </flop-vow>

@@ -83,13 +83,13 @@ The parameters controlled by governance are:
     syntax FlapAuthStep ::= "file" FlapFile
  // ---------------------------------------
 
-    syntax FlapFile ::= "beg" Ray
+    syntax FlapFile ::= "beg" Wad
                       | "ttl" Int
                       | "tau" Int
  // -----------------------------
     rule <k> Flap . file beg BEG => . ... </k>
          <flap-beg> _ => BEG </flap-beg>
-      requires BEG >=Ray 0Ray
+      requires BEG >=Wad 0Wad
 
     rule <k> Flap . file ttl TTL => . ... </k>
          <flap-ttl> _ => TTL </flap-ttl>

@@ -161,7 +161,7 @@ End Semantics
            ...
          </flip>
       requires TAG =/=Ray 0Ray
-       andBool LOT >=Rad 0Rad
+       andBool LOT >=Wad 0Wad
        andBool TAB /Rate RATE >=Wad 0Wad
 
     syntax EndStep ::= "skim" String Address
@@ -216,7 +216,7 @@ End Semantics
     syntax EndStep ::= "pack" Wad
  // -----------------------------
     rule <k> End . pack AMOUNT
-          => call Vat . move MSGSENDER Vow AMOUNT
+          => call Vat . move MSGSENDER Vow Wad2Rad(AMOUNT)
          ...
          </k>
          <msg-sender> MSGSENDER </msg-sender>
