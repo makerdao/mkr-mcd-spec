@@ -204,7 +204,7 @@ End Semantics
  // --------------------------------
     rule <k> End . flow ILK => . ... </k>
          <end-debt> DEBT </end-debt>
-         <end-fix> FIX => FIX [ ILK <- rdiv(rmul(rmul(ART, RATE), TAG) -Wad GAP, DEBT) ] </end-fix>
+         <end-fix> FIX => FIX [ ILK <- rdiv(Wad2Ray(rmul(rmul(ART, RATE), TAG) -Wad GAP), DEBT) ] </end-fix>
          <end-tag> ... ILK |-> TAG ... </end-tag>
          <end-gap> ... ILK |-> GAP ... </end-gap>
          <end-art> ... ILK |-> ART ... </end-art>
