@@ -73,14 +73,14 @@ module KMCD-PRELUDE
          // -------------------------------------------------------------
 
          // Vat parameters
-         transact ADMIN Vat . file Line 1000 ether
+         transact ADMIN Vat . file Line Int2Rad(1000 ether)
 
          // Vow parameters
-         transact ADMIN Vow . file bump 1 ether // flap fixed lot size
-         transact ADMIN Vow . file hump 0       // surplus buffer
-         transact ADMIN Vow . file sump 50      // flop fixed bid size
-         transact ADMIN Vow . file dump 30      // flop initial lot size
-         transact ADMIN Flop . file tau 3600    // flop auction liftime (s)
+         transact ADMIN Vow . file bump Int2Rad(1 ether) // flap fixed lot size
+         transact ADMIN Vow . file hump Int2Rad(0)       // surplus buffer
+         transact ADMIN Vow . file sump Int2Rad(50)      // flop fixed bid size
+         transact ADMIN Vow . file dump Int2Wad(30)      // flop initial lot size
+         transact ADMIN Flop . file tau 3600             // flop auction liftime (s)
 
          .MCDSteps
       [macro]
@@ -102,9 +102,9 @@ module KMCD-PRELUDE
 
          // Initialize Spot for gold
          transact ADMIN Spot . init     "gold"
-         transact ADMIN Spot . setPrice "gold" 3 ether
-         transact ADMIN Spot . file       mat "gold" 1
-         transact ADMIN Spot . file       par 1
+         transact ADMIN Spot . setPrice "gold" Int2Wad(3 ether)
+         transact ADMIN Spot . file       mat "gold" 1Ray
+         transact ADMIN Spot . file       par 1Ray
 
          // Initialize Flipper for gold
          transact ADMIN Flip "gold" . init
@@ -115,7 +115,7 @@ module KMCD-PRELUDE
 
          // Initialize "gold for Vat
          transact ADMIN Vat . initIlk "gold"
-         transact ADMIN Vat . file line "gold" 1000 ether
+         transact ADMIN Vat . file line "gold" Int2Rad(1000 ether)
          transact ANYONE Spot . poke "gold"
 
          // User Setup
@@ -124,8 +124,8 @@ module KMCD-PRELUDE
          // Initialize gold Gem and GemJoin
          transact ADMIN Gem "gold" . initUser "Alice"
          transact ADMIN Gem "gold" . initUser "Bobby"
-         transact ADMIN Gem "gold" . mint "Alice" 20
-         transact ADMIN Gem "gold" . mint "Bobby" 20
+         transact ADMIN Gem "gold" . mint "Alice" Int2Wad(20)
+         transact ADMIN Gem "gold" . mint "Bobby" Int2Wad(20)
 
          transact ADMIN Gem "MKR" . initUser "Alice"
          transact ADMIN Gem "MKR" . initUser "Bobby"
@@ -154,10 +154,10 @@ module KMCD-PRELUDE
          transact "Bobby" Vat . hope Flop
 
          // Setup CDPs
-         transact "Alice" GemJoin "gold" . join "Alice" 10
-         transact "Bobby" GemJoin "gold" . join "Bobby" 10
-         transact "Alice" Vat . frob "gold" "Alice" "Alice" "Alice" 10 10
-         transact "Bobby" Vat . frob "gold" "Bobby" "Bobby" "Bobby" 10 10
+         transact "Alice" GemJoin "gold" . join "Alice" Int2Wad(10)
+         transact "Bobby" GemJoin "gold" . join "Bobby" Int2Wad(10)
+         transact "Alice" Vat . frob "gold" "Alice" "Alice" "Alice" Int2Wad(10) Int2Wad(10)
+         transact "Bobby" Vat . frob "gold" "Bobby" "Bobby" "Bobby" Int2Wad(10) Int2Wad(10)
 
          // Initialize End for Users
          transact ADMIN End . initBag "Alice"
@@ -207,10 +207,12 @@ module KMCD-GEN
          <kmcd-snapshots> ListItem(_) </kmcd-snapshots>
 
     syntax Int ::= #timeStepMax() [function]
-                 | #dsrSpread()   [function]
  // ----------------------------------------
-    rule #timeStepMax() => 2  [macro]
-    rule #dsrSpread()   => 20 [macro]
+    rule #timeStepMax() => 2 [macro]
+
+    syntax Ray ::= #dsrSpread() [function]
+ // --------------------------------------
+    rule #dsrSpread() => Int2Ray(20)
 
     syntax Int   ::= head        ( Bytes ) [function]
     syntax Bytes ::= tail        ( Bytes ) [function]
@@ -346,7 +348,7 @@ module KMCD-GEN
       requires lengthBytes(BS) >Int 0
        andBool size(VAT_URNS) >Int 0
 
-    rule <k> GenVatFrob CDPID => GenVatFrob CDPID ((2 *Rat randRatBounded(head(BS), VAT_GEM)) -Rat VAT_GEM) ... </k>
+    rule <k> GenVatFrob CDPID => GenVatFrob CDPID ((Int2Wad(2) *Wad randWadBounded(head(BS), VAT_GEM)) -Wad VAT_GEM) ... </k>
          <random> BS => tail(BS) </random>
          <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
          <vat-gem> ... CDPID |-> VAT_GEM ... </vat-gem>
@@ -354,8 +356,8 @@ module KMCD-GEN
 
     rule <k> GenVatFrob { ILKID , ADDRESS } DINK
           => #fun( DARTBOUND
-                => LogGen ( transact ADDRESS Vat . frob ILKID ADDRESS ADDRESS ADDRESS DINK ((2 *Rat randRatBounded(head(BS), DARTBOUND)) -Rat DARTBOUND) )
-                 ) (((SPOT *Rat (URNINK +Rat DINK)) /Rat RATE) -Rat URNART)
+                => LogGen ( transact ADDRESS Vat . frob ILKID ADDRESS ADDRESS ADDRESS DINK ((Int2Wad(2) *Wad randWadBounded(head(BS), DARTBOUND)) -Wad DARTBOUND) )
+                 ) ((((URNINK +Wad DINK) *RateWad SPOT) /Rate RATE) -Wad URNART)
          ...
          </k>
          <random> BS => tail(BS) </random>
@@ -386,7 +388,7 @@ module KMCD-GEN
       requires lengthBytes(BS) >Int 0
        andBool size(VAT_DAIS) >Int 0
 
-    rule <k> GenVatMove ADDRSRC ADDRDST => LogGen ( transact ADDRSRC Vat . move ADDRSRC ADDRDST randRatBounded(head(BS), VAT_DAI) ) ... </k>
+    rule <k> GenVatMove ADDRSRC ADDRDST => LogGen ( transact ADDRSRC Vat . move ADDRSRC ADDRDST randRadBounded(head(BS), VAT_DAI) ) ... </k>
          <random> BS => tail(BS) </random>
          <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
          <vat-dai>
@@ -436,7 +438,7 @@ module KMCD-GEN
       requires lengthBytes(BS) >Int 0
        andBool size(GEM_BALANCES) >Int 0
 
-    rule <k> GenGemJoinJoin GEM_JOIN_ID ADDRESS => LogGen ( transact ADDRESS GemJoin GEM_JOIN_ID . join ADDRESS randRatBounded(head(BS), GEM_BALANCE) ) ... </k>
+    rule <k> GenGemJoinJoin GEM_JOIN_ID ADDRESS => LogGen ( transact ADDRESS GemJoin GEM_JOIN_ID . join ADDRESS randWadBounded(head(BS), GEM_BALANCE) ) ... </k>
          <random> BS => tail(BS) </random>
          <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
          <gem>
@@ -460,13 +462,13 @@ module KMCD-GEN
       requires lengthBytes(BS) >Int 0
        andBool size(VAT_DAIS) >Int 0
 
-    rule <k> GenFlapKick ADDRESS => GenFlapKick ADDRESS randRatBounded(head(BS), VOW_DAI) ... </k>
+    rule <k> GenFlapKick ADDRESS => GenFlapKick ADDRESS randRadBounded(head(BS), VOW_DAI) ... </k>
          <random> BS => tail(BS) </random>
          <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
          <vat-dai> ... ADDRESS |-> VOW_DAI ... </vat-dai>
       requires lengthBytes(BS) >Int 0
 
-    rule <k> GenFlapKick ADDRESS LOT => GenFlapKick ADDRESS LOT randRatBounded(head(BS), FLAP_MKR) ... </k>
+    rule <k> GenFlapKick ADDRESS LOT => GenFlapKick ADDRESS LOT randWadBounded(head(BS), FLAP_MKR) ... </k>
          <random> BS => tail(BS) </random>
          <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
          <gem>
@@ -490,8 +492,8 @@ module KMCD-GEN
                          | "GenFlipKick" CDPID
                          | "GenFlipKick" CDPID Address
                          | "GenFlipKick" CDPID Address Address
-                         | "GenFlipKick" CDPID Address Address Rad
-                         | "GenFlipKick" CDPID Address Address Rad Wad
+                         | "GenFlipKick" CDPID Address Address Wad
+                         | "GenFlipKick" CDPID Address Address Wad Rad
  // ------------------------------------------------------------------
     rule <k> GenFlipKick => GenFlipKick chooseCDPID(head(BS), keys_list(VAT_GEMS)) ... </k>
          <random> BS => tail(BS) </random>
@@ -514,18 +516,18 @@ module KMCD-GEN
       requires lengthBytes(BS) >Int 0
        andBool size(VAT_DAIS) >Int 0
 
-    rule <k> GenFlipKick CDPID STORAGE BENEFICIARY => GenFlipKick CDPID STORAGE BENEFICIARY randRatBounded(head(BS), VAT_GEM) ... </k>
+    rule <k> GenFlipKick CDPID STORAGE BENEFICIARY => GenFlipKick CDPID STORAGE BENEFICIARY randWadBounded(head(BS), VAT_GEM) ... </k>
          <random> BS => tail(BS) </random>
          <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
          <vat-gem> ... CDPID |-> VAT_GEM ... </vat-gem>
       requires lengthBytes(BS) >Int 0
 
-    rule <k> GenFlipKick CDPID STORAGE BENEFICIARY LOT => GenFlipKick CDPID STORAGE BENEFICIARY LOT randRatBounded(head(BS), 1000) ... </k>
+    rule <k> GenFlipKick CDPID STORAGE BENEFICIARY LOT => GenFlipKick CDPID STORAGE BENEFICIARY LOT randRadBounded(head(BS), Int2Rad(1000)) ... </k>
          <random> BS => tail(BS) </random>
          <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
       requires lengthBytes(BS) >Int 0
 
-    rule <k> GenFlipKick { ILKID , ADDRESS } STORAGE BENEFICIARY LOT BID => LogGen ( transact ADDRESS Flip ILKID . kick STORAGE BENEFICIARY 1000 LOT BID ) ... </k>
+    rule <k> GenFlipKick { ILKID , ADDRESS } STORAGE BENEFICIARY LOT BID => LogGen ( transact ADDRESS Flip ILKID . kick STORAGE BENEFICIARY Int2Rad(1000) LOT BID ) ... </k>
 
     syntax GenStep ::= GenPotStep
     syntax GenPotStep ::= "GenPotJoin"
@@ -546,14 +548,14 @@ module KMCD-GEN
       requires lengthBytes(BS) >Int 0
        andBool size(POT_PIES) >Int 0
 
-    rule <k> GenPotJoin ADDRESS => LogGen ( transact ADDRESS Pot . join randRatBounded(head(BS), VAT_DAI /Rat POT_CHI) ) ... </k>
+    rule <k> GenPotJoin ADDRESS => LogGen ( transact ADDRESS Pot . join randWadBounded(head(BS), VAT_DAI /Rate POT_CHI) ) ... </k>
          <random> BS => tail(BS) </random>
          <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
          <vat-dai> ... ADDRESS |-> VAT_DAI ... </vat-dai>
          <pot-chi> POT_CHI </pot-chi>
       requires lengthBytes(BS) >Int 0
 
-    rule <k> GenPotFileDSR => LogGen ( transact ADMIN Pot . file dsr (randRatBounded(head(BS), #dsrSpread() /Rat 100) +Rat 1) ) ... </k>
+    rule <k> GenPotFileDSR => LogGen ( transact ADMIN Pot . file dsr (randRayBounded(head(BS), #dsrSpread() /Ray Int2Ray(100)) +Ray 1Ray) ) ... </k>
          <random> BS => tail(BS) </random>
          <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
       requires lengthBytes(BS) >Int 0
@@ -565,7 +567,7 @@ module KMCD-GEN
       requires lengthBytes(BS) >Int 0
        andBool size(POT_PIES) >Int 0
 
-    rule <k> GenPotExit ADDRESS => LogGen ( transact ADDRESS Pot . exit (VAT_DAI /Rat CHI) ) ... </k>
+    rule <k> GenPotExit ADDRESS => LogGen ( transact ADDRESS Pot . exit (VAT_DAI /Rate CHI) ) ... </k>
          <vat-dai> ... Pot |-> VAT_DAI ... </vat-dai>
          <pot-chi> CHI </pot-chi>
 
@@ -649,7 +651,7 @@ module KMCD-GEN
       requires lengthBytes(BS) >Int 0
        andBool size(END_OUTS) >Int 0
 
-    rule <k> GenEndCash { ILKID , ADDRESS } => LogGen ( transact ADDRESS End . cash ILKID randRatBounded(head(BS), BAG -Rat OUT) ) ... </k>
+    rule <k> GenEndCash { ILKID , ADDRESS } => LogGen ( transact ADDRESS End . cash ILKID randWadBounded(head(BS), BAG -Wad OUT) ) ... </k>
          <random> BS => tail(BS) </random>
          <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
          <end-out> ... { ILKID , ADDRESS } |-> OUT ... </end-out>
