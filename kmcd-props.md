@@ -123,49 +123,6 @@ Art of an ilk = Sum of all urn art across all users for that ilk.
     rule sumOfUrnArt(.Map, _, SUM) => SUM
 ```
 
-Ink of an ilk = Sum of all urn ink across all users for that ilk.
-
-Total debt = Sum of all debt across all users.
-
-```k
-    syntax Int ::= sumOfAllDebt(Map, Int) [function, functional]
- // ------------------------------------------------------------
-    rule sumOfAllDebt( ADDR |-> DAI USERDAI, SUM)
-      => sumOfAllDebt( USERDAI, SUM +Int DAI)
-
-    rule sumOfAllDebt( _ |-> _ USERDAI, SUM ) => sumOfAllDebt( USERDAI, SUM ) [owise]
-
-    rule sumOfAllDebt(.Map, SUM) => SUM
-```
-
-Total vice = Sum of all sin across all users.
-
-```k
-    syntax Int ::= sumOfAllSin(Map, Int) [function, functional]
- // ------------------------------------------------------------
-    rule sumOfAllSin( ADDR |-> SIN USERSIN, SUM)
-      => sumOfAllSin( USERSIN, SUM +Int SIN)
-
-    rule sumOfAllSin( _ |-> _ USERSIN, SUM ) => sumOfAllSin( USERSIN, SUM ) [owise]
-
-    rule sumOfAllSin(.Map, SUM) => SUM
-```
-
-Total dai of all users = CDP debt for all users and gem + system debt (vice)
-
-```k
-    syntax Rat ::= sumOfAllUserDebt( ilks: Map, urns: Map, sum: Rat) [function, functional]
- // ---------------------------------------------------------------------------------------
-    rule sumOfAllUserDebt(
-             ILKID |-> ILK ILKS => ILKS,
-             URNS,
-             SUM => SUM +Rat (rate(ILK) *Rat sumOfUrnArt(URNS, ILKID, 0)) )
-
-    rule sumOfAllUserDebt(_ |-> _ ILKS => ILKS, URNS, SUM) [owise]
-
-    rule sumOfAllUserDebt(.Map, _, SUM) => SUM
-```
-
 Total backed debt (sum over each CDP's art times corresponding ilk's rate)
 
 ```k
