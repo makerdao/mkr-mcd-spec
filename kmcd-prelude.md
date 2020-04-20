@@ -169,49 +169,13 @@ module KMCD-PRELUDE
 endmodule
 ```
 
-Random Choices
---------------
-
-```k
-module KMCD-RANDOM-CHOICES
-    imports KMCD-PRELUDE
-```
-
-```k
-    syntax Int ::= randIntBounded ( Int , Int ) [function]
- // ------------------------------------------------------
-    rule randIntBounded(RAND, BOUND) => 0                          requires         BOUND <Int 0
-    rule randIntBounded(RAND, BOUND) => RAND modInt (BOUND +Int 1) requires notBool BOUND <Int 0
-
-    syntax Rat ::= randRat ( Int ) [function]
- // -----------------------------------------
-    rule randRat(I) => I /Rat 256
-
-    syntax Rat ::= randRatBounded ( Int , Rat ) [function]
- // ------------------------------------------------------
-    rule randRatBounded(I, BOUND) => BOUND *Rat randRat(I)
-
-    syntax Int     ::= chooseInt     ( Int , List ) [function]
-    syntax String  ::= chooseString  ( Int , List ) [function]
-    syntax Address ::= chooseAddress ( Int , List ) [function]
-    syntax CDPID   ::= chooseCDPID   ( Int , List ) [function]
- // ----------------------------------------------------------
-    rule chooseInt    (I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>Int
-    rule chooseString (I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>String
-    rule chooseAddress(I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>Address
-    rule chooseCDPID  (I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>CDPID
-```
-
-```k
-endmodule
-```
-
 Random Sequence Generation
 --------------------------
 
 ```k
 module KMCD-GEN
     imports KMCD-RANDOM-CHOICES
+    imports KMCD-PRELUDE
     imports BYTES
 
     configuration
