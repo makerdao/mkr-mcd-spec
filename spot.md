@@ -78,17 +78,24 @@ These parameters are controlled by governance/oracles:
                       | "mat" String Ray
                       | "par" Ray
  // -----------------------------
-    rule <k> Spot . file pip ILKID PIP => . ... </k>
+    rule <k> Spot . file pip ILKID .Wad => . ... </k>
          <spot-live> true </spot-live>
-         <spot-ilks> ... ILKID |-> SpotIlk ( ... pip: (_ => PIP) ) ... </spot-ilks>
+         <spot-ilks> ... ILKID |-> SpotIlk ( ... pip: (_ => .Wad) ) ... </spot-ilks>
+
+    rule <k> Spot . file pip ILKID WAD:Wad => . ... </k>
+         <spot-live> true </spot-live>
+         <spot-ilks> ... ILKID |-> SpotIlk ( ... pip: (_ => WAD) ) ... </spot-ilks>
+      requires WAD >=Rat 0
 
     rule <k> Spot . file mat ILKID MAT => . ... </k>
          <spot-live> true </spot-live>
          <spot-ilks> ... ILKID |-> SpotIlk ( ... mat: (_ => MAT) ) ... </spot-ilks>
+      requires MAT >=Rat 0
 
     rule <k> Spot . file par PAR => . ... </k>
          <spot-live> true </spot-live>
          <spot-par> _ => PAR </spot-par>
+      requires PAR >=Rat 0
 ```
 
 **TODO**: We currently store a `MaybeWad` for `pip` instead of a contract address to call to get that data.

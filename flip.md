@@ -101,6 +101,7 @@ The parameters controlled by governance are:
            <flip-beg> _ => BEG </flip-beg>
            ...
          </flip>
+      requires BEG >=Rat 0
 
     rule <k> Flip ILKID . file ttl TTL => . ... </k>
          <flip>
@@ -108,6 +109,7 @@ The parameters controlled by governance are:
            <flip-ttl> _ => TTL </flip-ttl>
            ...
          </flip>
+      requires TTL >=Int 0
 
     rule <k> Flip ILKID . file tau TAU => . ... </k>
          <flip>
@@ -115,6 +117,7 @@ The parameters controlled by governance are:
            <flip-tau> _ => TAU </flip-tau>
            ...
          </flip>
+      requires TAU >=Int 0
 ```
 
 Flip Events
@@ -159,6 +162,9 @@ Flip Semantics
            ...
          </flip>
          <frame-events> ... (.List => ListItem(FlipKick(MSGSENDER, ILK, KICKS +Int 1, LOT, BID, TAB, USR, GAL))) </frame-events>
+      requires TAB >=Rat 0
+       andBool LOT >=Rat 0
+       andBool BID >=Rat 0
 
     syntax FlipStep ::= "tick" Int
  // ------------------------------
@@ -189,7 +195,9 @@ Flip Semantics
            <flip-bids> ... ID |-> FlipBid(... bid: BID' => BID, lot: LOT', guy: GUY => MSGSENDER, tic: TIC => NOW +Int TTL, end: END, gal: GAL, tab: TAB) ... </flip-bids>
            ...
          </flip>
-      requires GUY =/=K 0
+      requires LOT >=Rat 0
+       andBool BID >=Rat 0
+       andBool GUY =/=K 0
        andBool (TIC >Int NOW orBool TIC ==Int 0)
        andBool END >Int NOW
        andBool LOT ==Rat LOT'
@@ -214,7 +222,9 @@ Flip Semantics
            <flip-bids> ... ID |-> FlipBid(... bid: BID', lot: LOT' => LOT, guy: GUY => MSGSENDER, tic: TIC => NOW +Int TTL, end: END, usr: USR, tab: TAB) ... </flip-bids>
            ...
          </flip>
-      requires GUY =/=K 0
+      requires LOT >=Rat 0
+       andBool BID >=Rat 0
+       andBool GUY =/=K 0
        andBool (TIC >Int NOW orBool TIC ==Int 0)
        andBool END >Int NOW
        andBool BID ==Rat BID'

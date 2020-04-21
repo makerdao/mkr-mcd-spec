@@ -91,15 +91,19 @@ The parameters controlled by governance are:
  // --------------------------------------
     rule <k> Flop . file beg BEG => . ... </k>
          <flop-beg> _ => BEG </flop-beg>
+      requires BEG >=Rat 0
 
     rule <k> Flop . file ttl TTL => . ... </k>
          <flop-ttl> _ => TTL </flop-ttl>
+      requires TTL >=Int 0
 
     rule <k> Flop . file tau TAU => . ... </k>
          <flop-tau> _ => TAU </flop-tau>
+      requires TAU >=Int 0
 
     rule <k> Flop . file pad PAD => . ... </k>
          <flop-pad> _ => PAD </flop-pad>
+      requires PAD >=Rat 0
 
     rule <k> Flop . file vow-file ADDR => . ... </k>
          <flop-vow> _ => ADDR </flop-vow>
@@ -134,6 +138,8 @@ Flop Semantics
          <flop-kicks> KICKS => KICKS +Int 1 </flop-kicks>
          <flop-tau> TAU </flop-tau>
          <frame-events> ... (.List => ListItem(FlopKick(KICKS +Int 1, LOT, BID, GAL))) </frame-events>
+      requires LOT >=Rat 0
+       andBool BID >=Rat 0
 ```
 
 - tick(uint id)
@@ -166,7 +172,9 @@ Flop Semantics
          <flop-live> true </flop-live>
          <flop-beg> BEG </flop-beg>
          <flop-ttl> TTL </flop-ttl>
-      requires (TIC >Int NOW orBool TIC ==Int 0)
+      requires LOT >=Rat 0
+       andBool BID >=Rat 0
+       andBool (TIC >Int NOW orBool TIC ==Int 0)
        andBool END >Int NOW
        andBool BID ==Rat BID'
        andBool LOT <Rat LOT'
