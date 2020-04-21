@@ -71,6 +71,7 @@ These parameters are controlled by governance:
          <current-time> NOW </current-time>
          <pot-live> true </pot-live>
       requires NOW ==Int RHO
+       andBool DSR >=Rat 0
 
     rule <k> Pot . file vow-file ADDR => . ... </k>
          <pot-vow> _ => ADDR </pot-vow>
@@ -120,7 +121,8 @@ Pot Semantics
          <pot-pie> PIE => PIE +Rat WAD </pot-pie>
          <pot-chi> CHI </pot-chi>
          <pot-rho> RHO </pot-rho>
-      requires NOW ==Int RHO
+      requires WAD >=Rat 0
+       andBool NOW ==Int RHO
 
     syntax PotStep ::= "exit" Wad
  // -----------------------------
@@ -130,7 +132,8 @@ Pot Semantics
          <pot-pies> ... MSGSENDER |-> ( MSGSENDER_PIE => MSGSENDER_PIE -Rat WAD ) ... </pot-pies>
          <pot-pie> PIE => PIE -Rat WAD </pot-pie>
          <pot-chi> CHI </pot-chi>
-      requires MSGSENDER_PIE >=Rat WAD
+      requires WAD >=Rat 0
+       andBool MSGSENDER_PIE >=Rat WAD
 
     syntax PotAuthStep ::= "cage"
  // -----------------------------

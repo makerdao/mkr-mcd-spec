@@ -69,7 +69,8 @@ Gem Semantics
            </gem-balances>
            ...
          </gem>
-      requires ACCTSRC =/=K ACCTDST
+      requires VALUE >=Rat 0
+       andBool ACCTSRC =/=K ACCTDST
        andBool VALUE >=Rat 0
        andBool BALANCE_SRC >=Rat VALUE
 
@@ -85,21 +86,25 @@ Gem Semantics
     syntax GemStep ::= "move" Address Address Wad
  // ---------------------------------------------
     rule <k> Gem _ . (move ACCTSRC ACCTDST VALUE => transferFrom ACCTSRC ACCTDST VALUE) ... </k>
+      requires VALUE >=Rat 0
 
     syntax GemStep ::= "push" Address Wad
  // -------------------------------------
     rule <k> Gem _ . (push ACCTDST VALUE => transferFrom MSGSENDER ACCTDST VALUE) ... </k>
          <msg-sender> MSGSENDER </msg-sender>
+      requires VALUE >=Rat 0
 
     syntax GemStep ::= "pull" Address Wad
  // -------------------------------------
     rule <k> Gem _ . (pull ACCTSRC VALUE => transferFrom ACCTSRC MSGSENDER VALUE) ... </k>
          <msg-sender> MSGSENDER </msg-sender>
+      requires VALUE >=Rat 0
 
     syntax GemStep ::= "transfer" Address Wad
  // -----------------------------------------
     rule <k> Gem _ . (transfer ACCTDST VALUE => transferFrom MSGSENDER ACCTDST VALUE) ... </k>
          <msg-sender> MSGSENDER </msg-sender>
+      requires VALUE >=Rat 0
 
     syntax GemStep ::= "mint" Address Wad
  // -------------------------------------

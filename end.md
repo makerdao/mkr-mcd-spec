@@ -82,6 +82,7 @@ These parameters are controlled by governance:
     rule <k> End . file wait WAIT => . ... </k>
          <end-live> true </end-live>
          <end-wait> _ => WAIT </end-wait>
+      requires WAIT >=Int 0
 ```
 
 **NOTE**: We have not added `file` steps for `vat`, `cat`, `vow`, `pot`, or `spot` because this model does not deal with swapping out implementations.
@@ -221,7 +222,8 @@ End Semantics
          <msg-sender> MSGSENDER </msg-sender>
          <end-debt> DEBT </end-debt>
          <end-bag> ... MSGSENDER |-> (BAG => BAG +Rat AMOUNT) ... </end-bag>
-      requires DEBT =/=Rat 0
+      requires AMOUNT >=Rat 0
+       andBool DEBT =/=Rat 0
 
     syntax EndStep ::= "cash" String Wad
  // ------------------------------------
@@ -234,7 +236,8 @@ End Semantics
          <end-fix> ... ILK |-> FIX ... </end-fix>
          <end-out> ... {ILK, MSGSENDER} |-> (OUT => OUT +Rat AMOUNT) ... </end-out>
          <end-bag> ... MSGSENDER |-> BAG ... </end-bag>
-      requires FIX =/=Rat 0
+      requires AMOUNT >=Rat 0
+       andBool FIX =/=Rat 0
        andBool OUT +Rat AMOUNT <=Rat BAG
 ```
 

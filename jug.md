@@ -80,9 +80,11 @@ These parameters are controlled by governance:
          <jug-ilks> ... ILK |-> Ilk ( ... duty: (_ => DUTY) , rho: RHO ) ... </jug-ilks>
          <current-time> NOW </current-time>
       requires NOW ==Int RHO
+       andBool DUTY >=Rat 0
 
     rule <k> Jug . file base BASE => . ... </k>
          <jug-base> _ => BASE </jug-base>
+      requires BASE >=Rat 0
 
     rule <k> Jug . file vow-file ADDR => . ... </k>
          <jug-vow> _ => ADDR </jug-vow>
