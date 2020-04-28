@@ -50,7 +50,7 @@
             .Set
           </dai-wards>
           <dai-totalSupply>
-            0
+            wad ( 0 )
           </dai-totalSupply>
           <dai-account-id>
             0
@@ -83,27 +83,27 @@
               0
             </end-wait>
             <end-debt>
-              20
+              rad ( 20 )
             </end-debt>
             <end-tag>
-              "gold" |-> 1 /Rat 3000000000
+              "gold" |-> ray ( 1 /Rat 3000000000 )
             </end-tag>
             <end-gap>
-              "gold" |-> 0
+              "gold" |-> wad ( 0 )
             </end-gap>
             <end-art>
-              "gold" |-> 20
+              "gold" |-> wad ( 20 )
             </end-art>
             <end-fix>
-              "gold" |-> 1 /Rat 3000000000
+              "gold" |-> ray ( 1 /Rat 3000000000 )
             </end-fix>
             <end-bag>
-              "Alice" |-> 0
-              "Bobby" |-> 0
+              "Alice" |-> wad ( 0 )
+              "Bobby" |-> wad ( 0 )
             </end-bag>
             <end-out>
-              { "gold" , "Alice" } |-> 0
-              { "gold" , "Bobby" } |-> 0
+              { "gold" , "Alice" } |-> wad ( 0 )
+              { "gold" , "Bobby" } |-> wad ( 0 )
             </end-out>
           </end>
         </end-state>
@@ -121,7 +121,7 @@
             false
           </flap-live>
           <flap-beg>
-            21 /Rat 20
+            wad ( 21 /Rat 20 )
           </flap-beg>
           <flap-ttl>
             10800
@@ -142,7 +142,7 @@
               .Map
             </flip-bids>
             <flip-beg>
-              21 /Rat 20
+              wad ( 21 /Rat 20 )
             </flip-beg>
             <flip-ttl>
               10800
@@ -169,10 +169,10 @@
             false
           </flop-live>
           <flop-beg>
-            21 /Rat 20
+            wad ( 21 /Rat 20 )
           </flop-beg>
           <flop-pad>
-            3 /Rat 2
+            wad ( 3 /Rat 2 )
           </flop-pad>
           <flop-ttl>
             10800
@@ -193,11 +193,11 @@
               .Set
             </gem-wards>
             <gem-balances>
-              "Alice" |-> 0
-              "Bobby" |-> 0
-              Flap |-> 0
-              GemJoin "MKR" |-> 0
-              Vow |-> 0
+              "Alice" |-> wad ( 0 )
+              "Bobby" |-> wad ( 0 )
+              Flap |-> wad ( 0 )
+              GemJoin "MKR" |-> wad ( 0 )
+              Vow |-> wad ( 0 )
             </gem-balances>
           </gem> <gem>
             <gem-id>
@@ -207,9 +207,9 @@
               .Set
             </gem-wards>
             <gem-balances>
-              "Alice" |-> 10
-              "Bobby" |-> 9
-              GemJoin "gold" |-> 21
+              "Alice" |-> wad ( 10 )
+              "Bobby" |-> wad ( 9 )
+              GemJoin "gold" |-> wad ( 21 )
             </gem-balances>
           </gem>
         </gems>
@@ -257,7 +257,7 @@
             0
           </jug-vow>
           <jug-base>
-            0
+            ray ( 0 )
           </jug-base>
         </jug>
         <pot>
@@ -265,17 +265,17 @@
             SetItem ( End )
           </pot-wards>
           <pot-pies>
-            "Alice" |-> 0
-            "Bobby" |-> 0
+            "Alice" |-> wad ( 0 )
+            "Bobby" |-> wad ( 0 )
           </pot-pies>
           <pot-pie>
-            0
+            wad ( 0 )
           </pot-pie>
           <pot-dsr>
-            1
+            ray ( 1 )
           </pot-dsr>
           <pot-chi>
-            1
+            ray ( 1 )
           </pot-chi>
           <pot-vow>
             Vow
@@ -292,10 +292,10 @@
             .Set
           </spot-wards>
           <spot-ilks>
-            "gold" |-> SpotIlk ( 3000000000 , 1 )
+            "gold" |-> SpotIlk ( wad ( 3000000000 ) , ray ( 1 ) )
           </spot-ilks>
           <spot-par>
-            1
+            ray ( 1 )
           </spot-par>
           <spot-live>
             true
@@ -323,43 +323,43 @@
             Vow |-> SetItem ( Flap )
           </vat-can>
           <vat-ilks>
-            "gold" |-> Ilk ( 20 , 1 , 3000000000 , 1000000000000 , 0 )
+            "gold" |-> Ilk ( wad ( 20 ) , ray ( 1 ) , ray ( 3000000000 ) , rad ( 1000000000000 ) , rad ( 0 ) )
           </vat-ilks>
           <vat-urns>
-            { "gold" , "Alice" } |-> Urn ( 10 , 10 )
-            { "gold" , "Bobby" } |-> Urn ( 10 , 10 )
-            { "gold" , End } |-> Urn ( 0 , 0 )
+            { "gold" , "Alice" } |-> Urn ( wad ( 10 ) , wad ( 10 ) )
+            { "gold" , "Bobby" } |-> Urn ( wad ( 10 ) , wad ( 10 ) )
+            { "gold" , End } |-> Urn ( wad ( 0 ) , wad ( 0 ) )
           </vat-urns>
           <vat-gem>
-            { "gold" , "Alice" } |-> 0
-            { "gold" , "Bobby" } |-> 1
-            { "gold" , End } |-> 0
-            { "gold" , Flip "gold" } |-> 0
+            { "gold" , "Alice" } |-> wad ( 0 )
+            { "gold" , "Bobby" } |-> wad ( 1 )
+            { "gold" , End } |-> wad ( 0 )
+            { "gold" , Flip "gold" } |-> wad ( 0 )
           </vat-gem>
           <vat-dai>
-            "Alice" |-> 10
-            "Bobby" |-> 10
-            End |-> 0
-            Flap |-> 0
-            Pot |-> 0
-            Vow |-> 0
+            "Alice" |-> rad ( 10 )
+            "Bobby" |-> rad ( 10 )
+            End |-> rad ( 0 )
+            Flap |-> rad ( 0 )
+            Pot |-> rad ( 0 )
+            Vow |-> rad ( 0 )
           </vat-dai>
           <vat-sin>
-            "Alice" |-> 0
-            "Bobby" |-> 0
-            End |-> 0
-            Flap |-> 0
-            Pot |-> 0
-            Vow |-> 0
+            "Alice" |-> rad ( 0 )
+            "Bobby" |-> rad ( 0 )
+            End |-> rad ( 0 )
+            Flap |-> rad ( 0 )
+            Pot |-> rad ( 0 )
+            Vow |-> rad ( 0 )
           </vat-sin>
           <vat-debt>
-            20
+            rad ( 20 )
           </vat-debt>
           <vat-vice>
-            0
+            rad ( 0 )
           </vat-vice>
           <vat-Line>
-            1000000000000
+            rad ( 1000000000000 )
           </vat-Line>
           <vat-live>
             false
@@ -374,25 +374,25 @@
             .Map
           </vow-sins>
           <vow-sin>
-            0
+            rad ( 0 )
           </vow-sin>
           <vow-ash>
-            0
+            rad ( 0 )
           </vow-ash>
           <vow-wait>
             0
           </vow-wait>
           <vow-dump>
-            30
+            wad ( 30 )
           </vow-dump>
           <vow-sump>
-            50
+            rad ( 50 )
           </vow-sump>
           <vow-bump>
-            1000000000
+            rad ( 1000000000 )
           </vow-bump>
           <vow-hump>
-            0
+            rad ( 0 )
           </vow-hump>
           <vow-live>
             false
@@ -402,890 +402,890 @@
     </kmcd>
     <processed-events>
       ListItem ( LogNote ( ADMIN , Vat . rely Pot ) )
-      ListItem ( Measure ( 0 , .Map , 1 , 0 , 0 , 0 , 0 , 0 , .Map , 0 , .Map , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , .Map , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , .Map , wad ( 0 ) , .Map , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Vat . rely End ) )
-      ListItem ( Measure ( 0 , .Map , 1 , 0 , 0 , 0 , 0 , 0 , .Map , 0 , .Map , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , .Map , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , .Map , wad ( 0 ) , .Map , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Vat . rely Spot ) )
-      ListItem ( Measure ( 0 , .Map , 1 , 0 , 0 , 0 , 0 , 0 , .Map , 0 , .Map , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , .Map , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , .Map , wad ( 0 ) , .Map , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Pot . rely End ) )
-      ListItem ( Measure ( 0 , .Map , 1 , 0 , 0 , 0 , 0 , 0 , .Map , 0 , .Map , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , .Map , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , .Map , wad ( 0 ) , .Map , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Vow . rely Pot ) )
-      ListItem ( Measure ( 0 , .Map , 1 , 0 , 0 , 0 , 0 , 0 , .Map , 0 , .Map , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , .Map , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , .Map , wad ( 0 ) , .Map , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Vow . rely End ) )
-      ListItem ( Measure ( 0 , .Map , 1 , 0 , 0 , 0 , 0 , 0 , .Map , 0 , .Map , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , .Map , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , .Map , wad ( 0 ) , .Map , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Cat . rely End ) )
-      ListItem ( Measure ( 0 , .Map , 1 , 0 , 0 , 0 , 0 , 0 , .Map , 0 , .Map , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , .Map , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , .Map , wad ( 0 ) , .Map , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Flap . rely Vow ) )
-      ListItem ( Measure ( 0 , .Map , 1 , 0 , 0 , 0 , 0 , 0 , .Map , 0 , .Map , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , .Map , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , .Map , wad ( 0 ) , .Map , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Flop . rely Vow ) )
-      ListItem ( Measure ( 0 , .Map , 1 , 0 , 0 , 0 , 0 , 0 , .Map , 0 , .Map , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , .Map , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , .Map , wad ( 0 ) , .Map , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Vat . initUser Vow ) )
-      ListItem ( Measure ( 0 , Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , Vow |-> 0 , 0 , .Map , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , Vow |-> rad ( 0 ) , wad ( 0 ) , .Map , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Vat . initUser Pot ) )
-      ListItem ( Measure ( 0 , Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , Pot |-> 0
-      Vow |-> 0 , 0 , .Map , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , .Map , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Vat . initUser Flap ) )
-      ListItem ( Measure ( 0 , Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , .Map , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , .Map , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Vat . initUser End ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , .Map , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , .Map , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Gem "MKR" . init ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , .Map , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , .Map , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , GemJoin "MKR" . init ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , GemJoin "MKR" |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , GemJoin "MKR" |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Gem "MKR" . initUser Vow ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Gem "MKR" . initUser Flap ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Pot . file vow-file Vow ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( Vow , Vat . hope Flap ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
-      ListItem ( LogNote ( ADMIN , Vat . file Line 1000000000000 ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
-      ListItem ( LogNote ( ADMIN , Vow . file bump 1000000000 ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
-      ListItem ( LogNote ( ADMIN , Vow . file hump 0 ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
-      ListItem ( LogNote ( ADMIN , Vow . file sump 50 ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
-      ListItem ( LogNote ( ADMIN , Vow . file dump 30 ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
+      ListItem ( LogNote ( ADMIN , Vat . file Line rad ( 1000000000000 ) ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
+      ListItem ( LogNote ( ADMIN , Vow . file bump rad ( 1000000000 ) ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
+      ListItem ( LogNote ( ADMIN , Vow . file hump rad ( 0 ) ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
+      ListItem ( LogNote ( ADMIN , Vow . file sump rad ( 50 ) ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
+      ListItem ( LogNote ( ADMIN , Vow . file dump wad ( 30 ) ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Flop . file tau 3600 ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Gem "gold" . init ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , GemJoin "gold" . init ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Vat . rely GemJoin "gold" ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Vat . initGem "gold" End ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Vat . initGem "gold" Flip "gold" ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Vat . initCDP "gold" End ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Spot . init "gold" ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
-      ListItem ( LogNote ( ADMIN , Spot . setPrice "gold" 3000000000 ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
-      ListItem ( LogNote ( ADMIN , Spot . file mat "gold" 1 ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
-      ListItem ( LogNote ( ADMIN , Spot . file par 1 ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
+      ListItem ( LogNote ( ADMIN , Spot . setPrice "gold" wad ( 3000000000 ) ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
+      ListItem ( LogNote ( ADMIN , Spot . file mat "gold" ray ( 1 ) ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
+      ListItem ( LogNote ( ADMIN , Spot . file par ray ( 1 ) ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Flip "gold" . init ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Flip "gold" . rely End ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , End . initGap "gold" ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Vat . initIlk "gold" ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
-      ListItem ( LogNote ( ADMIN , Vat . file line "gold" 1000000000000 ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
-      ListItem ( LogNote ( ANYONE , Vat . file spot "gold" 3000000000 ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
+      ListItem ( LogNote ( ADMIN , Vat . file line "gold" rad ( 1000000000000 ) ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
+      ListItem ( LogNote ( ANYONE , Vat . file spot "gold" ray ( 3000000000 ) ) )
       ListItem ( LogNote ( ANYONE , Spot . poke "gold" ) )
-      ListItem ( Poke ( "gold" , 3000000000 , 3000000000 ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Poke ( "gold" , wad ( 3000000000 ) , ray ( 3000000000 ) ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Gem "gold" . initUser "Alice" ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Gem "gold" . initUser "Bobby" ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
-      ListItem ( LogNote ( ADMIN , Gem "gold" . mint "Alice" 20 ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
-      ListItem ( LogNote ( ADMIN , Gem "gold" . mint "Bobby" 20 ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
+      ListItem ( LogNote ( ADMIN , Gem "gold" . mint "Alice" wad ( 20 ) ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
+      ListItem ( LogNote ( ADMIN , Gem "gold" . mint "Bobby" wad ( 20 ) ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Gem "MKR" . initUser "Alice" ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , "Alice" |-> 0
-      Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
+      Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Gem "MKR" . initUser "Bobby" ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
+      "Bobby" |-> wad ( 0 )
+      Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Pot . initUser "Alice" ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
+      "Bobby" |-> wad ( 0 )
+      Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Pot . initUser "Bobby" ) )
-      ListItem ( Measure ( 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
+      "Bobby" |-> wad ( 0 )
+      Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Vat . initUser "Alice" ) )
-      ListItem ( Measure ( 0 , "Alice" |-> 0
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , "Alice" |-> 0
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , "Alice" |-> rad ( 0 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , "Alice" |-> rad ( 0 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
+      "Bobby" |-> wad ( 0 )
+      Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Vat . initGem "gold" "Alice" ) )
-      ListItem ( Measure ( 0 , "Alice" |-> 0
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , "Alice" |-> 0
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , "Alice" |-> rad ( 0 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , "Alice" |-> rad ( 0 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
+      "Bobby" |-> wad ( 0 )
+      Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Vat . initCDP "gold" "Alice" ) )
-      ListItem ( Measure ( 0 , "Alice" |-> 0
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , "Alice" |-> 0
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , "Alice" |-> rad ( 0 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , "Alice" |-> rad ( 0 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
+      "Bobby" |-> wad ( 0 )
+      Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Vat . initUser "Bobby" ) )
-      ListItem ( Measure ( 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , "Alice" |-> rad ( 0 )
+      "Bobby" |-> rad ( 0 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , "Alice" |-> rad ( 0 )
+      "Bobby" |-> rad ( 0 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
+      "Bobby" |-> wad ( 0 )
+      Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Vat . initGem "gold" "Bobby" ) )
-      ListItem ( Measure ( 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , "Alice" |-> rad ( 0 )
+      "Bobby" |-> rad ( 0 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , "Alice" |-> rad ( 0 )
+      "Bobby" |-> rad ( 0 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
+      "Bobby" |-> wad ( 0 )
+      Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Vat . initCDP "gold" "Bobby" ) )
-      ListItem ( Measure ( 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , "Alice" |-> rad ( 0 )
+      "Bobby" |-> rad ( 0 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , "Alice" |-> rad ( 0 )
+      "Bobby" |-> rad ( 0 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
+      "Bobby" |-> wad ( 0 )
+      Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( "Alice" , Vat . hope Pot ) )
-      ListItem ( Measure ( 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , "Alice" |-> rad ( 0 )
+      "Bobby" |-> rad ( 0 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , "Alice" |-> rad ( 0 )
+      "Bobby" |-> rad ( 0 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
+      "Bobby" |-> wad ( 0 )
+      Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( "Alice" , Vat . hope Flip "gold" ) )
-      ListItem ( Measure ( 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , "Alice" |-> rad ( 0 )
+      "Bobby" |-> rad ( 0 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , "Alice" |-> rad ( 0 )
+      "Bobby" |-> rad ( 0 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
+      "Bobby" |-> wad ( 0 )
+      Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( "Alice" , Vat . hope End ) )
-      ListItem ( Measure ( 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , "Alice" |-> rad ( 0 )
+      "Bobby" |-> rad ( 0 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , "Alice" |-> rad ( 0 )
+      "Bobby" |-> rad ( 0 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
+      "Bobby" |-> wad ( 0 )
+      Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( "Alice" , Vat . hope Flop ) )
-      ListItem ( Measure ( 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , "Alice" |-> rad ( 0 )
+      "Bobby" |-> rad ( 0 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , "Alice" |-> rad ( 0 )
+      "Bobby" |-> rad ( 0 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
+      "Bobby" |-> wad ( 0 )
+      Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( "Bobby" , Vat . hope Pot ) )
-      ListItem ( Measure ( 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , "Alice" |-> rad ( 0 )
+      "Bobby" |-> rad ( 0 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , "Alice" |-> rad ( 0 )
+      "Bobby" |-> rad ( 0 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
+      "Bobby" |-> wad ( 0 )
+      Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( "Bobby" , Vat . hope Flip "gold" ) )
-      ListItem ( Measure ( 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , "Alice" |-> rad ( 0 )
+      "Bobby" |-> rad ( 0 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , "Alice" |-> rad ( 0 )
+      "Bobby" |-> rad ( 0 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
+      "Bobby" |-> wad ( 0 )
+      Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( "Bobby" , Vat . hope End ) )
-      ListItem ( Measure ( 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , "Alice" |-> rad ( 0 )
+      "Bobby" |-> rad ( 0 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , "Alice" |-> rad ( 0 )
+      "Bobby" |-> rad ( 0 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
+      "Bobby" |-> wad ( 0 )
+      Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( "Bobby" , Vat . hope Flop ) )
-      ListItem ( Measure ( 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
-      ListItem ( LogNote ( "Alice" , Vat . slip "gold" "Alice" 10 ) )
-      ListItem ( LogNote ( "Alice" , Gem "gold" . transferFrom "Alice" GemJoin "gold" 10 ) )
-      ListItem ( LogNote ( "Alice" , GemJoin "gold" . join "Alice" 10 ) )
-      ListItem ( Measure ( 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
-      ListItem ( LogNote ( "Bobby" , Vat . slip "gold" "Bobby" 10 ) )
-      ListItem ( LogNote ( "Bobby" , Gem "gold" . transferFrom "Bobby" GemJoin "gold" 10 ) )
-      ListItem ( LogNote ( "Bobby" , GemJoin "gold" . join "Bobby" 10 ) )
-      ListItem ( Measure ( 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 0 , 0 , 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
-      ListItem ( LogNote ( "Alice" , Vat . frob "gold" "Alice" "Alice" "Alice" 10 10 ) )
-      ListItem ( Measure ( 10 , "Alice" |-> 10
-      "Bobby" |-> 0
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 10 , 0 , 0 , 0 , "Alice" |-> 10
-      "Bobby" |-> 0
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
-      ListItem ( LogNote ( "Bobby" , Vat . frob "gold" "Bobby" "Bobby" "Bobby" 10 10 ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 20 , 0 , 0 , 0 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 0 ) , "Alice" |-> rad ( 0 )
+      "Bobby" |-> rad ( 0 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , "Alice" |-> rad ( 0 )
+      "Bobby" |-> rad ( 0 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
+      "Bobby" |-> wad ( 0 )
+      Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
+      ListItem ( LogNote ( "Alice" , Vat . slip "gold" "Alice" wad ( 10 ) ) )
+      ListItem ( LogNote ( "Alice" , Gem "gold" . transferFrom "Alice" GemJoin "gold" wad ( 10 ) ) )
+      ListItem ( LogNote ( "Alice" , GemJoin "gold" . join "Alice" wad ( 10 ) ) )
+      ListItem ( Measure ( rad ( 0 ) , "Alice" |-> rad ( 0 )
+      "Bobby" |-> rad ( 0 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , "Alice" |-> rad ( 0 )
+      "Bobby" |-> rad ( 0 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
+      "Bobby" |-> wad ( 0 )
+      Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
+      ListItem ( LogNote ( "Bobby" , Vat . slip "gold" "Bobby" wad ( 10 ) ) )
+      ListItem ( LogNote ( "Bobby" , Gem "gold" . transferFrom "Bobby" GemJoin "gold" wad ( 10 ) ) )
+      ListItem ( LogNote ( "Bobby" , GemJoin "gold" . join "Bobby" wad ( 10 ) ) )
+      ListItem ( Measure ( rad ( 0 ) , "Alice" |-> rad ( 0 )
+      "Bobby" |-> rad ( 0 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , "Alice" |-> rad ( 0 )
+      "Bobby" |-> rad ( 0 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
+      "Bobby" |-> wad ( 0 )
+      Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
+      ListItem ( LogNote ( "Alice" , Vat . frob "gold" "Alice" "Alice" "Alice" wad ( 10 ) wad ( 10 ) ) )
+      ListItem ( Measure ( rad ( 10 ) , "Alice" |-> rad ( 10 )
+      "Bobby" |-> rad ( 0 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 10 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , "Alice" |-> rad ( 10 )
+      "Bobby" |-> rad ( 0 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
+      "Bobby" |-> wad ( 0 )
+      Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
+      ListItem ( LogNote ( "Bobby" , Vat . frob "gold" "Bobby" "Bobby" "Bobby" wad ( 10 ) wad ( 10 ) ) )
+      ListItem ( Measure ( rad ( 20 ) , "Alice" |-> rad ( 10 )
+      "Bobby" |-> rad ( 10 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 20 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , "Alice" |-> rad ( 10 )
+      "Bobby" |-> rad ( 10 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
+      "Bobby" |-> wad ( 0 )
+      Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , End . initBag "Alice" ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 20 , 0 , 0 , 0 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 20 ) , "Alice" |-> rad ( 10 )
+      "Bobby" |-> rad ( 10 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 20 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , "Alice" |-> rad ( 10 )
+      "Bobby" |-> rad ( 10 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
+      "Bobby" |-> wad ( 0 )
+      Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , End . initBag "Bobby" ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 20 , 0 , 0 , 0 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 20 ) , "Alice" |-> rad ( 10 )
+      "Bobby" |-> rad ( 10 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 20 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , "Alice" |-> rad ( 10 )
+      "Bobby" |-> rad ( 10 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
+      "Bobby" |-> wad ( 0 )
+      Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , End . initOut "gold" "Alice" ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 20 , 0 , 0 , 0 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 20 ) , "Alice" |-> rad ( 10 )
+      "Bobby" |-> rad ( 10 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 20 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , "Alice" |-> rad ( 10 )
+      "Bobby" |-> rad ( 10 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
+      "Bobby" |-> wad ( 0 )
+      Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , End . initOut "gold" "Bobby" ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 20 , 0 , 0 , 0 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
-      ListItem ( LogNote ( "Bobby" , Vat . slip "gold" "Bobby" 1 ) )
-      ListItem ( LogNote ( "Bobby" , Gem "gold" . transferFrom "Bobby" GemJoin "gold" 1 ) )
-      ListItem ( LogNote ( "Bobby" , GemJoin "gold" . join "Bobby" 1 ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 20 , 0 , 0 , 0 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 20 ) , "Alice" |-> rad ( 10 )
+      "Bobby" |-> rad ( 10 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 20 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , "Alice" |-> rad ( 10 )
+      "Bobby" |-> rad ( 10 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
+      "Bobby" |-> wad ( 0 )
+      Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
+      ListItem ( LogNote ( "Bobby" , Vat . slip "gold" "Bobby" wad ( 1 ) ) )
+      ListItem ( LogNote ( "Bobby" , Gem "gold" . transferFrom "Bobby" GemJoin "gold" wad ( 1 ) ) )
+      ListItem ( LogNote ( "Bobby" , GemJoin "gold" . join "Bobby" wad ( 1 ) ) )
+      ListItem ( Measure ( rad ( 20 ) , "Alice" |-> rad ( 10 )
+      "Bobby" |-> rad ( 10 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 20 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , "Alice" |-> rad ( 10 )
+      "Bobby" |-> rad ( 10 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
+      "Bobby" |-> wad ( 0 )
+      Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Vat . cage ) )
       ListItem ( LogNote ( ADMIN , Cat . cage ) )
-      ListItem ( LogNote ( Vow , Vat . move Flap Vow 0 ) )
-      ListItem ( LogNote ( End , Flap . cage 0 ) )
+      ListItem ( LogNote ( Vow , Vat . move Flap Vow rad ( 0 ) ) )
+      ListItem ( LogNote ( End , Flap . cage rad ( 0 ) ) )
       ListItem ( LogNote ( End , Flop . cage ) )
-      ListItem ( LogNote ( End , Vat . heal 0 ) )
+      ListItem ( LogNote ( End , Vat . heal rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , Vow . cage ) )
       ListItem ( LogNote ( ADMIN , Pot . cage ) )
       ListItem ( LogNote ( ADMIN , End . cage ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 20 , 0 , 0 , 0 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 20 ) , "Alice" |-> rad ( 10 )
+      "Bobby" |-> rad ( 10 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 20 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , "Alice" |-> rad ( 10 )
+      "Bobby" |-> rad ( 10 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
+      "Bobby" |-> wad ( 0 )
+      Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , End . cage "gold" ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 20 , 0 , 0 , 0 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 20 ) , "Alice" |-> rad ( 10 )
+      "Bobby" |-> rad ( 10 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 20 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , "Alice" |-> rad ( 10 )
+      "Bobby" |-> rad ( 10 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
+      "Bobby" |-> wad ( 0 )
+      Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( TimeStep ( 3600 , 3600 ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 20 , 0 , 0 , 0 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 20 ) , "Alice" |-> rad ( 10 )
+      "Bobby" |-> rad ( 10 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 20 ) , rad ( 0 ) , rad ( 0 ) , rad ( 0 ) , "Alice" |-> rad ( 10 )
+      "Bobby" |-> rad ( 10 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
+      "Bobby" |-> wad ( 0 )
+      Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , End . thaw ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 20 , 0 , 20 , 0 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 20 ) , "Alice" |-> rad ( 10 )
+      "Bobby" |-> rad ( 10 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 20 ) , rad ( 0 ) , rad ( 20 ) , rad ( 0 ) , "Alice" |-> rad ( 10 )
+      "Bobby" |-> rad ( 10 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
+      "Bobby" |-> wad ( 0 )
+      Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
       ListItem ( LogNote ( ADMIN , End . flow "gold" ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 20 , 0 , 20 , 0 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
-      ListItem ( Exception ( Flip "gold" . kick End "Bobby" 1001000000000 1 1000000000000 ) )
+      ListItem ( Measure ( rad ( 20 ) , "Alice" |-> rad ( 10 )
+      "Bobby" |-> rad ( 10 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 20 ) , rad ( 0 ) , rad ( 20 ) , rad ( 0 ) , "Alice" |-> rad ( 10 )
+      "Bobby" |-> rad ( 10 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
+      "Bobby" |-> wad ( 0 )
+      Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
+      ListItem ( Exception ( Flip "gold" . kick End "Bobby" rad ( 1001000000000 ) wad ( 1 ) rad ( 1000000000000 ) ) )
       ListItem ( Exception ( End . skip "gold" 1 ) )
-      ListItem ( Measure ( 20 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 1 , 0 , 20 , 0 , 20 , 0 , "Alice" |-> 10
-      "Bobby" |-> 10
-      End |-> 0
-      Flap |-> 0
-      Pot |-> 0
-      Vow |-> 0 , 0 , "Alice" |-> 0
-      "Bobby" |-> 0
-      Flap |-> 0
-      GemJoin "MKR" |-> 0
-      Vow |-> 0 , 0 ) )
+      ListItem ( Measure ( rad ( 20 ) , "Alice" |-> rad ( 10 )
+      "Bobby" |-> rad ( 10 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 20 ) , rad ( 0 ) , rad ( 20 ) , rad ( 0 ) , "Alice" |-> rad ( 10 )
+      "Bobby" |-> rad ( 10 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
+      "Bobby" |-> wad ( 0 )
+      Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
     </processed-events>
     <properties>
       "Debt Constant After Thaw" |-> debtConstantAfterThaw
       "Flap Dai Consistency" |-> flapDaiConsistencyEnd
       "Flap MKR Consistency" |-> flapMkrConsistency
-      "Flop Block Check" |-> flopBlockCheck ( 0 , 0 )
+      "Flop Block Check" |-> flopBlockCheck ( rad ( 0 ) , 0 )
       "Pot Interest Accumulation After End" |-> potEndInterestEnd
-      "PotChi PotPie VatPot" |-> potChiPieDai ( 0 , 0 )
+      "PotChi PotPie VatPot" |-> potChiPieDai ( rad ( 0 ) , wad ( 0 ) )
       "Total Backed Debt Consistency" |-> totalBackedDebtConsistency
-      "Total Bound on Debt" |-> totalDebtBoundedEnd ( 20 )
+      "Total Bound on Debt" |-> totalDebtBoundedEnd ( rad ( 20 ) )
       "Unauthorized Flap Kick" |-> unAuthFlapKick
       "Unauthorized Flip Kick" |-> unAuthFlipKick
       "Zero-Time Pot Interest Accumulation" |-> zeroTimePotInterestEnd
