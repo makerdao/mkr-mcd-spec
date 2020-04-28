@@ -124,7 +124,7 @@ Cat Semantics
           => #fun(TAB
           => call Vat . grab ILK URN THIS VOWADDR (0Wad -Wad LOT) (0Wad -Wad ART)
           ~> call Vow . fess TAB
-          ~> call Flip ILK . kick URN VOWADDR rmulRad(TAB, CHOP) LOT 0Rad
+          ~> call Flip ILK . kick URN VOWADDR rmul(TAB, CHOP) LOT 0Rad
           ~> emitBite ILK URN LOT ART TAB)
           (ART *Rate RATE))
           (minWad(URNART, (LOT *Wad URNART) /Wad INK)))
