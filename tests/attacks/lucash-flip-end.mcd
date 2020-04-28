@@ -4,7 +4,7 @@ STEPS ( ATTACK-PRELUDE )
 // Attack Sequence
 // ---------------
 
-transact "Bobby" GemJoin "gold" . join "Bobby" 1
+transact "Bobby" GemJoin "gold" . join "Bobby" wad(1)
 transact ADMIN End . cage
 transact ADMIN End . cage "gold"
 TimeStep 1 hour
@@ -12,7 +12,7 @@ transact ADMIN End . thaw
 transact ADMIN End . flow "gold"
 
 // Every call after this reverts in fixed version
-transact "Bobby" Flip "gold" . kick End "Bobby" 1001 ether 1 1000 ether
+transact "Bobby" Flip "gold" . kick End "Bobby" rad(1001 ether) wad(1) rad(1000 ether)
 transact "Bobby" End . skip "gold" 1
 
 // Now Bobby has more dai than he should.

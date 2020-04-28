@@ -10,11 +10,11 @@ transact ADMIN End . skim "gold" "Alice"
 transact ADMIN End . skim "gold" "Bobby"
 transact ADMIN End . thaw
 transact ADMIN End . flow "gold"
-transact "Alice" Pot . join 10
-transact ADMIN Pot . file dsr 2
+transact "Alice" Pot . join wad(10)
+transact ADMIN Pot . file dsr ray(2)
 TimeStep 1 second
 transact "Alice" Pot . drip
-transact "Alice" Pot . exit 10
+transact "Alice" Pot . exit wad(10)
 
 assert
 
