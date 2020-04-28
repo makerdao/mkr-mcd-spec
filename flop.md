@@ -15,15 +15,15 @@ Flop Configuration
 ```k
     configuration
       <flop-state>
-        <flop-wards> .Set                    </flop-wards>
-        <flop-bids>  .Map                    </flop-bids>  // mapping (uint => Bid) Int |-> FlopBid
-        <flop-kicks>  0                      </flop-kicks>
-        <flop-live>   true                   </flop-live>
-        <flop-beg>    wad(105) /Wad wad(100) </flop-beg>
-        <flop-pad>    wad(150) /Wad wad(100) </flop-pad>
-        <flop-ttl>    3 hours                </flop-ttl>
-        <flop-tau>    2 days                 </flop-tau>
-        <flop-vow>    0:Address              </flop-vow>
+        <flop-wards> .Set               </flop-wards>
+        <flop-bids>  .Map               </flop-bids>  // mapping (uint => Bid) Int |-> FlopBid
+        <flop-kicks>  0                 </flop-kicks>
+        <flop-live>   true              </flop-live>
+        <flop-beg>    wad(105 /Rat 100) </flop-beg>
+        <flop-pad>    wad(150 /Rat 100) </flop-pad>
+        <flop-ttl>    3 hours           </flop-ttl>
+        <flop-tau>    2 days            </flop-tau>
+        <flop-vow>    0:Address         </flop-vow>
       </flop-state>
 ```
 
