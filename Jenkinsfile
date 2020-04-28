@@ -1,63 +1,26 @@
 pipeline {
   agent { label 'docker' }
-  options {
-    ansiColor('xterm')
-  }
+  options { ansiColor('xterm') }
   stages {
     stage('Init title') {
       when { changeRequest() }
-      steps {
-        script {
-          currentBuild.displayName = "PR ${env.CHANGE_ID}: ${env.CHANGE_TITLE}"
-        }
-      }
+      steps { script { currentBuild.displayName = "PR ${env.CHANGE_ID}: ${env.CHANGE_TITLE}" } }
     }
     stage('Build and Test') {
       agent {
         dockerfile {
           additionalBuildArgs '--build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g)'
-          args '-m 60g'
           reuseNode true
         }
       }
       stages {
-        stage('Dependencies') {
-          steps {
-            sh '''
-              make deps K_BUILD_TYPE=Release
-            '''
-          }
-        }
-        stage('Build') {
-          steps {
-            sh '''
-              make build -j4
-            '''
-          }
-        }
+        stage('Dependencies') { steps { sh 'make deps K_BUILD_TYPE=Release' } }
+        stage('Build')        { steps { sh 'make build -j4'                 } }
         stage('Test') {
           parallel {
-            stage('Run Simulation Tests') {
-              steps {
-                sh '''
-                  make test-execution -j8
-                '''
-              }
-            }
-            stage('Python Generator (Lucash Attacks)') {
-              steps {
-                sh '''
-                  make test-python-generator
-                '''
-              }
-            }
-            stage('Python Generator') {
-              steps {
-                sh '''
-                  make test-random
-                '''
-              }
-            }
+            stage('Run Simulation Tests')              { steps { sh 'make test-execution -j8'    } }
+            stage('Python Generator (Lucash Attacks)') { steps { sh 'make test-python-generator' } }
+            stage('Python Generator')                  { steps { sh 'make test-random'           } }
           }
         }
       }
@@ -66,7 +29,6 @@ pipeline {
       agent {
         dockerfile {
           additionalBuildArgs '--build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g)'
-          args '-m 60g'
           reuseNode true
         }
       }
