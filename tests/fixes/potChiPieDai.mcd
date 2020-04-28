@@ -3,7 +3,7 @@ STEPS ( ATTACK-PRELUDE )
 
 transact ADMIN Pot . file dsr ray(23 /Rat 20)
 TimeStep 1
-transact "Bobby" Vat . move "Bobby" Pot wad(495 /Rat 64)
+transact "Bobby" Vat . move "Bobby" Pot rad(495 /Rat 64)
 
 assert
 
