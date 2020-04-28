@@ -73,14 +73,14 @@ module KMCD-PRELUDE
          // -------------------------------------------------------------
 
          // Vat parameters
-         transact ADMIN Vat . file Line Int2Rad(1000 ether)
+         transact ADMIN Vat . file Line rad(1000 ether)
 
          // Vow parameters
-         transact ADMIN Vow . file bump Int2Rad(1 ether) // flap fixed lot size
-         transact ADMIN Vow . file hump Int2Rad(0)       // surplus buffer
-         transact ADMIN Vow . file sump Int2Rad(50)      // flop fixed bid size
-         transact ADMIN Vow . file dump Int2Wad(30)      // flop initial lot size
-         transact ADMIN Flop . file tau 3600             // flop auction liftime (s)
+         transact ADMIN Vow . file bump rad(1 ether) // flap fixed lot size
+         transact ADMIN Vow . file hump rad(0)       // surplus buffer
+         transact ADMIN Vow . file sump rad(50)      // flop fixed bid size
+         transact ADMIN Vow . file dump wad(30)      // flop initial lot size
+         transact ADMIN Flop . file tau 3600         // flop auction liftime (s)
 
          .MCDSteps
       [macro]
@@ -102,7 +102,7 @@ module KMCD-PRELUDE
 
          // Initialize Spot for gold
          transact ADMIN Spot . init     "gold"
-         transact ADMIN Spot . setPrice "gold" Int2Wad(3 ether)
+         transact ADMIN Spot . setPrice "gold" wad(3 ether)
          transact ADMIN Spot . file       mat "gold" 1Ray
          transact ADMIN Spot . file       par 1Ray
 
@@ -115,7 +115,7 @@ module KMCD-PRELUDE
 
          // Initialize "gold for Vat
          transact ADMIN Vat . initIlk "gold"
-         transact ADMIN Vat . file line "gold" Int2Rad(1000 ether)
+         transact ADMIN Vat . file line "gold" rad(1000 ether)
          transact ANYONE Spot . poke "gold"
 
          // User Setup
@@ -124,8 +124,8 @@ module KMCD-PRELUDE
          // Initialize gold Gem and GemJoin
          transact ADMIN Gem "gold" . initUser "Alice"
          transact ADMIN Gem "gold" . initUser "Bobby"
-         transact ADMIN Gem "gold" . mint "Alice" Int2Wad(20)
-         transact ADMIN Gem "gold" . mint "Bobby" Int2Wad(20)
+         transact ADMIN Gem "gold" . mint "Alice" wad(20)
+         transact ADMIN Gem "gold" . mint "Bobby" wad(20)
 
          transact ADMIN Gem "MKR" . initUser "Alice"
          transact ADMIN Gem "MKR" . initUser "Bobby"
@@ -154,10 +154,10 @@ module KMCD-PRELUDE
          transact "Bobby" Vat . hope Flop
 
          // Setup CDPs
-         transact "Alice" GemJoin "gold" . join "Alice" Int2Wad(10)
-         transact "Bobby" GemJoin "gold" . join "Bobby" Int2Wad(10)
-         transact "Alice" Vat . frob "gold" "Alice" "Alice" "Alice" Int2Wad(10) Int2Wad(10)
-         transact "Bobby" Vat . frob "gold" "Bobby" "Bobby" "Bobby" Int2Wad(10) Int2Wad(10)
+         transact "Alice" GemJoin "gold" . join "Alice" wad(10)
+         transact "Bobby" GemJoin "gold" . join "Bobby" wad(10)
+         transact "Alice" Vat . frob "gold" "Alice" "Alice" "Alice" wad(10) wad(10)
+         transact "Bobby" Vat . frob "gold" "Bobby" "Bobby" "Bobby" wad(10) wad(10)
 
          // Initialize End for Users
          transact ADMIN End . initBag "Alice"
@@ -212,7 +212,7 @@ module KMCD-GEN
 
     syntax Ray ::= #dsrSpread() [function]
  // --------------------------------------
-    rule #dsrSpread() => Int2Ray(20)
+    rule #dsrSpread() => ray(20)
 
     syntax Int   ::= head        ( Bytes ) [function]
     syntax Bytes ::= tail        ( Bytes ) [function]
@@ -348,7 +348,7 @@ module KMCD-GEN
       requires lengthBytes(BS) >Int 0
        andBool size(VAT_URNS) >Int 0
 
-    rule <k> GenVatFrob CDPID => GenVatFrob CDPID ((Int2Wad(2) *Wad randWadBounded(head(BS), VAT_GEM)) -Wad VAT_GEM) ... </k>
+    rule <k> GenVatFrob CDPID => GenVatFrob CDPID ((wad(2) *Wad randWadBounded(head(BS), VAT_GEM)) -Wad VAT_GEM) ... </k>
          <random> BS => tail(BS) </random>
          <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
          <vat-gem> ... CDPID |-> VAT_GEM ... </vat-gem>
@@ -356,7 +356,7 @@ module KMCD-GEN
 
     rule <k> GenVatFrob { ILKID , ADDRESS } DINK
           => #fun( DARTBOUND
-                => LogGen ( transact ADDRESS Vat . frob ILKID ADDRESS ADDRESS ADDRESS DINK ((Int2Wad(2) *Wad randWadBounded(head(BS), DARTBOUND)) -Wad DARTBOUND) )
+                => LogGen ( transact ADDRESS Vat . frob ILKID ADDRESS ADDRESS ADDRESS DINK ((wad(2) *Wad randWadBounded(head(BS), DARTBOUND)) -Wad DARTBOUND) )
                  ) ((((URNINK +Wad DINK) *Rate SPOT) /Rate RATE) -Wad URNART)
          ...
          </k>
@@ -522,12 +522,12 @@ module KMCD-GEN
          <vat-gem> ... CDPID |-> VAT_GEM ... </vat-gem>
       requires lengthBytes(BS) >Int 0
 
-    rule <k> GenFlipKick CDPID STORAGE BENEFICIARY LOT => GenFlipKick CDPID STORAGE BENEFICIARY LOT randRadBounded(head(BS), Int2Rad(1000)) ... </k>
+    rule <k> GenFlipKick CDPID STORAGE BENEFICIARY LOT => GenFlipKick CDPID STORAGE BENEFICIARY LOT randRadBounded(head(BS), rad(1000)) ... </k>
          <random> BS => tail(BS) </random>
          <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
       requires lengthBytes(BS) >Int 0
 
-    rule <k> GenFlipKick { ILKID , ADDRESS } STORAGE BENEFICIARY LOT BID => LogGen ( transact ADDRESS Flip ILKID . kick STORAGE BENEFICIARY Int2Rad(1000) LOT BID ) ... </k>
+    rule <k> GenFlipKick { ILKID , ADDRESS } STORAGE BENEFICIARY LOT BID => LogGen ( transact ADDRESS Flip ILKID . kick STORAGE BENEFICIARY rad(1000) LOT BID ) ... </k>
 
     syntax GenStep ::= GenPotStep
     syntax GenPotStep ::= "GenPotJoin"
@@ -555,7 +555,7 @@ module KMCD-GEN
          <pot-chi> POT_CHI </pot-chi>
       requires lengthBytes(BS) >Int 0
 
-    rule <k> GenPotFileDSR => LogGen ( transact ADMIN Pot . file dsr (randRayBounded(head(BS), #dsrSpread() /Ray Int2Ray(100)) +Ray 1Ray) ) ... </k>
+    rule <k> GenPotFileDSR => LogGen ( transact ADMIN Pot . file dsr (randRayBounded(head(BS), #dsrSpread() /Ray ray(100)) +Ray 1Ray) ) ... </k>
          <random> BS => tail(BS) </random>
          <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
       requires lengthBytes(BS) >Int 0
