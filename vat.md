@@ -112,8 +112,8 @@ CDP Data
  // -----------------------------------------------------------------------
     rule urnBalance(ILK, URN) => urnCollateral(ILK, URN) -Rad urnDebt(ILK, URN)
 
-    rule urnDebt      (ILK, URN) => art(URN) *RateWad rate(ILK)
-    rule urnCollateral(ILK, URN) => ink(URN) *RateWad spot(ILK)
+    rule urnDebt      (ILK, URN) => art(URN) *Rate rate(ILK)
+    rule urnCollateral(ILK, URN) => ink(URN) *Rate spot(ILK)
 ```
 
 File-able Fields
@@ -385,14 +385,14 @@ This is quite permissive, and would allow the account to drain all your locked c
     syntax VatAuthStep ::= "grab" String Address Address Address Wad Wad
  // --------------------------------------------------------------------
     rule <k> Vat . grab ILKID ADDRU ADDRV ADDRW DINK DART => . ... </k>
-         <vat-vice> VICE => VICE -Rad (DART *RateWad RATE) </vat-vice>
+         <vat-vice> VICE => VICE -Rad (DART *Rate RATE) </vat-vice>
          <vat-urns> ... { ILKID , ADDRU } |-> Urn ( INK => INK +Wad DINK , URNART => URNART +Wad DART ) ... </vat-urns>
          <vat-ilks> ... ILKID |-> Ilk ( ILKART => ILKART +Wad DART , RATE , _ , _ , _ ) ... </vat-ilks>
          <vat-gem> ... { ILKID , ADDRV } |-> ( ILKV => ILKV -Wad DINK ) ... </vat-gem>
-         <vat-sin> ... ADDRW |-> ( SINW => SINW -Rad (DART *RateWad RATE) ) ... </vat-sin>
+         <vat-sin> ... ADDRW |-> ( SINW => SINW -Rad (DART *Rate RATE) ) ... </vat-sin>
       requires ILKV >=Wad DINK
-       andBool SINW >=Rad (DART *RateWad RATE)
-       andBool VICE >=Rad (DART *RateWad RATE)
+       andBool SINW >=Rad (DART *Rate RATE)
+       andBool VICE >=Rad (DART *Rate RATE)
 
     syntax VatStep ::= "frob" String Address Address Address Wad Wad
  // ----------------------------------------------------------------
@@ -400,25 +400,25 @@ This is quite permissive, and would allow the account to drain all your locked c
          ...
          </k>
          <vat-live> true </vat-live>
-         <vat-debt> DEBT => DEBT +Rad (DART *RateWad RATE) </vat-debt>
+         <vat-debt> DEBT => DEBT +Rad (DART *Rate RATE) </vat-debt>
          <vat-urns> ... { ILKID , ADDRU } |-> Urn ( INK => INK +Wad DINK , URNART => URNART +Wad DART ) ... </vat-urns>
          <vat-ilks> ... ILKID |-> Ilk (... Art: ILKART => ILKART +Wad DART , rate: RATE , spot: SPOT, line: ILKLINE, dust: DUST ) ... </vat-ilks>
          <vat-gem> ... { ILKID , ADDRV } |-> ( ILKV => ILKV -Wad DINK ) ... </vat-gem>
-         <vat-dai> ... ADDRW |-> ( DAIW => DAIW +Rad (DART *RateWad RATE) ) ... </vat-dai>
+         <vat-dai> ... ADDRW |-> ( DAIW => DAIW +Rad (DART *Rate RATE) ) ... </vat-dai>
          <vat-Line> LINE </vat-Line>
       requires ILKV >=Wad DINK
        andBool ( DART <=Wad 0Wad
-               orBool ((ILKART +Wad DART) *RateWad RATE <=Rad ILKLINE andBool DEBT +Rad (DART *RateWad RATE) <=Rad LINE)
+               orBool ((ILKART +Wad DART) *Rate RATE <=Rad ILKLINE andBool DEBT +Rad (DART *Rate RATE) <=Rad LINE)
                     )
        andBool      ( (DART <=Wad 0Wad andBool DINK >=Wad 0Wad)
-               orBool (URNART +Wad DART) *RateWad RATE <=Rad (INK +Wad DINK) *RateWad SPOT
+               orBool (URNART +Wad DART) *Rate RATE <=Rad (INK +Wad DINK) *Rate SPOT
                     )
        andBool      ( (DART <=Wad 0Wad andBool DINK >=Wad 0Wad)
                orBool wish ADDRU
                     )
        andBool (DINK <=Wad 0Wad orBool wish ADDRV)
        andBool (DART >=Wad 0Wad orBool wish ADDRW)
-       andBool (URNART +Wad DART ==Wad 0Wad orBool (URNART +Wad DART) *RateWad RATE >=Rad DUST)
+       andBool (URNART +Wad DART ==Wad 0Wad orBool (URNART +Wad DART) *Rate RATE >=Rad DUST)
 ```
 
 ### Debt/Dai manipulation (`<vat-debt>`, `<vat-dai>`, `<vat-vice>`, `<vat-sin>`)
@@ -460,9 +460,9 @@ This is quite permissive, and would allow the account to drain all your locked c
  // ------------------------------------------------
     rule <k> Vat . fold ILKID ADDRU RATE => . ... </k>
          <vat-live> true </vat-live>
-         <vat-debt> DEBT => DEBT +Rad (ILKART *RateWad RATE) </vat-debt>
+         <vat-debt> DEBT => DEBT +Rad (ILKART *Rate RATE) </vat-debt>
          <vat-ilks> ... ILKID |-> Ilk ( ILKART , ILKRATE => ILKRATE +Ray RATE , _ , _ , _ ) ... </vat-ilks>
-         <vat-dai> ... ADDRU |-> ( DAI => DAI +Rad (ILKART *RateWad RATE) ) ... </vat-dai>
+         <vat-dai> ... ADDRU |-> ( DAI => DAI +Rad (ILKART *Rate RATE) ) ... </vat-dai>
 ```
 
 ```k

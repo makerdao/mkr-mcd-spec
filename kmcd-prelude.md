@@ -357,7 +357,7 @@ module KMCD-GEN
     rule <k> GenVatFrob { ILKID , ADDRESS } DINK
           => #fun( DARTBOUND
                 => LogGen ( transact ADDRESS Vat . frob ILKID ADDRESS ADDRESS ADDRESS DINK ((Int2Wad(2) *Wad randWadBounded(head(BS), DARTBOUND)) -Wad DARTBOUND) )
-                 ) ((((URNINK +Wad DINK) *RateWad SPOT) /Rate RATE) -Wad URNART)
+                 ) ((((URNINK +Wad DINK) *Rate SPOT) /Rate RATE) -Wad URNART)
          ...
          </k>
          <random> BS => tail(BS) </random>

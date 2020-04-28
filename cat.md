@@ -126,7 +126,7 @@ Cat Semantics
           ~> call Vow . fess TAB
           ~> call Flip ILK . kick URN VOWADDR rmulRad(TAB, CHOP) LOT 0Rad
           ~> emitBite ILK URN LOT ART TAB)
-          (ART *RateWad RATE))
+          (ART *Rate RATE))
           (minWad(URNART, (LOT *Wad URNART) /Wad INK)))
           (minWad(INK, LUMP))
          ...
@@ -137,7 +137,7 @@ Cat Semantics
          <vat-ilks> ... ILK |-> Ilk(... rate: RATE, spot: SPOT) ... </vat-ilks>
          <vat-urns> ... { ILK, URN } |-> Urn(... ink: INK, art: URNART ) ... </vat-urns>
          <cat-vow> VOWADDR </cat-vow>
-      requires (INK *RateWad SPOT) <Rad (URNART *RateWad RATE)
+      requires (INK *Rate SPOT) <Rad (URNART *Rate RATE)
 
     syntax CatAuthStep ::= "cage" [klabel(#CatCage), symbol]
  // --------------------------------------------------------

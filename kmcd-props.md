@@ -142,7 +142,7 @@ Total backed debt (sum over each CDP's art times corresponding ilk's rate)
     rule calcSumOfScaledArts(VAT_ILKS, VAT_URNS) => calcSumOfScaledArtsAux(keys_list(VAT_ILKS), VAT_ILKS, VAT_URNS, 0Rad)
 
     rule calcSumOfScaledArtsAux(                        .List ,        _ ,        _ , TOTAL ) => TOTAL
-    rule calcSumOfScaledArtsAux( ListItem(ILK_ID) VAT_ILK_IDS , VAT_ILKS , VAT_URNS , TOTAL ) => calcSumOfScaledArtsAux(VAT_ILK_IDS, VAT_ILKS, VAT_URNS, TOTAL +Rad (sumOfUrnArt(VAT_URNS, ILK_ID, 0Wad) *RateWad rate({VAT_ILKS[ILK_ID]}:>VatIlk)))
+    rule calcSumOfScaledArtsAux( ListItem(ILK_ID) VAT_ILK_IDS , VAT_ILKS , VAT_URNS , TOTAL ) => calcSumOfScaledArtsAux(VAT_ILK_IDS, VAT_ILKS, VAT_URNS, TOTAL +Rad (sumOfUrnArt(VAT_URNS, ILK_ID, 0Wad) *Rate rate({VAT_ILKS[ILK_ID]}:>VatIlk)))
 ```
 
 ### Flap Measures
@@ -304,9 +304,9 @@ The Pot Chi multiplied by Pot Pie should equal the Vat Dai for the Pot
     rule derive( potChiPieDai(... offset: OFFSET, joining: JOINING ) , LogNote(_, Pot . join WAD)       ) => potChiPieDai(... offset: OFFSET          , joining: JOINING +Wad WAD )
     rule derive( potChiPieDai(... offset: OFFSET, joining: JOINING ) , LogNote(_, Vat . move _ Pot RAD) ) => potChiPieDai(... offset: OFFSET +Rad RAD , joining: JOINING          )
 
-    rule derive(potChiPieDai(... offset: OFFSET => OFFSET -Rad (JOINING *RateWad POT_CHI), joining: JOINING => 0Wad), Measure(... potChi: POT_CHI)) requires JOINING =/=Wad 0Wad
+    rule derive(potChiPieDai(... offset: OFFSET => OFFSET -Rad (JOINING *Rate POT_CHI), joining: JOINING => 0Wad), Measure(... potChi: POT_CHI)) requires JOINING =/=Wad 0Wad
 
-    rule derive(potChiPieDai(... offset: OFFSET, joining: 0Wad) #as PREV, Measure(... controlDai: CONTROL_DAI, potChi: POT_CHI, potPie: POT_PIE)) => Violated(PREV) requires POT_PIE *RateWad POT_CHI =/=Rad #lookupRad(CONTROL_DAI, Pot) -Rad OFFSET
+    rule derive(potChiPieDai(... offset: OFFSET, joining: 0Wad) #as PREV, Measure(... controlDai: CONTROL_DAI, potChi: POT_CHI, potPie: POT_PIE)) => Violated(PREV) requires POT_PIE *Rate POT_CHI =/=Rad #lookupRad(CONTROL_DAI, Pot) -Rad OFFSET
 ```
 
 ### Kicking off a fake `flip` auction (inspired by lucash-flip)

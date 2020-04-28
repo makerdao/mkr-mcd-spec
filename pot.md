@@ -100,7 +100,7 @@ Pot Semantics
 ```k
     syntax PotStep ::= "drip"
  // -------------------------
-    rule <k> Pot . drip => call Vat . suck VOW THIS ( PIE *RateWad ( CHI *Ray ( DSR ^Ray (NOW -Int RHO) -Ray 1Ray ) ) ) ... </k>
+    rule <k> Pot . drip => call Vat . suck VOW THIS ( PIE *Rate ( CHI *Ray ( DSR ^Ray (NOW -Int RHO) -Ray 1Ray ) ) ) ... </k>
          <this> THIS </this>
          <current-time> NOW </current-time>
          <pot-chi> CHI => CHI *Ray (DSR ^Ray (NOW -Int RHO)) </pot-chi>
@@ -113,7 +113,7 @@ Pot Semantics
 
     syntax PotStep ::= "join" Wad
  // -----------------------------
-    rule <k> Pot . join WAD => call Vat . move MSGSENDER THIS ( WAD *RateWad CHI ) ... </k>
+    rule <k> Pot . join WAD => call Vat . move MSGSENDER THIS ( WAD *Rate CHI ) ... </k>
          <this> THIS </this>
          <current-time> NOW </current-time>
          <msg-sender> MSGSENDER </msg-sender>
@@ -126,7 +126,7 @@ Pot Semantics
 
     syntax PotStep ::= "exit" Wad
  // -----------------------------
-    rule <k> Pot . exit WAD => call Vat . move THIS MSGSENDER ( WAD *RateWad CHI ) ... </k>
+    rule <k> Pot . exit WAD => call Vat . move THIS MSGSENDER ( WAD *Rate CHI ) ... </k>
          <this> THIS </this>
          <msg-sender> MSGSENDER </msg-sender>
          <pot-pies> ... MSGSENDER |-> ( MSGSENDER_PIE => MSGSENDER_PIE -Wad WAD ) ... </pot-pies>
