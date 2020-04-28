@@ -186,9 +186,13 @@ We model everything with arbitrary precision rationals, but use sort information
  // -----------------------------------------
     rule R1 /Rate R2 => R1 /Rat R2
 
-    syntax Wad ::= rmul ( Wad , Ray ) [function]
- // --------------------------------------------
-    rule rmul(R1, R2) => R1 *Rat R2
+    syntax Wad ::= rmulWad ( Wad , Ray ) [function]
+ // -----------------------------------------------
+    rule rmulWad(R1, R2) => R1 *Rat R2
+
+    syntax Rad ::= rmulRad ( Rad , Ray ) [function]
+ // -----------------------------------------------
+    rule rmulRad(R1, R2) => R1 *Rat R2
 
     syntax Ray ::= rdiv ( Ray , Rad ) [function]
  // --------------------------------------------

@@ -167,12 +167,12 @@ End Semantics
     syntax EndStep ::= "skim" String Address
  // ----------------------------------------
     rule <k> End . skim ILK ADDR
-          => call Vat . grab ILK ADDR THIS Vow (0Wad -Wad minWad(INK, rmul(rmul(ART, RATE), TAG))) (0Wad -Wad ART)
+          => call Vat . grab ILK ADDR THIS Vow (0Wad -Wad minWad(INK, rmulWad(rmulWad(ART, RATE), TAG))) (0Wad -Wad ART)
          ...
          </k>
          <this> THIS </this>
          <end-tag> ... ILK |-> TAG ... </end-tag>
-         <end-gap> ... ILK |-> (GAP => GAP +Wad (rmul(rmul(ART, RATE), TAG) -Wad minWad(INK, rmul(rmul(ART, RATE), TAG)))) ... </end-gap>
+         <end-gap> ... ILK |-> (GAP => GAP +Wad (rmulWad(rmulWad(ART, RATE), TAG) -Wad minWad(INK, rmulWad(rmulWad(ART, RATE), TAG)))) ... </end-gap>
          <vat-ilks> ... ILK |-> Ilk(... rate: RATE)::VatIlk ... </vat-ilks>
          <vat-urns> ... {ILK, ADDR} |-> Urn(... ink: INK, art: ART) ... </vat-urns>
       requires TAG =/=Ray 0Ray
@@ -204,13 +204,13 @@ End Semantics
  // --------------------------------
     rule <k> End . flow ILK => . ... </k>
          <end-debt> DEBT </end-debt>
-         <end-fix> FIX => FIX [ ILK <- rdiv(Wad2Ray(rmul(rmul(ART, RATE), TAG) -Wad GAP), DEBT) ] </end-fix>
+         <end-fix> FIX => FIX [ ILK <- rdiv(Wad2Ray(rmulWad(rmulWad(ART, RATE), TAG) -Wad GAP), DEBT) ] </end-fix>
          <end-tag> ... ILK |-> TAG ... </end-tag>
          <end-gap> ... ILK |-> GAP ... </end-gap>
          <end-art> ... ILK |-> ART ... </end-art>
          <vat-ilks> ... ILK |-> Ilk(... rate: RATE)::VatIlk ... </vat-ilks>
       requires DEBT =/=Rad 0Rad
-       andBool rmul(rmul(ART, RATE), TAG) >=Wad GAP
+       andBool rmulWad(rmulWad(ART, RATE), TAG) >=Wad GAP
        andBool notBool ILK in_keys(FIX)
 
     syntax EndStep ::= "pack" Wad
@@ -228,7 +228,7 @@ End Semantics
     syntax EndStep ::= "cash" String Wad
  // ------------------------------------
     rule <k> End . cash ILK AMOUNT
-          => call Vat . flux ILK THIS MSGSENDER rmul(AMOUNT, FIX)
+          => call Vat . flux ILK THIS MSGSENDER rmulWad(AMOUNT, FIX)
          ...
          </k>
          <msg-sender> MSGSENDER </msg-sender>
