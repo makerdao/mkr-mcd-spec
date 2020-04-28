@@ -19,7 +19,7 @@ Flap Configuration
         <flap-bids>  .Map         </flap-bids>  // mapping (uint => Bid) Int |-> FlapBid
         <flap-kicks> 0            </flap-kicks>
         <flap-live>  true         </flap-live>
-        <flap-beg>   105 /Rat 100 </flap-beg>
+        <flap-beg>   105 /Wad 100 </flap-beg>
         <flap-ttl>   3 hours      </flap-ttl>
         <flap-tau>   2 days       </flap-tau>
       </flap-state>
@@ -83,13 +83,13 @@ The parameters controlled by governance are:
     syntax FlapAuthStep ::= "file" FlapFile
  // ---------------------------------------
 
-    syntax FlapFile ::= "beg" Ray
+    syntax FlapFile ::= "beg" Wad
                       | "ttl" Int
                       | "tau" Int
  // -----------------------------
     rule <k> Flap . file beg BEG => . ... </k>
          <flap-beg> _ => BEG </flap-beg>
-      requires BEG >=Rat 0
+      requires BEG >=Wad 0Wad
 
     rule <k> Flap . file ttl TTL => . ... </k>
          <flap-ttl> _ => TTL </flap-ttl>
@@ -130,8 +130,8 @@ Flap Semantics
          <flap-live> true </flap-live>
          <flap-tau> TAU </flap-tau>
          <frame-events> ... (.List => ListItem(FlapKick(MSGSENDER, KICKS +Int 1, LOT, BID))) </frame-events>
-      requires LOT >=Rat 0
-       andBool BID >=Rat 0
+      requires LOT >=Rad 0Rad
+       andBool BID >=Wad 0Wad
 ```
 
 - tick(uint id)
@@ -155,7 +155,7 @@ Flap Semantics
  // --------------------------------------
     rule <k> Flap . tend ID LOT BID
           => call Gem "MKR" . move MSGSENDER GUY BID'
-          ~> call Gem "MKR" . move MSGSENDER THIS (BID -Rat BID')
+          ~> call Gem "MKR" . move MSGSENDER THIS (BID -Wad BID')
          ...
          </k>
          <msg-sender> MSGSENDER </msg-sender>
@@ -165,13 +165,13 @@ Flap Semantics
          <flap-live> true </flap-live>
          <flap-ttl> TTL </flap-ttl>
          <flap-beg> BEG </flap-beg>
-      requires LOT >=Rat 0
-       andBool BID >=Rat 0
+      requires LOT >=Rad 0Rad
+       andBool BID >=Wad 0Wad
        andBool (TIC >Int NOW orBool TIC ==Int 0)
        andBool END  >Int NOW
-       andBool LOT ==Rat LOT'
-       andBool BID  >Rat BID'
-       andBool BID >=Rat BID' *Rat BEG
+       andBool LOT ==Rad LOT'
+       andBool BID  >Wad BID'
+       andBool BID >=Wad BID' *Wad BEG
 ```
 
 - deal(uint id)
@@ -203,7 +203,7 @@ Flap Semantics
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
          <flap-live> _ => false </flap-live>
-      requires RAD >=Rat 0
+      requires RAD >=Rad 0Rad
 ```
 
 - yank(uint id)

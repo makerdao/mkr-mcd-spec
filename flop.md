@@ -19,8 +19,8 @@ Flop Configuration
         <flop-bids>  .Map          </flop-bids>  // mapping (uint => Bid) Int |-> FlopBid
         <flop-kicks>  0            </flop-kicks>
         <flop-live>   true         </flop-live>
-        <flop-beg>    105 /Rat 100 </flop-beg>
-        <flop-pad>    150 /Rat 100 </flop-pad>
+        <flop-beg>    105 /Wad 100 </flop-beg>
+        <flop-pad>    150 /Wad 100 </flop-pad>
         <flop-ttl>    3 hours      </flop-ttl>
         <flop-tau>    2 days       </flop-tau>
         <flop-vow>    0:Address    </flop-vow>
@@ -83,15 +83,15 @@ The parameters controlled by governance are:
     syntax FlopAuthStep ::= "file" FlopFile
  // ---------------------------------------
 
-    syntax FlopFile ::= "beg" Ray
+    syntax FlopFile ::= "beg" Wad
                       | "ttl" Int
                       | "tau" Int
-                      | "pad" Ray
+                      | "pad" Wad
                       | "vow-file" Address
  // --------------------------------------
     rule <k> Flop . file beg BEG => . ... </k>
          <flop-beg> _ => BEG </flop-beg>
-      requires BEG >=Rat 0
+      requires BEG >=Wad 0Wad
 
     rule <k> Flop . file ttl TTL => . ... </k>
          <flop-ttl> _ => TTL </flop-ttl>
@@ -103,7 +103,7 @@ The parameters controlled by governance are:
 
     rule <k> Flop . file pad PAD => . ... </k>
          <flop-pad> _ => PAD </flop-pad>
-      requires PAD >=Rat 0
+      requires PAD >=Wad 0Wad
 
     rule <k> Flop . file vow-file ADDR => . ... </k>
          <flop-vow> _ => ADDR </flop-vow>
@@ -138,8 +138,8 @@ Flop Semantics
          <flop-kicks> KICKS => KICKS +Int 1 </flop-kicks>
          <flop-tau> TAU </flop-tau>
          <frame-events> ... (.List => ListItem(FlopKick(KICKS +Int 1, LOT, BID, GAL))) </frame-events>
-      requires LOT >=Rat 0
-       andBool BID >=Rat 0
+      requires LOT >=Wad 0Wad
+       andBool BID >=Rad 0Rad
 ```
 
 - tick(uint id)
@@ -150,7 +150,7 @@ Flop Semantics
  // ------------------------------
     rule <k> Flop . tick ID => . ... </k>
          <current-time> NOW </current-time>
-         <flop-bids> ... ID |-> FlopBid(... lot: LOT => LOT *Rat PAD, tic: 0, end: END => NOW +Int TAU ) ... </flop-bids>
+         <flop-bids> ... ID |-> FlopBid(... lot: LOT => LOT *Wad PAD, tic: 0, end: END => NOW +Int TAU ) ... </flop-bids>
          <flop-pad> PAD </flop-pad>
          <flop-tau> TAU </flop-tau>
       requires END <Int NOW
@@ -172,13 +172,13 @@ Flop Semantics
          <flop-live> true </flop-live>
          <flop-beg> BEG </flop-beg>
          <flop-ttl> TTL </flop-ttl>
-      requires LOT >=Rat 0
-       andBool BID >=Rat 0
+      requires LOT >=Wad 0Wad
+       andBool BID >=Rad 0Rad
        andBool (TIC >Int NOW orBool TIC ==Int 0)
        andBool END >Int NOW
-       andBool BID ==Rat BID'
-       andBool LOT <Rat LOT'
-       andBool LOT *Rat BEG <=Rat LOT'
+       andBool BID ==Rad BID'
+       andBool LOT <Wad LOT'
+       andBool LOT *Wad BEG <=Wad LOT'
 ```
 
 - deal(uint id)

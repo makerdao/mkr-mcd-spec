@@ -16,7 +16,7 @@ Jug Configuration
         <jug-wards> .Set      </jug-wards>
         <jug-ilks>  .Map      </jug-ilks> // mapping (bytes32 => JugIlk) String  |-> JugIlk
         <jug-vow>   0:Address </jug-vow>  //                             Address
-        <jug-base>  0:Ray     </jug-base> //                             Ray
+        <jug-base>  0Ray      </jug-base> //                             Ray
       </jug>
 ```
 
@@ -80,11 +80,11 @@ These parameters are controlled by governance:
          <jug-ilks> ... ILK |-> Ilk ( ... duty: (_ => DUTY) , rho: RHO ) ... </jug-ilks>
          <current-time> NOW </current-time>
       requires NOW ==Int RHO
-       andBool DUTY >=Rat 0
+       andBool DUTY >=Ray 0Ray
 
     rule <k> Jug . file base BASE => . ... </k>
          <jug-base> _ => BASE </jug-base>
-      requires BASE >=Rat 0
+      requires BASE >=Ray 0Ray
 
     rule <k> Jug . file vow-file ADDR => . ... </k>
          <jug-vow> _ => ADDR </jug-vow>
@@ -100,13 +100,13 @@ Jug Semantics
  // ------------------------------------
     rule <k> Jug . init ILK => . ... </k>
          <current-time> NOW </current-time>
-         <jug-ilks> ... ILK |-> Ilk ( ... duty: 0 => 1, rho: _ => NOW ) ... </jug-ilks>
+         <jug-ilks> ... ILK |-> Ilk ( ... duty: 0Ray => 1Ray, rho: _ => NOW ) ... </jug-ilks>
 ```
 
 ```k
     syntax JugStep ::= "drip" String
  // --------------------------------
-    rule <k> Jug . drip ILK => call Vat . fold ILK ADDRESS ( ( (BASE +Rat ILKDUTY) ^Rat (TIME -Int ILKRHO) ) *Rat ILKRATE ) -Rat ILKRATE ... </k>
+    rule <k> Jug . drip ILK => call Vat . fold ILK ADDRESS ( ( (BASE +Ray ILKDUTY) ^Ray (TIME -Int ILKRHO) ) *Ray ILKRATE ) -Ray ILKRATE ... </k>
          <current-time> TIME </current-time>
          <vat-ilks> ... ILK |-> Ilk ( ... rate: ILKRATE ) ... </vat-ilks>
          <jug-ilks> ... ILK |-> Ilk ( ... duty: ILKDUTY, rho: ILKRHO => TIME ) ... </jug-ilks>

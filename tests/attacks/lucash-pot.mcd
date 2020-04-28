@@ -5,12 +5,12 @@ STEPS ( ATTACK-PRELUDE )
 // ---------------
 
 // Earn Interest
-transact ADMIN Pot . file dsr 5            // set interest rate
+transact ADMIN Pot . file dsr ray(5)       // set interest rate
 TimeStep 1 second                          // earn interest for a second
 
-transact "Alice" Pot . join 10
+transact "Alice" Pot . join wad(10)
 transact "Alice" Pot . drip
-transact "Alice" Pot . exit 10
+transact "Alice" Pot . exit wad(10)
 
 assert
 
