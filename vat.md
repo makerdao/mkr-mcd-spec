@@ -396,9 +396,7 @@ This is quite permissive, and would allow the account to drain all your locked c
 
     syntax VatStep ::= "frob" String Address Address Address Wad Wad
  // ----------------------------------------------------------------
-    rule <k> Vat . frob ILKID ADDRU ADDRV ADDRW DINK DART => .
-         ...
-         </k>
+    rule <k> Vat . frob ILKID ADDRU ADDRV ADDRW DINK DART => . ... </k>
          <vat-live> true </vat-live>
          <vat-debt> DEBT => DEBT +Rad (DART *Rate RATE) </vat-debt>
          <vat-urns> ... { ILKID , ADDRU } |-> Urn ( INK => INK +Wad DINK , URNART => URNART +Wad DART ) ... </vat-urns>

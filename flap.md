@@ -15,13 +15,13 @@ Flap Configuration
 ```k
     configuration
       <flap-state>
-        <flap-wards> .Set         </flap-wards>
-        <flap-bids>  .Map         </flap-bids>  // mapping (uint => Bid) Int |-> FlapBid
-        <flap-kicks> 0            </flap-kicks>
-        <flap-live>  true         </flap-live>
-        <flap-beg>   105 /Wad 100 </flap-beg>
-        <flap-ttl>   3 hours      </flap-ttl>
-        <flap-tau>   2 days       </flap-tau>
+        <flap-wards> .Set              </flap-wards>
+        <flap-bids>  .Map              </flap-bids>  // mapping (uint => Bid) Int |-> FlapBid
+        <flap-kicks> 0                 </flap-kicks>
+        <flap-live>  true              </flap-live>
+        <flap-beg>   wad(105 /Rat 100) </flap-beg>
+        <flap-ttl>   3 hours           </flap-ttl>
+        <flap-tau>   2 days            </flap-tau>
       </flap-state>
 ```
 
