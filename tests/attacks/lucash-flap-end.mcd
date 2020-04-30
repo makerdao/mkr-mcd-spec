@@ -5,18 +5,18 @@ STEPS ( ATTACK-PRELUDE )
 // ---------------
 
 // Give Bobby some MKR
-transact ADMIN Gem "MKR" . mint "Bobby" 20
+transact ADMIN Gem "MKR" . mint "Bobby" wad(20)
 
 // Cheat a little to get a Flap auction started w/o going through full surplus generation cycle
 // (dump sin into the End, out-of-sight of the accounting logic)
-transact ADMIN Vat . suck End Vow 1 ether
+transact ADMIN Vat . suck End Vow rad(1 ether)
 transact ADMIN Vow . flap
 
 // Bobby bids on flap auction
-transact "Bobby" Flap . tend 1 1 ether 20
+transact "Bobby" Flap . tend 1 rad(1 ether) wad(20)
 
 transact "Alice" Vat . hope Flap
-transact "Alice" Flap . kick 1 20 // step that shouldn't go through
+transact "Alice" Flap . kick rad(1) wad(20) // step that shouldn't go through
 
 transact ADMIN End . cage
 transact "Alice" Flap . yank 2

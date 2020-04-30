@@ -17,7 +17,7 @@ Flip Configuration
           <flip-ilk>   ""           </flip-ilk>
           <flip-wards> .Set         </flip-wards>
           <flip-bids>  .Map         </flip-bids> // mapping (uint => Bid) Int |-> FlipBid
-          <flip-beg>   105 /Rat 100 </flip-beg>  // Minimum Bid Increase
+          <flip-beg>   105 /Wad 100 </flip-beg>  // Minimum Bid Increase
           <flip-ttl>   3 hours      </flip-ttl>  // Single Bid Lifetime
           <flip-tau>   2 days       </flip-tau>  // Total Auction Length
           <flip-kicks> 0            </flip-kicks>
@@ -91,7 +91,7 @@ The parameters controlled by governance are:
     syntax FlipAuthStep ::= "file" FlipFile
  // ---------------------------------------
 
-    syntax FlipFile ::= "beg" Ray
+    syntax FlipFile ::= "beg" Wad
                       | "ttl" Int
                       | "tau" Int
  // -----------------------------
@@ -101,7 +101,7 @@ The parameters controlled by governance are:
            <flip-beg> _ => BEG </flip-beg>
            ...
          </flip>
-      requires BEG >=Rat 0
+      requires BEG >=Wad 0Wad
 
     rule <k> Flip ILKID . file ttl TTL => . ... </k>
          <flip>
@@ -162,9 +162,9 @@ Flip Semantics
            ...
          </flip>
          <frame-events> ... (.List => ListItem(FlipKick(MSGSENDER, ILK, KICKS +Int 1, LOT, BID, TAB, USR, GAL))) </frame-events>
-      requires TAB >=Rat 0
-       andBool LOT >=Rat 0
-       andBool BID >=Rat 0
+      requires TAB >=Rad 0Rad
+       andBool LOT >=Wad 0Wad
+       andBool BID >=Rad 0Rad
 
     syntax FlipStep ::= "tick" Int
  // ------------------------------
@@ -183,7 +183,7 @@ Flip Semantics
  // --------------------------------------
     rule <k> Flip ILK . tend ID LOT BID
           => call Vat . move MSGSENDER GUY BID'
-          ~> call Vat . move MSGSENDER GAL (BID -Rat BID')
+          ~> call Vat . move MSGSENDER GAL (BID -Rad BID')
          ...
          </k>
          <msg-sender> MSGSENDER </msg-sender>
@@ -195,21 +195,21 @@ Flip Semantics
            <flip-bids> ... ID |-> FlipBid(... bid: BID' => BID, lot: LOT', guy: GUY => MSGSENDER, tic: TIC => NOW +Int TTL, end: END, gal: GAL, tab: TAB) ... </flip-bids>
            ...
          </flip>
-      requires LOT >=Rat 0
-       andBool BID >=Rat 0
+      requires LOT >=Wad 0Wad
+       andBool BID >=Rad 0Rad
        andBool GUY =/=K 0
        andBool (TIC >Int NOW orBool TIC ==Int 0)
        andBool END >Int NOW
-       andBool LOT ==Rat LOT'
-       andBool BID <=Rat TAB
-       andBool BID >Rat BID'
-       andBool (BID >=Rat BEG *Rat BID' orBool BID ==Rat TAB)
+       andBool LOT ==Wad LOT'
+       andBool BID <=Rad TAB
+       andBool BID >Rad BID'
+       andBool (BID >=Rad Wad2Rad(BEG) *Rad BID' orBool BID ==Rad TAB)
 
     syntax FlipStep ::= "dent" Int Wad Rad
  // --------------------------------------
     rule <k> Flip ILK . dent ID LOT BID
           => call Vat.move MSGSENDER GUY BID
-          ~> call Vat.flux ILK THIS USR (LOT' -Rat LOT)
+          ~> call Vat.flux ILK THIS USR (LOT' -Wad LOT)
          ...
          </k>
          <msg-sender> MSGSENDER </msg-sender>
@@ -222,15 +222,15 @@ Flip Semantics
            <flip-bids> ... ID |-> FlipBid(... bid: BID', lot: LOT' => LOT, guy: GUY => MSGSENDER, tic: TIC => NOW +Int TTL, end: END, usr: USR, tab: TAB) ... </flip-bids>
            ...
          </flip>
-      requires LOT >=Rat 0
-       andBool BID >=Rat 0
+      requires LOT >=Wad 0Wad
+       andBool BID >=Rad 0Rad
        andBool GUY =/=K 0
        andBool (TIC >Int NOW orBool TIC ==Int 0)
        andBool END >Int NOW
-       andBool BID ==Rat BID'
-       andBool BID ==Rat TAB
-       andBool LOT <Rat LOT'
-       andBool BEG *Rat LOT <Rat LOT'
+       andBool BID ==Rad BID'
+       andBool BID ==Rad TAB
+       andBool LOT <Wad LOT'
+       andBool BEG *Wad LOT <Wad LOT'
 
     syntax FlipStep ::= "deal" Int
  // ------------------------------
@@ -259,7 +259,7 @@ Flip Semantics
            <flip-bids> ... ID |-> FlipBid(... bid: BID, lot: LOT, guy: GUY, tab: TAB) => .Map ... </flip-bids>
            ...
          </flip>
-      requires GUY =/=K 0 andBool BID <Rat TAB
+      requires GUY =/=K 0 andBool BID <Rad TAB
 ```
 
 ```k

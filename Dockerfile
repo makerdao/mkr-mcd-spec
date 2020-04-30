@@ -44,3 +44,13 @@ ADD --chown=user:user deps/k/haskell-backend/src/main/native/haskell-backend/sta
 ADD --chown=user:user deps/k/haskell-backend/src/main/native/haskell-backend/kore/package.yaml /home/user/.tmp-haskell/kore/
 RUN    cd /home/user/.tmp-haskell  \
     && stack build --only-snapshot
+
+RUN    git config --global user.email "admin@runtimeverification.com" \
+    && git config --global user.name  "RV Jenkins"                    \
+    && mkdir -p ~/.ssh                                                \
+    && echo 'host github.com'                       > ~/.ssh/config   \
+    && echo '    hostname github.com'              >> ~/.ssh/config   \
+    && echo '    user git'                         >> ~/.ssh/config   \
+    && echo '    identityagent SSH_AUTH_SOCK'      >> ~/.ssh/config   \
+    && echo '    stricthostkeychecking accept-new' >> ~/.ssh/config   \
+    && chmod go-rwx -R ~/.ssh

@@ -17,16 +17,16 @@ Vow Configuration
 ```k
     configuration
       <vow>
-        <vow-wards> .Set  </vow-wards>
-        <vow-sins>  .Map  </vow-sins> // mapping (uint256 => uint256) Int |-> Rad
-        <vow-sin>   0:Rad </vow-sin>
-        <vow-ash>   0:Rad </vow-ash>
-        <vow-wait>  0     </vow-wait>
-        <vow-dump>  0:Wad </vow-dump>
-        <vow-sump>  0:Rad </vow-sump>
-        <vow-bump>  0:Rad </vow-bump>
-        <vow-hump>  0:Rad </vow-hump>
-        <vow-live>  true  </vow-live>
+        <vow-wards> .Set </vow-wards>
+        <vow-sins>  .Map </vow-sins> // mapping (uint256 => uint256) Int |-> Rad
+        <vow-sin>   0Rad </vow-sin>
+        <vow-ash>   0Rad </vow-ash>
+        <vow-wait>  0    </vow-wait>
+        <vow-dump>  0Wad </vow-dump>
+        <vow-sump>  0Rad </vow-sump>
+        <vow-bump>  0Rad </vow-bump>
+        <vow-hump>  0Rad </vow-hump>
+        <vow-live>  true </vow-live>
       </vow>
 ```
 
@@ -84,19 +84,19 @@ These praameters are set by governance:
 
     rule <k> Vow . file bump BUMP => . ... </k>
          <vow-bump> _ => BUMP </vow-bump>
-      requires BUMP >=Rat 0
+      requires BUMP >=Rad 0Rad
 
     rule <k> Vow . file hump HUMP => . ... </k>
          <vow-hump> _ => HUMP </vow-hump>
-      requires HUMP >=Rat 0
+      requires HUMP >=Rad 0Rad
 
     rule <k> Vow . file sump SUMP => . ... </k>
          <vow-sump> _ => SUMP </vow-sump>
-      requires SUMP >=Rat 0
+      requires SUMP >=Rad 0Rad
 
     rule <k> Vow . file dump DUMP => . ... </k>
          <vow-dump> _ => DUMP </vow-dump>
-      requires DUMP >=Rat 0
+      requires DUMP >=Wad 0Wad
 ```
 
 Vow Semantics
@@ -107,17 +107,17 @@ Vow Semantics
  // ---------------------------------
     rule <k> Vow . fess TAB => . ... </k>
          <current-time> NOW </current-time>
-         <vow-sins> ... NOW |-> (SIN' => SIN' +Rat TAB) ... </vow-sins>
-         <vow-sin> SIN => SIN +Rat TAB </vow-sin>
-      requires TAB >=Rat 0
+         <vow-sins> ... NOW |-> (SIN' => SIN' +Rad TAB) ... </vow-sins>
+         <vow-sin> SIN => SIN +Rad TAB </vow-sin>
+      requires TAB >=Rad 0Rad
 
     syntax VowStep ::= "flog" Int
  // -----------------------------
     rule <k> Vow . flog ERA => . ... </k>
          <current-time> NOW </current-time>
          <vow-wait> WAIT </vow-wait>
-         <vow-sins> ... ERA |-> (SIN' => 0) ... </vow-sins>
-         <vow-sin> SIN => SIN -Rat SIN' </vow-sin>
+         <vow-sins> ... ERA |-> (SIN' => 0Rad) ... </vow-sins>
+         <vow-sin> SIN => SIN -Rad SIN' </vow-sin>
       requires ERA >=Int 0
        andBool ERA +Int WAIT <=Int NOW
 
@@ -129,19 +129,19 @@ Vow Semantics
          <vat-sin> ... THIS |-> VATSIN ... </vat-sin>
          <vow-sin> SIN </vow-sin>
          <vow-ash> ASH </vow-ash>
-      requires AMOUNT >=Rat 0
-       andBool AMOUNT <=Rat VATDAI
-       andBool AMOUNT <=Rat VATSIN -Rat SIN -Rat ASH
+      requires AMOUNT >=Rad 0Rad
+       andBool AMOUNT <=Rad VATDAI
+       andBool AMOUNT <=Rad (VATSIN -Rad SIN) -Rad ASH
 
     syntax VowStep ::= "kiss" Rad
  // -----------------------------
     rule <k> Vow . kiss AMOUNT => call Vat . heal AMOUNT ... </k>
          <this> THIS </this>
          <vat-dai> ... THIS |-> VATDAI ... </vat-dai>
-         <vow-ash> ASH => ASH -Rat AMOUNT </vow-ash>
-       requires AMOUNT >=Rat 0
-        andBool AMOUNT <=Rat ASH
-        andBool AMOUNT <=Rat VATDAI
+         <vow-ash> ASH => ASH -Rad AMOUNT </vow-ash>
+       requires AMOUNT >=Rad 0Rad
+        andBool AMOUNT <=Rad ASH
+        andBool AMOUNT <=Rad VATDAI
 
     syntax VowStep ::= "flop"
  // -------------------------
@@ -150,15 +150,15 @@ Vow Semantics
          <vat-sin> ... THIS |-> VATSIN ... </vat-sin>
          <vat-dai> ... THIS |-> VATDAI ... </vat-dai>
          <vow-sin> SIN </vow-sin>
-         <vow-ash> ASH => ASH +Rat SUMP </vow-ash>
+         <vow-ash> ASH => ASH +Rad SUMP </vow-ash>
          <vow-sump> SUMP </vow-sump>
          <vow-dump> DUMP </vow-dump>
-      requires SUMP <=Rat VATSIN -Rat SIN -Rat ASH
-       andBool VATDAI ==Int 0
+      requires SUMP <=Rad (VATSIN -Rad SIN) -Rad ASH
+       andBool VATDAI ==Rad 0Rad
 
     syntax VowStep ::= "flap"
  // -------------------------
-    rule <k> Vow . flap => call Flap . kick BUMP 0 ... </k>
+    rule <k> Vow . flap => call Flap . kick BUMP 0Wad ... </k>
          <this> THIS </this>
          <vat-sin> ... THIS |-> VATSIN ... </vat-sin>
          <vat-dai> ... THIS |-> VATDAI ... </vat-dai>
@@ -166,15 +166,15 @@ Vow Semantics
          <vow-ash> ASH </vow-ash>
          <vow-bump> BUMP </vow-bump>
          <vow-hump> HUMP </vow-hump>
-      requires VATDAI >=Rat VATSIN +Rat BUMP +Rat HUMP
-       andBool VATSIN -Rat SIN -Rat ASH ==Rat 0
+      requires VATDAI >=Rad (VATSIN +Rad BUMP) +Rad HUMP
+       andBool (VATSIN -Rad SIN) -Rad ASH ==Rad 0Rad
 
     syntax VowAuthStep ::= "cage"
  // -----------------------------
     rule <k> Vow . cage
           => call Flap . cage FLAPDAI
           ~> call Flop . cage
-          ~> call Vat . heal minRat(VATDAI, VATSIN)
+          ~> call Vat . heal minRad(VATDAI, VATSIN)
          ...
          </k>
          <this> THIS </this>
@@ -186,8 +186,8 @@ Vow Semantics
            ...
          </vat-dai>
          <vow-live> _ => false </vow-live>
-         <vow-sin> _ => 0 </vow-sin>
-         <vow-ash> _ => 0 </vow-ash>
+         <vow-sin> _ => 0Rad </vow-sin>
+         <vow-ash> _ => 0Rad </vow-ash>
       requires THIS =/=K Flap
 ```
 
