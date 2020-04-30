@@ -23,20 +23,14 @@ We model everything with arbitrary precision rationals, but use sort information
 -   `Rad`: result of multiplying `Wad` and `Ray` (highest precision). Represented in implementation as 1e45 fixed point.
 
 ```k
-    syntax Wad = Rat
     syntax Wad ::= wad ( Rat )
  // --------------------------
-    rule wad(R) => R [macro]
 
-    syntax Ray = Rat
     syntax Ray ::= ray ( Rat )
  // --------------------------
-    rule ray(R) => R [macro]
 
-    syntax Rad = Rat
     syntax Rad ::= rad ( Rat )
  // --------------------------
-    rule rad(R) => R [macro]
 
     syntax MaybeWad ::= Wad | ".Wad"
  // --------------------------------
@@ -45,30 +39,38 @@ We model everything with arbitrary precision rationals, but use sort information
 ```k
     syntax Wad ::= "0Wad" | "1Wad"
  // ------------------------------
-    rule 0Wad => 0 [macro]
-    rule 1Wad => 1 [macro]
+    rule 0Wad => wad(0) [macro]
+    rule 1Wad => wad(1) [macro]
 
     syntax Ray ::= "0Ray" | "1Ray"
  // ------------------------------
-    rule 0Ray => 0 [macro]
-    rule 1Ray => 1 [macro]
+    rule 0Ray => ray(0) [macro]
+    rule 1Ray => ray(1) [macro]
 
     syntax Rad ::= "0Rad" | "1Rad"
  // ------------------------------
-    rule 0Rad => 0 [macro]
-    rule 1Rad => 1 [macro]
+    rule 0Rad => rad(0) [macro]
+    rule 1Rad => rad(1) [macro]
 ```
 
 ```k
-    syntax Ray ::= Wad2Ray ( Wad ) [function]
+    syntax Wad ::= Rad2Wad ( Rad ) [function]
+                 | Ray2Wad ( Ray ) [function]
  // -----------------------------------------
-    rule Wad2Ray(W) => W
+    rule Ray2Wad(ray(R)) => wad(R)
+    rule Rad2Wad(rad(R)) => wad(R)
+
+    syntax Ray ::= Wad2Ray ( Wad ) [function]
+                 | Rad2Ray ( Rad ) [function]
+ // -----------------------------------------
+    rule Wad2Ray(wad(W)) => ray(W)
+    rule Rad2Ray(rad(R)) => ray(R)
 
     syntax Rad ::= Wad2Rad ( Wad ) [function]
                  | Ray2Rad ( Ray ) [function]
  // -----------------------------------------
-    rule Wad2Rad(W) => W
-    rule Ray2Rad(R) => R
+    rule Wad2Rad(wad(W)) => rad(W)
+    rule Ray2Rad(ray(R)) => rad(R)
 ```
 
 ```k
@@ -78,11 +80,11 @@ We model everything with arbitrary precision rationals, but use sort information
                  > Wad "+Wad" Wad [function]
                  | Wad "-Wad" Wad [function]
  // ----------------------------------------
-    rule R1 *Wad R2 => R1 *Rat R2
-    rule R1 /Wad R2 => R1 /Rat R2
-    rule R1 ^Wad R2 => R1 ^Rat R2
-    rule R1 +Wad R2 => R1 +Rat R2
-    rule R1 -Wad R2 => R1 -Rat R2
+    rule wad(R1) *Wad wad(R2) => wad(R1 *Rat R2)
+    rule wad(R1) /Wad wad(R2) => wad(R1 /Rat R2)
+    rule wad(R1) ^Wad I       => wad(R1 ^Rat I)
+    rule wad(R1) +Wad wad(R2) => wad(R1 +Rat R2)
+    rule wad(R1) -Wad wad(R2) => wad(R1 -Rat R2)
 
     syntax Ray ::= Ray "*Ray" Ray [function]
                  | Ray "/Ray" Ray [function]
@@ -90,11 +92,11 @@ We model everything with arbitrary precision rationals, but use sort information
                  > Ray "+Ray" Ray [function]
                  | Ray "-Ray" Ray [function]
  // ----------------------------------------
-    rule R1 *Ray R2 => R1 *Rat R2
-    rule R1 /Ray R2 => R1 /Rat R2
-    rule R1 ^Ray R2 => R1 ^Rat R2
-    rule R1 +Ray R2 => R1 +Rat R2
-    rule R1 -Ray R2 => R1 -Rat R2
+    rule ray(R1) *Ray ray(R2) => ray(R1 *Rat R2)
+    rule ray(R1) /Ray ray(R2) => ray(R1 /Rat R2)
+    rule ray(R1) ^Ray I       => ray(R1 ^Rat I)
+    rule ray(R1) +Ray ray(R2) => ray(R1 +Rat R2)
+    rule ray(R1) -Ray ray(R2) => ray(R1 -Rat R2)
 
     syntax Rad ::= Rad "*Rad" Rad [function]
                  | Rad "/Rad" Rad [function]
@@ -102,31 +104,31 @@ We model everything with arbitrary precision rationals, but use sort information
                  > Rad "+Rad" Rad [function]
                  | Rad "-Rad" Rad [function]
  // ----------------------------------------
-    rule R1 *Rad R2 => R1 *Rat R2
-    rule R1 /Rad R2 => R1 /Rat R2
-    rule R1 ^Rad R2 => R1 ^Rat R2
-    rule R1 +Rad R2 => R1 +Rat R2
-    rule R1 -Rad R2 => R1 -Rat R2
+    rule rad(R1) *Rad rad(R2) => rad(R1 *Rat R2)
+    rule rad(R1) /Rad rad(R2) => rad(R1 /Rat R2)
+    rule rad(R1) ^Rad I       => rad(R1 ^Rat I)
+    rule rad(R1) +Rad rad(R2) => rad(R1 +Rat R2)
+    rule rad(R1) -Rad rad(R2) => rad(R1 -Rat R2)
 ```
 
 ```k
     syntax Wad ::= minWad ( Wad , Wad ) [function]
                  | maxWad ( Wad , Wad ) [function]
  // ----------------------------------------------
-    rule minWad(W1, W2) => minRat(W1, W2)
-    rule maxWad(W1, W2) => maxRat(W1, W2)
+    rule minWad(wad(W1), wad(W2)) => wad(minRat(W1, W2))
+    rule maxWad(wad(W1), wad(W2)) => wad(maxRat(W1, W2))
 
     syntax Ray ::= minRay ( Ray , Ray ) [function]
                  | maxRay ( Ray , Ray ) [function]
  // ----------------------------------------------
-    rule minRay(W1, W2) => minRat(W1, W2)
-    rule maxRay(W1, W2) => maxRat(W1, W2)
+    rule minRay(ray(W1), ray(W2)) => ray(minRat(W1, W2))
+    rule maxRay(ray(W1), ray(W2)) => ray(maxRat(W1, W2))
 
     syntax Rad ::= minRad ( Rad , Rad ) [function]
                  | maxRad ( Rad , Rad ) [function]
  // ----------------------------------------------
-    rule minRad(W1, W2) => minRat(W1, W2)
-    rule maxRad(W1, W2) => maxRat(W1, W2)
+    rule minRad(rad(W1), rad(W2)) => rad(minRat(W1, W2))
+    rule maxRad(rad(W1), rad(W2)) => rad(maxRat(W1, W2))
 ```
 
 ```k
@@ -137,12 +139,12 @@ We model everything with arbitrary precision rationals, but use sort information
                   | Wad  "==Wad" Wad [function]
                   | Wad "=/=Wad" Wad [function]
  // -------------------------------------------
-    rule W1  <=Wad W2 => W1  <=Rat W2
-    rule W1   <Wad W2 => W1   <Rat W2
-    rule W1  >=Wad W2 => W1  >=Rat W2
-    rule W1   >Wad W2 => W1   >Rat W2
-    rule W1  ==Wad W2 => W1  ==Rat W2
-    rule W1 =/=Wad W2 => W1 =/=Rat W2
+    rule wad(W1)  <=Wad wad(W2) => W1  <=Rat W2
+    rule wad(W1)   <Wad wad(W2) => W1   <Rat W2
+    rule wad(W1)  >=Wad wad(W2) => W1  >=Rat W2
+    rule wad(W1)   >Wad wad(W2) => W1   >Rat W2
+    rule wad(W1)  ==Wad wad(W2) => W1  ==Rat W2
+    rule wad(W1) =/=Wad wad(W2) => W1 =/=Rat W2
 
     syntax Bool ::= Ray  "<=Ray" Ray [function]
                   | Ray   "<Ray" Ray [function]
@@ -151,12 +153,12 @@ We model everything with arbitrary precision rationals, but use sort information
                   | Ray  "==Ray" Ray [function]
                   | Ray "=/=Ray" Ray [function]
  // -------------------------------------------
-    rule W1  <=Ray W2 => W1  <=Rat W2
-    rule W1   <Ray W2 => W1   <Rat W2
-    rule W1  >=Ray W2 => W1  >=Rat W2
-    rule W1   >Ray W2 => W1   >Rat W2
-    rule W1  ==Ray W2 => W1  ==Rat W2
-    rule W1 =/=Ray W2 => W1 =/=Rat W2
+    rule ray(W1)  <=Ray ray(W2) => W1  <=Rat W2
+    rule ray(W1)   <Ray ray(W2) => W1   <Rat W2
+    rule ray(W1)  >=Ray ray(W2) => W1  >=Rat W2
+    rule ray(W1)   >Ray ray(W2) => W1   >Rat W2
+    rule ray(W1)  ==Ray ray(W2) => W1  ==Rat W2
+    rule ray(W1) =/=Ray ray(W2) => W1 =/=Rat W2
 
     syntax Bool ::= Rad  "<=Rad" Rad [function]
                   | Rad   "<Rad" Rad [function]
@@ -165,38 +167,38 @@ We model everything with arbitrary precision rationals, but use sort information
                   | Rad  "==Rad" Rad [function]
                   | Rad "=/=Rad" Rad [function]
  // -------------------------------------------
-    rule W1  <=Rad W2 => W1  <=Rat W2
-    rule W1   <Rad W2 => W1   <Rat W2
-    rule W1  >=Rad W2 => W1  >=Rat W2
-    rule W1   >Rad W2 => W1   >Rat W2
-    rule W1  ==Rad W2 => W1  ==Rat W2
-    rule W1 =/=Rad W2 => W1 =/=Rat W2
+    rule rad(W1)  <=Rad rad(W2) => W1  <=Rat W2
+    rule rad(W1)   <Rad rad(W2) => W1   <Rat W2
+    rule rad(W1)  >=Rad rad(W2) => W1  >=Rat W2
+    rule rad(W1)   >Rad rad(W2) => W1   >Rat W2
+    rule rad(W1)  ==Rad rad(W2) => W1  ==Rat W2
+    rule rad(W1) =/=Rad rad(W2) => W1 =/=Rat W2
 ```
 
 ```k
     syntax Rad ::= Wad "*Rate" Ray [function]
  // -----------------------------------------
-    rule R1 *Rate R2 => R1 *Rat R2
+    rule wad(R1) *Rate ray(R2) => rad(R1 *Rat R2)
 
     syntax Wad ::= Rad "/Rate" Ray [function]
  // -----------------------------------------
-    rule R1 /Rate R2 => R1 /Rat R2
+    rule rad(R1) /Rate ray(R2) => wad(R1 /Rat R2)
 
-    syntax Wad ::= rmulWad ( Wad , Ray ) [function]
- // -----------------------------------------------
-    rule rmulWad(R1, R2) => R1 *Rat R2
+    syntax Wad ::= rmul ( Wad , Ray ) [function]
+ // --------------------------------------------
+    rule rmul(wad(R1), ray(R2)) => wad(R1 *Rat R2)
 
-    syntax Rad ::= rmulRad ( Rad , Ray ) [function]
- // -----------------------------------------------
-    rule rmulRad(R1, R2) => R1 *Rat R2
+    syntax Rad ::= rmul ( Rad , Ray ) [function]
+ // --------------------------------------------
+    rule rmul(rad(R1), ray(R2)) => rad(R1 *Rat R2)
 
     syntax Ray ::= rdiv ( Ray , Rad ) [function]
  // --------------------------------------------
-    rule rdiv(R1, R2) => R1 /Rat R2
+    rule rdiv(ray(R1), rad(R2)) => ray(R1 /Rat R2)
 
     syntax Ray ::= wdiv ( Ray , Wad ) [function]
  // --------------------------------------------
-    rule wdiv(R1, R2) => R1 /Rat R2
+    rule wdiv(ray(R1), wad(R2)) => ray(R1 /Rat R2)
 ```
 
 Time Increments
@@ -278,15 +280,15 @@ module KMCD-RANDOM-CHOICES
 
     syntax Wad ::= randWadBounded ( Int , Wad ) [function]
  // ------------------------------------------------------
-    rule randWadBounded(I, W) => randRatBounded(I, W)
+    rule randWadBounded(I, wad(W)) => wad(randRatBounded(I, W))
 
     syntax Ray ::= randRayBounded ( Int , Ray ) [function]
  // ------------------------------------------------------
-    rule randRayBounded(I, R) => randRatBounded(I, R)
+    rule randRayBounded(I, ray(R)) => ray(randRatBounded(I, R))
 
     syntax Rad ::= randRadBounded ( Int , Rad ) [function]
  // ------------------------------------------------------
-    rule randRadBounded(I, R) => randRatBounded(I, R)
+    rule randRadBounded(I, rad(R)) => rad(randRatBounded(I, R))
 ```
 
 ```k

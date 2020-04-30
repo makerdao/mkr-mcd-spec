@@ -638,7 +638,7 @@ module KMCD-GEN
       requires lengthBytes(BS) >Int 0
        andBool size(END_BAGS) >Int 0
 
-    rule <k> GenEndPack ADDRESS => LogGen ( transact ADDRESS End . pack randIntBounded(head(BS), VAT_DAI) ) ... </k>
+    rule <k> GenEndPack ADDRESS => LogGen ( transact ADDRESS End . pack randWadBounded(head(BS), Rad2Wad(VAT_DAI)) ) ... </k>
          <random> BS => tail(BS) </random>
          <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
          <vat-dai> ... ADDRESS |-> VAT_DAI ... </vat-dai>
