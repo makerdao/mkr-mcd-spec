@@ -101,20 +101,20 @@ $(haskell_dir)/%.k: %.md
 # LLVM Backend
 
 $(llvm_kompiled): $(llvm_files)
-	$(K_BIN)/kompile --debug --main-module $(MAIN_MODULE) --backend llvm              \
-	                 --syntax-module $(SYNTAX_MODULE) $(llvm_dir)/$(MAIN_DEFN_FILE).k \
-	                 --directory $(llvm_dir) -I $(llvm_dir)                           \
-	                 --emit-json                                                      \
-	                 $(LLVM_KOMPILE_OPTS)
+	kompile --debug --main-module $(MAIN_MODULE) --backend llvm              \
+	        --syntax-module $(SYNTAX_MODULE) $(llvm_dir)/$(MAIN_DEFN_FILE).k \
+	        --directory $(llvm_dir) -I $(llvm_dir)                           \
+	        --emit-json                                                      \
+	        $(LLVM_KOMPILE_OPTS)
 
 # Haskell Backend
 
 $(haskell_kompiled): $(haskell_files)
-	$(K_BIN)/kompile --debug --main-module $(MAIN_MODULE) --backend haskell              \
-	                 --syntax-module $(SYNTAX_MODULE) $(haskell_dir)/$(MAIN_DEFN_FILE).k \
-	                 --directory $(haskell_dir) -I $(haskell_dir)                        \
-	                 --emit-json                                                         \
-	                 $(KOMPILE_OPTS)
+	kompile --debug --main-module $(MAIN_MODULE) --backend haskell              \
+	        --syntax-module $(SYNTAX_MODULE) $(haskell_dir)/$(MAIN_DEFN_FILE).k \
+	        --directory $(haskell_dir) -I $(haskell_dir)                        \
+	        --emit-json                                                         \
+	        $(KOMPILE_OPTS)
 
 # Test
 # ----
