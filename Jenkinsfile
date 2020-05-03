@@ -13,8 +13,7 @@ pipeline {
     }
     stage('Build and Test') {
       stages {
-        stage('Dependencies') { steps { sh 'make deps K_BUILD_TYPE=Release' } }
-        stage('Build')        { steps { sh 'make build -j4'                 } }
+        stage('Build') { steps { sh 'make build -j4' } }
         stage('Test') {
           parallel {
             stage('Run Simulation Tests')              { steps { sh 'make test-execution -j8'    } }
