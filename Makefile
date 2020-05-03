@@ -121,7 +121,7 @@ $(haskell_kompiled): $(haskell_files)
 
 KMCD_RANDOMSEED := ""
 
-test: test-execution test-python-generator
+test: test-execution test-python-generator test-random
 
 execution_tests_random := $(wildcard tests/*/*.random.mcd)
 execution_tests := $(wildcard tests/*/*.mcd)
