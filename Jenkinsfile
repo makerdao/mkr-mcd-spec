@@ -12,12 +12,6 @@ pipeline {
       steps { script { currentBuild.displayName = "PR ${env.CHANGE_ID}: ${env.CHANGE_TITLE}" } }
     }
     stage('Build and Test') {
-      agent {
-        dockerfile {
-          additionalBuildArgs '--build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g)'
-          reuseNode true
-        }
-      }
       stages {
         stage('Dependencies') { steps { sh 'make deps K_BUILD_TYPE=Release' } }
         stage('Build')        { steps { sh 'make build -j4'                 } }
@@ -31,12 +25,6 @@ pipeline {
       }
     }
     stage('Deploy') {
-      agent {
-        dockerfile {
-          additionalBuildArgs '--build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g)'
-          reuseNode true
-        }
-      }
       when {
         branch 'master'
         beforeAgent true
