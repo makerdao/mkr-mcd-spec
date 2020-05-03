@@ -16,9 +16,9 @@ pipeline {
         stage('Build') { steps { sh 'make build -j4' } }
         stage('Test') {
           parallel {
-            stage('Run Simulation Tests')              { steps { sh 'make test-execution -j8'    } }
-            stage('Python Generator (Lucash Attacks)') { steps { sh 'make test-python-generator' } }
-            stage('Python Generator')                  { steps { sh 'make test-random'           } }
+            stage('Run Simulation Tests') { steps { sh 'make test-execution -j8'    } }
+            stage('Python Runner')        { steps { sh 'make test-python-generator' } }
+            stage('Random Generation')    { steps { sh 'make test-random'           } }
           }
         }
       }
