@@ -18,7 +18,7 @@ K_BUILD_TYPE := FastBuild
 PATH:=$(K_BIN):$(PATH)
 export PATH
 
-PYTHONPATH:=$(K_LIB)
+PYTHONPATH:=$(K_LIB):/usr/lib/kframework/lib
 export PYTHONPATH
 
 TANGLER:=$(PANDOC_TANGLE_SUBMODULE)/tangle.lua
