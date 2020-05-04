@@ -1,0 +1,64 @@
+version: 2
+jobs:
+  dependencies:
+    docker:
+      - image: circleci/node:lts
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            make deps
+      - persist_to_workspace:
+          root: .
+          paths: .build/*
+  test:
+    docker:
+      - image: circleci/node:lts
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .build
+      - run:
+          name: Run tests
+          command: |
+            make test-execution
+            make test-python-generator
+            make test-random
+  gh-pages-deploy:
+    docker:
+      - image: node:12.13
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .build
+      - add_ssh_keys:
+          fingerprints:
+            - "be:c8:cd:8e:00:2b:23:d7:62:e4:8b:41:59:35:59:14"
+      - run:
+          name: gh-pages
+          command: |
+            git config user.email "mkr-mcd-spec@makerdao.com"
+            git config user.name "CircleCI"
+            git checkout -B 'gh-pages'
+            rm -rf .build .gitignore deps .gitmodules Dockerfile Jenkinsfile Makefile kmcd mcd-pyk.py
+            git add ./
+            git commit -m 'gh-pages: remove unrelated content'
+            git fetch origin gh-pages
+            git merge --strategy ours FETCH_HEAD
+            git push origin gh-pages
+
+workflows:
+  version: 2
+  mainflow:
+    jobs:
+      - dependencies
+      - test:
+          requires:
+            - dependencies
+      - gh-pages-deploy:
+          requires:
+            - test
+          filters:
+            branches:
+              only: master

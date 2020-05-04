@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/makerdao/mkr-mcd-spec.svg?style=svg)](https://circleci.com/gh/makerdao/mkr-mcd-spec)
+
 KMCD - Multi-Collateral Dai (MCD) KSpecification
 ====================================================
 
