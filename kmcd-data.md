@@ -23,14 +23,14 @@ We model everything with arbitrary precision rationals, but use sort information
 -   `Rad`: result of multiplying `Wad` and `Ray` (highest precision). Represented in implementation as 1e45 fixed point.
 
 ```k
-    syntax Wad ::= wad ( Rat )
- // --------------------------
+    syntax Wad ::= wad ( Rat ) [klabel(wad), symbol]
+ // ------------------------------------------------
 
-    syntax Ray ::= ray ( Rat )
- // --------------------------
+    syntax Ray ::= ray ( Rat ) [klabel(ray), symbol]
+ // ------------------------------------------------
 
-    syntax Rad ::= rad ( Rat )
- // --------------------------
+    syntax Rad ::= rad ( Rat ) [klabel(rad), symbol]
+ // ------------------------------------------------
 
     syntax MaybeWad ::= Wad | ".Wad"
  // --------------------------------
