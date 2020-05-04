@@ -14,13 +14,13 @@ Flip Configuration
     configuration
       <flips>
         <flip multiplicity="*" type="Map">
-          <flip-ilk>   ""                </flip-ilk>
-          <flip-wards> .Set              </flip-wards>
-          <flip-bids>  .Map              </flip-bids> // mapping (uint => Bid) Int |-> FlipBid
-          <flip-beg>   wad(105 /Rat 100) </flip-beg>  // Minimum Bid Increase
-          <flip-ttl>   3 hours           </flip-ttl>  // Single Bid Lifetime
-          <flip-tau>   2 days            </flip-tau>  // Total Auction Length
-          <flip-kicks> 0                 </flip-kicks>
+          <flip-ilk>   ""                     </flip-ilk>
+          <flip-wards> .Set                   </flip-wards>
+          <flip-bids>  .Map                   </flip-bids> // mapping (uint => Bid) Int |-> FlipBid
+          <flip-beg>   wad(105) /Wad wad(100) </flip-beg>  // Minimum Bid Increase
+          <flip-ttl>   3 hours                </flip-ttl>  // Single Bid Lifetime
+          <flip-tau>   2 days                 </flip-tau>  // Total Auction Length
+          <flip-kicks> 0                      </flip-kicks>
         </flip>
       </flips>
 ```
