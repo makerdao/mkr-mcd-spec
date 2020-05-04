@@ -26,7 +26,7 @@ export TANGLER
 export LUA_PATH
 
 .PHONY: all clean                                             \
-        deps deps-k deps-tangle deps-media                    \
+        deps deps-k deps-media                                \
         defn defn-llvm defn-haskell                           \
         build build-llvm build-haskell                        \
         test test-execution test-python-generator test-random
@@ -37,21 +37,13 @@ all: build
 clean:
 	rm -rf $(BUILD_DIR)
 
-clean-submodules:
-	rm -rf $(DEPS_DIR)/k/submodule.timestamp $(DEPS_DIR)/k/mvn.timestamp $(DEPS_DIR)/pandoc-tangle/submodule.timestamp tests/eth2.0-specs/submodule.timestamp
-
 # Dependencies
 # ------------
 
-deps: deps-k deps-tangle
+deps: deps-k
 deps-k: $(K_SUBMODULE)/mvn.timestamp
-deps-tangle: $(PANDOC_TANGLE_SUBMODULE)/submodule.timestamp
 
-%/submodule.timestamp:
-	git submodule update --init --recursive -- $*
-	touch $@
-
-$(K_SUBMODULE)/mvn.timestamp: $(K_SUBMODULE)/submodule.timestamp
+$(K_SUBMODULE)/mvn.timestamp:
 	cd $(K_SUBMODULE) && mvn package -DskipTests -Dproject.build.type=$(K_BUILD_TYPE)
 	touch $(K_SUBMODULE)/mvn.timestamp
 
