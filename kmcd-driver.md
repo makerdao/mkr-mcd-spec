@@ -121,8 +121,8 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
 
     rule <k> call MCD => exception MCD ... </k> [owise]
 
-    syntax ReturnValue ::= Rat
- // --------------------------
+    syntax ReturnValue ::= MCDNum
+ // -----------------------------
     rule <k> R:ReturnValue => . ... </k>
          <return-value> _ => R </return-value>
 
