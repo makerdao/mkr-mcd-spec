@@ -101,7 +101,7 @@ The parameters controlled by governance are:
            <flip-beg> _ => BEG </flip-beg>
            ...
          </flip>
-      requires BEG >=Wad 0Wad
+      requires BEG >=Wad wad(0)
 
     rule <k> Flip ILKID . file ttl TTL => . ... </k>
          <flip>
@@ -162,9 +162,9 @@ Flip Semantics
            ...
          </flip>
          <frame-events> ... (.List => ListItem(FlipKick(MSGSENDER, ILK, KICKS +Int 1, LOT, BID, TAB, USR, GAL))) </frame-events>
-      requires TAB >=Rad 0Rad
-       andBool LOT >=Wad 0Wad
-       andBool BID >=Rad 0Rad
+      requires TAB >=Rad rad(0)
+       andBool LOT >=Wad wad(0)
+       andBool BID >=Rad rad(0)
 
     syntax FlipStep ::= "tick" Int
  // ------------------------------
@@ -195,8 +195,8 @@ Flip Semantics
            <flip-bids> ... ID |-> FlipBid(... bid: BID' => BID, lot: LOT', guy: GUY => MSGSENDER, tic: TIC => NOW +Int TTL, end: END, gal: GAL, tab: TAB) ... </flip-bids>
            ...
          </flip>
-      requires LOT >=Wad 0Wad
-       andBool BID >=Rad 0Rad
+      requires LOT >=Wad wad(0)
+       andBool BID >=Rad rad(0)
        andBool GUY =/=K 0
        andBool (TIC >Int NOW orBool TIC ==Int 0)
        andBool END >Int NOW
@@ -222,8 +222,8 @@ Flip Semantics
            <flip-bids> ... ID |-> FlipBid(... bid: BID', lot: LOT' => LOT, guy: GUY => MSGSENDER, tic: TIC => NOW +Int TTL, end: END, usr: USR, tab: TAB) ... </flip-bids>
            ...
          </flip>
-      requires LOT >=Wad 0Wad
-       andBool BID >=Rad 0Rad
+      requires LOT >=Wad wad(0)
+       andBool BID >=Rad rad(0)
        andBool GUY =/=K 0
        andBool (TIC >Int NOW orBool TIC ==Int 0)
        andBool END >Int NOW

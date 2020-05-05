@@ -89,7 +89,7 @@ The parameters controlled by governance are:
  // -----------------------------
     rule <k> Flap . file beg BEG => . ... </k>
          <flap-beg> _ => BEG </flap-beg>
-      requires BEG >=Wad 0Wad
+      requires BEG >=Wad wad(0)
 
     rule <k> Flap . file ttl TTL => . ... </k>
          <flap-ttl> _ => TTL </flap-ttl>
@@ -130,8 +130,8 @@ Flap Semantics
          <flap-live> true </flap-live>
          <flap-tau> TAU </flap-tau>
          <frame-events> ... (.List => ListItem(FlapKick(MSGSENDER, KICKS +Int 1, LOT, BID))) </frame-events>
-      requires LOT >=Rad 0Rad
-       andBool BID >=Wad 0Wad
+      requires LOT >=Rad rad(0)
+       andBool BID >=Wad wad(0)
 ```
 
 - tick(uint id)
@@ -165,8 +165,8 @@ Flap Semantics
          <flap-live> true </flap-live>
          <flap-ttl> TTL </flap-ttl>
          <flap-beg> BEG </flap-beg>
-      requires LOT >=Rad 0Rad
-       andBool BID >=Wad 0Wad
+      requires LOT >=Rad rad(0)
+       andBool BID >=Wad wad(0)
        andBool (TIC >Int NOW orBool TIC ==Int 0)
        andBool END  >Int NOW
        andBool LOT ==Rad LOT'
@@ -203,7 +203,7 @@ Flap Semantics
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
          <flap-live> _ => false </flap-live>
-      requires RAD >=Rad 0Rad
+      requires RAD >=Rad rad(0)
 ```
 
 - yank(uint id)

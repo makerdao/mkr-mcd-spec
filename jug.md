@@ -16,7 +16,7 @@ Jug Configuration
         <jug-wards> .Set      </jug-wards>
         <jug-ilks>  .Map      </jug-ilks> // mapping (bytes32 => JugIlk) String  |-> JugIlk
         <jug-vow>   0:Address </jug-vow>  //                             Address
-        <jug-base>  0Ray      </jug-base> //                             Ray
+        <jug-base>  ray(0)    </jug-base> //                             Ray
       </jug>
 ```
 
@@ -80,11 +80,11 @@ These parameters are controlled by governance:
          <jug-ilks> ... ILK |-> Ilk ( ... duty: (_ => DUTY) , rho: RHO ) ... </jug-ilks>
          <current-time> NOW </current-time>
       requires NOW ==Int RHO
-       andBool DUTY >=Ray 0Ray
+       andBool DUTY >=Ray ray(0)
 
     rule <k> Jug . file base BASE => . ... </k>
          <jug-base> _ => BASE </jug-base>
-      requires BASE >=Ray 0Ray
+      requires BASE >=Ray ray(0)
 
     rule <k> Jug . file vow-file ADDR => . ... </k>
          <jug-vow> _ => ADDR </jug-vow>
@@ -100,7 +100,7 @@ Jug Semantics
  // ------------------------------------
     rule <k> Jug . init ILK => . ... </k>
          <current-time> NOW </current-time>
-         <jug-ilks> ... ILK |-> Ilk ( ... duty: 0Ray => 1Ray, rho: _ => NOW ) ... </jug-ilks>
+         <jug-ilks> ... ILK |-> Ilk ( ... duty: ray(0) => ray(1), rho: _ => NOW ) ... </jug-ilks>
 ```
 
 ```k
