@@ -199,11 +199,11 @@ Flap Semantics
 ```k
     syntax FlapAuthStep ::= "cage" Rad
  // ----------------------------------
-    rule <k> Flap . cage RAD => call Vat . move THIS MSGSENDER RAD ... </k>
+    rule <k> Flap . cage AMOUNT => call Vat . move THIS MSGSENDER AMOUNT ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
          <flap-live> _ => false </flap-live>
-      requires RAD >=Rad rad(0)
+      requires AMOUNT >=Rad rad(0)
 ```
 
 - yank(uint id)

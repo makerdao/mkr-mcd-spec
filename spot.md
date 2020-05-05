@@ -82,10 +82,10 @@ These parameters are controlled by governance/oracles:
          <spot-live> true </spot-live>
          <spot-ilks> ... ILKID |-> SpotIlk ( ... pip: (_ => .Wad) ) ... </spot-ilks>
 
-    rule <k> Spot . file pip ILKID WAD:Wad => . ... </k>
+    rule <k> Spot . file pip ILKID PRICE:Wad => . ... </k>
          <spot-live> true </spot-live>
-         <spot-ilks> ... ILKID |-> SpotIlk ( ... pip: (_ => WAD) ) ... </spot-ilks>
-      requires WAD >=Wad wad(0)
+         <spot-ilks> ... ILKID |-> SpotIlk ( ... pip: (_ => PRICE) ) ... </spot-ilks>
+      requires PRICE >=Wad wad(0)
 
     rule <k> Spot . file mat ILKID MAT => . ... </k>
          <spot-live> true </spot-live>

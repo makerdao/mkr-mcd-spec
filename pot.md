@@ -113,27 +113,27 @@ Pot Semantics
 
     syntax PotStep ::= "join" Wad
  // -----------------------------
-    rule <k> Pot . join WAD => call Vat . move MSGSENDER THIS ( WAD *Rate CHI ) ... </k>
+    rule <k> Pot . join AMOUNT => call Vat . move MSGSENDER THIS ( AMOUNT *Rate CHI ) ... </k>
          <this> THIS </this>
          <current-time> NOW </current-time>
          <msg-sender> MSGSENDER </msg-sender>
-         <pot-pies> ... MSGSENDER |-> ( MSGSENDER_PIE => MSGSENDER_PIE +Wad WAD ) ... </pot-pies>
-         <pot-pie> PIE => PIE +Wad WAD </pot-pie>
+         <pot-pies> ... MSGSENDER |-> ( MSGSENDER_PIE => MSGSENDER_PIE +Wad AMOUNT ) ... </pot-pies>
+         <pot-pie> PIE => PIE +Wad AMOUNT </pot-pie>
          <pot-chi> CHI </pot-chi>
          <pot-rho> RHO </pot-rho>
-      requires WAD >=Wad wad(0)
+      requires AMOUNT >=Wad wad(0)
        andBool NOW ==Int RHO
 
     syntax PotStep ::= "exit" Wad
  // -----------------------------
-    rule <k> Pot . exit WAD => call Vat . move THIS MSGSENDER ( WAD *Rate CHI ) ... </k>
+    rule <k> Pot . exit AMOUNT => call Vat . move THIS MSGSENDER ( AMOUNT *Rate CHI ) ... </k>
          <this> THIS </this>
          <msg-sender> MSGSENDER </msg-sender>
-         <pot-pies> ... MSGSENDER |-> ( MSGSENDER_PIE => MSGSENDER_PIE -Wad WAD ) ... </pot-pies>
-         <pot-pie> PIE => PIE -Wad WAD </pot-pie>
+         <pot-pies> ... MSGSENDER |-> ( MSGSENDER_PIE => MSGSENDER_PIE -Wad AMOUNT ) ... </pot-pies>
+         <pot-pie> PIE => PIE -Wad AMOUNT </pot-pie>
          <pot-chi> CHI </pot-chi>
-      requires WAD >=Wad wad(0)
-       andBool MSGSENDER_PIE >=Wad WAD
+      requires AMOUNT >=Wad wad(0)
+       andBool MSGSENDER_PIE >=Wad AMOUNT
 
     syntax PotAuthStep ::= "cage"
  // -----------------------------
