@@ -23,9 +23,6 @@ We model everything with arbitrary precision rationals, but use sort information
 -   `Rad`: result of multiplying `Wad` and `Ray` (highest precision). Represented in implementation as 1e45 fixed point.
 
 ```k
-    syntax MCDNum ::= Wad | Ray | Rad
- // ---------------------------------
-
     syntax Int ::= "WAD" | "RAY" | "RAD"
  // ------------------------------------
     rule WAD => 1000000000000000000                            [macro]
