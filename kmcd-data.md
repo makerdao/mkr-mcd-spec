@@ -26,6 +26,12 @@ We model everything with arbitrary precision rationals, but use sort information
     syntax MCDNum ::= Wad | Ray | Rad
  // ---------------------------------
 
+    syntax Int ::= "WAD" | "RAY" | "RAD"
+ // ------------------------------------
+    rule WAD => 1000000000000000000                            [macro]
+    rule RAY => 1000000000000000000000000000                   [macro]
+    rule RAD => 1000000000000000000000000000000000000000000000 [macro]
+
     syntax Wad ::= wad ( Rat ) [klabel(wad), symbol]
  // ------------------------------------------------
 
