@@ -6,7 +6,7 @@ module FIXED-INT
     syntax FInt ::= "(" FInt ")"                   [bracket]
                   | FInt ( value: Int , one: Int ) [klabel(FInt), symbol]
  // ---------------------------------------------------------------------
-    rule #Ceil(FInt(... value: V, one: O)) => { V >=Int 0 andBool O >Int 0 #Equals true } [anywhere]
+    // rule #Ceil(FInt(... value: V, one: O)) => { V >=Int 0 andBool O >Int 0 #Equals true } [anywhere, symbolic]
 
     // Operations always produce the width of the left integer.
     syntax FInt ::= FInt "*FInt" FInt [function]
