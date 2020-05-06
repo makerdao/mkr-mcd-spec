@@ -11,14 +11,13 @@ PANDOC_TANGLE_SUBMODULE:=$(DEPS_DIR)/pandoc-tangle
 K_RELEASE := $(K_SUBMODULE)/k-distribution/target/release/k
 K_BIN     := $(K_RELEASE)/bin
 K_LIB     := $(K_RELEASE)/lib
-export K_RELEASE
 
 K_BUILD_TYPE := FastBuild
 
 PATH:=$(K_BIN):$(PATH)
 export PATH
 
-PYTHONPATH:=$(K_LIB)
+PYTHONPATH:=$(K_LIB):/usr/lib/kframework/lib
 export PYTHONPATH
 
 TANGLER:=$(PANDOC_TANGLE_SUBMODULE)/tangle.lua
@@ -27,7 +26,7 @@ export TANGLER
 export LUA_PATH
 
 .PHONY: all clean                                             \
-        deps deps-k deps-tangle deps-media                    \
+        deps deps-k deps-media                                \
         defn defn-llvm defn-haskell                           \
         build build-llvm build-haskell                        \
         test test-execution test-python-generator test-random
@@ -38,21 +37,13 @@ all: build
 clean:
 	rm -rf $(BUILD_DIR)
 
-clean-submodules:
-	rm -rf $(DEPS_DIR)/k/submodule.timestamp $(DEPS_DIR)/k/mvn.timestamp $(DEPS_DIR)/pandoc-tangle/submodule.timestamp tests/eth2.0-specs/submodule.timestamp
-
 # Dependencies
 # ------------
 
-deps: deps-k deps-tangle
+deps: deps-k
 deps-k: $(K_SUBMODULE)/mvn.timestamp
-deps-tangle: $(PANDOC_TANGLE_SUBMODULE)/submodule.timestamp
 
-%/submodule.timestamp:
-	git submodule update --init --recursive -- $*
-	touch $@
-
-$(K_SUBMODULE)/mvn.timestamp: $(K_SUBMODULE)/submodule.timestamp
+$(K_SUBMODULE)/mvn.timestamp:
 	cd $(K_SUBMODULE) && mvn package -DskipTests -Dproject.build.type=$(K_BUILD_TYPE)
 	touch $(K_SUBMODULE)/mvn.timestamp
 
@@ -101,27 +92,27 @@ $(haskell_dir)/%.k: %.md
 # LLVM Backend
 
 $(llvm_kompiled): $(llvm_files)
-	$(K_BIN)/kompile --debug --main-module $(MAIN_MODULE) --backend llvm              \
-	                 --syntax-module $(SYNTAX_MODULE) $(llvm_dir)/$(MAIN_DEFN_FILE).k \
-	                 --directory $(llvm_dir) -I $(llvm_dir)                           \
-	                 --emit-json                                                      \
-	                 $(LLVM_KOMPILE_OPTS)
+	kompile --debug --main-module $(MAIN_MODULE) --backend llvm              \
+	        --syntax-module $(SYNTAX_MODULE) $(llvm_dir)/$(MAIN_DEFN_FILE).k \
+	        --directory $(llvm_dir) -I $(llvm_dir)                           \
+	        --emit-json                                                      \
+	        $(LLVM_KOMPILE_OPTS)
 
 # Haskell Backend
 
 $(haskell_kompiled): $(haskell_files)
-	$(K_BIN)/kompile --debug --main-module $(MAIN_MODULE) --backend haskell              \
-	                 --syntax-module $(SYNTAX_MODULE) $(haskell_dir)/$(MAIN_DEFN_FILE).k \
-	                 --directory $(haskell_dir) -I $(haskell_dir)                        \
-	                 --emit-json                                                         \
-	                 $(KOMPILE_OPTS)
+	kompile --debug --main-module $(MAIN_MODULE) --backend haskell              \
+	        --syntax-module $(SYNTAX_MODULE) $(haskell_dir)/$(MAIN_DEFN_FILE).k \
+	        --directory $(haskell_dir) -I $(haskell_dir)                        \
+	        --emit-json                                                         \
+	        $(KOMPILE_OPTS)
 
 # Test
 # ----
 
 KMCD_RANDOMSEED := ""
 
-test: test-execution test-python-generator
+test: test-execution test-python-generator test-random
 
 execution_tests_random := $(wildcard tests/*/*.random.mcd)
 execution_tests := $(wildcard tests/*/*.mcd)

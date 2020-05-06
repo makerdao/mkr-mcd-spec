@@ -26,17 +26,17 @@ Sometimes you need a lookup to default to zero, and want to cast the result as a
     syntax Wad ::= #lookupWad ( Map , Address ) [function]
  // ------------------------------------------------------
     rule #lookupWad(M, A) => { M[A] }:>Wad requires A in_keys(M)
-    rule #lookupWad(M, A) => 0Wad          [owise]
+    rule #lookupWad(M, A) => wad(0)        [owise]
 
     syntax Ray ::= #lookupRay ( Map , Address ) [function]
  // ------------------------------------------------------
     rule #lookupRay(M, A) => { M[A] }:>Ray requires A in_keys(M)
-    rule #lookupRay(M, A) => 0Ray          [owise]
+    rule #lookupRay(M, A) => ray(0)        [owise]
 
     syntax Rad ::= #lookupRad ( Map , Address ) [function]
  // ------------------------------------------------------
     rule #lookupRad(M, A) => { M[A] }:>Rad requires A in_keys(M)
-    rule #lookupRad(M, A) => 0Rad          [owise]
+    rule #lookupRad(M, A) => rad(0)        [owise]
 ```
 
 ### Measure Event
@@ -79,23 +79,23 @@ State predicates that capture undesirable states in the system (representing vio
  // -------------------------------------------------------
     rule controlDaiForUser(ADDR) => (vatDaiForUser(ADDR) +Rad potDaiForUser(ADDR)) +Rad erc20DaiForUser(ADDR)
 
-    rule    vatDaiForUser(_)    => 0Rad [owise]
+    rule    vatDaiForUser(_)    => rad(0) [owise]
     rule [[ vatDaiForUser(ADDR) => VAT_DAI ]]
          <vat-dai> ... ADDR |-> VAT_DAI:Rad ... </vat-dai>
 
     rule potDaiForUser(ADDR) => vatDaiForUser(Pot) *Rad Wad2Rad(portionOfPie(ADDR))
 
-    rule    erc20DaiForUser(_)    => 0Rad [owise]
+    rule    erc20DaiForUser(_)    => rad(0) [owise]
     rule [[ erc20DaiForUser(ADDR) => Wad2Rad(USER_ADAPT_DAI) ]]
          <dai-balance> ... ADDR |-> USER_ADAPT_DAI:Wad ... </dai-balance>
 
     syntax Wad ::= portionOfPie ( Address ) [function]
  // --------------------------------------------------
-    rule    portionOfPie(_)    => 0Wad [owise]
+    rule    portionOfPie(_)    => wad(0) [owise]
     rule [[ portionOfPie(ADDR) => USER_PIE /Wad PIE ]]
          <pot-pies> ... ADDR |-> USER_PIE:Wad ... </pot-pies>
          <pot-pie> PIE </pot-pie>
-      requires PIE =/=Wad 0Wad
+      requires PIE =/=Wad wad(0)
        andBool ADDR =/=K Pot
 ```
 
@@ -139,10 +139,10 @@ Total backed debt (sum over each CDP's art times corresponding ilk's rate)
     syntax Rad ::= calcSumOfScaledArts   (      Map, Map     ) [function]
                  | calcSumOfScaledArtsAux(List, Map, Map, Rad) [function]
  // ---------------------------------------------------------------------
-    rule calcSumOfScaledArts(VAT_ILKS, VAT_URNS) => calcSumOfScaledArtsAux(keys_list(VAT_ILKS), VAT_ILKS, VAT_URNS, 0Rad)
+    rule calcSumOfScaledArts(VAT_ILKS, VAT_URNS) => calcSumOfScaledArtsAux(keys_list(VAT_ILKS), VAT_ILKS, VAT_URNS, rad(0))
 
     rule calcSumOfScaledArtsAux(                        .List ,        _ ,        _ , TOTAL ) => TOTAL
-    rule calcSumOfScaledArtsAux( ListItem(ILK_ID) VAT_ILK_IDS , VAT_ILKS , VAT_URNS , TOTAL ) => calcSumOfScaledArtsAux(VAT_ILK_IDS, VAT_ILKS, VAT_URNS, TOTAL +Rad (sumOfUrnArt(VAT_URNS, ILK_ID, 0Wad) *Rate rate({VAT_ILKS[ILK_ID]}:>VatIlk)))
+    rule calcSumOfScaledArtsAux( ListItem(ILK_ID) VAT_ILK_IDS , VAT_ILKS , VAT_URNS , TOTAL ) => calcSumOfScaledArtsAux(VAT_ILK_IDS, VAT_ILKS, VAT_URNS, TOTAL +Rad (sumOfUrnArt(VAT_URNS, ILK_ID, wad(0)) *Rate rate({VAT_ILKS[ILK_ID]}:>VatIlk)))
 ```
 
 ### Flap Measures
@@ -153,7 +153,7 @@ Sum of all lot values (i.e. total surplus dai up for auction).
     syntax Rad ::= sumOfAllFlapLots   (      Map     ) [function]
                  | sumOfAllFlapLotsAux(List, Map, Rad) [function]
  // -------------------------------------------------------------
-    rule sumOfAllFlapLots(FLAP_BIDS) => sumOfAllFlapLotsAux(keys_list(FLAP_BIDS), FLAP_BIDS, 0Rad)
+    rule sumOfAllFlapLots(FLAP_BIDS) => sumOfAllFlapLotsAux(keys_list(FLAP_BIDS), FLAP_BIDS, rad(0))
 
     rule sumOfAllFlapLotsAux(                          .List ,         _ , SUM ) => SUM
     rule sumOfAllFlapLotsAux( ListItem(BID_ID) FLAP_BIDS_IDS , FLAP_BIDS , SUM ) => sumOfAllFlapLotsAux(FLAP_BIDS_IDS, FLAP_BIDS, SUM +Rad lot({FLAP_BIDS[BID_ID]}:>FlapBid))
@@ -165,7 +165,7 @@ Sum of all bid values (i.e. total amount of MKR that's been bid on dai currently
     syntax Wad ::= sumOfAllFlapBids   (      Map     ) [function]
                  | sumOfAllFlapBidsAux(List, Map, Wad) [function]
  // -------------------------------------------------------------
-    rule sumOfAllFlapBids(FLAP_BIDS) => sumOfAllFlapBidsAux(keys_list(FLAP_BIDS), FLAP_BIDS, 0Wad)
+    rule sumOfAllFlapBids(FLAP_BIDS) => sumOfAllFlapBidsAux(keys_list(FLAP_BIDS), FLAP_BIDS, wad(0))
 
     rule sumOfAllFlapBidsAux(                          .List ,         _ , SUM ) => SUM
     rule sumOfAllFlapBidsAux( ListItem(BID_ID) FLAP_BIDS_IDS , FLAP_BIDS , SUM ) => sumOfAllFlapBidsAux(FLAP_BIDS_IDS, FLAP_BIDS, SUM +Wad bid({FLAP_BIDS[BID_ID]}:>FlapBid))
@@ -179,17 +179,17 @@ A violation occurs if any of the properties above holds.
 ```k
     syntax Map ::= "#violationFSMs" [function]
  // ------------------------------------------
-    rule #violationFSMs => ( "Zero-Time Pot Interest Accumulation" |-> zeroTimePotInterest                           )
-                           ( "Pot Interest Accumulation After End" |-> potEndInterest                                )
-                           ( "Unauthorized Flip Kick"              |-> unAuthFlipKick                                )
-                           ( "Unauthorized Flap Kick"              |-> unAuthFlapKick                                )
-                           ( "Total Bound on Debt"                 |-> totalDebtBounded(... dsr: 1Ray)               )
-                           ( "PotChi PotPie VatPot"                |-> potChiPieDai(... offset: 0Rad, joining: 0Wad) )
-                           ( "Total Backed Debt Consistency"       |-> totalBackedDebtConsistency                    )
-                           ( "Debt Constant After Thaw"            |-> debtConstantAfterThaw                         )
-                           ( "Flap Dai Consistency"                |-> flapDaiConsistency                            )
-                           ( "Flap MKR Consistency"                |-> flapMkrConsistency                            )
-                           ( "Flop Block Check"                    |-> flopBlockCheck(... embers: 0Rad, dented: 0)   )
+    rule #violationFSMs => ( "Zero-Time Pot Interest Accumulation" |-> zeroTimePotInterest                               )
+                           ( "Pot Interest Accumulation After End" |-> potEndInterest                                    )
+                           ( "Unauthorized Flip Kick"              |-> unAuthFlipKick                                    )
+                           ( "Unauthorized Flap Kick"              |-> unAuthFlapKick                                    )
+                           ( "Total Bound on Debt"                 |-> totalDebtBounded(... dsr: ray(1))                 )
+                           ( "PotChi PotPie VatPot"                |-> potChiPieDai(... offset: rad(0), joining: wad(0)) )
+                           ( "Total Backed Debt Consistency"       |-> totalBackedDebtConsistency                        )
+                           ( "Debt Constant After Thaw"            |-> debtConstantAfterThaw                             )
+                           ( "Flap Dai Consistency"                |-> flapDaiConsistency                                )
+                           ( "Flap MKR Consistency"                |-> flapMkrConsistency                                )
+                           ( "Flop Block Check"                    |-> flopBlockCheck(... embers: rad(0), dented: 0)     )
 ```
 
 A violation can be checked using the Admin step `assert`. If a violation is detected,
@@ -270,7 +270,7 @@ Vat.debt should not change after End.thaw is called, as this implies the creatio
 ```k
     syntax ViolationFSM ::= "debtConstantAfterThaw"
  // -----------------------------------------------
-    rule derive(debtConstantAfterThaw, Measure(... debt: DEBT, endDebt: END_DEBT)) => Violated(debtConstantAfterThaw) requires (END_DEBT =/=Rad 0Rad) andBool (DEBT =/=Rad END_DEBT)
+    rule derive(debtConstantAfterThaw, Measure(... debt: DEBT, endDebt: END_DEBT)) => Violated(debtConstantAfterThaw) requires (END_DEBT =/=Rad rad(0)) andBool (DEBT =/=Rad END_DEBT)
 ```
 
 ### Bounded Debt Growth
@@ -285,7 +285,7 @@ The Debt growth should be bounded in principle by the interest rates available i
     rule derive(totalDebtBounded(... dsr: DSR), Measure(... debt: DEBT)) => totalDebtBoundedRun(... debt: DEBT, dsr: DSR)
 
     rule derive( totalDebtBoundedRun(... debt: DEBT, dsr: _  ) #as PREV , Measure(... debt: DEBT')            ) => Violated(PREV) requires DEBT' >Rad DEBT
-    rule derive( totalDebtBoundedRun(... debt: DEBT, dsr: DSR)          , TimeStep(TIME, _)                   ) => totalDebtBoundedRun(... debt: DEBT +Rad rmul(vatDaiForUser(Pot), (DSR ^Ray TIME) -Ray 1Ray), dsr: DSR)
+    rule derive( totalDebtBoundedRun(... debt: DEBT, dsr: DSR)          , TimeStep(TIME, _)                   ) => totalDebtBoundedRun(... debt: DEBT +Rad rmul(vatDaiForUser(Pot), (DSR ^Ray TIME) -Ray ray(1)), dsr: DSR)
     rule derive( totalDebtBoundedRun(... debt: DEBT, dsr: DSR)          , LogNote(_ , Vat . frob _ _ _ _ _ _) ) => totalDebtBounded(... dsr: DSR)
     rule derive( totalDebtBoundedRun(... debt: DEBT, dsr: DSR)          , LogNote(_ , Vat . suck _ _ AMOUNT)  ) => totalDebtBoundedRun(... debt: DEBT +Rad AMOUNT, dsr: DSR)
     rule derive( totalDebtBoundedRun(... debt: DEBT, dsr: DSR)          , LogNote(_ , Pot . file dsr DSR')    ) => totalDebtBoundedRun(... debt: DEBT, dsr: DSR')
@@ -301,12 +301,12 @@ The Pot Chi multiplied by Pot Pie should equal the Vat Dai for the Pot
 ```k
     syntax ViolationFSM ::= potChiPieDai ( offset: Rad , joining: Wad )
  // -------------------------------------------------------------------
-    rule derive( potChiPieDai(... offset: OFFSET, joining: JOINING ) , LogNote(_, Pot . join WAD)       ) => potChiPieDai(... offset: OFFSET          , joining: JOINING +Wad WAD )
-    rule derive( potChiPieDai(... offset: OFFSET, joining: JOINING ) , LogNote(_, Vat . move _ Pot RAD) ) => potChiPieDai(... offset: OFFSET +Rad RAD , joining: JOINING          )
+    rule derive( potChiPieDai(... offset: OFFSET, joining: JOINING ) , LogNote(_, Pot . join AMOUNT)       ) => potChiPieDai(... offset: OFFSET             , joining: JOINING +Wad AMOUNT )
+    rule derive( potChiPieDai(... offset: OFFSET, joining: JOINING ) , LogNote(_, Vat . move _ Pot AMOUNT) ) => potChiPieDai(... offset: OFFSET +Rad AMOUNT , joining: JOINING             )
 
-    rule derive(potChiPieDai(... offset: OFFSET => OFFSET -Rad (JOINING *Rate POT_CHI), joining: JOINING => 0Wad), Measure(... potChi: POT_CHI)) requires JOINING =/=Wad 0Wad
+    rule derive(potChiPieDai(... offset: OFFSET => OFFSET -Rad (JOINING *Rate POT_CHI), joining: JOINING => wad(0)), Measure(... potChi: POT_CHI)) requires JOINING =/=Wad wad(0)
 
-    rule derive(potChiPieDai(... offset: OFFSET, joining: 0Wad) #as PREV, Measure(... controlDai: CONTROL_DAI, potChi: POT_CHI, potPie: POT_PIE)) => Violated(PREV) requires POT_PIE *Rate POT_CHI =/=Rad #lookupRad(CONTROL_DAI, Pot) -Rad OFFSET
+    rule derive(potChiPieDai(... offset: OFFSET, joining: wad(0)) #as PREV, Measure(... controlDai: CONTROL_DAI, potChi: POT_CHI, potPie: POT_PIE)) => Violated(PREV) requires POT_PIE *Rate POT_CHI =/=Rad #lookupRad(CONTROL_DAI, Pot) -Rad OFFSET
 ```
 
 ### Kicking off a fake `flip` auction (inspired by lucash-flip)

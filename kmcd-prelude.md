@@ -103,8 +103,8 @@ module KMCD-PRELUDE
          // Initialize Spot for gold
          transact ADMIN Spot . init     "gold"
          transact ADMIN Spot . setPrice "gold" wad(3 ether)
-         transact ADMIN Spot . file       mat "gold" 1Ray
-         transact ADMIN Spot . file       par 1Ray
+         transact ADMIN Spot . file       mat "gold" ray(1)
+         transact ADMIN Spot . file       par ray(1)
 
          // Initialize Flipper for gold
          transact ADMIN Flip "gold" . init
@@ -555,7 +555,7 @@ module KMCD-GEN
          <pot-chi> POT_CHI </pot-chi>
       requires lengthBytes(BS) >Int 0
 
-    rule <k> GenPotFileDSR => LogGen ( transact ADMIN Pot . file dsr (randRayBounded(head(BS), #dsrSpread() /Ray ray(100)) +Ray 1Ray) ) ... </k>
+    rule <k> GenPotFileDSR => LogGen ( transact ADMIN Pot . file dsr (randRayBounded(head(BS), #dsrSpread() /Ray ray(100)) +Ray ray(1)) ) ... </k>
          <random> BS => tail(BS) </random>
          <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
       requires lengthBytes(BS) >Int 0
