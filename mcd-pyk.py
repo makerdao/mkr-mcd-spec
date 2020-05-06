@@ -87,7 +87,6 @@ def kMapToDict(s, keyConvert = lambda x: x, valueConvert = lambda x: x):
 
 MCD_definition_llvm_symbols = pyk.buildSymbolTable(MCD_definition_llvm)
 
-MCD_definition_llvm_symbols [ 'FInt' ]                                     = lambda v, o: v
 MCD_definition_llvm_symbols [ '_List_' ]                                   = lambda l1, l2: pyk.newLines([l1, l2])
 MCD_definition_llvm_symbols [ '_Set_' ]                                    = lambda s1, s2: pyk.newLines([s1, s2])
 MCD_definition_llvm_symbols [ '_Map_' ]                                    = lambda m1, m2: pyk.newLines([m1, m2])
@@ -319,40 +318,44 @@ def noRewriteToDots(config):
             subst[cell] = pyk.ktokenDots
     return pyk.substitute(cfg, subst)
 
-def solidityArgs(k):
+def solidityKeys(k):
     args = []
     if pyk.isKApply(k) and k['label'] == 'CDPID':
         args = [ a for a in k['args'] ]
     else:
         args = [ a for a in [k] ]
-    argStrs = [ argify(printMCD(a)) for a in args ]
-    return ', '.join(argStrs)
+    return args
 
-def stateAssertions(contract, field, value):
+def solidityArgs(ks):
+    allKeys = []
+    for k in ks:
+        allKeys.extend(solidityKeys(k))
+    return ', '.join([argify(printMCD(k)) for k in allKeys])
+
+def stateAssertions(contract, field, value, subkeys = []):
     assertionData = []
     if pyk.isKToken(value) and value['sort'] == 'Bool':
-        actual     = contract + '.' + field + '()'
+        actual     = contract + '.' + field + '(' + solidityArgs(subkeys) + ')'
         comparator = '=='
         expected   = printMCD(intToken(0))
         if value['token'] == 'true':
             comparator = '!='
         assertionData.append((actual, comparator, expected, True))
+    elif pyk.isKApply(value) and value['label'] == 'FInt':
+        actual     = contract + '.' + field + '(' + solidityArgs(subkeys) + ')'
+        comparator = '=='
+        expected   = printMCD(value['args'][0])
+        assertionData.append((actual, comparator, expected, True))
     elif pyk.isKApply(value) and value['label'] == '_Map_':
         for (k, v) in flattenMap(value):
-            keyStr = solidityArgs(k)
+            keys = subkeys + [k]
             if pyk.isKApply(v) and v['label'] == '_Set_':
                 for si in flattenSet(v):
-                    actual     = contract + '.' + field + '(' + keyStr + ', ' + argify(printMCD(si)) + ')'
-                    comparator = '!='
-                    expected   = printMCD(intToken(0))
-                    assertionData.append((actual, comparator, expected, True))
+                    assertionData.extend(stateAssertions(contract, field, boolToken(True), subkeys = keys + [si]))
             elif pyk.isKApply(v) and v['label'] == 'FInt':
-                actual     = contract + '.' + field + '(' + keyStr + ')'
-                comparator = '=='
-                expected   = printMCD(v)
-                assertionData.append((actual, comparator, expected, True))
+                assertionData.extend(stateAssertions(contract, field, v, subkeys = keys))
             else:
-                actual     = contract + '.' + field + '(' + keyStr + ')'
+                actual     = contract + '.' + field + '(' + solidityArgs(keys) + ')'
                 comparator = '=='
                 expected   = printMCD(v)
                 assertionData.append((actual, comparator, expected, False))
