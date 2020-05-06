@@ -11,17 +11,17 @@ Vat Configuration
 ```k
     configuration
       <vat>
-        <vat-wards> .Set </vat-wards>
-        <vat-can>   .Map </vat-can>  // mapping (address (address => uint))       Address |-> Set
-        <vat-ilks>  .Map </vat-ilks> // mapping (bytes32 => Ilk)                  String  |-> VatIlk
-        <vat-urns>  .Map </vat-urns> // mapping (bytes32 => (address => Urn))     CDPID   |-> VatUrn
-        <vat-gem>   .Map </vat-gem>  // mapping (bytes32 => (address => uint256)) CDPID   |-> Wad
-        <vat-dai>   .Map </vat-dai>  // mapping (address => uint256)              Address |-> Rad
-        <vat-sin>   .Map </vat-sin>  // mapping (address => uint256)              Address |-> Rad
-        <vat-debt>  0Rad </vat-debt> // Total Dai Issued
-        <vat-vice>  0Rad </vat-vice> // Total Unbacked Dai
-        <vat-Line>  0Rad </vat-Line> // Total Debt Ceiling
-        <vat-live>  true </vat-live> // Access Flag
+        <vat-wards> .Set   </vat-wards>
+        <vat-can>   .Map   </vat-can>  // mapping (address (address => uint))       Address |-> Set
+        <vat-ilks>  .Map   </vat-ilks> // mapping (bytes32 => Ilk)                  String  |-> VatIlk
+        <vat-urns>  .Map   </vat-urns> // mapping (bytes32 => (address => Urn))     CDPID   |-> VatUrn
+        <vat-gem>   .Map   </vat-gem>  // mapping (bytes32 => (address => uint256)) CDPID   |-> Wad
+        <vat-dai>   .Map   </vat-dai>  // mapping (address => uint256)              Address |-> Rad
+        <vat-sin>   .Map   </vat-sin>  // mapping (address => uint256)              Address |-> Rad
+        <vat-debt>  rad(0) </vat-debt> // Total Dai Issued
+        <vat-vice>  rad(0) </vat-vice> // Total Unbacked Dai
+        <vat-Line>  rad(0) </vat-Line> // Total Debt Ceiling
+        <vat-live>  true   </vat-live> // Access Flag
       </vat>
 ```
 
@@ -138,22 +138,22 @@ The parameters controlled by governance are:
     rule <k> Vat . file Line LINE => . ... </k>
          <vat-live> true </vat-live>
          <vat-Line> _ => LINE </vat-Line>
-      requires LINE >=Rad 0Rad
+      requires LINE >=Rad rad(0)
 
     rule <k> Vat . file spot ILKID SPOT => . ... </k>
          <vat-live> true </vat-live>
          <vat-ilks> ... ILKID |-> Ilk ( ... spot: (_ => SPOT) ) ... </vat-ilks>
-      requires SPOT >=Ray 0Ray
+      requires SPOT >=Ray ray(0)
 
     rule <k> Vat . file line ILKID LINE => . ... </k>
          <vat-live> true </vat-live>
          <vat-ilks> ... ILKID |-> Ilk ( ... line: (_ => LINE) ) ... </vat-ilks>
-      requires LINE >=Rad 0Rad
+      requires LINE >=Rad rad(0)
 
     rule <k> Vat . file dust ILKID DUST => . ... </k>
          <vat-live> true </vat-live>
          <vat-ilks> ... ILKID |-> Ilk ( ... dust: (_ => DUST) ) ... </vat-ilks>
-      requires DUST >=Rad 0Rad
+      requires DUST >=Rad rad(0)
 ```
 
 Vat Initialization
@@ -173,23 +173,23 @@ Because data isn't explicitely initialized to 0 in KMCD, we need explicit initia
                          | "initCDP" String Address
  // -----------------------------------------------
     rule <k> Vat . initIlk ILKID => . ... </k>
-         <vat-ilks> ILKS => ILKS [ ILKID <- Ilk ( ... Art: 0Wad , rate: 1Ray , spot: 0Ray , line: 0Rad , dust: 0Rad ) ] </vat-ilks>
+         <vat-ilks> ILKS => ILKS [ ILKID <- Ilk ( ... Art: wad(0) , rate: ray(1) , spot: ray(0) , line: rad(0) , dust: rad(0) ) ] </vat-ilks>
       requires notBool ILKID in_keys(ILKS)
 
     rule <k> Vat . initUser ADDR => . ... </k>
          <vat-can> CAN => CAN [ ADDR <- .Set ] </vat-can>
-         <vat-dai> DAI => DAI [ ADDR <- 0Rad ] </vat-dai>
-         <vat-sin> SIN => SIN [ ADDR <- 0Rad ] </vat-sin>
+         <vat-dai> DAI => DAI [ ADDR <- rad(0) ] </vat-dai>
+         <vat-sin> SIN => SIN [ ADDR <- rad(0) ] </vat-sin>
       requires notBool ADDR in_keys(CAN)
        andBool notBool ADDR in_keys(DAI)
        andBool notBool ADDR in_keys(SIN)
 
     rule <k> Vat . initGem ILKID ADDR => . ... </k>
-         <vat-gem> GEMS => GEMS [ { ILKID , ADDR } <- 0Wad ] </vat-gem>
+         <vat-gem> GEMS => GEMS [ { ILKID , ADDR } <- wad(0) ] </vat-gem>
       requires notBool { ILKID , ADDR } in_keys(GEMS)
 
     rule <k> Vat . initCDP ILKID ADDR => . ... </k>
-         <vat-urns> URNS => URNS [ { ILKID , ADDR } <- Urn( ... ink: 0Wad , art: 0Wad ) ] </vat-urns>
+         <vat-urns> URNS => URNS [ { ILKID , ADDR } <- Urn( ... ink: wad(0) , art: wad(0) ) ] </vat-urns>
       requires notBool { ILKID , ADDR } in_keys(URNS)
 ```
 
@@ -253,7 +253,7 @@ This is quite permissive, and would allow the account to drain all your locked c
     rule <k> Vat . safe ILKID ADDR => . ... </k>
          <vat-ilks> ...   ILKID          |-> ILK ... </vat-ilks>
          <vat-urns> ... { ILKID , ADDR } |-> URN ... </vat-urns>
-      requires 0Rad <=Rad urnBalance(ILK, URN)
+      requires rad(0) <=Rad urnBalance(ILK, URN)
        andBool urnDebt(ILK, URN) <=Rad line(ILK)
 
     syntax VatStep ::= "nondusty" String Address
@@ -261,7 +261,7 @@ This is quite permissive, and would allow the account to drain all your locked c
     rule <k> Vat . nondusty ILKID ADDR => . ... </k>
          <vat-ilks> ...   ILKID          |-> ILK ... </vat-ilks>
          <vat-urns> ... { ILKID , ADDR } |-> URN ... </vat-urns>
-      requires dust(ILK) <=Rad urnDebt(ILK, URN) orBool 0Rad ==Rad urnDebt(ILK, URN)
+      requires dust(ILK) <=Rad urnDebt(ILK, URN) orBool rad(0) ==Rad urnDebt(ILK, URN)
 ```
 
 ### Ilk Initialization (`<vat-ilks>`)
@@ -272,7 +272,7 @@ This is quite permissive, and would allow the account to drain all your locked c
     syntax VatAuthStep ::= "init" String
  // ------------------------------------
     rule <k> Vat . init ILKID => . ... </k>
-         <vat-ilks> ... ILKID |-> Ilk(... rate: 0Ray => 1Ray) ... </vat-ilks>
+         <vat-ilks> ... ILKID |-> Ilk(... rate: ray(0) => ray(1)) ... </vat-ilks>
 ```
 
 ### Collateral manipulation (`<vat-gem>`)
@@ -290,7 +290,7 @@ This is quite permissive, and would allow the account to drain all your locked c
  // ------------------------------------------------
     rule <k> Vat . slip ILKID ADDRTO NEWCOL => . ... </k>
          <vat-gem> ... { ILKID , ADDRTO } |-> ( COL => COL +Wad NEWCOL ) ... </vat-gem>
-      requires NEWCOL >=Wad 0Wad
+      requires NEWCOL >=Wad wad(0)
 
     syntax VatStep ::= "flux" String Address Address Wad
  // ----------------------------------------------------
@@ -301,13 +301,13 @@ This is quite permissive, and would allow the account to drain all your locked c
            { ILKID , ADDRTO   } |-> ( COLTO   => COLTO   +Wad COL )
            ...
          </vat-gem>
-      requires COL     >=Wad 0Wad
+      requires COL     >=Wad wad(0)
        andBool COLFROM >=Wad COL
        andBool wish ADDRFROM
 
     rule <k> Vat . flux ILKID ADDRFROM ADDRFROM COL => . ... </k>
          <vat-gem> ... { ILKID , ADDRFROM } |-> COLFROM ... </vat-gem>
-      requires COL     >=Wad 0Wad
+      requires COL     >=Wad wad(0)
        andBool COLFROM >=Wad COL
        andBool wish ADDRFROM
 ```
@@ -326,13 +326,13 @@ This is quite permissive, and would allow the account to drain all your locked c
            ADDRTO   |-> (DAITO   => DAITO   +Rad DAI)
            ...
          </vat-dai>
-      requires DAI     >=Rad 0Rad
+      requires DAI     >=Rad rad(0)
        andBool DAIFROM >=Rad DAI
        andBool wish ADDRFROM
 
     rule <k> Vat . move ADDRFROM ADDRFROM DAI => . ... </k>
          <vat-dai> ... ADDRFROM |-> DAIFROM ... </vat-dai>
-      requires DAI     >=Rad 0Rad
+      requires DAI     >=Rad rad(0)
        andBool DAIFROM >=Rad DAI
        andBool wish ADDRFROM
 ```
@@ -405,18 +405,18 @@ This is quite permissive, and would allow the account to drain all your locked c
          <vat-dai> ... ADDRW |-> ( DAIW => DAIW +Rad (DART *Rate RATE) ) ... </vat-dai>
          <vat-Line> LINE </vat-Line>
       requires ILKV >=Wad DINK
-       andBool ( DART <=Wad 0Wad
+       andBool ( DART <=Wad wad(0)
                orBool ((ILKART +Wad DART) *Rate RATE <=Rad ILKLINE andBool DEBT +Rad (DART *Rate RATE) <=Rad LINE)
                     )
-       andBool      ( (DART <=Wad 0Wad andBool DINK >=Wad 0Wad)
+       andBool      ( (DART <=Wad wad(0) andBool DINK >=Wad wad(0))
                orBool (URNART +Wad DART) *Rate RATE <=Rad (INK +Wad DINK) *Rate SPOT
                     )
-       andBool      ( (DART <=Wad 0Wad andBool DINK >=Wad 0Wad)
+       andBool      ( (DART <=Wad wad(0) andBool DINK >=Wad wad(0))
                orBool wish ADDRU
                     )
-       andBool (DINK <=Wad 0Wad orBool wish ADDRV)
-       andBool (DART >=Wad 0Wad orBool wish ADDRW)
-       andBool (URNART +Wad DART ==Wad 0Wad orBool (URNART +Wad DART) *Rate RATE >=Rad DUST)
+       andBool (DINK <=Wad wad(0) orBool wish ADDRV)
+       andBool (DART >=Wad wad(0) orBool wish ADDRW)
+       andBool (URNART +Wad DART ==Wad wad(0) orBool (URNART +Wad DART) *Rate RATE >=Rad DUST)
 ```
 
 ### Debt/Dai manipulation (`<vat-debt>`, `<vat-dai>`, `<vat-vice>`, `<vat-sin>`)
@@ -433,7 +433,7 @@ This is quite permissive, and would allow the account to drain all your locked c
          <vat-vice> VICE => VICE -Rad AMOUNT </vat-vice>
          <vat-sin> ... ADDRFROM |-> (SIN => SIN -Rad AMOUNT) ... </vat-sin>
          <vat-dai> ... ADDRFROM |-> (DAI => DAI -Rad AMOUNT) ... </vat-dai>
-      requires AMOUNT >=Rad 0Rad
+      requires AMOUNT >=Rad rad(0)
        andBool DEBT >=Rad AMOUNT
        andBool VICE >=Rad AMOUNT
        andBool SIN  >=Rad AMOUNT
@@ -446,7 +446,7 @@ This is quite permissive, and would allow the account to drain all your locked c
          <vat-vice> VICE => VICE +Rad AMOUNT </vat-vice>
          <vat-sin> ... ADDRU |-> (SIN => SIN +Rad AMOUNT) ... </vat-sin>
          <vat-dai> ... ADDRV |-> (DAI => DAI +Rad AMOUNT) ... </vat-dai>
-      requires AMOUNT >=Rad 0Rad
+      requires AMOUNT >=Rad rad(0)
 ```
 
 ### CDP Manipulation

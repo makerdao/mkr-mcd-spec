@@ -13,10 +13,10 @@ Spot Configuration
 ```k
     configuration
       <spot>
-        <spot-wards> .Set </spot-wards>
-        <spot-ilks>  .Map </spot-ilks> // mapping (bytes32 => ilk)  String  |-> SpotIlk
-        <spot-par>   1Ray </spot-par>
-        <spot-live>  true </spot-live>
+        <spot-wards> .Set   </spot-wards>
+        <spot-ilks>  .Map   </spot-ilks> // mapping (bytes32 => ilk)  String  |-> SpotIlk
+        <spot-par>   ray(1) </spot-par>
+        <spot-live>  true   </spot-live>
       </spot>
 ```
 
@@ -82,20 +82,20 @@ These parameters are controlled by governance/oracles:
          <spot-live> true </spot-live>
          <spot-ilks> ... ILKID |-> SpotIlk ( ... pip: (_ => .Wad) ) ... </spot-ilks>
 
-    rule <k> Spot . file pip ILKID WAD:Wad => . ... </k>
+    rule <k> Spot . file pip ILKID PRICE:Wad => . ... </k>
          <spot-live> true </spot-live>
-         <spot-ilks> ... ILKID |-> SpotIlk ( ... pip: (_ => WAD) ) ... </spot-ilks>
-      requires WAD >=Wad 0Wad
+         <spot-ilks> ... ILKID |-> SpotIlk ( ... pip: (_ => PRICE) ) ... </spot-ilks>
+      requires PRICE >=Wad wad(0)
 
     rule <k> Spot . file mat ILKID MAT => . ... </k>
          <spot-live> true </spot-live>
          <spot-ilks> ... ILKID |-> SpotIlk ( ... mat: (_ => MAT) ) ... </spot-ilks>
-      requires MAT >=Ray 0Ray
+      requires MAT >=Ray ray(0)
 
     rule <k> Spot . file par PAR => . ... </k>
          <spot-live> true </spot-live>
          <spot-par> _ => PAR </spot-par>
-      requires PAR >=Ray 0Ray
+      requires PAR >=Ray ray(0)
 ```
 
 **TODO**: We currently store a `MaybeWad` for `pip` instead of a contract address to call to get that data.
@@ -122,7 +122,7 @@ Because data isn't explicitely initialized to 0 in KMCD, we need explicit initia
                           | "setPrice" String Wad
  // ---------------------------------------------
     rule <k> Spot . init ILKID => . ... </k>
-         <spot-ilks> ILKS => ILKS [ ILKID <- SpotIlk( ... pip: .Wad, mat: 0Ray ) ] </spot-ilks>
+         <spot-ilks> ILKS => ILKS [ ILKID <- SpotIlk( ... pip: .Wad, mat: ray(0) ) ] </spot-ilks>
       requires notBool ILKID in_keys(ILKS)
 
     rule <k> Spot . setPrice ILKID PRICE => . ... </k>
