@@ -3,7 +3,8 @@ module FIXED-INT
     imports INT
     imports BOOL
 
-    syntax FInt ::= FInt ( value: Int , one: Int ) [klabel(FInt), symbol]
+    syntax FInt ::= "(" FInt ")"                   [bracket]
+                  | FInt ( value: Int , one: Int ) [klabel(FInt), symbol]
  // ---------------------------------------------------------------------
     rule #Ceil(FInt(... value: V, one: O)) => { V >=Int 0 andBool O >Int 0 #Equals true } [anywhere]
 
