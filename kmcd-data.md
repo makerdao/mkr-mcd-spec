@@ -46,23 +46,6 @@ We model everything with arbitrary precision rationals, but use sort information
 ```
 
 ```k
-    syntax Wad ::= "0Wad" | "1Wad"
- // ------------------------------
-    rule 0Wad => wad(0) [macro]
-    rule 1Wad => wad(1) [macro]
-
-    syntax Ray ::= "0Ray" | "1Ray"
- // ------------------------------
-    rule 0Ray => ray(0) [macro]
-    rule 1Ray => ray(1) [macro]
-
-    syntax Rad ::= "0Rad" | "1Rad"
- // ------------------------------
-    rule 0Rad => rad(0) [macro]
-    rule 1Rad => rad(1) [macro]
-```
-
-```k
     syntax Wad ::= Rad2Wad ( Rad ) [function]
  // -----------------------------------------
     rule Rad2Wad(rad(R)) => wad(R)
