@@ -328,7 +328,7 @@ def solidityArgs(k):
     argStrs = [ argify(printMCD(a)) for a in args ]
     return ', '.join(argStrs)
 
-def buildAssert(contract, field, value):
+def stateAssertions(contract, field, value):
     assertionData = []
     if pyk.isKToken(value) and value['sort'] == 'Bool':
         actual     = contract + '.' + field + '()'
@@ -359,6 +359,10 @@ def buildAssert(contract, field, value):
     else:
         actual = contract + '.' + field + '()'
         assertionData.append((actual, '==', printMCD(value), False))
+    return assertionData
+
+def buildAsserts(contract, field, value):
+    assertionData = stateAssertions(contract, field, value)
     assertions = []
     for (actual, comparator, expected, implemented) in assertionData:
         aStr = 'assertTrue( ' + actual + ' ' + comparator + ' ' + expected + ' );'
@@ -380,7 +384,7 @@ def extractAsserts(config):
             if contract == 'Vat' and field == 'line':
                 field = 'Line'
             rhs = subst[cell]['rhs']
-            asserts.extend(buildAssert(contract, field, rhs))
+            asserts.extend(buildAsserts(contract, field, rhs))
     stateDelta = noRewriteToDots(stateDelta)
     stateDelta = pyk.collapseDots(stateDelta)
     return (printMCD(stateDelta), asserts)
