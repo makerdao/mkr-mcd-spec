@@ -262,6 +262,20 @@ def argify(arg):
         newArg = '"' + newArg + '"'
     return newArg
 
+def solidityKeys(k):
+    args = []
+    if pyk.isKApply(k) and k['label'] == 'CDPID':
+        args = [ a for a in k['args'] ]
+    else:
+        args = [ a for a in [k] ]
+    return args
+
+def solidityArgs(ks):
+    allKeys = []
+    for k in ks:
+        allKeys.extend(solidityKeys(k))
+    return ', '.join([argify(printMCD(k)) for k in allKeys])
+
 def unimplemented(s):
     return '// UNIMPLEMENTED << ' + '\n    //'.join(s.split('\n')) + ' >>'
 
@@ -317,20 +331,6 @@ def noRewriteToDots(config):
         if not pyk.isKRewrite(subst[cell]):
             subst[cell] = pyk.ktokenDots
     return pyk.substitute(cfg, subst)
-
-def solidityKeys(k):
-    args = []
-    if pyk.isKApply(k) and k['label'] == 'CDPID':
-        args = [ a for a in k['args'] ]
-    else:
-        args = [ a for a in [k] ]
-    return args
-
-def solidityArgs(ks):
-    allKeys = []
-    for k in ks:
-        allKeys.extend(solidityKeys(k))
-    return ', '.join([argify(printMCD(k)) for k in allKeys])
 
 def stateAssertions(contract, field, value, subkeys = []):
     assertionData = []
