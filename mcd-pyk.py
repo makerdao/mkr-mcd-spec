@@ -258,7 +258,7 @@ def argify(arg):
        or newArg in ['cat', 'dai', 'end', 'flap', 'flop', 'jug', 'pot', 'spotter', 'vat', 'vow'] \
        or newArg.endswith('Flip') or newArg.endswith('Join'):
         newArg = 'address(' + newArg + ')'
-    if newArg in ['gold', 'line', 'mat', 'par']:
+    if newArg in ['gold', 'line', 'mat', 'par', 'dsr']:
         newArg = '"' + newArg + '"'
     return newArg
 
