@@ -1,5 +1,10 @@
 pipeline {
-  agent { label 'docker' }
+  agent {
+    dockerfile {
+      label 'docker'
+      additionalBuildArgs '--build-arg K_COMMIT=$(cd deps/k && git rev-parse --short=7 HEAD) --build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g)'
+    }
+  }
   options { ansiColor('xterm') }
   stages {
     stage('Init title') {
@@ -7,31 +12,18 @@ pipeline {
       steps { script { currentBuild.displayName = "PR ${env.CHANGE_ID}: ${env.CHANGE_TITLE}" } }
     }
     stage('Build and Test') {
-      agent {
-        dockerfile {
-          additionalBuildArgs '--build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g)'
-          reuseNode true
-        }
-      }
       stages {
-        stage('Dependencies') { steps { sh 'make deps K_BUILD_TYPE=Release' } }
-        stage('Build')        { steps { sh 'make build -j4'                 } }
+        stage('Build') { steps { sh 'make build -j4' } }
         stage('Test') {
           parallel {
-            stage('Run Simulation Tests')              { steps { sh 'make test-execution -j8'    } }
-            stage('Python Generator (Lucash Attacks)') { steps { sh 'make test-python-generator' } }
-            stage('Python Generator')                  { steps { sh 'make test-random'           } }
+            stage('Run Simulation Tests') { steps { sh 'make test-execution -j8'    } }
+            stage('Python Runner')        { steps { sh 'make test-python-generator' } }
+            stage('Random Generation')    { steps { sh 'make test-random'           } }
           }
         }
       }
     }
     stage('Deploy') {
-      agent {
-        dockerfile {
-          additionalBuildArgs '--build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g)'
-          reuseNode true
-        }
-      }
       when {
         branch 'master'
         beforeAgent true
