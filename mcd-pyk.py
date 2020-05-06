@@ -263,12 +263,12 @@ def argify(arg):
     return newArg
 
 def solidityKeys(k):
-    args = []
     if pyk.isKApply(k) and k['label'] == 'CDPID':
-        args = [ a for a in k['args'] ]
+        return [ a for a in k['args'] ]
+    elif pyk.isKApply(k) and k['label'] == 'FInt':
+        return [ a for a in [ k['args'][0] ] ]
     else:
-        args = [ a for a in [k] ]
-    return args
+        return [ a for a in [k] ]
 
 def solidityArgs(ks):
     allKeys = []
@@ -295,12 +295,12 @@ def extractCallEvent(logEvent):
             if fileable.endswith('-file'):
                 fileable = fileable[0:-5]
             fileargs = functionCall['args'][0]['args']
-            args.append('"' + fileable + '"')
-            for arg in fileargs:
-                args.append(argify(printMCD(arg)))
+            args.append(stringToken(fileable))
+            args.extend(fileargs)
         else:
-            args = [ argify(printMCD(arg)) for arg in functionCall['args'] ]
-        return [ caller + '.' + contract + '_' + function + '(' + ', '.join(args) + ');' ]
+            args = functionCall['args']
+        strArgs = solidityArgs(args)
+        return [ caller + '.' + contract + '_' + function + '(' + strArgs + ');' ]
     elif pyk.isKApply(logEvent) and logEvent['label'] == 'LogTimeStep':
         return [ 'hevm.warp(' + printMCD(logEvent['args'][0]) + ');' ]
     elif pyk.isKApply(logEvent) and logEvent['label'] == 'LogException':
