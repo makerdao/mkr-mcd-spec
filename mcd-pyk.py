@@ -254,11 +254,11 @@ def solidify(input):
 
 def argify(arg):
     newArg = solidify(arg)
-    if    newArg in ['alice', 'bobby', 'admin', 'anyone']                                      \
+    if    newArg in ['alice', 'bobby', 'admin', 'anyone']                                        \
        or newArg in ['cat', 'dai', 'end', 'flap', 'flop', 'jug', 'pot', 'spotter', 'vat', 'vow'] \
        or newArg.endswith('Flip') or newArg.endswith('Join'):
         newArg = 'address(' + newArg + ')'
-    if newArg in ['gold']:
+    if newArg in ['gold', 'line', 'mat', 'par']:
         newArg = '"' + newArg + '"'
     return newArg
 
