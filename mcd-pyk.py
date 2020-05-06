@@ -319,6 +319,15 @@ def noRewriteToDots(config):
             subst[cell] = pyk.ktokenDots
     return pyk.substitute(cfg, subst)
 
+def solidityArgs(k):
+    args = []
+    if pyk.isKApply(k) and k['label'] == 'CDPID':
+        args = [ a for a in k['args'] ]
+    else:
+        args = [ a for a in [k] ]
+    argStrs = [ argify(printMCD(a)) for a in args ]
+    return ', '.join(argStrs)
+
 def buildAssert(contract, field, value):
     assertionData = []
     if pyk.isKToken(value) and value['sort'] == 'Bool':
@@ -330,14 +339,15 @@ def buildAssert(contract, field, value):
         assertionData.append((actual, comparator, expected, True))
     elif pyk.isKApply(value) and value['label'] == '_Map_':
         for (k, v) in flattenMap(value):
+            keyStr = solidityArgs(k)
             if pyk.isKApply(v) and v['label'] == '_Set_':
                 for si in flattenSet(v):
-                    actual     = contract + '.' + field + '(' + argify(printMCD(k)) + ', ' + argify(printMCD(si)) + ')'
+                    actual     = contract + '.' + field + '(' + keyStr + ', ' + argify(printMCD(si)) + ')'
                     comparator = '!='
                     expected   = printMCD(intToken(0))
                     assertionData.append((actual, comparator, expected, True))
             else:
-                actual     = contract + '.' + field + '(' + argify(printMCD(k)) + ')'
+                actual     = contract + '.' + field + '(' + keyStr + ')'
                 comparator = '=='
                 expected   = printMCD(v)
                 assertionData.append((actual, comparator, expected, False))
