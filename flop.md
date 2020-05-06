@@ -15,15 +15,15 @@ Flop Configuration
 ```k
     configuration
       <flop-state>
-        <flop-wards> .Set               </flop-wards>
-        <flop-bids>  .Map               </flop-bids>  // mapping (uint => Bid) Int |-> FlopBid
-        <flop-kicks>  0                 </flop-kicks>
-        <flop-live>   true              </flop-live>
-        <flop-beg>    wad(105 /Rat 100) </flop-beg>
-        <flop-pad>    wad(150 /Rat 100) </flop-pad>
-        <flop-ttl>    3 hours           </flop-ttl>
-        <flop-tau>    2 days            </flop-tau>
-        <flop-vow>    0:Address         </flop-vow>
+        <flop-wards> .Set                    </flop-wards>
+        <flop-bids>  .Map                    </flop-bids>  // mapping (uint => Bid) Int |-> FlopBid
+        <flop-kicks>  0                      </flop-kicks>
+        <flop-live>   true                   </flop-live>
+        <flop-beg>    wad(105) /Wad wad(100) </flop-beg>
+        <flop-pad>    wad(150) /Wad wad(100) </flop-pad>
+        <flop-ttl>    3 hours                </flop-ttl>
+        <flop-tau>    2 days                 </flop-tau>
+        <flop-vow>    0:Address              </flop-vow>
       </flop-state>
 ```
 
@@ -91,7 +91,7 @@ The parameters controlled by governance are:
  // --------------------------------------
     rule <k> Flop . file beg BEG => . ... </k>
          <flop-beg> _ => BEG </flop-beg>
-      requires BEG >=Wad 0Wad
+      requires BEG >=Wad wad(0)
 
     rule <k> Flop . file ttl TTL => . ... </k>
          <flop-ttl> _ => TTL </flop-ttl>
@@ -103,7 +103,7 @@ The parameters controlled by governance are:
 
     rule <k> Flop . file pad PAD => . ... </k>
          <flop-pad> _ => PAD </flop-pad>
-      requires PAD >=Wad 0Wad
+      requires PAD >=Wad wad(0)
 
     rule <k> Flop . file vow-file ADDR => . ... </k>
          <flop-vow> _ => ADDR </flop-vow>
@@ -138,8 +138,8 @@ Flop Semantics
          <flop-kicks> KICKS => KICKS +Int 1 </flop-kicks>
          <flop-tau> TAU </flop-tau>
          <frame-events> ... (.List => ListItem(FlopKick(KICKS +Int 1, LOT, BID, GAL))) </frame-events>
-      requires LOT >=Wad 0Wad
-       andBool BID >=Rad 0Rad
+      requires LOT >=Wad wad(0)
+       andBool BID >=Rad rad(0)
 ```
 
 - tick(uint id)
@@ -172,8 +172,8 @@ Flop Semantics
          <flop-live> true </flop-live>
          <flop-beg> BEG </flop-beg>
          <flop-ttl> TTL </flop-ttl>
-      requires LOT >=Wad 0Wad
-       andBool BID >=Rad 0Rad
+      requires LOT >=Wad wad(0)
+       andBool BID >=Rad rad(0)
        andBool (TIC >Int NOW orBool TIC ==Int 0)
        andBool END >Int NOW
        andBool BID ==Rad BID'

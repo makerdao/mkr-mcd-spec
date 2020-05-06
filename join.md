@@ -116,17 +116,17 @@ Join Semantics
            <gem-join-live> true </gem-join-live>
            ...
          </gem-join>
-      requires AMOUNT >=Wad 0Wad
+      requires AMOUNT >=Wad wad(0)
 
     syntax GemJoinStep ::= "exit" Address Wad
  // -----------------------------------------
     rule <k> GemJoin GEMID . exit USR AMOUNT
-          => call Vat . slip GEMID MSGSENDER (0Wad -Wad AMOUNT)
+          => call Vat . slip GEMID MSGSENDER (wad(0) -Wad AMOUNT)
           ~> call Gem GEMID . transfer USR AMOUNT
          ...
          </k>
          <msg-sender> MSGSENDER </msg-sender>
-      requires AMOUNT >=Wad 0Wad
+      requires AMOUNT >=Wad wad(0)
 
     syntax DaiJoinStep ::= "join" Address Wad
  // -----------------------------------------
@@ -138,7 +138,7 @@ Join Semantics
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
          <dai-join-live> true </dai-join-live>
-      requires AMOUNT >=Wad 0Wad
+      requires AMOUNT >=Wad wad(0)
 
     syntax DaiJoinStep ::= "exit" Address Wad
  // -----------------------------------------
@@ -149,7 +149,7 @@ Join Semantics
          </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
-      requires AMOUNT >=Wad 0Wad
+      requires AMOUNT >=Wad wad(0)
 ```
 
 Join Deactivation

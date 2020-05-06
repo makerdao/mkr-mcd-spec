@@ -15,13 +15,13 @@ Flap Configuration
 ```k
     configuration
       <flap-state>
-        <flap-wards> .Set              </flap-wards>
-        <flap-bids>  .Map              </flap-bids>  // mapping (uint => Bid) Int |-> FlapBid
-        <flap-kicks> 0                 </flap-kicks>
-        <flap-live>  true              </flap-live>
-        <flap-beg>   wad(105 /Rat 100) </flap-beg>
-        <flap-ttl>   3 hours           </flap-ttl>
-        <flap-tau>   2 days            </flap-tau>
+        <flap-wards> .Set                   </flap-wards>
+        <flap-bids>  .Map                   </flap-bids>  // mapping (uint => Bid) Int |-> FlapBid
+        <flap-kicks> 0                      </flap-kicks>
+        <flap-live>  true                   </flap-live>
+        <flap-beg>   wad(105) /Wad wad(100) </flap-beg>
+        <flap-ttl>   3 hours                </flap-ttl>
+        <flap-tau>   2 days                 </flap-tau>
       </flap-state>
 ```
 
@@ -89,7 +89,7 @@ The parameters controlled by governance are:
  // -----------------------------
     rule <k> Flap . file beg BEG => . ... </k>
          <flap-beg> _ => BEG </flap-beg>
-      requires BEG >=Wad 0Wad
+      requires BEG >=Wad wad(0)
 
     rule <k> Flap . file ttl TTL => . ... </k>
          <flap-ttl> _ => TTL </flap-ttl>
@@ -130,8 +130,8 @@ Flap Semantics
          <flap-live> true </flap-live>
          <flap-tau> TAU </flap-tau>
          <frame-events> ... (.List => ListItem(FlapKick(MSGSENDER, KICKS +Int 1, LOT, BID))) </frame-events>
-      requires LOT >=Rad 0Rad
-       andBool BID >=Wad 0Wad
+      requires LOT >=Rad rad(0)
+       andBool BID >=Wad wad(0)
 ```
 
 - tick(uint id)
@@ -165,8 +165,8 @@ Flap Semantics
          <flap-live> true </flap-live>
          <flap-ttl> TTL </flap-ttl>
          <flap-beg> BEG </flap-beg>
-      requires LOT >=Rad 0Rad
-       andBool BID >=Wad 0Wad
+      requires LOT >=Rad rad(0)
+       andBool BID >=Wad wad(0)
        andBool (TIC >Int NOW orBool TIC ==Int 0)
        andBool END  >Int NOW
        andBool LOT ==Rad LOT'
@@ -199,11 +199,11 @@ Flap Semantics
 ```k
     syntax FlapAuthStep ::= "cage" Rad
  // ----------------------------------
-    rule <k> Flap . cage RAD => call Vat . move THIS MSGSENDER RAD ... </k>
+    rule <k> Flap . cage AMOUNT => call Vat . move THIS MSGSENDER AMOUNT ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
          <flap-live> _ => false </flap-live>
-      requires RAD >=Rad 0Rad
+      requires AMOUNT >=Rad rad(0)
 ```
 
 - yank(uint id)

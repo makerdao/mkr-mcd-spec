@@ -17,16 +17,16 @@ Vow Configuration
 ```k
     configuration
       <vow>
-        <vow-wards> .Set </vow-wards>
-        <vow-sins>  .Map </vow-sins> // mapping (uint256 => uint256) Int |-> Rad
-        <vow-sin>   0Rad </vow-sin>
-        <vow-ash>   0Rad </vow-ash>
-        <vow-wait>  0    </vow-wait>
-        <vow-dump>  0Wad </vow-dump>
-        <vow-sump>  0Rad </vow-sump>
-        <vow-bump>  0Rad </vow-bump>
-        <vow-hump>  0Rad </vow-hump>
-        <vow-live>  true </vow-live>
+        <vow-wards> .Set   </vow-wards>
+        <vow-sins>  .Map   </vow-sins> // mapping (uint256 => uint256) Int |-> Rad
+        <vow-sin>   rad(0) </vow-sin>
+        <vow-ash>   rad(0) </vow-ash>
+        <vow-wait>  0      </vow-wait>
+        <vow-dump>  wad(0) </vow-dump>
+        <vow-sump>  rad(0) </vow-sump>
+        <vow-bump>  rad(0) </vow-bump>
+        <vow-hump>  rad(0) </vow-hump>
+        <vow-live>  true   </vow-live>
       </vow>
 ```
 
@@ -84,19 +84,19 @@ These praameters are set by governance:
 
     rule <k> Vow . file bump BUMP => . ... </k>
          <vow-bump> _ => BUMP </vow-bump>
-      requires BUMP >=Rad 0Rad
+      requires BUMP >=Rad rad(0)
 
     rule <k> Vow . file hump HUMP => . ... </k>
          <vow-hump> _ => HUMP </vow-hump>
-      requires HUMP >=Rad 0Rad
+      requires HUMP >=Rad rad(0)
 
     rule <k> Vow . file sump SUMP => . ... </k>
          <vow-sump> _ => SUMP </vow-sump>
-      requires SUMP >=Rad 0Rad
+      requires SUMP >=Rad rad(0)
 
     rule <k> Vow . file dump DUMP => . ... </k>
          <vow-dump> _ => DUMP </vow-dump>
-      requires DUMP >=Wad 0Wad
+      requires DUMP >=Wad wad(0)
 ```
 
 Vow Semantics
@@ -109,14 +109,14 @@ Vow Semantics
          <current-time> NOW </current-time>
          <vow-sins> ... NOW |-> (SIN' => SIN' +Rad TAB) ... </vow-sins>
          <vow-sin> SIN => SIN +Rad TAB </vow-sin>
-      requires TAB >=Rad 0Rad
+      requires TAB >=Rad rad(0)
 
     syntax VowStep ::= "flog" Int
  // -----------------------------
     rule <k> Vow . flog ERA => . ... </k>
          <current-time> NOW </current-time>
          <vow-wait> WAIT </vow-wait>
-         <vow-sins> ... ERA |-> (SIN' => 0Rad) ... </vow-sins>
+         <vow-sins> ... ERA |-> (SIN' => rad(0)) ... </vow-sins>
          <vow-sin> SIN => SIN -Rad SIN' </vow-sin>
       requires ERA >=Int 0
        andBool ERA +Int WAIT <=Int NOW
@@ -129,7 +129,7 @@ Vow Semantics
          <vat-sin> ... THIS |-> VATSIN ... </vat-sin>
          <vow-sin> SIN </vow-sin>
          <vow-ash> ASH </vow-ash>
-      requires AMOUNT >=Rad 0Rad
+      requires AMOUNT >=Rad rad(0)
        andBool AMOUNT <=Rad VATDAI
        andBool AMOUNT <=Rad (VATSIN -Rad SIN) -Rad ASH
 
@@ -139,7 +139,7 @@ Vow Semantics
          <this> THIS </this>
          <vat-dai> ... THIS |-> VATDAI ... </vat-dai>
          <vow-ash> ASH => ASH -Rad AMOUNT </vow-ash>
-       requires AMOUNT >=Rad 0Rad
+       requires AMOUNT >=Rad rad(0)
         andBool AMOUNT <=Rad ASH
         andBool AMOUNT <=Rad VATDAI
 
@@ -154,11 +154,11 @@ Vow Semantics
          <vow-sump> SUMP </vow-sump>
          <vow-dump> DUMP </vow-dump>
       requires SUMP <=Rad (VATSIN -Rad SIN) -Rad ASH
-       andBool VATDAI ==Rad 0Rad
+       andBool VATDAI ==Rad rad(0)
 
     syntax VowStep ::= "flap"
  // -------------------------
-    rule <k> Vow . flap => call Flap . kick BUMP 0Wad ... </k>
+    rule <k> Vow . flap => call Flap . kick BUMP wad(0) ... </k>
          <this> THIS </this>
          <vat-sin> ... THIS |-> VATSIN ... </vat-sin>
          <vat-dai> ... THIS |-> VATDAI ... </vat-dai>
@@ -167,7 +167,7 @@ Vow Semantics
          <vow-bump> BUMP </vow-bump>
          <vow-hump> HUMP </vow-hump>
       requires VATDAI >=Rad (VATSIN +Rad BUMP) +Rad HUMP
-       andBool (VATSIN -Rad SIN) -Rad ASH ==Rad 0Rad
+       andBool (VATSIN -Rad SIN) -Rad ASH ==Rad rad(0)
 
     syntax VowAuthStep ::= "cage"
  // -----------------------------
@@ -186,8 +186,8 @@ Vow Semantics
            ...
          </vat-dai>
          <vow-live> _ => false </vow-live>
-         <vow-sin> _ => 0Rad </vow-sin>
-         <vow-ash> _ => 0Rad </vow-ash>
+         <vow-sin> _ => rad(0) </vow-sin>
+         <vow-ash> _ => rad(0) </vow-ash>
       requires THIS =/=K Flap
 ```
 

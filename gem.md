@@ -46,7 +46,7 @@ Because data isn't explicitely initialized to 0 in KMCD, we need explicit initia
     rule <k> Gem GEMID . initUser ADDR => . ... </k>
          <gem>
             <gem-id> GEMID </gem-id>
-            <gem-balances> BALS => BALS [ ADDR <- 0Wad ] </gem-balances>
+            <gem-balances> BALS => BALS [ ADDR <- wad(0) ] </gem-balances>
             ...
          </gem>
       requires notBool ADDR in_keys(BALS)
@@ -69,9 +69,9 @@ Gem Semantics
            </gem-balances>
            ...
          </gem>
-      requires VALUE >=Wad 0Wad
+      requires VALUE >=Wad wad(0)
        andBool ACCTSRC =/=K ACCTDST
-       andBool VALUE >=Wad 0Wad
+       andBool VALUE >=Wad wad(0)
        andBool BALANCE_SRC >=Wad VALUE
 
     rule <k> Gem GEMID . transferFrom ACCTSRC ACCTSRC VALUE => . ... </k>
@@ -80,31 +80,31 @@ Gem Semantics
            <gem-balances> ... ACCTSRC |-> BALANCE_SRC ... </gem-balances>
            ...
          </gem>
-      requires VALUE >=Wad 0Wad
+      requires VALUE >=Wad wad(0)
        andBool BALANCE_SRC >=Wad VALUE
 
     syntax GemStep ::= "move" Address Address Wad
  // ---------------------------------------------
     rule <k> Gem _ . (move ACCTSRC ACCTDST VALUE => transferFrom ACCTSRC ACCTDST VALUE) ... </k>
-      requires VALUE >=Wad 0Wad
+      requires VALUE >=Wad wad(0)
 
     syntax GemStep ::= "push" Address Wad
  // -------------------------------------
     rule <k> Gem _ . (push ACCTDST VALUE => transferFrom MSGSENDER ACCTDST VALUE) ... </k>
          <msg-sender> MSGSENDER </msg-sender>
-      requires VALUE >=Wad 0Wad
+      requires VALUE >=Wad wad(0)
 
     syntax GemStep ::= "pull" Address Wad
  // -------------------------------------
     rule <k> Gem _ . (pull ACCTSRC VALUE => transferFrom ACCTSRC MSGSENDER VALUE) ... </k>
          <msg-sender> MSGSENDER </msg-sender>
-      requires VALUE >=Wad 0Wad
+      requires VALUE >=Wad wad(0)
 
     syntax GemStep ::= "transfer" Address Wad
  // -----------------------------------------
     rule <k> Gem _ . (transfer ACCTDST VALUE => transferFrom MSGSENDER ACCTDST VALUE) ... </k>
          <msg-sender> MSGSENDER </msg-sender>
-      requires VALUE >=Wad 0Wad
+      requires VALUE >=Wad wad(0)
 
     syntax GemStep ::= "mint" Address Wad
  // -------------------------------------
@@ -114,7 +114,7 @@ Gem Semantics
            <gem-balances> ... ACCTDST |-> ( BALANCE_DST => BALANCE_DST +Wad VALUE ) ... </gem-balances>
            ...
          </gem>
-      requires VALUE >=Wad 0Wad
+      requires VALUE >=Wad wad(0)
 
     syntax GemStep ::= "burn" Address Wad
  // -------------------------------------
@@ -124,7 +124,7 @@ Gem Semantics
            <gem-balances> ... ACCTSRC |-> ( BALANCE_SRC => BALANCE_SRC -Wad VALUE ) ... </gem-balances>
            ...
          </gem>
-      requires VALUE >=Wad 0Wad
+      requires VALUE >=Wad wad(0)
        andBool BALANCE_SRC >=Wad VALUE
 ```
 

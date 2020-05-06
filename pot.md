@@ -15,9 +15,9 @@ Pot Configuration
       <pot>
         <pot-wards> .Set      </pot-wards>
         <pot-pies>  .Map      </pot-pies> // mapping (address => uint256) Address |-> Wad
-        <pot-pie>   0Wad      </pot-pie>
-        <pot-dsr>   1Ray      </pot-dsr>
-        <pot-chi>   1Ray      </pot-chi>
+        <pot-pie>   wad(0)    </pot-pie>
+        <pot-dsr>   ray(1)    </pot-dsr>
+        <pot-chi>   ray(1)    </pot-chi>
         <pot-vow>   0:Address </pot-vow>
         <pot-rho>   0         </pot-rho>
         <pot-live>  true      </pot-live>
@@ -71,7 +71,7 @@ These parameters are controlled by governance:
          <current-time> NOW </current-time>
          <pot-live> true </pot-live>
       requires NOW ==Int RHO
-       andBool DSR >=Ray 0Ray
+       andBool DSR >=Ray ray(0)
 
     rule <k> Pot . file vow-file ADDR => . ... </k>
          <pot-vow> _ => ADDR </pot-vow>
@@ -90,7 +90,7 @@ Because data isn't explicitely initialized to 0 in KMCD, we need explicit initia
     syntax PotAuthStep ::= "initUser" Address
  // -----------------------------------------
     rule <k> Pot . initUser ADDR => . ... </k>
-         <pot-pies> PIES => PIES [ ADDR <- 0Wad ] </pot-pies>
+         <pot-pies> PIES => PIES [ ADDR <- wad(0) ] </pot-pies>
       requires notBool ADDR in_keys(PIES)
 ```
 
@@ -100,7 +100,7 @@ Pot Semantics
 ```k
     syntax PotStep ::= "drip"
  // -------------------------
-    rule <k> Pot . drip => call Vat . suck VOW THIS ( PIE *Rate ( CHI *Ray ( DSR ^Ray (NOW -Int RHO) -Ray 1Ray ) ) ) ... </k>
+    rule <k> Pot . drip => call Vat . suck VOW THIS ( PIE *Rate ( CHI *Ray ( DSR ^Ray (NOW -Int RHO) -Ray ray(1) ) ) ) ... </k>
          <this> THIS </this>
          <current-time> NOW </current-time>
          <pot-chi> CHI => CHI *Ray (DSR ^Ray (NOW -Int RHO)) </pot-chi>
@@ -109,37 +109,37 @@ Pot Semantics
          <pot-vow> VOW </pot-vow>
          <pot-pie> PIE </pot-pie>
       requires NOW >=Int RHO
-       andBool DSR >=Ray 1Ray // to ensure positive interest rate
+       andBool DSR >=Ray ray(1) // to ensure positive interest rate
 
     syntax PotStep ::= "join" Wad
  // -----------------------------
-    rule <k> Pot . join WAD => call Vat . move MSGSENDER THIS ( WAD *Rate CHI ) ... </k>
+    rule <k> Pot . join AMOUNT => call Vat . move MSGSENDER THIS ( AMOUNT *Rate CHI ) ... </k>
          <this> THIS </this>
          <current-time> NOW </current-time>
          <msg-sender> MSGSENDER </msg-sender>
-         <pot-pies> ... MSGSENDER |-> ( MSGSENDER_PIE => MSGSENDER_PIE +Wad WAD ) ... </pot-pies>
-         <pot-pie> PIE => PIE +Wad WAD </pot-pie>
+         <pot-pies> ... MSGSENDER |-> ( MSGSENDER_PIE => MSGSENDER_PIE +Wad AMOUNT ) ... </pot-pies>
+         <pot-pie> PIE => PIE +Wad AMOUNT </pot-pie>
          <pot-chi> CHI </pot-chi>
          <pot-rho> RHO </pot-rho>
-      requires WAD >=Wad 0Wad
+      requires AMOUNT >=Wad wad(0)
        andBool NOW ==Int RHO
 
     syntax PotStep ::= "exit" Wad
  // -----------------------------
-    rule <k> Pot . exit WAD => call Vat . move THIS MSGSENDER ( WAD *Rate CHI ) ... </k>
+    rule <k> Pot . exit AMOUNT => call Vat . move THIS MSGSENDER ( AMOUNT *Rate CHI ) ... </k>
          <this> THIS </this>
          <msg-sender> MSGSENDER </msg-sender>
-         <pot-pies> ... MSGSENDER |-> ( MSGSENDER_PIE => MSGSENDER_PIE -Wad WAD ) ... </pot-pies>
-         <pot-pie> PIE => PIE -Wad WAD </pot-pie>
+         <pot-pies> ... MSGSENDER |-> ( MSGSENDER_PIE => MSGSENDER_PIE -Wad AMOUNT ) ... </pot-pies>
+         <pot-pie> PIE => PIE -Wad AMOUNT </pot-pie>
          <pot-chi> CHI </pot-chi>
-      requires WAD >=Wad 0Wad
-       andBool MSGSENDER_PIE >=Wad WAD
+      requires AMOUNT >=Wad wad(0)
+       andBool MSGSENDER_PIE >=Wad AMOUNT
 
     syntax PotAuthStep ::= "cage"
  // -----------------------------
     rule <k> Pot . cage => . ... </k>
          <pot-live> _ => false </pot-live>
-         <pot-dsr> _ => 1Ray </pot-dsr>
+         <pot-dsr> _ => ray(1) </pot-dsr>
 ```
 
 ```k
