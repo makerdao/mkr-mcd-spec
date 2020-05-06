@@ -4,12 +4,11 @@ KMCD Data
 This module defines base data-types needed for the KMCD system.
 
 ```k
-requires "rat.k"
+requires "fixed-int.k"
 
 module KMCD-DATA
     imports BOOL
-    imports INT
-    imports RAT
+    imports FIXED-INT
     imports MAP
 ```
 
@@ -18,28 +17,47 @@ Precision Quantities
 
 We model everything with arbitrary precision rationals, but use sort information to indicate the EVM code precision.
 
--   `Wad`: basic quantities (e.g. balances). Represented in implementation as 1e18 fixed point.
--   `Ray`: precise quantities (e.g. ratios). Represented in implementation as 1e27 fixed point.
--   `Rad`: result of multiplying `Wad` and `Ray` (highest precision). Represented in implementation as 1e45 fixed point.
+-   `Way`: conversions between `Wad` and `Ray` (1e9).
+-   `Wad`: basic quantities (e.g. balances) (1e18).
+-   `Ray`: precise quantities (e.g. ratios) (1e27).
+-   `Rad`: result of multiplying `Wad` and `Ray` (highest precision) (1e45).
 
 ```k
     syntax Value ::= Wad | Ray | Rad | Int
  // --------------------------------------
 
-    syntax Int ::= "WAD" | "RAY" | "RAD"
- // ------------------------------------
+    syntax Int ::= "WAY" | "WAD" | "RAY" | "RAD"
+ // --------------------------------------------
+    rule WAY => 1000000000                                     [macro]
     rule WAD => 1000000000000000000                            [macro]
     rule RAY => 1000000000000000000000000000                   [macro]
     rule RAD => 1000000000000000000000000000000000000000000000 [macro]
 
-    syntax Wad ::= wad ( Rat ) [klabel(wad), symbol]
- // ------------------------------------------------
+    syntax Way = FInt
+    syntax Way ::= way ( Int )
+ // --------------------------
+    rule way(I) => FInt(I *Int WAY, WAY) [macro]
 
-    syntax Ray ::= ray ( Rat ) [klabel(ray), symbol]
- // ------------------------------------------------
+    syntax Wad = FInt
+    syntax Wad ::= wad ( Int )
+ // --------------------------
+    rule wad(0) => FInt(0         , WAD) [macro]
+    rule wad(1) => FInt(WAD       , WAD) [macro]
+    rule wad(I) => FInt(I *Int WAD, WAD) [macro, owise]
 
-    syntax Rad ::= rad ( Rat ) [klabel(rad), symbol]
- // ------------------------------------------------
+    syntax Ray = FInt
+    syntax Ray ::= ray ( Int )
+ // --------------------------
+    rule ray(0) => FInt(0         , RAY) [macro]
+    rule ray(1) => FInt(RAY       , RAY) [macro]
+    rule ray(I) => FInt(I *Int RAY, RAY) [macro, owise]
+
+    syntax Rad = FInt
+    syntax Rad ::= rad ( Int )
+ // --------------------------
+    rule rad(0) => FInt(0         , RAD) [macro]
+    rule rad(1) => FInt(RAD       , RAD) [macro]
+    rule rad(I) => FInt(I *Int RAD, RAD) [macro, owise]
 
     syntax MaybeWad ::= Wad | ".Wad"
  // --------------------------------
@@ -48,27 +66,32 @@ We model everything with arbitrary precision rationals, but use sort information
 ```k
     syntax Wad ::= Rad2Wad ( Rad ) [function]
  // -----------------------------------------
-    rule Rad2Wad(rad(R)) => wad(R)
+    rule Rad2Wad(FInt(R, RAD)) => FInt(R /Int RAY, WAD)
 
     syntax Ray ::= Wad2Ray ( Wad ) [function]
  // -----------------------------------------
-    rule Wad2Ray(wad(W)) => ray(W)
+    rule Wad2Ray(FInt(W, WAD)) => FInt(W *Int WAY, RAY)
 
     syntax Rad ::= Wad2Rad ( Wad ) [function]
+                 | Ray2Rad ( Ray ) [function]
  // -----------------------------------------
-    rule Wad2Rad(wad(W)) => rad(W)
+    rule Wad2Rad(FInt(W, WAD)) => FInt(W *Int RAY, RAD)
+    rule Ray2Rad(FInt(R, RAY)) => FInt(R *Int WAD, RAD)
 ```
 
 ```k
     syntax Wad ::= Wad "*Wad" Wad [function]
                  | Wad "/Wad" Wad [function]
+                 | Wad "^Wad" Int [function]
                  > Wad "+Wad" Wad [function]
                  | Wad "-Wad" Wad [function]
  // ----------------------------------------
-    rule wad(R1) *Wad wad(R2) => wad(R1 *Rat R2)
-    rule wad(R1) /Wad wad(R2) => wad(R1 /Rat R2)
-    rule wad(R1) +Wad wad(R2) => wad(R1 +Rat R2)
-    rule wad(R1) -Wad wad(R2) => wad(R1 -Rat R2)
+    rule FI1 *Wad FI2    => FI1 *FInt FI2
+    rule FI1 /Wad wad(0) => wad(0)
+    rule FI1 /Wad FI2    => FI1 /FInt FI2 [owise]
+    rule FI1 ^Wad I      => FI1 ^FInt I
+    rule FI1 +Wad FI2    => FI1 +FInt FI2
+    rule FI1 -Wad FI2    => FI1 -FInt FI2
 
     syntax Ray ::= Ray "*Ray" Ray [function]
                  | Ray "/Ray" Ray [function]
@@ -76,29 +99,35 @@ We model everything with arbitrary precision rationals, but use sort information
                  > Ray "+Ray" Ray [function]
                  | Ray "-Ray" Ray [function]
  // ----------------------------------------
-    rule ray(R1) *Ray ray(R2) => ray(R1 *Rat R2)
-    rule ray(R1) /Ray ray(R2) => ray(R1 /Rat R2)
-    rule ray(R1) ^Ray I       => ray(R1 ^Rat I)
-    rule ray(R1) +Ray ray(R2) => ray(R1 +Rat R2)
-    rule ray(R1) -Ray ray(R2) => ray(R1 -Rat R2)
+    rule FI1 *Ray FI2    => FI1 *FInt FI2
+    rule FI1 /Ray ray(0) => ray(0)
+    rule FI1 /Ray FI2    => FI1 /FInt FI2 [owise]
+    rule FI1 ^Ray I      => FI1 ^FInt I
+    rule FI1 +Ray FI2    => FI1 +FInt FI2
+    rule FI1 -Ray FI2    => FI1 -FInt FI2
 
     syntax Rad ::= Rad "*Rad" Rad [function]
+                 | Rad "/Rad" Rad [function]
+                 | Rad "^Rad" Int [function]
                  > Rad "+Rad" Rad [function]
                  | Rad "-Rad" Rad [function]
  // ----------------------------------------
-    rule rad(R1) *Rad rad(R2) => rad(R1 *Rat R2)
-    rule rad(R1) +Rad rad(R2) => rad(R1 +Rat R2)
-    rule rad(R1) -Rad rad(R2) => rad(R1 -Rat R2)
+    rule FI1 *Rad FI2    => FI1 *FInt FI2
+    rule FI1 /Rad rad(0) => rad(0)
+    rule FI1 /Rad FI2    => FI1 /FInt FI2 [owise]
+    rule FI1 ^Rad I      => FI1 ^FInt I
+    rule FI1 +Rad FI2    => FI1 +FInt FI2
+    rule FI1 -Rad FI2    => FI1 -FInt FI2
 ```
 
 ```k
     syntax Wad ::= minWad ( Wad , Wad ) [function]
  // ----------------------------------------------
-    rule minWad(wad(W1), wad(W2)) => wad(minRat(W1, W2))
+    rule minWad(FInt(W1, WAD), FInt(W2, WAD)) => FInt(minInt(W1, W2), WAD)
 
     syntax Rad ::= minRad ( Rad , Rad ) [function]
  // ----------------------------------------------
-    rule minRad(rad(W1), rad(W2)) => rad(minRat(W1, W2))
+    rule minRad(FInt(W1, RAD), FInt(W2, RAD)) => FInt(minInt(W1, W2), RAD)
 ```
 
 ```k
@@ -109,12 +138,12 @@ We model everything with arbitrary precision rationals, but use sort information
                   | Wad  "==Wad" Wad [function]
                   | Wad "=/=Wad" Wad [function]
  // -------------------------------------------
-    rule wad(W1)  <=Wad wad(W2) => W1  <=Rat W2
-    rule wad(W1)   <Wad wad(W2) => W1   <Rat W2
-    rule wad(W1)  >=Wad wad(W2) => W1  >=Rat W2
-    rule wad(W1)   >Wad wad(W2) => W1   >Rat W2
-    rule wad(W1)  ==Wad wad(W2) => W1  ==Rat W2
-    rule wad(W1) =/=Wad wad(W2) => W1 =/=Rat W2
+    rule W1  <=Wad W2 => W1  <=FInt W2
+    rule W1   <Wad W2 => W1   <FInt W2
+    rule W1  >=Wad W2 => W1  >=FInt W2
+    rule W1   >Wad W2 => W1   >FInt W2
+    rule W1  ==Wad W2 => W1  ==FInt W2
+    rule W1 =/=Wad W2 => W1 =/=FInt W2
 
     syntax Bool ::= Ray  "<=Ray" Ray [function]
                   | Ray   "<Ray" Ray [function]
@@ -123,12 +152,12 @@ We model everything with arbitrary precision rationals, but use sort information
                   | Ray  "==Ray" Ray [function]
                   | Ray "=/=Ray" Ray [function]
  // -------------------------------------------
-    rule ray(W1)  <=Ray ray(W2) => W1  <=Rat W2
-    rule ray(W1)   <Ray ray(W2) => W1   <Rat W2
-    rule ray(W1)  >=Ray ray(W2) => W1  >=Rat W2
-    rule ray(W1)   >Ray ray(W2) => W1   >Rat W2
-    rule ray(W1)  ==Ray ray(W2) => W1  ==Rat W2
-    rule ray(W1) =/=Ray ray(W2) => W1 =/=Rat W2
+    rule W1  <=Ray W2 => W1  <=FInt W2
+    rule W1   <Ray W2 => W1   <FInt W2
+    rule W1  >=Ray W2 => W1  >=FInt W2
+    rule W1   >Ray W2 => W1   >FInt W2
+    rule W1  ==Ray W2 => W1  ==FInt W2
+    rule W1 =/=Ray W2 => W1 =/=FInt W2
 
     syntax Bool ::= Rad  "<=Rad" Rad [function]
                   | Rad   "<Rad" Rad [function]
@@ -137,38 +166,40 @@ We model everything with arbitrary precision rationals, but use sort information
                   | Rad  "==Rad" Rad [function]
                   | Rad "=/=Rad" Rad [function]
  // -------------------------------------------
-    rule rad(W1)  <=Rad rad(W2) => W1  <=Rat W2
-    rule rad(W1)   <Rad rad(W2) => W1   <Rat W2
-    rule rad(W1)  >=Rad rad(W2) => W1  >=Rat W2
-    rule rad(W1)   >Rad rad(W2) => W1   >Rat W2
-    rule rad(W1)  ==Rad rad(W2) => W1  ==Rat W2
-    rule rad(W1) =/=Rad rad(W2) => W1 =/=Rat W2
+    rule W1  <=Rad W2 => W1  <=FInt W2
+    rule W1   <Rad W2 => W1   <FInt W2
+    rule W1  >=Rad W2 => W1  >=FInt W2
+    rule W1   >Rad W2 => W1   >FInt W2
+    rule W1  ==Rad W2 => W1  ==FInt W2
+    rule W1 =/=Rad W2 => W1 =/=FInt W2
 ```
 
 ```k
     syntax Rad ::= Wad "*Rate" Ray [function]
  // -----------------------------------------
-    rule wad(R1) *Rate ray(R2) => rad(R1 *Rat R2)
+    rule FInt(W, WAD) *Rate FInt(R, RAY) => FInt(W *Int R, RAD)
 
     syntax Wad ::= Rad "/Rate" Ray [function]
  // -----------------------------------------
-    rule rad(R1) /Rate ray(R2) => wad(R1 /Rat R2)
+    rule FInt(_ , _  ) /Rate ray(0)        => wad(0)
+    rule FInt(R1, RAD) /Rate FInt(R2, RAY) => FInt(R1 /Int R2, WAD) [owise]
 
-    syntax Wad ::= rmul ( Wad , Ray ) [function]
- // --------------------------------------------
-    rule rmul(wad(R1), ray(R2)) => wad(R1 *Rat R2)
-
-    syntax Rad ::= rmul ( Rad , Ray ) [function]
- // --------------------------------------------
-    rule rmul(rad(R1), ray(R2)) => rad(R1 *Rat R2)
+    // syntax Wad ::= rmul ( Wad , Ray ) [function]
+    // syntax Rad ::= rmul ( Rad , Ray ) [function]
+    syntax FInt ::= rmul ( FInt , FInt ) [function]
+ // -----------------------------------------------
+    rule rmul(FInt(W, WAD), FInt(R, RAY)) => FInt((W *Int R) /Int RAY, WAD)
+    rule rmul(FInt(W, RAD), FInt(R, RAY)) => FInt((W *Int R) /Int RAY, RAD)
 
     syntax Ray ::= rdiv ( Ray , Rad ) [function]
  // --------------------------------------------
-    rule rdiv(ray(R1), rad(R2)) => ray(R1 /Rat R2)
+    rule rdiv(FInt(_ , RAY), rad(0))        => ray(0)
+    rule rdiv(FInt(R1, RAY), FInt(R2, RAD)) => FInt((R1 *Int RAY) /Int R2, RAY) [owise]
 
     syntax Ray ::= wdiv ( Ray , Wad ) [function]
  // --------------------------------------------
-    rule wdiv(ray(R1), wad(R2)) => ray(R1 /Rat R2)
+    rule wdiv(FInt(_ , RAY), wad(0))        => ray(0)
+    rule wdiv(FInt(R1, RAY), FInt(R2, WAD)) => FInt((R1 *Int WAD) /Int R2, RAY) [owise]
 ```
 
 Time Increments
@@ -227,38 +258,29 @@ module KMCD-RANDOM-CHOICES
 ```k
     syntax Int ::= randIntBounded ( Int , Int ) [function]
  // ------------------------------------------------------
-    rule randIntBounded(RAND, BOUND) => 0                          requires         BOUND <Int 0
-    rule randIntBounded(RAND, BOUND) => RAND modInt (BOUND +Int 1) requires notBool BOUND <Int 0
-
-    syntax Rat ::= randRat ( Int ) [function]
- // -----------------------------------------
-    rule randRat(I) => I /Rat 256
-
-    syntax Rat ::= randRatBounded ( Int , Rat ) [function]
- // ------------------------------------------------------
-    rule randRatBounded(I, BOUND) => BOUND *Rat randRat(I)
+    rule randIntBounded(RAND, BOUND) => ((RAND %Int 256) *Int BOUND) /Int 256
 
     syntax Int     ::= chooseInt     ( Int , List ) [function]
     syntax String  ::= chooseString  ( Int , List ) [function]
     syntax Address ::= chooseAddress ( Int , List ) [function]
     syntax CDPID   ::= chooseCDPID   ( Int , List ) [function]
  // ----------------------------------------------------------
-    rule chooseInt    (I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>Int
-    rule chooseString (I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>String
-    rule chooseAddress(I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>Address
-    rule chooseCDPID  (I, ITEMS) => { ITEMS [ I modInt size(ITEMS) ] }:>CDPID
+    rule chooseInt    (RAND, ITEMS) => { ITEMS [ RAND %Int size(ITEMS) ] }:>Int
+    rule chooseString (RAND, ITEMS) => { ITEMS [ RAND %Int size(ITEMS) ] }:>String
+    rule chooseAddress(RAND, ITEMS) => { ITEMS [ RAND %Int size(ITEMS) ] }:>Address
+    rule chooseCDPID  (RAND, ITEMS) => { ITEMS [ RAND %Int size(ITEMS) ] }:>CDPID
 
     syntax Wad ::= randWadBounded ( Int , Wad ) [function]
  // ------------------------------------------------------
-    rule randWadBounded(I, wad(W)) => wad(randRatBounded(I, W))
+    rule randWadBounded(RAND, FInt(_, WAD) #as FI) => wad(randIntBounded(RAND, baseFInt(FI)))
 
     syntax Ray ::= randRayBounded ( Int , Ray ) [function]
  // ------------------------------------------------------
-    rule randRayBounded(I, ray(R)) => ray(randRatBounded(I, R))
+    rule randRayBounded(RAND, FInt(_, RAY) #as FI) => ray(randIntBounded(RAND, baseFInt(FI)))
 
     syntax Rad ::= randRadBounded ( Int , Rad ) [function]
  // ------------------------------------------------------
-    rule randRadBounded(I, rad(R)) => rad(randRatBounded(I, R))
+    rule randRadBounded(RAND, FInt(_, RAD) #as FI) => rad(randIntBounded(RAND, baseFInt(FI)))
 ```
 
 ```k
