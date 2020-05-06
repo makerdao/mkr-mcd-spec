@@ -346,6 +346,11 @@ def buildAssert(contract, field, value):
                     comparator = '!='
                     expected   = printMCD(intToken(0))
                     assertionData.append((actual, comparator, expected, True))
+            elif pyk.isKApply(v) and v['label'] == 'FInt':
+                actual     = contract + '.' + field + '(' + keyStr + ')'
+                comparator = '=='
+                expected   = printMCD(v)
+                assertionData.append((actual, comparator, expected, True))
             else:
                 actual     = contract + '.' + field + '(' + keyStr + ')'
                 comparator = '=='
