@@ -41,22 +41,22 @@ We model everything with arbitrary precision rationals, but use sort information
     syntax Wad = FInt
     syntax Wad ::= wad ( Int )
  // --------------------------
-    rule wad(0) => FInt(0         , WAD) [macro]
-    rule wad(1) => FInt(WAD       , WAD) [macro]
+    rule wad(0) => 0FInt(WAD)            [macro]
+    rule wad(1) => 1FInt(WAD)            [macro]
     rule wad(I) => FInt(I *Int WAD, WAD) [macro, owise]
 
     syntax Ray = FInt
     syntax Ray ::= ray ( Int )
  // --------------------------
-    rule ray(0) => FInt(0         , RAY) [macro]
-    rule ray(1) => FInt(RAY       , RAY) [macro]
+    rule ray(0) => 0FInt(RAY)            [macro]
+    rule ray(1) => 1FInt(RAY)            [macro]
     rule ray(I) => FInt(I *Int RAY, RAY) [macro, owise]
 
     syntax Rad = FInt
     syntax Rad ::= rad ( Int )
  // --------------------------
-    rule rad(0) => FInt(0         , RAD) [macro]
-    rule rad(1) => FInt(RAD       , RAD) [macro]
+    rule rad(0) => 0FInt(RAD)            [macro]
+    rule rad(1) => 1FInt(RAD)            [macro]
     rule rad(I) => FInt(I *Int RAD, RAD) [macro, owise]
 
     syntax MaybeWad ::= Wad | ".Wad"
