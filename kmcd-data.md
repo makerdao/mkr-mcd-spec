@@ -184,22 +184,15 @@ We model everything with arbitrary precision rationals, but use sort information
     rule FInt(_ , _  ) /Rate ray(0)        => wad(0)
     rule FInt(R1, RAD) /Rate FInt(R2, RAY) => FInt(R1 /Int R2, WAD) [owise]
 
-    // syntax Wad ::= rmul ( Wad , Ray ) [function]
-    // syntax Rad ::= rmul ( Rad , Ray ) [function]
     syntax FInt ::= rmul ( FInt , FInt ) [function]
+                  | rdiv ( FInt , FInt ) [function]
+                  | wdiv ( FInt , FInt ) [function]
  // -----------------------------------------------
-    rule rmul(FInt(W, WAD), FInt(R, RAY)) => FInt((W *Int R) /Int RAY, WAD)
-    rule rmul(FInt(W, RAD), FInt(R, RAY)) => FInt((W *Int R) /Int RAY, RAD)
-
-    syntax Ray ::= rdiv ( Ray , Rad ) [function]
- // --------------------------------------------
-    rule rdiv(FInt(_ , RAY), rad(0))        => ray(0)
-    rule rdiv(FInt(R1, RAY), FInt(R2, RAD)) => FInt((R1 *Int RAY) /Int R2, RAY) [owise]
-
-    syntax Ray ::= wdiv ( Ray , Wad ) [function]
- // --------------------------------------------
-    rule wdiv(FInt(_ , RAY), wad(0))        => ray(0)
-    rule wdiv(FInt(R1, RAY), FInt(R2, WAD)) => FInt((R1 *Int WAD) /Int R2, RAY) [owise]
+    rule rmul(FI1, FI2) => FI1 *FInt FI2
+    rule rdiv(FI1, FI2) => 0FInt(one(FI1)) requires value(FI2)  ==Int 0
+    rule rdiv(FI1, FI2) => FI1 /FInt FI2   requires value(FI2) =/=Int 0
+    rule wdiv(FI1, FI2) => 0FInt(one(FI1)) requires value(FI2)  ==Int 0
+    rule wdiv(FI1, FI2) => FI1 /FInt FI2   requires value(FI2) =/=Int 0
 ```
 
 Time Increments
