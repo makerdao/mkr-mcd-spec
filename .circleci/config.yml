@@ -1,20 +1,18 @@
 version: 2
 jobs:
-  dependencies:
+  build:
     docker:
-      - image: circleci/node:lts
+      - image: runtimeverificationinc/kframework-k:ubuntu-bionic-master
     steps:
       - checkout
+      - attach_workspace:
+          at: .build
       - run:
-          name: Install dependencies
-          command: |
-            make deps
-      - persist_to_workspace:
-          root: .
-          paths: .build/*
+          name: Build Definition
+          command: make build -j8
   test:
     docker:
-      - image: circleci/node:lts
+      - image: runtimeverificationinc/kframework-k:ubuntu-bionic-master
     steps:
       - checkout
       - attach_workspace:
@@ -27,7 +25,7 @@ jobs:
             make test-random
   gh-pages-deploy:
     docker:
-      - image: node:12.13
+      - image: runtimeverificationinc/kframework-k:ubuntu-bionic-master
     steps:
       - checkout
       - attach_workspace:
@@ -52,10 +50,10 @@ workflows:
   version: 2
   mainflow:
     jobs:
-      - dependencies
+      - build
       - test:
           requires:
-            - dependencies
+            - build
       - gh-pages-deploy:
           requires:
             - test
