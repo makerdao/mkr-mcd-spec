@@ -101,11 +101,11 @@ The parameters controlled by governance are:
 
     rule <k> Cat . file chop ILKID CHOP => . ... </k>
          <cat-ilks> ... ILKID |-> Ilk ( ... chop: (_ => CHOP) ) ... </cat-ilks>
-      requires CHOP >=Ray 0Ray
+      requires CHOP >=Ray ray(0)
 
     rule <k> Cat . file lump ILKID LUMP => . ... </k>
          <cat-ilks> ... ILKID |-> Ilk ( ... lump: (_ => LUMP) ) ... </cat-ilks>
-      requires LUMP >=Wad 0Wad
+      requires LUMP >=Wad wad(0)
 ```
 
 **NOTE**: `flip` is not fileable since we are assuming a unique liquidator for each ilk.
@@ -122,9 +122,9 @@ Cat Semantics
           => #fun(LOT
           => #fun(ART
           => #fun(TAB
-          => call Vat . grab ILK URN THIS VOWADDR (0Wad -Wad LOT) (0Wad -Wad ART)
+          => call Vat . grab ILK URN THIS VOWADDR (wad(0) -Wad LOT) (wad(0) -Wad ART)
           ~> call Vow . fess TAB
-          ~> call Flip ILK . kick URN VOWADDR rmul(TAB, CHOP) LOT 0Rad
+          ~> call Flip ILK . kick URN VOWADDR rmul(TAB, CHOP) LOT rad(0)
           ~> emitBite ILK URN LOT ART TAB)
           (ART *Rate RATE))
           (minWad(URNART, (LOT *Wad URNART) /Wad INK)))

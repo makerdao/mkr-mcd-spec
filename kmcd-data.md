@@ -23,66 +23,50 @@ We model everything with arbitrary precision rationals, but use sort information
 -   `Rad`: result of multiplying `Wad` and `Ray` (highest precision). Represented in implementation as 1e45 fixed point.
 
 ```k
-    syntax Wad ::= wad ( Rat )
- // --------------------------
+    syntax Value ::= Wad | Ray | Rad | Int
+ // --------------------------------------
 
-    syntax Ray ::= ray ( Rat )
- // --------------------------
+    syntax Int ::= "WAD" | "RAY" | "RAD"
+ // ------------------------------------
+    rule WAD => 1000000000000000000                            [macro]
+    rule RAY => 1000000000000000000000000000                   [macro]
+    rule RAD => 1000000000000000000000000000000000000000000000 [macro]
 
-    syntax Rad ::= rad ( Rat )
- // --------------------------
+    syntax Wad ::= wad ( Rat ) [klabel(wad), symbol]
+ // ------------------------------------------------
+
+    syntax Ray ::= ray ( Rat ) [klabel(ray), symbol]
+ // ------------------------------------------------
+
+    syntax Rad ::= rad ( Rat ) [klabel(rad), symbol]
+ // ------------------------------------------------
 
     syntax MaybeWad ::= Wad | ".Wad"
  // --------------------------------
 ```
 
 ```k
-    syntax Wad ::= "0Wad" | "1Wad"
- // ------------------------------
-    rule 0Wad => wad(0) [macro]
-    rule 1Wad => wad(1) [macro]
-
-    syntax Ray ::= "0Ray" | "1Ray"
- // ------------------------------
-    rule 0Ray => ray(0) [macro]
-    rule 1Ray => ray(1) [macro]
-
-    syntax Rad ::= "0Rad" | "1Rad"
- // ------------------------------
-    rule 0Rad => rad(0) [macro]
-    rule 1Rad => rad(1) [macro]
-```
-
-```k
     syntax Wad ::= Rad2Wad ( Rad ) [function]
-                 | Ray2Wad ( Ray ) [function]
  // -----------------------------------------
-    rule Ray2Wad(ray(R)) => wad(R)
     rule Rad2Wad(rad(R)) => wad(R)
 
     syntax Ray ::= Wad2Ray ( Wad ) [function]
-                 | Rad2Ray ( Rad ) [function]
  // -----------------------------------------
     rule Wad2Ray(wad(W)) => ray(W)
-    rule Rad2Ray(rad(R)) => ray(R)
 
     syntax Rad ::= Wad2Rad ( Wad ) [function]
-                 | Ray2Rad ( Ray ) [function]
  // -----------------------------------------
     rule Wad2Rad(wad(W)) => rad(W)
-    rule Ray2Rad(ray(R)) => rad(R)
 ```
 
 ```k
     syntax Wad ::= Wad "*Wad" Wad [function]
                  | Wad "/Wad" Wad [function]
-                 | Wad "^Wad" Int [function]
                  > Wad "+Wad" Wad [function]
                  | Wad "-Wad" Wad [function]
  // ----------------------------------------
     rule wad(R1) *Wad wad(R2) => wad(R1 *Rat R2)
     rule wad(R1) /Wad wad(R2) => wad(R1 /Rat R2)
-    rule wad(R1) ^Wad I       => wad(R1 ^Rat I)
     rule wad(R1) +Wad wad(R2) => wad(R1 +Rat R2)
     rule wad(R1) -Wad wad(R2) => wad(R1 -Rat R2)
 
@@ -99,36 +83,22 @@ We model everything with arbitrary precision rationals, but use sort information
     rule ray(R1) -Ray ray(R2) => ray(R1 -Rat R2)
 
     syntax Rad ::= Rad "*Rad" Rad [function]
-                 | Rad "/Rad" Rad [function]
-                 | Rad "^Rad" Int [function]
                  > Rad "+Rad" Rad [function]
                  | Rad "-Rad" Rad [function]
  // ----------------------------------------
     rule rad(R1) *Rad rad(R2) => rad(R1 *Rat R2)
-    rule rad(R1) /Rad rad(R2) => rad(R1 /Rat R2)
-    rule rad(R1) ^Rad I       => rad(R1 ^Rat I)
     rule rad(R1) +Rad rad(R2) => rad(R1 +Rat R2)
     rule rad(R1) -Rad rad(R2) => rad(R1 -Rat R2)
 ```
 
 ```k
     syntax Wad ::= minWad ( Wad , Wad ) [function]
-                 | maxWad ( Wad , Wad ) [function]
  // ----------------------------------------------
     rule minWad(wad(W1), wad(W2)) => wad(minRat(W1, W2))
-    rule maxWad(wad(W1), wad(W2)) => wad(maxRat(W1, W2))
-
-    syntax Ray ::= minRay ( Ray , Ray ) [function]
-                 | maxRay ( Ray , Ray ) [function]
- // ----------------------------------------------
-    rule minRay(ray(W1), ray(W2)) => ray(minRat(W1, W2))
-    rule maxRay(ray(W1), ray(W2)) => ray(maxRat(W1, W2))
 
     syntax Rad ::= minRad ( Rad , Rad ) [function]
-                 | maxRad ( Rad , Rad ) [function]
  // ----------------------------------------------
     rule minRad(rad(W1), rad(W2)) => rad(minRat(W1, W2))
-    rule maxRad(rad(W1), rad(W2)) => rad(maxRat(W1, W2))
 ```
 
 ```k

@@ -25,17 +25,17 @@ End Configuration
       <end-state>
         <endPhase> false </endPhase>
         <end>
-          <end-wards> .Set </end-wards>
-          <end-live>  true </end-live>
-          <end-when>  0    </end-when>
-          <end-wait>  0    </end-wait>
-          <end-debt>  0Rad </end-debt>
-          <end-tag>   .Map </end-tag>  // mapping (bytes32 => uint256)                      String  |-> Ray
-          <end-gap>   .Map </end-gap>  // mapping (bytes32 => uint256)                      String  |-> Wad
-          <end-art>   .Map </end-art>  // mapping (bytes32 => uint256)                      String  |-> Wad
-          <end-fix>   .Map </end-fix>  // mapping (bytes32 => uint256)                      String  |-> Ray
-          <end-bag>   .Map </end-bag>  // mapping (address => uint256)                      Address |-> Wad
-          <end-out>   .Map </end-out>  // mapping (bytes32 => mapping (address => uint256)) CDPID   |-> Wad
+          <end-wards> .Set   </end-wards>
+          <end-live>  true   </end-live>
+          <end-when>  0      </end-when>
+          <end-wait>  0      </end-wait>
+          <end-debt>  rad(0) </end-debt>
+          <end-tag>   .Map   </end-tag>  // mapping (bytes32 => uint256)                      String  |-> Ray
+          <end-gap>   .Map   </end-gap>  // mapping (bytes32 => uint256)                      String  |-> Wad
+          <end-art>   .Map   </end-art>  // mapping (bytes32 => uint256)                      String  |-> Wad
+          <end-fix>   .Map   </end-fix>  // mapping (bytes32 => uint256)                      String  |-> Ray
+          <end-bag>   .Map   </end-bag>  // mapping (address => uint256)                      Address |-> Wad
+          <end-out>   .Map   </end-out>  // mapping (bytes32 => mapping (address => uint256)) CDPID   |-> Wad
         </end>
       </end-state>
 ```
@@ -101,15 +101,15 @@ Because data isn't explicitely initialized to 0 in KMCD, we need explicit initia
                          | "initOut" String Address
  // -----------------------------------------------
     rule <k> End . initGap ILKID => . ... </k>
-         <end-gap> GAPS => GAPS [ ILKID <- 0Wad ] </end-gap>
+         <end-gap> GAPS => GAPS [ ILKID <- wad(0) ] </end-gap>
       requires notBool ILKID in_keys(GAPS)
 
     rule <k> End . initBag ADDR => . ... </k>
-         <end-bag> BAGS => BAGS [ ADDR <- 0Wad ] </end-bag>
+         <end-bag> BAGS => BAGS [ ADDR <- wad(0) ] </end-bag>
       requires notBool ADDR in_keys(BAGS)
 
     rule <k> End . initOut ILKID ADDR => . ... </k>
-         <end-out> OUTS => OUTS [ { ILKID , ADDR } <- 0Wad ] </end-out>
+         <end-out> OUTS => OUTS [ { ILKID , ADDR } <- wad(0) ] </end-out>
       requires notBool { ILKID , ADDR } in_keys(OUTS)
 ```
 
@@ -160,14 +160,14 @@ End Semantics
            <flip-bids> ... ID |-> FlipBid(... bid: BID, lot: LOT, usr: USR, tab: TAB) ... </flip-bids>
            ...
          </flip>
-      requires TAG =/=Ray 0Ray
-       andBool LOT >=Wad 0Wad
-       andBool TAB /Rate RATE >=Wad 0Wad
+      requires TAG =/=Ray ray(0)
+       andBool LOT >=Wad wad(0)
+       andBool TAB /Rate RATE >=Wad wad(0)
 
     syntax EndStep ::= "skim" String Address
  // ----------------------------------------
     rule <k> End . skim ILK ADDR
-          => call Vat . grab ILK ADDR THIS Vow (0Wad -Wad minWad(INK, rmul(rmul(ART, RATE), TAG))) (0Wad -Wad ART)
+          => call Vat . grab ILK ADDR THIS Vow (wad(0) -Wad minWad(INK, rmul(rmul(ART, RATE), TAG))) (wad(0) -Wad ART)
          ...
          </k>
          <this> THIS </this>
@@ -175,28 +175,28 @@ End Semantics
          <end-gap> ... ILK |-> (GAP => GAP +Wad (rmul(rmul(ART, RATE), TAG) -Wad minWad(INK, rmul(rmul(ART, RATE), TAG)))) ... </end-gap>
          <vat-ilks> ... ILK |-> Ilk(... rate: RATE)::VatIlk ... </vat-ilks>
          <vat-urns> ... {ILK, ADDR} |-> Urn(... ink: INK, art: ART) ... </vat-urns>
-      requires TAG =/=Ray 0Ray
+      requires TAG =/=Ray ray(0)
 
     syntax EndStep ::= "free" String
  // --------------------------------
     rule <k> End . free ILK
-          => call Vat . grab ILK MSGSENDER MSGSENDER Vow (0Wad -Wad INK) 0Wad
+          => call Vat . grab ILK MSGSENDER MSGSENDER Vow (wad(0) -Wad INK) wad(0)
          ...
          </k>
          <msg-sender> MSGSENDER </msg-sender>
          <end-live> false </end-live>
          <vat-urns> ... {ILK, MSGSENDER} |-> Urn(... ink: INK, art: ART) ... </vat-urns>
-      requires ART ==Wad 0Wad
+      requires ART ==Wad wad(0)
 
     syntax EndStep ::= "thaw"
  // -------------------------
     rule <k> End . thaw => . ... </k>
          <current-time> NOW </current-time>
          <end-live> false </end-live>
-         <end-debt> 0Rad => DEBT </end-debt>
+         <end-debt> rad(0) => DEBT </end-debt>
          <end-when> WHEN </end-when>
          <end-wait> WAIT </end-wait>
-         <vat-dai> ... Vow |-> 0Rad ... </vat-dai>
+         <vat-dai> ... Vow |-> rad(0) ... </vat-dai>
          <vat-debt> DEBT </vat-debt>
       requires NOW >=Int WHEN +Int WAIT
 
@@ -209,7 +209,7 @@ End Semantics
          <end-gap> ... ILK |-> GAP ... </end-gap>
          <end-art> ... ILK |-> ART ... </end-art>
          <vat-ilks> ... ILK |-> Ilk(... rate: RATE)::VatIlk ... </vat-ilks>
-      requires DEBT =/=Rad 0Rad
+      requires DEBT =/=Rad rad(0)
        andBool rmul(rmul(ART, RATE), TAG) >=Wad GAP
        andBool notBool ILK in_keys(FIX)
 
@@ -222,8 +222,8 @@ End Semantics
          <msg-sender> MSGSENDER </msg-sender>
          <end-debt> DEBT </end-debt>
          <end-bag> ... MSGSENDER |-> (BAG => BAG +Wad AMOUNT) ... </end-bag>
-      requires AMOUNT >=Wad 0Wad
-       andBool DEBT =/=Rad 0Rad
+      requires AMOUNT >=Wad wad(0)
+       andBool DEBT =/=Rad rad(0)
 
     syntax EndStep ::= "cash" String Wad
  // ------------------------------------
@@ -236,8 +236,8 @@ End Semantics
          <end-fix> ... ILK |-> FIX ... </end-fix>
          <end-out> ... {ILK, MSGSENDER} |-> (OUT => OUT +Wad AMOUNT) ... </end-out>
          <end-bag> ... MSGSENDER |-> BAG ... </end-bag>
-      requires AMOUNT >=Wad 0Wad
-       andBool FIX =/=Ray 0Ray
+      requires AMOUNT >=Wad wad(0)
+       andBool FIX =/=Ray ray(0)
        andBool OUT +Wad AMOUNT <=Wad BAG
 ```
 
