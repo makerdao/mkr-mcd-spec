@@ -7,8 +7,8 @@ module FIXED-INT
                   | FInt ( value: Int , one: Int ) [klabel(FInt), symbol]
  // ---------------------------------------------------------------------
 
-    syntax FInt ::= 0FInt ( Int ) | 1FInt ( Int )
- // ---------------------------------------------
+    syntax FInt ::= "0FInt" "(" Int ")" | "1FInt" "(" Int ")"
+ // ---------------------------------------------------------
     rule 0FInt(ONE) => FInt(0  , ONE) [macro]
     rule 1FInt(ONE) => FInt(ONE, ONE) [macro]
 
