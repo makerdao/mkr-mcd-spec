@@ -17,7 +17,7 @@ module FLOP
  // --------------------------------------
     rule <k> Flop . dent ID LOT BID
           => #if MSGSENDER =/=K GUY #then call Vat . move MSGSENDER GUY BID #else . #fi
-          ~> #if TIC ==Int 0 #then call GUY . kiss ( minRat(BID, ASH) ) #else . #fi
+          ~> #if TIC ==Int 0 #then call GUY . kiss ( minRad(BID, ASH) ) #else . #fi
          ...
          </k>
          <msg-sender> MSGSENDER </msg-sender>
