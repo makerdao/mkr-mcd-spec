@@ -1,8 +1,8 @@
 STEPS ( DEPLOY-PRELUDE )
 STEPS ( ATTACK-PRELUDE )
 
-transact "Bobby" Vat . move "Bobby" Pot rad(985 /Rat 128)
-transact ADMIN Pot . file dsr ray(9 /Rat 8)
+transact "Bobby" Vat . move "Bobby" Pot (rad(985) /Rad rad(128))
+transact ADMIN Pot . file dsr (ray(9) /Ray ray(8))
 TimeStep 1
 transact ADMIN End . cage
 
