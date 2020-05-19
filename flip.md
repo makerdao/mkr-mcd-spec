@@ -182,7 +182,7 @@ Flip Semantics
     syntax FlipStep ::= "tend" Int Wad Rad
  // --------------------------------------
     rule <k> Flip ILK . tend ID LOT BID
-          => call Vat . move MSGSENDER GUY BID'
+          => #if MSGSENDER =/=K GUY #then call Vat . move MSGSENDER GUY BID' #else . #fi
           ~> call Vat . move MSGSENDER GAL (BID -Rad BID')
          ...
          </k>
@@ -208,7 +208,7 @@ Flip Semantics
     syntax FlipStep ::= "dent" Int Wad Rad
  // --------------------------------------
     rule <k> Flip ILK . dent ID LOT BID
-          => call Vat.move MSGSENDER GUY BID
+          => #if MSGSENDER =/=K GUY #then call Vat . move MSGSENDER GUY BID #else . #fi
           ~> call Vat.flux ILK THIS USR (LOT' -Wad LOT)
          ...
          </k>

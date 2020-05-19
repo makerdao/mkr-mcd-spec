@@ -3,10 +3,10 @@
     <kmcd>
       <kmcd-driver>
         <k>
-          #assert-failure ~> dropState ~> transact "Bobby" Vow . flop assert .MCDSteps
+          .
         </k>
         <return-value>
-          .
+          2
         </return-value>
         <msg-sender>
           "Bobby"
@@ -21,375 +21,7 @@
           .List
         </call-stack>
         <pre-state>
-          <kmcd-state>
-            <cat>
-              <cat-wards>
-                SetItem ( End )
-              </cat-wards>
-              <cat-ilks>
-                .Map
-              </cat-ilks>
-              <cat-live>
-                true
-              </cat-live>
-              <cat-vow>
-                0
-              </cat-vow>
-            </cat>
-            <dai>
-              <dai-wards>
-                .Set
-              </dai-wards>
-              <dai-totalSupply>
-                wad ( 0 )
-              </dai-totalSupply>
-              <dai-account-id>
-                0
-              </dai-account-id>
-              <dai-balance>
-                .Map
-              </dai-balance>
-              <dai-allowance>
-                .Map
-              </dai-allowance>
-              <dai-nonce>
-                .Map
-              </dai-nonce>
-            </dai>
-            <end-state>
-              <endPhase>
-                false
-              </endPhase>
-              <end>
-                <end-wards>
-                  .Set
-                </end-wards>
-                <end-live>
-                  true
-                </end-live>
-                <end-when>
-                  0
-                </end-when>
-                <end-wait>
-                  0
-                </end-wait>
-                <end-debt>
-                  rad ( 0 )
-                </end-debt>
-                <end-tag>
-                  .Map
-                </end-tag>
-                <end-gap>
-                  "gold" |-> wad ( 0 )
-                </end-gap>
-                <end-art>
-                  .Map
-                </end-art>
-                <end-fix>
-                  .Map
-                </end-fix>
-                <end-bag>
-                  "Alice" |-> wad ( 0 )
-                  "Bobby" |-> wad ( 0 )
-                </end-bag>
-                <end-out>
-                  { "gold" , "Alice" } |-> wad ( 0 )
-                  { "gold" , "Bobby" } |-> wad ( 0 )
-                </end-out>
-              </end>
-            </end-state>
-            <flap-state>
-              <flap-wards>
-                SetItem ( Vow )
-              </flap-wards>
-              <flap-bids>
-                .Map
-              </flap-bids>
-              <flap-kicks>
-                0
-              </flap-kicks>
-              <flap-live>
-                true
-              </flap-live>
-              <flap-beg>
-                wad ( 21 /Rat 20 )
-              </flap-beg>
-              <flap-ttl>
-                10800
-              </flap-ttl>
-              <flap-tau>
-                172800
-              </flap-tau>
-            </flap-state>
-            <flips>
-              <flip>
-                <flip-ilk>
-                  "gold"
-                </flip-ilk>
-                <flip-wards>
-                  SetItem ( End )
-                </flip-wards>
-                <flip-bids>
-                  .Map
-                </flip-bids>
-                <flip-beg>
-                  wad ( 21 /Rat 20 )
-                </flip-beg>
-                <flip-ttl>
-                  10800
-                </flip-ttl>
-                <flip-tau>
-                  172800
-                </flip-tau>
-                <flip-kicks>
-                  0
-                </flip-kicks>
-              </flip>
-            </flips>
-            <flop-state>
-              <flop-wards>
-                SetItem ( Vow )
-              </flop-wards>
-              <flop-bids>
-                1 |-> FlopBid ( rad ( 50 ) , wad ( 25 ) , "Bobby" , 10800 , 3600 )
-              </flop-bids>
-              <flop-kicks>
-                1
-              </flop-kicks>
-              <flop-live>
-                true
-              </flop-live>
-              <flop-beg>
-                wad ( 21 /Rat 20 )
-              </flop-beg>
-              <flop-pad>
-                wad ( 3 /Rat 2 )
-              </flop-pad>
-              <flop-ttl>
-                10800
-              </flop-ttl>
-              <flop-tau>
-                3600
-              </flop-tau>
-              <flop-vow>
-                0
-              </flop-vow>
-            </flop-state>
-            <gems>
-              <gem>
-                <gem-id>
-                  "MKR"
-                </gem-id>
-                <gem-wards>
-                  .Set
-                </gem-wards>
-                <gem-balances>
-                  "Alice" |-> wad ( 0 )
-                  "Bobby" |-> wad ( 0 )
-                  Flap |-> wad ( 0 )
-                  GemJoin "MKR" |-> wad ( 0 )
-                  Vow |-> wad ( 0 )
-                </gem-balances>
-              </gem> <gem>
-                <gem-id>
-                  "gold"
-                </gem-id>
-                <gem-wards>
-                  .Set
-                </gem-wards>
-                <gem-balances>
-                  "Alice" |-> wad ( 10 )
-                  "Bobby" |-> wad ( 10 )
-                  GemJoin "gold" |-> wad ( 20 )
-                </gem-balances>
-              </gem>
-            </gems>
-            <join-state>
-              <gem-joins>
-                <gem-join>
-                  <gem-join-gem>
-                    "MKR"
-                  </gem-join-gem>
-                  <gem-join-wards>
-                    .Set
-                  </gem-join-wards>
-                  <gem-join-live>
-                    true
-                  </gem-join-live>
-                </gem-join> <gem-join>
-                  <gem-join-gem>
-                    "gold"
-                  </gem-join-gem>
-                  <gem-join-wards>
-                    .Set
-                  </gem-join-wards>
-                  <gem-join-live>
-                    true
-                  </gem-join-live>
-                </gem-join>
-              </gem-joins>
-              <dai-join>
-                <dai-join-wards>
-                  .Set
-                </dai-join-wards>
-                <dai-join-live>
-                  true
-                </dai-join-live>
-              </dai-join>
-            </join-state>
-            <jug>
-              <jug-wards>
-                .Set
-              </jug-wards>
-              <jug-ilks>
-                .Map
-              </jug-ilks>
-              <jug-vow>
-                0
-              </jug-vow>
-              <jug-base>
-                ray ( 0 )
-              </jug-base>
-            </jug>
-            <pot>
-              <pot-wards>
-                SetItem ( End )
-              </pot-wards>
-              <pot-pies>
-                "Alice" |-> wad ( 0 )
-                "Bobby" |-> wad ( 0 )
-              </pot-pies>
-              <pot-pie>
-                wad ( 0 )
-              </pot-pie>
-              <pot-dsr>
-                ray ( 1 )
-              </pot-dsr>
-              <pot-chi>
-                ray ( 1 )
-              </pot-chi>
-              <pot-vow>
-                Vow
-              </pot-vow>
-              <pot-rho>
-                0
-              </pot-rho>
-              <pot-live>
-                true
-              </pot-live>
-            </pot>
-            <spot>
-              <spot-wards>
-                .Set
-              </spot-wards>
-              <spot-ilks>
-                "gold" |-> SpotIlk ( wad ( 3000000000 ) , ray ( 1 ) )
-              </spot-ilks>
-              <spot-par>
-                ray ( 1 )
-              </spot-par>
-              <spot-live>
-                true
-              </spot-live>
-            </spot>
-            <vat>
-              <vat-wards>
-                SetItem ( End )
-                SetItem ( GemJoin "gold" )
-                SetItem ( Pot )
-                SetItem ( Spot )
-              </vat-wards>
-              <vat-can>
-                "Alice" |-> SetItem ( End )
-                SetItem ( Flip "gold" )
-                SetItem ( Flop )
-                SetItem ( Pot )
-                "Bobby" |-> SetItem ( End )
-                SetItem ( Flip "gold" )
-                SetItem ( Flop )
-                SetItem ( Pot )
-                End |-> .Set
-                Flap |-> .Set
-                Pot |-> .Set
-                Vow |-> SetItem ( Flap )
-              </vat-can>
-              <vat-ilks>
-                "gold" |-> Ilk ( wad ( 20 ) , ray ( 1 ) , ray ( 3000000000 ) , rad ( 1000000000000 ) , rad ( 0 ) )
-              </vat-ilks>
-              <vat-urns>
-                { "gold" , "Alice" } |-> Urn ( wad ( 10 ) , wad ( 10 ) )
-                { "gold" , "Bobby" } |-> Urn ( wad ( 10 ) , wad ( 10 ) )
-                { "gold" , End } |-> Urn ( wad ( 0 ) , wad ( 0 ) )
-              </vat-urns>
-              <vat-gem>
-                { "gold" , "Alice" } |-> wad ( 0 )
-                { "gold" , "Bobby" } |-> wad ( 0 )
-                { "gold" , End } |-> wad ( 0 )
-                { "gold" , Flip "gold" } |-> wad ( 0 )
-              </vat-gem>
-              <vat-dai>
-                "Alice" |-> rad ( 10 )
-                "Bobby" |-> rad ( 60 )
-                End |-> rad ( 0 )
-                Flap |-> rad ( 0 )
-                Pot |-> rad ( 0 )
-                Vow |-> rad ( 50 )
-              </vat-dai>
-              <vat-sin>
-                "Alice" |-> rad ( 0 )
-                "Bobby" |-> rad ( 0 )
-                End |-> rad ( 0 )
-                Flap |-> rad ( 0 )
-                Pot |-> rad ( 0 )
-                Vow |-> rad ( 100 )
-              </vat-sin>
-              <vat-debt>
-                rad ( 120 )
-              </vat-debt>
-              <vat-vice>
-                rad ( 100 )
-              </vat-vice>
-              <vat-Line>
-                rad ( 1000000000000 )
-              </vat-Line>
-              <vat-live>
-                true
-              </vat-live>
-            </vat>
-            <vow>
-              <vow-wards>
-                SetItem ( End )
-                SetItem ( Pot )
-              </vow-wards>
-              <vow-sins>
-                .Map
-              </vow-sins>
-              <vow-sin>
-                rad ( 0 )
-              </vow-sin>
-              <vow-ash>
-                rad ( 50 )
-              </vow-ash>
-              <vow-wait>
-                0
-              </vow-wait>
-              <vow-dump>
-                wad ( 30 )
-              </vow-dump>
-              <vow-sump>
-                rad ( 50 )
-              </vow-sump>
-              <vow-bump>
-                rad ( 1000000000 )
-              </vow-bump>
-              <vow-hump>
-                rad ( 0 )
-              </vow-hump>
-              <vow-live>
-                true
-              </vow-live>
-            </vow>
-          </kmcd-state>
+          .
         </pre-state>
         <events>
           .List
@@ -529,9 +161,10 @@
           </flop-wards>
           <flop-bids>
             1 |-> FlopBid ( rad ( 50 ) , wad ( 25 ) , "Bobby" , 10800 , 3600 )
+            2 |-> FlopBid ( rad ( 50 ) , wad ( 30 ) , Vow , 0 , 3600 )
           </flop-bids>
           <flop-kicks>
-            1
+            2
           </flop-kicks>
           <flop-live>
             true
@@ -1556,24 +1189,43 @@
       GemJoin "MKR" |-> wad ( 0 )
       Vow |-> wad ( 0 ) , rad ( 50 ) ) )
       ListItem ( LogNote ( "Bobby" , Vat . move "Bobby" Vow rad ( 50 ) ) )
+      ListItem ( LogNote ( Flop , Vat . heal rad ( 50 ) ) )
+      ListItem ( LogNote ( "Bobby" , Vow . kiss rad ( 50 ) ) )
       ListItem ( LogNote ( "Bobby" , Flop . dent 1 wad ( 25 ) rad ( 50 ) ) )
-      ListItem ( Measure ( rad ( 120 ) , "Alice" |-> rad ( 10 )
+      ListItem ( Measure ( rad ( 70 ) , "Alice" |-> rad ( 10 )
       "Bobby" |-> rad ( 60 )
       End |-> rad ( 0 )
       Flap |-> rad ( 0 )
       Pot |-> rad ( 0 )
-      Vow |-> rad ( 50 ) , ray ( 1 ) , wad ( 0 ) , rad ( 20 ) , rad ( 100 ) , rad ( 0 ) , rad ( 0 ) , "Alice" |-> rad ( 10 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 20 ) , rad ( 50 ) , rad ( 0 ) , rad ( 0 ) , "Alice" |-> rad ( 10 )
       "Bobby" |-> rad ( 60 )
       End |-> rad ( 0 )
       Flap |-> rad ( 0 )
       Pot |-> rad ( 0 )
-      Vow |-> rad ( 50 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
+      "Bobby" |-> wad ( 0 )
+      Flap |-> wad ( 0 )
+      GemJoin "MKR" |-> wad ( 0 )
+      Vow |-> wad ( 0 ) , rad ( 0 ) ) )
+      ListItem ( Exception ( Vow . heal rad ( 50 ) ) )
+      ListItem ( LogNote ( "Bobby" , Flop . kick Vow wad ( 30 ) rad ( 50 ) ) )
+      ListItem ( FlopKick ( 2 , wad ( 30 ) , rad ( 50 ) , Vow ) )
+      ListItem ( LogNote ( "Bobby" , Vow . flop ) )
+      ListItem ( Measure ( rad ( 70 ) , "Alice" |-> rad ( 10 )
+      "Bobby" |-> rad ( 60 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , ray ( 1 ) , wad ( 0 ) , rad ( 20 ) , rad ( 50 ) , rad ( 0 ) , rad ( 0 ) , "Alice" |-> rad ( 10 )
+      "Bobby" |-> rad ( 60 )
+      End |-> rad ( 0 )
+      Flap |-> rad ( 0 )
+      Pot |-> rad ( 0 )
+      Vow |-> rad ( 0 ) , wad ( 0 ) , "Alice" |-> wad ( 0 )
       "Bobby" |-> wad ( 0 )
       Flap |-> wad ( 0 )
       GemJoin "MKR" |-> wad ( 0 )
       Vow |-> wad ( 0 ) , rad ( 50 ) ) )
-      ListItem ( LogNote ( "Bobby" , Vat . heal rad ( 50 ) ) )
-      ListItem ( LogNote ( "Bobby" , Vow . heal rad ( 50 ) ) )
       ListItem ( Measure ( rad ( 70 ) , "Alice" |-> rad ( 10 )
       "Bobby" |-> rad ( 60 )
       End |-> rad ( 0 )
@@ -1594,7 +1246,7 @@
       "Debt Constant After Thaw" |-> debtConstantAfterThaw
       "Flap Dai Consistency" |-> flapDaiConsistency
       "Flap MKR Consistency" |-> flapMkrConsistency
-      "Flop Block Check" |-> Violated ( flopBlockCheck ( rad ( 0 ) , 2 ) )
+      "Flop Block Check" |-> flopBlockCheck ( rad ( 50 ) , 2 )
       "Pot Interest Accumulation After End" |-> potEndInterest
       "PotChi PotPie VatPot" |-> potChiPieDai ( rad ( 0 ) , wad ( 0 ) )
       "Total Backed Debt Consistency" |-> totalBackedDebtConsistency

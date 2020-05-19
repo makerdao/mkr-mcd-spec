@@ -14,6 +14,9 @@ K_LIB     := $(K_RELEASE)/lib
 
 K_BUILD_TYPE := FastBuild
 
+K_OPTS += -Xmx8G
+export K_OPTS
+
 PATH:=$(K_BIN):$(PATH)
 export PATH
 
