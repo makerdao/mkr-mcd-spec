@@ -92,7 +92,6 @@ MCD_definition_llvm_symbols [ '_Set_' ]                                    = lam
 MCD_definition_llvm_symbols [ '_Map_' ]                                    = lambda m1, m2: pyk.newLines([m1, m2])
 MCD_definition_llvm_symbols [ '___KMCD-DRIVER_MCDSteps_MCDStep_MCDSteps' ] = lambda s1, s2: pyk.newLines([s1, s2])
 
-
 def printMCD(k):
     return pyk.prettyPrintKast(k, MCD_definition_llvm_symbols)
 
