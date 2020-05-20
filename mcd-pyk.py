@@ -87,7 +87,6 @@ def kMapToDict(s, keyConvert = lambda x: x, valueConvert = lambda x: x):
 
 MCD_definition_llvm_symbols = pyk.buildSymbolTable(MCD_definition_llvm)
 
-MCD_definition_llvm_symbols [ '<_,_>Rat_RAT-COMMON_Rat_Int_Int' ]          = pyk.underbarUnparsing('_/Rat_')
 MCD_definition_llvm_symbols [ '_List_' ]                                   = lambda l1, l2: pyk.newLines([l1, l2])
 MCD_definition_llvm_symbols [ '_Set_' ]                                    = lambda s1, s2: pyk.newLines([s1, s2])
 MCD_definition_llvm_symbols [ '_Map_' ]                                    = lambda m1, m2: pyk.newLines([m1, m2])
@@ -254,13 +253,27 @@ def solidify(input):
 
 def argify(arg):
     newArg = solidify(arg)
-    if    newArg in ['alice', 'bobby', 'admin', 'anyone']                                      \
+    if    newArg in ['alice', 'bobby', 'admin', 'anyone']                                        \
        or newArg in ['cat', 'dai', 'end', 'flap', 'flop', 'jug', 'pot', 'spotter', 'vat', 'vow'] \
        or newArg.endswith('Flip') or newArg.endswith('Join'):
         newArg = 'address(' + newArg + ')'
-    if newArg in ['gold']:
+    if newArg in ['gold', 'line', 'mat', 'par', 'dsr']:
         newArg = '"' + newArg + '"'
     return newArg
+
+def solidityKeys(k):
+    if pyk.isKApply(k) and k['label'] == 'CDPID':
+        return [ a for a in k['args'] ]
+    elif pyk.isKApply(k) and k['label'] == 'FInt':
+        return [ a for a in [ k['args'][0] ] ]
+    else:
+        return [ a for a in [k] ]
+
+def solidityArgs(ks):
+    allKeys = []
+    for k in ks:
+        allKeys.extend(solidityKeys(k))
+    return ', '.join([argify(printMCD(k)) for k in allKeys])
 
 def unimplemented(s):
     return '// UNIMPLEMENTED << ' + '\n    //'.join(s.split('\n')) + ' >>'
@@ -281,12 +294,12 @@ def extractCallEvent(logEvent):
             if fileable.endswith('-file'):
                 fileable = fileable[0:-5]
             fileargs = functionCall['args'][0]['args']
-            args.append('"' + fileable + '"')
-            for arg in fileargs:
-                args.append(argify(printMCD(arg)))
+            args.append(stringToken(fileable))
+            args.extend(fileargs)
         else:
-            args = [ argify(printMCD(arg)) for arg in functionCall['args'] ]
-        return [ caller + '.' + contract + '_' + function + '(' + ', '.join(args) + ');' ]
+            args = functionCall['args']
+        strArgs = solidityArgs(args)
+        return [ caller + '.' + contract + '_' + function + '(' + strArgs + ');' ]
     elif pyk.isKApply(logEvent) and logEvent['label'] == 'LogTimeStep':
         return [ 'hevm.warp(' + printMCD(logEvent['args'][0]) + ');' ]
     elif pyk.isKApply(logEvent) and logEvent['label'] == 'LogException':
@@ -318,31 +331,40 @@ def noRewriteToDots(config):
             subst[cell] = pyk.ktokenDots
     return pyk.substitute(cfg, subst)
 
-def buildAssert(contract, field, value):
+def stateAssertions(contract, field, value, subkeys = []):
     assertionData = []
     if pyk.isKToken(value) and value['sort'] == 'Bool':
-        actual     = contract + '.' + field + '()'
+        actual     = contract + '.' + field + '(' + solidityArgs(subkeys) + ')'
         comparator = '=='
         expected   = printMCD(intToken(0))
         if value['token'] == 'true':
             comparator = '!='
         assertionData.append((actual, comparator, expected, True))
+    elif pyk.isKApply(value) and value['label'] == 'FInt':
+        actual     = contract + '.' + field + '(' + solidityArgs(subkeys) + ')'
+        comparator = '=='
+        expected   = printMCD(value['args'][0])
+        assertionData.append((actual, comparator, expected, True))
     elif pyk.isKApply(value) and value['label'] == '_Map_':
         for (k, v) in flattenMap(value):
+            keys = subkeys + [k]
             if pyk.isKApply(v) and v['label'] == '_Set_':
                 for si in flattenSet(v):
-                    actual     = contract + '.' + field + '(' + argify(printMCD(k)) + ', ' + argify(printMCD(si)) + ')'
-                    comparator = '!='
-                    expected   = printMCD(intToken(0))
-                    assertionData.append((actual, comparator, expected, True))
+                    assertionData.extend(stateAssertions(contract, field, boolToken(True), subkeys = keys + [si]))
+            elif pyk.isKApply(v) and v['label'] == 'FInt':
+                assertionData.extend(stateAssertions(contract, field, v, subkeys = keys))
             else:
-                actual     = contract + '.' + field + '(' + argify(printMCD(k)) + ')'
+                actual     = contract + '.' + field + '(' + solidityArgs(keys) + ')'
                 comparator = '=='
                 expected   = printMCD(v)
                 assertionData.append((actual, comparator, expected, False))
     else:
         actual = contract + '.' + field + '()'
         assertionData.append((actual, '==', printMCD(value), False))
+    return assertionData
+
+def buildAsserts(contract, field, value):
+    assertionData = stateAssertions(contract, field, value)
     assertions = []
     for (actual, comparator, expected, implemented) in assertionData:
         aStr = 'assertTrue( ' + actual + ' ' + comparator + ' ' + expected + ' );'
@@ -364,7 +386,7 @@ def extractAsserts(config):
             if contract == 'Vat' and field == 'line':
                 field = 'Line'
             rhs = subst[cell]['rhs']
-            asserts.extend(buildAssert(contract, field, rhs))
+            asserts.extend(buildAsserts(contract, field, rhs))
     stateDelta = noRewriteToDots(stateDelta)
     stateDelta = pyk.collapseDots(stateDelta)
     return (printMCD(stateDelta), asserts)

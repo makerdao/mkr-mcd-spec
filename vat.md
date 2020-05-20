@@ -92,8 +92,8 @@ CDP Data
     -   `art`: Total amount of debt against the CDP.
 
 ```k
-    syntax CDPID ::= "{" String "," Address "}"
- // -------------------------------------------
+    syntax CDPID ::= "{" String "," Address "}" [klabel(CDPID), symbol]
+ // -------------------------------------------------------------------
 
     syntax VatUrn ::= Urn ( ink: Wad , art: Wad ) [klabel(#VatUrn), symbol]
  // -----------------------------------------------------------------------
