@@ -129,8 +129,8 @@ test-random: mcd-pyk.py
 	python3 $< random-test 1 1 $(init_random_seeds) --emit-solidity
 
 test-solidity:
-	cd tests/mkr-mcd-spec-sort-tests \
-	    && dapp build                \
+	cd tests/mkr-mcd-spec-sol-tests \
+	    && dapp build               \
 	    && dapp test
 
 ### Testing Parameters
