@@ -33,4 +33,4 @@ RUN    git config --global user.email "admin@runtimeverification.com" \
     && chmod go-rwx -R ~/.ssh
 
 RUN curl https://dapp.tools/install | sh
-ENV PATH="$PATH:$HOME/.nix-profile/bin"
+ENV PATH="$PATH:/home/user/.nix-profile/bin"
