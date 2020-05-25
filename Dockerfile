@@ -11,14 +11,27 @@ RUN    apt-get update        \
         pkg-config           \
         python3
 
-RUN curl -L https://nixos.org/nix/install | sh
+RUN    addgroup --system nixbld                                                       \
+    && adduser --home /home/nix --disabled-password --gecos "" --shell /bin/bash nix  \
+    && adduser nix nixbld                                                             \
+    && mkdir -m 0755 /nix                                                             \
+    && chown nix /nix                                                                 \
+    && mkdir -p /etc/nix                                                              \
+    && echo 'sandbox = false' > /etc/nix/nix.conf
+USER nix
+ENV USER=nix
+WORKDIR /home/nix
+RUN touch .bash_profile && curl https://nixos.org/nix/install | sh --daemon
 
+USER root
+ENV user=root
 ARG USER_ID=1000
 ARG GROUP_ID=1000
 RUN groupadd -g $GROUP_ID user && useradd -m -u $USER_ID -s /bin/sh -g user -G user
 
 USER user:user
 WORKDIR /home/user
+ENV user=user
 
 RUN    git config --global user.email "admin@runtimeverification.com" \
     && git config --global user.name  "RV Jenkins"                    \
