@@ -28,11 +28,11 @@ LUA_PATH:=$(PANDOC_TANGLE_SUBMODULE)/?.lua;;
 export TANGLER
 export LUA_PATH
 
-.PHONY: all clean                                             \
-        deps deps-k deps-media                                \
-        defn defn-llvm defn-haskell                           \
-        build build-llvm build-haskell                        \
-        test test-execution test-python-generator test-random
+.PHONY: all clean                                                           \
+        deps deps-k deps-media                                              \
+        defn defn-llvm defn-haskell                                         \
+        build build-llvm build-haskell                                      \
+        test test-execution test-python-generator test-random test-solidity
 .SECONDARY:
 
 all: build
@@ -115,7 +115,7 @@ $(haskell_kompiled): $(haskell_files)
 
 KMCD_RANDOMSEED := ""
 
-test: test-execution test-python-generator test-random
+test: test-execution test-python-generator test-random test-solidity
 
 execution_tests_random := $(wildcard tests/*/*.random.mcd)
 execution_tests := $(wildcard tests/*/*.mcd)
@@ -127,6 +127,11 @@ init_random_seeds :=
 
 test-random: mcd-pyk.py
 	python3 $< random-test 1 1 $(init_random_seeds) --emit-solidity
+
+test-solidity:
+	cd tests/mkr-mcd-spec-sort-tests \
+	    && dapp build                \
+	    && dapp test
 
 ### Testing Parameters
 
