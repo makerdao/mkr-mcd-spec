@@ -10,7 +10,7 @@
     path = deps/dss
     url = https://github.com/makerdao/dss
     ignore = untracked
-[submodule "tests/mkr-mcd-spec-sort-tests"]
-    path = tests/mkr-mcd-spec-sort-tests
+[submodule "tests/mkr-mcd-spec-sol-tests"]
+    path = tests/mkr-mcd-spec-sol-tests
     url = https://github.com/makerdao/mkr-mcd-spec-sol-tests.git
     ignore = untracked
