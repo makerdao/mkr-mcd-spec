@@ -29,5 +29,6 @@ RUN    git config --global user.email "admin@runtimeverification.com" \
     && echo '    stricthostkeychecking accept-new' >> ~/.ssh/config   \
     && chmod go-rwx -R ~/.ssh
 
+ENV USER=user
 RUN curl https://dapp.tools/install | sh
 ENV PATH="$PATH:$HOME/.nix-profile/bin"
