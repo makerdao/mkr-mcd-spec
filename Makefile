@@ -43,12 +43,13 @@ clean:
 # Dependencies
 # ------------
 
-deps: deps-k
-deps-k: $(K_SUBMODULE)/mvn.timestamp
+K_JAR := $(K_SUBMODULE)/k-distribution/target/release/k/lib/java/kernel-1.0-SNAPSHOT.jar
 
-$(K_SUBMODULE)/mvn.timestamp:
+deps: deps-k
+deps-k: $(K_JAR)
+
+$(K_JAR):
 	cd $(K_SUBMODULE) && mvn package -DskipTests -Dproject.build.type=$(K_BUILD_TYPE)
-	touch $(K_SUBMODULE)/mvn.timestamp
 
 # Building
 # --------
