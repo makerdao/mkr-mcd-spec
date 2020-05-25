@@ -5,6 +5,7 @@ RUN    apt-get update        \
     && apt-get upgrade --yes \
     && apt-get install --yes \
         cmake                \
+        curl                 \
         libprocps-dev        \
         pandoc               \
         pkg-config           \
