@@ -9,12 +9,13 @@ RUN    apt-get update        \
         libprocps-dev        \
         pandoc               \
         pkg-config           \
-        python3              \
-        sudo
+        python3
+
+RUN curl -L https://nixos.org/nix/install | sh
 
 ARG USER_ID=1000
 ARG GROUP_ID=1000
-RUN groupadd -g $GROUP_ID user && useradd -m -u $USER_ID -s /bin/sh -g user -G sudo user
+RUN groupadd -g $GROUP_ID user && useradd -m -u $USER_ID -s /bin/sh -g user -G user
 
 USER user:user
 WORKDIR /home/user
@@ -29,6 +30,5 @@ RUN    git config --global user.email "admin@runtimeverification.com" \
     && echo '    stricthostkeychecking accept-new' >> ~/.ssh/config   \
     && chmod go-rwx -R ~/.ssh
 
-ENV USER=user
 RUN curl https://dapp.tools/install | sh
 ENV PATH="$PATH:$HOME/.nix-profile/bin"
