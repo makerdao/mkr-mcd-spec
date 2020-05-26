@@ -391,6 +391,29 @@ def extractAsserts(config):
     stateDelta = pyk.collapseDots(stateDelta)
     return (printMCD(stateDelta), asserts)
 
+def emitTestFunction(calls, asserts, name = 'Example'):
+    return 'function test' + name + '() public {' + '\n' \
+         + ''                                     + '\n' \
+         + '    // Test Run'                      + '\n' \
+         + '\n    ' + '\n    '.join(calls)        + '\n' \
+         + ''                                     + '\n' \
+         + '    // Assertions'                    + '\n' \
+         + '\n    ' + '\n    '.join(asserts)      + '\n' \
+         + ''                                     + '\n' \
+         + '}'
+
+def emitTestContract(output_pairs, name = 'Example'):
+    test_functions = '\n\n'.join([emitTestFunction(c, a, name = str(i)) for (i, (c, a)) in enumerate(output_pairs)])
+    return 'pragma solidity ^0.5.12;'                              + '\n' \
+         + ''                                                      + '\n' \
+         + 'import "./MkrMcdSpecSolTests.t.sol";'                  + '\n' \
+         + ''                                                      + '\n' \
+         + 'contract Test' + name + ' is MkrMcdSpecSolTestsTest {' + '\n' \
+         + ''                                                      + '\n' \
+         + '\n    ' + '\n    '.join(test_functions.split('\n'))    + '\n' \
+         + ''                                                      + '\n' \
+         + '}'
+
 # Main Functionality
 # ------------------
 
@@ -429,6 +452,7 @@ if __name__ == '__main__':
 
     all_violations = []
     startTime = time.time()
+    solidityTests = []
     for randseed in randseeds:
         for i in range(numruns):
             curRandSeed = bytearray(randseed, 'utf-8') + randombytes(gendepth)
@@ -449,29 +473,17 @@ if __name__ == '__main__':
                 print('    Seed: ' + violation['seed'])
                 print('    Properties: ' + '\n              , '.join(violation['properties']))
                 print(printMCD(violation['output']))
-            if emitSol:
-                trace = extractTrace(output)
-                (stateDelta, asserts) = extractAsserts(output)
-                print()
-                print('### Solidity')
-                print('#### ID:'+str(i))
-                print('------------')
-                print()
-                print('    // Test Run')
-                print('    ' + '\n    '.join(trace))
-                print()
-                print('    // Assertions')
-                print('    ' + '\n    '.join(asserts))
-                print()
-                print('------------')
-                print('### /Solidity')
-                print()
-                print('### State Delta')
-                print('---------------')
-                print()
-                print(stateDelta)
-            sys.stdout.flush()
+            trace = extractTrace(output)
+            (stateDelta, asserts) = extractAsserts(output)
+            solidityTests.append((trace, asserts))
     stopTime = time.time()
+
+    if emitSol:
+        print()
+        print('### Solidity Test Contract')
+        print('--------------------------')
+        print(emitTestContract(solidityTests))
+        sys.stdout.flush()
 
     elapsedTime = stopTime - startTime
     perRunTime  = elapsedTime / (numruns * len(randseeds))
