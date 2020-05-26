@@ -14,13 +14,14 @@ pipeline {
     stage('Build and Test') {
       stages {
         stage('Build') { steps { sh 'make build -j4' } }
-        stage('Test') {
+        stage('Unit Test') {
           parallel {
             stage('Run Simulation Tests') { steps { sh 'make test-execution -j8'    } }
             stage('Python Runner')        { steps { sh 'make test-python-generator' } }
             stage('Random Generation')    { steps { sh 'make test-random'           } }
           }
         }
+        stage('Solidity Test') { steps { sh 'make test-solidity' } }
       }
     }
     stage('Deploy') {
