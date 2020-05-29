@@ -8,11 +8,21 @@ DEPS_DIR:=deps
 K_SUBMODULE:=$(abspath $(DEPS_DIR)/k)
 PANDOC_TANGLE_SUBMODULE:=$(DEPS_DIR)/pandoc-tangle
 
-K_RELEASE := $(K_SUBMODULE)/k-distribution/target/release/k
-K_BIN     := $(K_RELEASE)/bin
-K_LIB     := $(K_RELEASE)/lib
+K_SUBMODULE := $(DEPS_DIR)/k
+ifneq (,$(wildcard $(K_SUBMODULE)/k-distribution/target/release/k/bin/*))
+    K_RELEASE ?= $(abspath $(K_SUBMODULE)/k-distribution/target/release/k)
+else
+    K_RELEASE ?= $(dir $(shell which kompile))..
+endif
+K_BIN := $(K_RELEASE)/bin
+K_LIB := $(K_RELEASE)/lib/kframework
+export K_RELEASE
 
-K_BUILD_TYPE := FastBuild
+ifneq (,$(RELEASE))
+    K_BUILD_TYPE := Release
+else
+    K_BUILD_TYPE := FastBuild
+endif
 
 K_OPTS += -Xmx8G
 export K_OPTS
@@ -20,7 +30,7 @@ export K_OPTS
 PATH:=$(K_BIN):$(PATH)
 export PATH
 
-PYTHONPATH:=$(K_LIB):/usr/lib/kframework/lib
+PYTHONPATH:=$(K_LIB)
 export PYTHONPATH
 
 TANGLER:=$(PANDOC_TANGLE_SUBMODULE)/tangle.lua
@@ -58,8 +68,11 @@ MAIN_MODULE    := KMCD-GEN
 SYNTAX_MODULE  := $(MAIN_MODULE)
 MAIN_DEFN_FILE := kmcd-prelude
 
-KOMPILE_OPTS      :=
-LLVM_KOMPILE_OPTS := $(KOMPILE_OPTS) -ccopt -O2
+KOMPILE_OPTS :=
+
+ifneq (,$(RELEASE))
+    KOMPILE_OPTS += -O3
+endif
 
 k_files := $(MAIN_DEFN_FILE).k kmcd-prelude.k kmcd-props.k kmcd.k fixed-int.k kmcd-data.k kmcd-driver.k cat.k dai.k end.k flap.k flip.k flop.k gem.k join.k jug.k pot.k spot.k vat.k vow.k
 
@@ -100,7 +113,7 @@ $(llvm_kompiled): $(llvm_files)
 	        --syntax-module $(SYNTAX_MODULE) $(llvm_dir)/$(MAIN_DEFN_FILE).k \
 	        --directory $(llvm_dir) -I $(llvm_dir)                           \
 	        --emit-json                                                      \
-	        $(LLVM_KOMPILE_OPTS)
+	        $(KOMPILE_OPTS)
 
 # Haskell Backend
 
