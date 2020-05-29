@@ -22,6 +22,9 @@ USER user:user
 ENV USER=user
 WORKDIR /home/user
 
+RUN curl https://dapp.tools/install | sh
+ENV PATH="$PATH:/home/user/.nix-profile/bin"
+
 RUN    git config --global user.email "admin@runtimeverification.com" \
     && git config --global user.name  "RV Jenkins"                    \
     && mkdir -p ~/.ssh                                                \
@@ -31,6 +34,3 @@ RUN    git config --global user.email "admin@runtimeverification.com" \
     && echo '    identityagent SSH_AUTH_SOCK'      >> ~/.ssh/config   \
     && echo '    stricthostkeychecking accept-new' >> ~/.ssh/config   \
     && chmod go-rwx -R ~/.ssh
-
-RUN curl https://dapp.tools/install | sh
-ENV PATH="$PATH:/home/user/.nix-profile/bin"
