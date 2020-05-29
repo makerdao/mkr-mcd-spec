@@ -70,7 +70,7 @@ MAIN_DEFN_FILE := kmcd-prelude
 
 KOMPILE_OPTS :=
 
-ifneq $(,$(RELEASE))
+ifneq (,$(RELEASE))
     KOMPILE_OPTS += -O3
 endif
 
@@ -113,7 +113,7 @@ $(llvm_kompiled): $(llvm_files)
 	        --syntax-module $(SYNTAX_MODULE) $(llvm_dir)/$(MAIN_DEFN_FILE).k \
 	        --directory $(llvm_dir) -I $(llvm_dir)                           \
 	        --emit-json                                                      \
-	        $(LLVM_KOMPILE_OPTS)
+	        $(KOMPILE_OPTS)
 
 # Haskell Backend
 
