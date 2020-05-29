@@ -8,9 +8,15 @@ DEPS_DIR:=deps
 K_SUBMODULE:=$(abspath $(DEPS_DIR)/k)
 PANDOC_TANGLE_SUBMODULE:=$(DEPS_DIR)/pandoc-tangle
 
-K_RELEASE := $(K_SUBMODULE)/k-distribution/target/release/k
-K_BIN     := $(K_RELEASE)/bin
-K_LIB     := $(K_RELEASE)/lib
+K_SUBMODULE := $(DEPS_DIR)/k
+ifneq (,$(wildcard $(K_SUBMODULE)/k-distribution/target/release/k/bin/*))
+    K_RELEASE ?= $(abspath $(K_SUBMODULE)/k-distribution/target/release/k)
+else
+    K_RELEASE ?= $(dir $(shell which kompile))..
+endif
+K_BIN := $(K_RELEASE)/bin
+K_LIB := $(K_RELEASE)/lib/kframework
+export K_RELEASE
 
 K_BUILD_TYPE := FastBuild
 
@@ -20,7 +26,7 @@ export K_OPTS
 PATH:=$(K_BIN):$(PATH)
 export PATH
 
-PYTHONPATH:=$(K_LIB):/usr/lib/kframework/lib
+PYTHONPATH:=$(K_LIB)
 export PYTHONPATH
 
 TANGLER:=$(PANDOC_TANGLE_SUBMODULE)/tangle.lua
