@@ -24,36 +24,36 @@ pipeline {
         stage('Solidity Test') { steps { sh 'make test-solidity' } }
       }
     }
-    stage('Deploy') {
-      when {
-        branch 'master'
-        beforeAgent true
-      }
-      post {
-        failure {
-          slackSend color: '#cb2431'                            \
-                  , channel: '#maker-internal'                  \
-                  , message: "Deploy failure: ${env.BUILD_URL}"
-        }
-      }
-      stages {
-        stage('Push GitHub Pages') {
-          steps {
-            sshagent(['2b3d8d6b-0855-4b59-864a-6b3ddf9c9d1a']) {
-              sh '''
-                git remote set-url origin 'ssh://github.com/runtimeverification/mkr-mcd-spec'
-                git checkout -B 'gh-pages'
-                rm -rf .build .gitignore deps .gitmodules Dockerfile Jenkinsfile Makefile kmcd mcd-pyk.py
-                git add ./
-                git commit -m 'gh-pages: remove unrelated content'
-                git fetch origin gh-pages
-                git merge --strategy ours FETCH_HEAD
-                git push origin gh-pages
-              '''
-            }
-          }
-        }
-      }
-    }
+    // stage('Deploy') {
+    //   when {
+    //     branch 'master'
+    //     beforeAgent true
+    //   }
+    //   post {
+    //     failure {
+    //       slackSend color: '#cb2431'                            \
+    //               , channel: '#maker-internal'                  \
+    //               , message: "Deploy failure: ${env.BUILD_URL}"
+    //     }
+    //   }
+    //   stages {
+    //     stage('Push GitHub Pages') {
+    //       steps {
+    //         sshagent(['2b3d8d6b-0855-4b59-864a-6b3ddf9c9d1a']) {
+    //           sh '''
+    //             git remote set-url origin 'ssh://github.com/runtimeverification/mkr-mcd-spec'
+    //             git checkout -B 'gh-pages'
+    //             rm -rf .build .gitignore deps .gitmodules Dockerfile Jenkinsfile Makefile kmcd mcd-pyk.py
+    //             git add ./
+    //             git commit -m 'gh-pages: remove unrelated content'
+    //             git fetch origin gh-pages
+    //             git merge --strategy ours FETCH_HEAD
+    //             git push origin gh-pages
+    //           '''
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
   }
 }
