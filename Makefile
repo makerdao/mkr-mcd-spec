@@ -4,11 +4,10 @@
 BUILD_DIR:=.build
 DEFN_DIR:=$(BUILD_DIR)/defn
 
-DEPS_DIR:=deps
-K_SUBMODULE:=$(abspath $(DEPS_DIR)/k)
-PANDOC_TANGLE_SUBMODULE:=$(DEPS_DIR)/pandoc-tangle
+DEPS_DIR                := deps
+K_SUBMODULE             := $(DEPS_DIR)/k
+PANDOC_TANGLE_SUBMODULE := $(DEPS_DIR)/pandoc-tangle
 
-K_SUBMODULE := $(DEPS_DIR)/k
 ifneq (,$(wildcard $(K_SUBMODULE)/k-distribution/target/release/k/bin/*))
     K_RELEASE ?= $(abspath $(K_SUBMODULE)/k-distribution/target/release/k)
 else
