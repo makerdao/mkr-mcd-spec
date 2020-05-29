@@ -18,7 +18,11 @@ K_BIN := $(K_RELEASE)/bin
 K_LIB := $(K_RELEASE)/lib/kframework
 export K_RELEASE
 
-K_BUILD_TYPE := FastBuild
+ifneq (,$(RELEASE))
+    K_BUILD_TYPE := Release
+else
+    K_BUILD_TYPE := FastBuild
+endif
 
 K_OPTS += -Xmx8G
 export K_OPTS
@@ -64,8 +68,11 @@ MAIN_MODULE    := KMCD-GEN
 SYNTAX_MODULE  := $(MAIN_MODULE)
 MAIN_DEFN_FILE := kmcd-prelude
 
-KOMPILE_OPTS      :=
-LLVM_KOMPILE_OPTS := $(KOMPILE_OPTS) -ccopt -O2
+KOMPILE_OPTS :=
+
+ifneq $(,$(RELEASE))
+    KOMPILE_OPTS += -O3
+endif
 
 k_files := $(MAIN_DEFN_FILE).k kmcd-prelude.k kmcd-props.k kmcd.k fixed-int.k kmcd-data.k kmcd-driver.k cat.k dai.k end.k flap.k flip.k flop.k gem.k join.k jug.k pot.k spot.k vat.k vow.k
 

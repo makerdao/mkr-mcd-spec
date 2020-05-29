@@ -13,7 +13,7 @@ pipeline {
     }
     stage('Build and Test') {
       stages {
-        stage('Build') { steps { sh 'make build -j4' } }
+        stage('Build') { steps { sh 'make build -j4 RELEASE=true' } }
         stage('Unit Test') {
           parallel {
             stage('Run Simulation Tests') { steps { sh 'make test-execution -j8'    } }
