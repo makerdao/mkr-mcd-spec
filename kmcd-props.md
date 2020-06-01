@@ -183,18 +183,17 @@ A violation occurs if any of the properties above holds.
 ```k
     syntax Map ::= "#violationFSMs" [function]
  // ------------------------------------------
-    rule #violationFSMs => ( "Zero-Time Pot Interest Accumulation" |-> zeroTimePotInterest                                 )
-                           ( "Pot Interest Accumulation After End" |-> potEndInterest                                      )
-                           ( "Unauthorized Flip Kick"              |-> unAuthFlipKick                                      )
-                           ( "Unauthorized Flap Kick"              |-> unAuthFlapKick                                      )
-                           ( "Total Bound on Debt"                 |-> totalDebtBounded(... dsr: ray(1))                   )
-                           ( "PotChi PotPie VatPot"                |-> potChiPieDai(... offset: rad(0))                    )
-                           ( "Total Backed Debt Consistency"       |-> totalBackedDebtConsistency                          )
-                           ( "Debt Constant After Thaw"            |-> debtConstantAfterThaw                               )
-                           ( "Flap Dai Consistency"                |-> flapDaiConsistency                                  )
-                           ( "Flap MKR Consistency"                |-> flapMkrConsistency                                  )
-                           ( "Flop Block Check"                    |-> flopBlockCheck(... embers: rad(0), dented: 0)       )
-                           ( "Vow Ash Constant"                    |-> vowAshConstant(... curAsh: rad(0), curSump: rad(0)) )
+    rule #violationFSMs => ( "Zero-Time Pot Interest Accumulation" |-> zeroTimePotInterest                           )
+                           ( "Pot Interest Accumulation After End" |-> potEndInterest                                )
+                           ( "Unauthorized Flip Kick"              |-> unAuthFlipKick                                )
+                           ( "Unauthorized Flap Kick"              |-> unAuthFlapKick                                )
+                           ( "Total Bound on Debt"                 |-> totalDebtBounded(... dsr: ray(1))             )
+                           ( "PotChi PotPie VatPot"                |-> potChiPieDai(... offset: rad(0))              )
+                           ( "Total Backed Debt Consistency"       |-> totalBackedDebtConsistency                    )
+                           ( "Debt Constant After Thaw"            |-> debtConstantAfterThaw                         )
+                           ( "Flap Dai Consistency"                |-> flapDaiConsistency                            )
+                           ( "Flap MKR Consistency"                |-> flapMkrConsistency                            )
+                           ( "Flop Block Check"                    |-> flopBlockCheck(... embers: rad(0), dented: 0) )
 ```
 
 A violation can be checked using the Admin step `assert`. If a violation is detected,
@@ -389,17 +388,12 @@ The property checks if a successful `Pot . join` is preceded by a `TimeStep` mor
  // ----------------------------------------------------------------
     rule derive(flopBlockCheck(... embers: EMBERS, dented: DENTED), Measure(... dai: VAT_DAI, ash: ASH)) => Violated(flopBlockCheck(... embers: EMBERS, dented: DENTED))
         requires (ASH -Rad #lookupRad(VAT_DAI, Vow) >Rad EMBERS)
-    rule derive(flopBlockCheck(... embers: EMBERS, dented: DENTED), LogNote(_ , Flop . kick ID _ BID)) => flopBlockCheck(... embers: EMBERS +Rad BID, dented: DENTED)
+
+    rule derive(flopBlockCheck(... embers: EMBERS, dented: DENTED), FlopKick(_, _, BID, _)) => flopBlockCheck(... embers: EMBERS +Rad BID, dented: DENTED)
+
     rule derive(flopBlockCheck(... embers: EMBERS, dented: DENTED), LogNote(_ , Flop . dent ID _ BID)) => flopBlockCheck(... embers: EMBERS -Rad BID, dented: DENTED +Int (2 ^Int ID))
         requires ( ( ( DENTED /Int ( 2 ^Int ID ) ) modInt 2 ) ==Int 0 )
     rule derive(flopBlockCheck(... embers: EMBERS, dented: DENTED), LogNote(_ , Flop . dent ID _ BID)) => flopBlockCheck(... embers: EMBERS, dented: DENTED) [owise]
-
-    syntax ViolationFSM ::= vowAshConstant(curAsh: Rad, curSump: Rad)
- // -----------------------------------------------------------------
-    rule derive(vowAshConstant(... curAsh: CUR_ASH, curSump: CUR_SUMP), LogNote(_, Vow . flop)       ) => vowAshConstant(... curAsh: CUR_ASH +Rad CUR_SUMP, curSump: CUR_SUMP)
-    rule derive(vowAshConstant(... curAsh: CUR_ASH, curSump: CUR_SUMP), LogNote(_, Vow . kiss AMOUNT)) => vowAshConstant(... curAsh: CUR_ASH -Rad AMOUNT  , curSump: CUR_SUMP)
-
-    rule derive(vowAshConstant(... curAsh: CUR_ASH) #as PREV, Measure(... ash: MEASURE_ASH)) => Violated(PREV) requires CUR_ASH =/=Rad MEASURE_ASH
 ```
 
 ```k
