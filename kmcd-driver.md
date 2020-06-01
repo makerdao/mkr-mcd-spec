@@ -144,8 +144,8 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
          <tx-log> Transaction(... subcalls: L => L EVENTS) </tx-log>
          <frame-events> EVENTS => PREVEVENTS </frame-events>
 
-    syntax Event ::= Exception ( MCDStep ) [klabel(LogException), symbol]
- // ---------------------------------------------------------------------
+    syntax Event ::= Exception ( Address , MCDStep ) [klabel(LogException), symbol]
+ // -------------------------------------------------------------------------------
 
     syntax AdminStep ::= "exception" MCDStep
  // ----------------------------------------
@@ -160,7 +160,6 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
 
     rule <k> exception MCDSTEP ~> dropState => popState ... </k>
          <call-stack> .List </call-stack>
-         <events> ... (.List => ListItem(Exception(MCDSTEP))) </events>
 
     rule <k> exception _ ~> (assert => .) ... </k>
 ```
