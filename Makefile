@@ -141,7 +141,7 @@ init_random_seeds :=
 test-random: mcd-pyk.py
 	python3 $< random-test 1 1 $(init_random_seeds) --emit-solidity
 
-test-solidity: $(patsubst %, tests/mkr-mcd-spec-sol-tests/%.t.sol, 01 02 03 04 05 06 07 08 09 10)
+test-solidity: $(patsubst %, tests/mkr-mcd-spec-sol-tests/src/%.t.sol, 01 02 03 04 05 06 07 08 09 10)
 	cd tests/mkr-mcd-spec-sol-tests \
 	    && dapp build               \
 	    && dapp test
