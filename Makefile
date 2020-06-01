@@ -141,7 +141,7 @@ init_random_seeds :=
 test-random: mcd-pyk.py
 	python3 $< random-test 1 1 $(init_random_seeds) --emit-solidity
 
-test-solidity:
+test-solidity: $(patsubst %, tests/mkr-mcd-spec-sol-tests/%.t.sol, 01 02 03 04 05 06 07 08 09 10)
 	cd tests/mkr-mcd-spec-sol-tests \
 	    && dapp build               \
 	    && dapp test
@@ -151,6 +151,9 @@ test-solidity:
 TEST_BACKEND := llvm
 KMCD         := ./kmcd
 CHECK        := git --no-pager diff --no-index --ignore-all-space -R
+
+RANDOM_TEST_RUNS  := 5
+RANDOM_TEST_DEPTH := 200
 
 TEST_KOMPILED := $(llvm_kompiled)
 ifeq ($(TEST_BACKEND), haskell)
@@ -172,3 +175,6 @@ tests/%.mcd.python-out: mcd-pyk.py $(TEST_KOMPILED)
 
 tests/%.mcd.run: tests/%.mcd.out
 	$(CHECK) tests/$*.mcd.out tests/$*.mcd.expected
+
+tests/mkr-mcd-spec-sol-tests/%.t.sol: mcd-pyk.py
+	python3 $< random-test $(RANDOM_TEST_DEPTH) $(RANDOM_TEST_RUNS) $(KMCD_RANDOMSEED) --emit-solidity --emit-solidity-file $@
