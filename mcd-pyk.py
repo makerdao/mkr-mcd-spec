@@ -422,10 +422,11 @@ mcdArgs = argparse.ArgumentParser()
 mcdCommands = mcdArgs.add_subparsers()
 
 mcdRandomTestArgs = mcdCommands.add_parser('random-test', help = 'Run random tester and check for property violations.')
-mcdRandomTestArgs.add_argument( 'depth'           , type = int  ,               help = 'Number of bytes to feed as random input into each run' )
-mcdRandomTestArgs.add_argument( 'numRuns'         , type = int  ,               help = 'Number of runs per random seed.'                       )
-mcdRandomTestArgs.add_argument( 'initSeeds'       , type = str  , nargs = '*' , help = 'Random seeds to use as run prefixes.'                  )
-mcdRandomTestArgs.add_argument( '--emit-solidity' , action = 'store_true'     , help = 'Emit Solidity code reproducing the trace.'             )
+mcdRandomTestArgs.add_argument( 'depth'                , type = int ,               help = 'Number of bytes to feed as random input into each run' )
+mcdRandomTestArgs.add_argument( 'numRuns'              , type = int ,               help = 'Number of runs per random seed.'                       )
+mcdRandomTestArgs.add_argument( 'initSeeds'            , type = str , nargs = '*' , help = 'Random seeds to use as run prefixes.'                  )
+mcdRandomTestArgs.add_argument( '--emit-solidity'      , action = 'store_true'    , help = 'Emit Solidity code reproducing the trace.'             )
+mcdRandomTestArgs.add_argument( '--emit-solidity-file' , type = argparse.FileType('w') , default = '-' , help = 'File to emit Solidity code to.'   )
 mcdRandomTestArgs.set_defaults(emit_solidity = False)
 
 if __name__ == '__main__':
@@ -479,11 +480,15 @@ if __name__ == '__main__':
     stopTime = time.time()
 
     if emitSol:
+        solidityContract = emitTestContract(solidityTests)
         print()
-        print('### Solidity Test Contract')
-        print('--------------------------')
-        print(emitTestContract(solidityTests))
+        print('Writing Solidity File: ' + args['emit_solidity_file'].name)
+        print()
         sys.stdout.flush()
+        args['emit_solidity_file'].write('// Generated Test\n')
+        args['emit_solidity_file'].write('// --------------\n')
+        args['emit_solidity_file'].write('\n')
+        args['emit_solidity_file'].write(solidityContract)
 
     elapsedTime = stopTime - startTime
     perRunTime  = elapsedTime / (numruns * len(randseeds))
