@@ -215,12 +215,13 @@ it is recorded in the state and execution is immediately terminated.
 
     syntax List ::= #extractAssertEvents ( List ) [function]
  // --------------------------------------------------------
-    rule #extractAssertEvents(.List)                                                                   => .List
-    rule #extractAssertEvents(ListItem(M:Measure)                                                REST) => ListItem(M)                  #extractAssertEvents(REST)
-    rule #extractAssertEvents(ListItem(TimeStep(_, _) #as T)                                     REST) => ListItem(T)                  #extractAssertEvents(REST)
-    rule #extractAssertEvents(ListItem(Transaction(... acct: ADDR, call: C, txException: false)) REST) => ListItem(LogNote(ADDR, C))   #extractAssertEvents(REST)
-    rule #extractAssertEvents(ListItem(Transaction(... acct: ADDR, call: C, txException: true )) REST) => ListItem(Exception(ADDR, C)) #extractAssertEvents(REST)
-    rule #extractAssertEvents(ListItem(_)                                                        REST) =>                              #extractAssertEvents(REST) [owise]
+    rule #extractAssertEvents(.List)                                                                               => .List
+    rule #extractAssertEvents(ListItem(C:CustomEvent)                                                        REST) => ListItem(C)                                           #extractAssertEvents(REST)
+    rule #extractAssertEvents(ListItem(M:Measure)                                                            REST) => ListItem(M)                                           #extractAssertEvents(REST)
+    rule #extractAssertEvents(ListItem(TimeStep(_, _) #as T)                                                 REST) => ListItem(T)                                           #extractAssertEvents(REST)
+    rule #extractAssertEvents(ListItem(Transaction(... acct: ADDR, call: C, events: ES, txException: false)) REST) => ListItem(LogNote(ADDR, C))   #extractAssertEvents(ES) #extractAssertEvents(REST)
+    rule #extractAssertEvents(ListItem(Transaction(... acct: ADDR, call: C,             txException: true )) REST) => ListItem(Exception(ADDR, C))                          #extractAssertEvents(REST)
+    rule #extractAssertEvents(ListItem(_)                                                                    REST) =>                                                       #extractAssertEvents(REST) [owise]
 ```
 
 ### Violation Finite State Machines (FSMs)

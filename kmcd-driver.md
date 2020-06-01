@@ -94,7 +94,7 @@ Use `transact ...` for initiating top-level calls from a given user.
          <msg-sender> _ => ADDR </msg-sender>
          <call-stack> _ => .List </call-stack>
          <pre-state> _ => .K </pre-state>
-         <tx-log> _ => Transaction(... acct: ADDR, call: MCD, subcalls: .List, txException: false) </tx-log>
+         <tx-log> _ => Transaction(... acct: ADDR, call: MCD, events: .List, txException: false) </tx-log>
          <frame-events> _ => .List </frame-events>
          <return-value> _ => .K </return-value>
 
@@ -106,9 +106,9 @@ Use `transact ...` for initiating top-level calls from a given user.
          <tx-log> Transaction(... txException: _ => true) </tx-log>
 
     syntax Event ::= Transaction
-    syntax Transaction ::= ".Transaction"                                                                     [klabel(.Transaction) , symbol]
-                         | Transaction ( acct: Address , call: MCDStep , subcalls: List , txException: Bool ) [klabel(Transaction)  , symbol]
- // -----------------------------------------------------------------------------------------------------------------------------------------
+    syntax Transaction ::= ".Transaction"                                                                   [klabel(.Transaction) , symbol]
+                         | Transaction ( acct: Address , call: MCDStep , events: List , txException: Bool ) [klabel(Transaction)  , symbol]
+ // ---------------------------------------------------------------------------------------------------------------------------------------
 
     syntax AdminStep ::= "pushState" | "dropState" | "popState" | "assert"
  // ----------------------------------------------------------------------
@@ -141,7 +141,7 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
          <msg-sender> MSGSENDER => PREVSENDER </msg-sender>
          <this> THIS => MSGSENDER </this>
          <call-stack> ListItem(frame(PREVSENDER, PREVEVENTS, CONT)) => .List ... </call-stack>
-         <tx-log> Transaction(... subcalls: L => L EVENTS) </tx-log>
+         <tx-log> Transaction(... events: L => L EVENTS) </tx-log>
          <frame-events> EVENTS => PREVEVENTS </frame-events>
 
     syntax Event ::= Exception ( Address , MCDStep ) [klabel(LogException), symbol]
@@ -155,7 +155,7 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
          <msg-sender> MSGSENDER => PREVSENDER </msg-sender>
          <this> THIS => MSGSENDER </this>
          <call-stack> ListItem(frame(PREVSENDER, PREVEVENTS, CONT)) => .List ... </call-stack>
-         <tx-log> Transaction(... subcalls: L => L EVENTS) </tx-log>
+         <tx-log> Transaction(... events: L => L EVENTS) </tx-log>
          <frame-events> EVENTS => PREVEVENTS </frame-events>
 
     rule <k> exception MCDSTEP ~> dropState => popState ... </k>
@@ -172,6 +172,14 @@ Most operations add to the log, which stores the address which made the call and
 ```k
     syntax Event ::= LogNote(Address, MCDStep) [klabel(LogNote), symbol]
  // --------------------------------------------------------------------
+```
+
+Some contracts emit custom events, which are held in a subsort.
+
+```k
+    syntax CustomEvent
+    syntax Event ::= CustomEvent
+ // ----------------------------
 ```
 
 Time Steps
