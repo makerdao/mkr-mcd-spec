@@ -1594,6 +1594,7 @@
       "Total Bound on Debt" |-> Violated ( totalDebtBoundedEnd ( FInt ( 20961914062500000000000000000000000000000000000 , 1000000000000000000000000000000000000000000000 ) ) )
       "Unauthorized Flap Kick" |-> unAuthFlapKick
       "Unauthorized Flip Kick" |-> unAuthFlipKick
+      "Vow Ash Constant" |-> vowAshConstant ( FInt ( 0 , 1000000000000000000000000000000000000000000000 ) , FInt ( 0 , 1000000000000000000000000000000000000000000000 ) )
       "Zero-Time Pot Interest Accumulation" |-> zeroTimePotInterestEnd
     </properties>
   </kmcd-properties>
