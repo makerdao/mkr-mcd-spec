@@ -106,9 +106,9 @@ Use `transact ...` for initiating top-level calls from a given user.
          <tx-log> Transaction(... txException: _ => true) </tx-log>
 
     syntax Event ::= Transaction
-    syntax Transaction ::= ".Transaction"                                                                     [klabel(.Exception) , symbol]
-                         | Transaction ( acct: Address , call: MCDStep , subcalls: List , txException: Bool ) [klabel(Transaction), symbol]
- // ---------------------------------------------------------------------------------------------------------------------------------------
+    syntax Transaction ::= ".Transaction"                                                                     [klabel(.Transaction) , symbol]
+                         | Transaction ( acct: Address , call: MCDStep , subcalls: List , txException: Bool ) [klabel(Transaction)  , symbol]
+ // -----------------------------------------------------------------------------------------------------------------------------------------
 
     syntax AdminStep ::= "pushState" | "dropState" | "popState" | "assert"
  // ----------------------------------------------------------------------
