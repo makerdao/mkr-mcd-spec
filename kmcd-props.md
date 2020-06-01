@@ -198,7 +198,7 @@ it is recorded in the state and execution is immediately terminated.
 ```k
     syntax AdminStep ::= "#assert" | "#assert-failure"
  // --------------------------------------------------
-    rule <k> assert => deriveAll(keys_list(VFSMS), EVENTS ListItem(Measure())) ~> #assert ... </k>
+    rule <k> assert => deriveAll(keys_list(VFSMS), #extractAssertEvents(EVENTS ListItem(Measure()))) ~> #assert ... </k>
          <events> EVENTS => .List </events>
          <properties> VFSMS </properties>
 
@@ -207,6 +207,14 @@ it is recorded in the state and execution is immediately terminated.
       requires notBool anyViolation(values(VFSMS))
 
     rule <k> #assert => #assert-failure ... </k> [owise]
+
+    syntax List ::= #extractAssertEvents ( List ) [function]
+ // --------------------------------------------------------
+    rule #extractAssertEvents(.List)                                                                   => .List
+    rule #extractAssertEvents(ListItem(M:Measure)                                                REST) => ListItem(M)                #extractAssertEvents(REST)
+    rule #extractAssertEvents(ListItem(TimeStep(_, _) #as T)                                     REST) => ListItem(T)                #extractAssertEvents(REST)
+    rule #extractAssertEvents(ListItem(Transaction(... acct: ADDR, call: C, txException: false)) REST) => ListItem(LogNote(ADDR, C)) #extractAssertEvents(REST)
+    rule #extractAssertEvents(ListItem(_)                                                        REST) =>                            #extractAssertEvents(REST) [owise]
 ```
 
 ### Violation Finite State Machines (FSMs)
@@ -246,7 +254,7 @@ A default `owise` rule is added which leaves the FSM state unchanged.
           ~> deriveAll(VFSMIDS, REST)
          ...
          </k>
-         <processed-events> ... (.List => ListItem(E)) </processed-events>
+         <processed-events> L => L ListItem(E) </processed-events>
 
     rule <k> deriveVFSM(.List                 , E) => .                   ... </k>
     rule <k> deriveVFSM(ListItem(VFSMID) REST , E) => deriveVFSM(REST, E) ... </k>

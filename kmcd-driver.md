@@ -21,6 +21,7 @@ module KMCD-DRIVER
           <call-stack> .List </call-stack>
           <pre-state> .K </pre-state>
           <events> .List </events>
+          <tx-log> .Transaction </tx-log>
           <frame-events> .List </frame-events>
         </kmcd-driver>
 ```
@@ -86,15 +87,28 @@ Transactions
 Use `transact ...` for initiating top-level calls from a given user.
 
 ```k
-    syntax AdminStep ::= "transact" Address MCDStep
- // -----------------------------------------------
-    rule <k> transact ADDR:Address MCD:MCDStep => pushState ~> call MCD ~> assert ~> dropState ... </k>
+    syntax AdminStep ::= "transact" Address MCDStep | "#end-transact"
+ // -----------------------------------------------------------------
+    rule <k> transact ADDR:Address MCD:MCDStep => pushState ~> call MCD ~> #end-transact ~> assert ~> dropState ... </k>
          <this> _ => ADDR </this>
          <msg-sender> _ => ADDR </msg-sender>
          <call-stack> _ => .List </call-stack>
          <pre-state> _ => .K </pre-state>
+         <tx-log> _ => Transaction(... acct: ADDR, call: MCD, subcalls: .List, txException: false) </tx-log>
          <frame-events> _ => .List </frame-events>
          <return-value> _ => .K </return-value>
+
+    rule <k> #end-transact => . ... </k>
+         <events> ... (.List => ListItem(TXLOG)) </events>
+         <tx-log> TXLOG => .Transaction </tx-log>
+
+    rule <k> exception MCDSTEP ~> #end-transact => #end-transact ~> exception MCDSTEP ... </k>
+         <tx-log> Transaction(... txException: _ => true) </tx-log>
+
+    syntax Event ::= Transaction
+    syntax Transaction ::= ".Transaction"                                                                     [klabel(.Exception) , symbol]
+                         | Transaction ( acct: Address , call: MCDStep , subcalls: List , txException: Bool ) [klabel(Transaction), symbol]
+ // ---------------------------------------------------------------------------------------------------------------------------------------
 
     syntax AdminStep ::= "pushState" | "dropState" | "popState" | "assert"
  // ----------------------------------------------------------------------
@@ -127,7 +141,7 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
          <msg-sender> MSGSENDER => PREVSENDER </msg-sender>
          <this> THIS => MSGSENDER </this>
          <call-stack> ListItem(frame(PREVSENDER, PREVEVENTS, CONT)) => .List ... </call-stack>
-         <events> L => L EVENTS </events>
+         <tx-log> Transaction(... subcalls: L => L EVENTS) </tx-log>
          <frame-events> EVENTS => PREVEVENTS </frame-events>
 
     syntax Event ::= Exception ( MCDStep ) [klabel(LogException), symbol]
@@ -141,7 +155,8 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
          <msg-sender> MSGSENDER => PREVSENDER </msg-sender>
          <this> THIS => MSGSENDER </this>
          <call-stack> ListItem(frame(PREVSENDER, PREVEVENTS, CONT)) => .List ... </call-stack>
-         <frame-events> _ => PREVEVENTS </frame-events>
+         <tx-log> Transaction(... subcalls: L => L EVENTS) </tx-log>
+         <frame-events> EVENTS => PREVEVENTS </frame-events>
 
     rule <k> exception MCDSTEP ~> dropState => popState ... </k>
          <call-stack> .List </call-stack>
