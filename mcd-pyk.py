@@ -257,7 +257,7 @@ def argify(arg):
        or newArg in ['cat', 'dai', 'end', 'flap', 'flop', 'jug', 'pot', 'spotter', 'vat', 'vow'] \
        or newArg.endswith('Flip') or newArg.endswith('Join'):
         newArg = 'address(' + newArg + ')'
-    if newArg in ['gold', 'line', 'mat', 'par', 'dsr']:
+    if newArg in ['gold', 'line', 'mat', 'par', 'dsr', 'Line', 'sump', 'hump', 'dump', 'bump', 'tau']:
         newArg = '"' + newArg + '"'
     return newArg
 
@@ -440,7 +440,8 @@ if __name__ == '__main__':
     if len(randseeds) == 0:
         randseeds = [""]
 
-    config_loader = mcdSteps( [ steps(KConstant('ATTACK-PRELUDE'))
+    config_loader = mcdSteps( [ steps(KConstant('DEPLOY-PRELUDE'))
+                              , steps(KConstant('ATTACK-PRELUDE'))
                               , addGenerator(generator_lucash_pot_end)
                               , addGenerator(generator_lucash_pot)
                               , addGenerator(generator_lucash_flap_end)
