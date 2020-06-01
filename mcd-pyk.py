@@ -315,14 +315,7 @@ def extractTrace(config):
     (_, subst) = pyk.splitConfigFrom(config)
     pEvents = subst['PROCESSED_EVENTS_CELL']
     log_events = flattenList(pEvents)
-    call_events = []
-    last_event = None
-    for event in log_events:
-        if pyk.isKApply(event) and event['label'] == 'LogMeasure':
-            if last_event is not None:
-                call_events.extend(extractCallEvent(last_event))
-        last_event = event
-    return call_events
+    return [ extractCallEvent(e) for e in log_events ]
 
 def noRewriteToDots(config):
     (cfg, subst) = pyk.splitConfigFrom(config)
