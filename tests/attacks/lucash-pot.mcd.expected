@@ -1223,7 +1223,7 @@
       "Flap MKR Consistency" |-> flapMkrConsistency
       "Flop Block Check" |-> flopBlockCheck ( FInt ( 0 , 1000000000000000000000000000000000000000000000 ) , 0 )
       "Pot Interest Accumulation After End" |-> potEndInterest
-      "PotChi PotPie VatPot" |-> potChiPieDai ( FInt ( 0 , 1000000000000000000000000000000000000000000000 ) , FInt ( 0 , 1000000000000000000 ) )
+      "PotChi PotPie VatPot" |-> potChiPieDai ( FInt ( 0 , 1000000000000000000000000000000000000000000000 ) )
       "Total Backed Debt Consistency" |-> totalBackedDebtConsistency
       "Total Bound on Debt" |-> totalDebtBoundedRun ( FInt ( 20000000000000000000000000000000000000000000000 , 1000000000000000000000000000000000000000000000 ) , FInt ( 5000000000000000000000000000 , 1000000000000000000000000000 ) )
       "Unauthorized Flap Kick" |-> unAuthFlapKick
