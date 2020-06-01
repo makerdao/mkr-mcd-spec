@@ -188,7 +188,7 @@ A violation occurs if any of the properties above holds.
                            ( "Unauthorized Flip Kick"              |-> unAuthFlipKick                                      )
                            ( "Unauthorized Flap Kick"              |-> unAuthFlapKick                                      )
                            ( "Total Bound on Debt"                 |-> totalDebtBounded(... dsr: ray(1))                   )
-                           ( "PotChi PotPie VatPot"                |-> potChiPieDai(... offset: rad(0), joining: wad(0))   )
+                           ( "PotChi PotPie VatPot"                |-> potChiPieDai(... offset: rad(0))                    )
                            ( "Total Backed Debt Consistency"       |-> totalBackedDebtConsistency                          )
                            ( "Debt Constant After Thaw"            |-> debtConstantAfterThaw                               )
                            ( "Flap Dai Consistency"                |-> flapDaiConsistency                                  )
@@ -311,17 +311,14 @@ The Debt growth should be bounded in principle by the interest rates available i
 
 ### Pot Chi * Pot Pie == Vat Dai(Pot)
 
-The Pot Chi multiplied by Pot Pie should equal the Vat Dai for the Pot
+The Pot Chi multiplied by Pot Pie should equal the Vat Dai for the Pot (offset by any direct moves people make of Dai to the Pot).
 
 ```k
-    syntax ViolationFSM ::= potChiPieDai ( offset: Rad , joining: Wad )
- // -------------------------------------------------------------------
-    rule derive( potChiPieDai(... offset: OFFSET, joining: JOINING ) , LogNote(_, Pot . join AMOUNT)       ) => potChiPieDai(... offset: OFFSET             , joining: JOINING +Wad AMOUNT )
-    rule derive( potChiPieDai(... offset: OFFSET, joining: JOINING ) , LogNote(_, Vat . move _ Pot AMOUNT) ) => potChiPieDai(... offset: OFFSET +Rad AMOUNT , joining: JOINING             )
+    syntax ViolationFSM ::= potChiPieDai ( offset: Rad )
+ // ----------------------------------------------------
+    rule derive(potChiPieDai(... offset: OFFSET), LogNote(_, Vat . move _ Pot AMOUNT)) => potChiPieDai(... offset: OFFSET +Rad AMOUNT)
 
-    rule derive(potChiPieDai(... offset: OFFSET => OFFSET -Rad (JOINING *Rate POT_CHI), joining: JOINING => wad(0)), Measure(... potChi: POT_CHI)) requires JOINING =/=Wad wad(0)
-
-    rule derive(potChiPieDai(... offset: OFFSET, joining: wad(0)) #as PREV, Measure(... controlDai: CONTROL_DAI, potChi: POT_CHI, potPie: POT_PIE)) => Violated(PREV) requires POT_PIE *Rate POT_CHI =/=Rad #lookupRad(CONTROL_DAI, Pot) -Rad OFFSET
+    rule derive(potChiPieDai(... offset: OFFSET) #as PREV, Measure(... controlDai: CONTROL_DAI, potChi: POT_CHI, potPie: POT_PIE)) => Violated(PREV) requires POT_PIE *Rate POT_CHI =/=Rad #lookupRad(CONTROL_DAI, Pot) -Rad OFFSET
 ```
 
 ### Kicking off a fake `flip` auction (inspired by lucash-flip)
