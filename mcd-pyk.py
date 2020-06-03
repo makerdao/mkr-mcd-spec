@@ -278,7 +278,7 @@ def solidityArgs(ks):
 def unimplemented(s):
     return '// UNIMPLEMENTED << ' + '\n    //'.join(s.split('\n')) + ' >>'
 
-def extractCallEvent(logEvent):
+def extractCallEvents(logEvent):
     if pyk.isKApply(logEvent) and logEvent['label'] == 'LogNote':
         caller = solidify(printMCD(logEvent['args'][0]))
         contract = solidify(printMCD(logEvent['args'][1]['args'][0]))
@@ -315,14 +315,7 @@ def extractTrace(config):
     (_, subst) = pyk.splitConfigFrom(config)
     pEvents = subst['PROCESSED_EVENTS_CELL']
     log_events = flattenList(pEvents)
-    call_events = []
-    last_event = None
-    for event in log_events:
-        if pyk.isKApply(event) and event['label'] == 'LogMeasure':
-            if last_event is not None:
-                call_events.extend(extractCallEvent(last_event))
-        last_event = event
-    return call_events
+    return [ e for event in log_events for e in extractCallEvents(event) ]
 
 def noRewriteToDots(config):
     (cfg, subst) = pyk.splitConfigFrom(config)

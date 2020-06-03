@@ -394,6 +394,9 @@
         <events>
           .List
         </events>
+        <tx-log>
+          .Transaction
+        </tx-log>
         <frame-events>
           .List
         </frame-events>
@@ -1072,7 +1075,6 @@
       Vow |-> FInt ( 0 , 1000000000000000000000000000000000000000000000 ) , FInt ( 0 , 1000000000000000000 ) , Flap |-> FInt ( 0 , 1000000000000000000 )
       GemJoin "MKR" |-> FInt ( 0 , 1000000000000000000 )
       Vow |-> FInt ( 0 , 1000000000000000000 ) , FInt ( 0 , 1000000000000000000000000000000000000000000000 ) ) )
-      ListItem ( LogNote ( ANYONE , Vat . file spot "gold" FInt ( 3000000000000000000000000000000000000 , 1000000000000000000000000000 ) ) )
       ListItem ( LogNote ( ANYONE , Spot . poke "gold" ) )
       ListItem ( Poke ( "gold" , FInt ( 3000000000000000000000000000 , 1000000000000000000 ) , FInt ( 3000000000000000000000000000000000000 , 1000000000000000000000000000 ) ) )
       ListItem ( Measure ( FInt ( 0 , 1000000000000000000000000000000000000000000000 ) , End |-> FInt ( 0 , 1000000000000000000000000000000000000000000000 )
@@ -1389,8 +1391,6 @@
       Flap |-> FInt ( 0 , 1000000000000000000 )
       GemJoin "MKR" |-> FInt ( 0 , 1000000000000000000 )
       Vow |-> FInt ( 0 , 1000000000000000000 ) , FInt ( 0 , 1000000000000000000000000000000000000000000000 ) ) )
-      ListItem ( LogNote ( "Alice" , Vat . slip "gold" "Alice" FInt ( 10000000000000000000 , 1000000000000000000 ) ) )
-      ListItem ( LogNote ( "Alice" , Gem "gold" . transferFrom "Alice" GemJoin "gold" FInt ( 10000000000000000000 , 1000000000000000000 ) ) )
       ListItem ( LogNote ( "Alice" , GemJoin "gold" . join "Alice" FInt ( 10000000000000000000 , 1000000000000000000 ) ) )
       ListItem ( Measure ( FInt ( 0 , 1000000000000000000000000000000000000000000000 ) , "Alice" |-> FInt ( 0 , 1000000000000000000000000000000000000000000000 )
       "Bobby" |-> FInt ( 0 , 1000000000000000000000000000000000000000000000 )
@@ -1407,8 +1407,6 @@
       Flap |-> FInt ( 0 , 1000000000000000000 )
       GemJoin "MKR" |-> FInt ( 0 , 1000000000000000000 )
       Vow |-> FInt ( 0 , 1000000000000000000 ) , FInt ( 0 , 1000000000000000000000000000000000000000000000 ) ) )
-      ListItem ( LogNote ( "Bobby" , Vat . slip "gold" "Bobby" FInt ( 10000000000000000000 , 1000000000000000000 ) ) )
-      ListItem ( LogNote ( "Bobby" , Gem "gold" . transferFrom "Bobby" GemJoin "gold" FInt ( 10000000000000000000 , 1000000000000000000 ) ) )
       ListItem ( LogNote ( "Bobby" , GemJoin "gold" . join "Bobby" FInt ( 10000000000000000000 , 1000000000000000000 ) ) )
       ListItem ( Measure ( FInt ( 0 , 1000000000000000000000000000000000000000000000 ) , "Alice" |-> FInt ( 0 , 1000000000000000000000000000000000000000000000 )
       "Bobby" |-> FInt ( 0 , 1000000000000000000000000000000000000000000000 )
@@ -1569,14 +1567,6 @@
       Flap |-> FInt ( 0 , 1000000000000000000 )
       GemJoin "MKR" |-> FInt ( 0 , 1000000000000000000 )
       Vow |-> FInt ( 0 , 1000000000000000000 ) , FInt ( 0 , 1000000000000000000000000000000000000000000000 ) ) )
-      ListItem ( LogNote ( ADMIN , Vat . cage ) )
-      ListItem ( LogNote ( ADMIN , Cat . cage ) )
-      ListItem ( LogNote ( Vow , Vat . move Flap Vow FInt ( 0 , 1000000000000000000000000000000000000000000000 ) ) )
-      ListItem ( LogNote ( End , Flap . cage FInt ( 0 , 1000000000000000000000000000000000000000000000 ) ) )
-      ListItem ( LogNote ( End , Flop . cage ) )
-      ListItem ( LogNote ( End , Vat . heal FInt ( 0 , 1000000000000000000000000000000000000000000000 ) ) )
-      ListItem ( LogNote ( ADMIN , Vow . cage ) )
-      ListItem ( LogNote ( ADMIN , Pot . cage ) )
       ListItem ( LogNote ( ADMIN , End . cage ) )
       ListItem ( Measure ( FInt ( 20000000000000000000000000000000000000000000000 , 1000000000000000000000000000000000000000000000 ) , "Alice" |-> FInt ( 10000000000000000000000000000000000000000000000 , 1000000000000000000000000000000000000000000000 )
       "Bobby" |-> FInt ( 2304687500000000000000000000000000000000000000 , 1000000000000000000000000000000000000000000000 )
@@ -1600,7 +1590,7 @@
       "Flap MKR Consistency" |-> flapMkrConsistency
       "Flop Block Check" |-> flopBlockCheck ( FInt ( 0 , 1000000000000000000000000000000000000000000000 ) , 0 )
       "Pot Interest Accumulation After End" |-> potEndInterestEnd
-      "PotChi PotPie VatPot" |-> potChiPieDai ( FInt ( 7695312500000000000000000000000000000000000000 , 1000000000000000000000000000000000000000000000 ) , FInt ( 0 , 1000000000000000000 ) )
+      "PotChi PotPie VatPot" |-> potChiPieDai ( FInt ( 7695312500000000000000000000000000000000000000 , 1000000000000000000000000000000000000000000000 ) )
       "Total Backed Debt Consistency" |-> totalBackedDebtConsistency
       "Total Bound on Debt" |-> Violated ( totalDebtBoundedEnd ( FInt ( 20961914062500000000000000000000000000000000000 , 1000000000000000000000000000000000000000000000 ) ) )
       "Unauthorized Flap Kick" |-> unAuthFlapKick

@@ -44,19 +44,23 @@ Sometimes you need a lookup to default to zero, and want to cast the result as a
 ```k
     syntax Event ::= Measure
     syntax Measure ::= Measure () [function]
-                     | Measure ( debt: Rad , controlDai: Map , potChi: Ray , potPie: Wad , sumOfScaledArts: Rad , vice: Rad , endDebt: Rad , sumOfAllFlapLots: Rad , dai: Map , sumOfAllFlapBids: Wad , mkrBalances: Map, ash: Rad ) [klabel(LogMeasure), symbol]
- // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    rule [[ Measure() => Measure(... debt: DEBT, controlDai: controlDais(keys_list(VAT_DAIS)), potChi: POT_CHI, potPie: POT_PIE, sumOfScaledArts: calcSumOfScaledArts(VAT_ILKS, VAT_URNS), vice: VAT_VICE, endDebt: END_DEBT, sumOfAllFlapLots: sumOfAllFlapLots(FLAP_BIDS), dai: VAT_DAIS, sumOfAllFlapBids: sumOfAllFlapBids(FLAP_BIDS), mkrBalances: mkrBalances(), ash: VOW_ASH) ]]
-         <vat-debt>     DEBT      </vat-debt>
-         <vat-dai>      VAT_DAIS  </vat-dai>
-         <vat-ilks>     VAT_ILKS  </vat-ilks>
-         <vat-urns>     VAT_URNS  </vat-urns>
-         <vat-vice>     VAT_VICE  </vat-vice>
-         <pot-chi>      POT_CHI   </pot-chi>
-         <pot-pie>      POT_PIE   </pot-pie>
-         <end-debt>     END_DEBT  </end-debt>
-         <flap-bids>    FLAP_BIDS </flap-bids>
-         <vow-ash>      VOW_ASH   </vow-ash>
+                     | Measure ( debt: Rad , controlDai: Map , potChi: Ray , potPie: Wad , sumOfScaledArts: Rad , vice: Rad , endDebt: Rad
+                               , sumOfAllFlapLots: Rad , dai: Map , sumOfAllFlapBids: Wad , mkrBalances: Map , ash: Rad) [klabel(LogMeasure), symbol]
+ // -------------------------------------------------------------------------------------------------------------------------------------------------
+    rule [[ Measure() => Measure(... debt: DEBT, controlDai: controlDais(keys_list(VAT_DAIS)), potChi: POT_CHI, potPie: POT_PIE
+                                , sumOfScaledArts: calcSumOfScaledArts(VAT_ILKS, VAT_URNS), vice: VAT_VICE, endDebt: END_DEBT
+                                , sumOfAllFlapLots: sumOfAllFlapLots(FLAP_BIDS), dai: VAT_DAIS, sumOfAllFlapBids: sumOfAllFlapBids(FLAP_BIDS)
+                                , mkrBalances: mkrBalances(), ash: VOW_ASH) ]]
+         <vat-debt>  DEBT      </vat-debt>
+         <vat-dai>   VAT_DAIS  </vat-dai>
+         <vat-ilks>  VAT_ILKS  </vat-ilks>
+         <vat-urns>  VAT_URNS  </vat-urns>
+         <vat-vice>  VAT_VICE  </vat-vice>
+         <pot-chi>   POT_CHI   </pot-chi>
+         <pot-pie>   POT_PIE   </pot-pie>
+         <end-debt>  END_DEBT  </end-debt>
+         <flap-bids> FLAP_BIDS </flap-bids>
+         <vow-ash>   VOW_ASH   </vow-ash>
 ```
 
 ### Dai in Circulation
@@ -179,17 +183,17 @@ A violation occurs if any of the properties above holds.
 ```k
     syntax Map ::= "#violationFSMs" [function]
  // ------------------------------------------
-    rule #violationFSMs => ( "Zero-Time Pot Interest Accumulation" |-> zeroTimePotInterest                               )
-                           ( "Pot Interest Accumulation After End" |-> potEndInterest                                    )
-                           ( "Unauthorized Flip Kick"              |-> unAuthFlipKick                                    )
-                           ( "Unauthorized Flap Kick"              |-> unAuthFlapKick                                    )
-                           ( "Total Bound on Debt"                 |-> totalDebtBounded(... dsr: ray(1))                 )
-                           ( "PotChi PotPie VatPot"                |-> potChiPieDai(... offset: rad(0), joining: wad(0)) )
-                           ( "Total Backed Debt Consistency"       |-> totalBackedDebtConsistency                        )
-                           ( "Debt Constant After Thaw"            |-> debtConstantAfterThaw                             )
-                           ( "Flap Dai Consistency"                |-> flapDaiConsistency                                )
-                           ( "Flap MKR Consistency"                |-> flapMkrConsistency                                )
-                           ( "Flop Block Check"                    |-> flopBlockCheck(... embers: rad(0), dented: 0)     )
+    rule #violationFSMs => ( "Zero-Time Pot Interest Accumulation" |-> zeroTimePotInterest                           )
+                           ( "Pot Interest Accumulation After End" |-> potEndInterest                                )
+                           ( "Unauthorized Flip Kick"              |-> unAuthFlipKick                                )
+                           ( "Unauthorized Flap Kick"              |-> unAuthFlapKick                                )
+                           ( "Total Bound on Debt"                 |-> totalDebtBounded(... dsr: ray(1))             )
+                           ( "PotChi PotPie VatPot"                |-> potChiPieDai(... offset: rad(0))              )
+                           ( "Total Backed Debt Consistency"       |-> totalBackedDebtConsistency                    )
+                           ( "Debt Constant After Thaw"            |-> debtConstantAfterThaw                         )
+                           ( "Flap Dai Consistency"                |-> flapDaiConsistency                            )
+                           ( "Flap MKR Consistency"                |-> flapMkrConsistency                            )
+                           ( "Flop Block Check"                    |-> flopBlockCheck(... embers: rad(0), dented: 0) )
 ```
 
 A violation can be checked using the Admin step `assert`. If a violation is detected,
@@ -198,7 +202,7 @@ it is recorded in the state and execution is immediately terminated.
 ```k
     syntax AdminStep ::= "#assert" | "#assert-failure"
  // --------------------------------------------------
-    rule <k> assert => deriveAll(keys_list(VFSMS), EVENTS ListItem(Measure())) ~> #assert ... </k>
+    rule <k> assert => deriveAll(keys_list(VFSMS), #extractAssertEvents(EVENTS ListItem(Measure()))) ~> #assert ... </k>
          <events> EVENTS => .List </events>
          <properties> VFSMS </properties>
 
@@ -207,6 +211,16 @@ it is recorded in the state and execution is immediately terminated.
       requires notBool anyViolation(values(VFSMS))
 
     rule <k> #assert => #assert-failure ... </k> [owise]
+
+    syntax List ::= #extractAssertEvents ( List ) [function]
+ // --------------------------------------------------------
+    rule #extractAssertEvents(.List)                                                                               => .List
+    rule #extractAssertEvents(ListItem(C:CustomEvent)                                                        REST) => ListItem(C)                                           #extractAssertEvents(REST)
+    rule #extractAssertEvents(ListItem(M:Measure)                                                            REST) => ListItem(M)                                           #extractAssertEvents(REST)
+    rule #extractAssertEvents(ListItem(TimeStep(_, _) #as T)                                                 REST) => ListItem(T)                                           #extractAssertEvents(REST)
+    rule #extractAssertEvents(ListItem(Transaction(... acct: ADDR, call: C, events: ES, txException: false)) REST) => ListItem(LogNote(ADDR, C))   #extractAssertEvents(ES) #extractAssertEvents(REST)
+    rule #extractAssertEvents(ListItem(Transaction(... acct: ADDR, call: C,             txException: true )) REST) => ListItem(Exception(ADDR, C))                          #extractAssertEvents(REST)
+    rule #extractAssertEvents(ListItem(_)                                                                    REST) =>                                                       #extractAssertEvents(REST) [owise]
 ```
 
 ### Violation Finite State Machines (FSMs)
@@ -246,7 +260,7 @@ A default `owise` rule is added which leaves the FSM state unchanged.
           ~> deriveAll(VFSMIDS, REST)
          ...
          </k>
-         <processed-events> ... (.List => ListItem(E)) </processed-events>
+         <processed-events> L => L ListItem(E) </processed-events>
 
     rule <k> deriveVFSM(.List                 , E) => .                   ... </k>
     rule <k> deriveVFSM(ListItem(VFSMID) REST , E) => deriveVFSM(REST, E) ... </k>
@@ -296,17 +310,14 @@ The Debt growth should be bounded in principle by the interest rates available i
 
 ### Pot Chi * Pot Pie == Vat Dai(Pot)
 
-The Pot Chi multiplied by Pot Pie should equal the Vat Dai for the Pot
+The Pot Chi multiplied by Pot Pie should equal the Vat Dai for the Pot (offset by any direct moves people make of Dai to the Pot).
 
 ```k
-    syntax ViolationFSM ::= potChiPieDai ( offset: Rad , joining: Wad )
- // -------------------------------------------------------------------
-    rule derive( potChiPieDai(... offset: OFFSET, joining: JOINING ) , LogNote(_, Pot . join AMOUNT)       ) => potChiPieDai(... offset: OFFSET             , joining: JOINING +Wad AMOUNT )
-    rule derive( potChiPieDai(... offset: OFFSET, joining: JOINING ) , LogNote(_, Vat . move _ Pot AMOUNT) ) => potChiPieDai(... offset: OFFSET +Rad AMOUNT , joining: JOINING             )
+    syntax ViolationFSM ::= potChiPieDai ( offset: Rad )
+ // ----------------------------------------------------
+    rule derive(potChiPieDai(... offset: OFFSET), LogNote(_, Vat . move _ Pot AMOUNT)) => potChiPieDai(... offset: OFFSET +Rad AMOUNT)
 
-    rule derive(potChiPieDai(... offset: OFFSET => OFFSET -Rad (JOINING *Rate POT_CHI), joining: JOINING => wad(0)), Measure(... potChi: POT_CHI)) requires JOINING =/=Wad wad(0)
-
-    rule derive(potChiPieDai(... offset: OFFSET, joining: wad(0)) #as PREV, Measure(... controlDai: CONTROL_DAI, potChi: POT_CHI, potPie: POT_PIE)) => Violated(PREV) requires POT_PIE *Rate POT_CHI =/=Rad #lookupRad(CONTROL_DAI, Pot) -Rad OFFSET
+    rule derive(potChiPieDai(... offset: OFFSET) #as PREV, Measure(... controlDai: CONTROL_DAI, potChi: POT_CHI, potPie: POT_PIE)) => Violated(PREV) requires POT_PIE *Rate POT_CHI =/=Rad #lookupRad(CONTROL_DAI, Pot) -Rad OFFSET
 ```
 
 ### Kicking off a fake `flip` auction (inspired by lucash-flip)
@@ -377,8 +388,10 @@ The property checks if a successful `Pot . join` is preceded by a `TimeStep` mor
  // ----------------------------------------------------------------
     rule derive(flopBlockCheck(... embers: EMBERS, dented: DENTED), Measure(... dai: VAT_DAI, ash: ASH)) => Violated(flopBlockCheck(... embers: EMBERS, dented: DENTED))
         requires (ASH -Rad #lookupRad(VAT_DAI, Vow) >Rad EMBERS)
-    rule derive(flopBlockCheck(... embers: EMBERS, dented: DENTED), LogNote(_ , Flop . kick ID _ BID)) => flopBlockCheck(... embers: EMBERS +Rad BID, dented: DENTED)
-    rule derive(flopBlockCheck(... embers: EMBERS, dented: DENTED), LogNote(_ , Flop . dent ID _ BID)) => flopBlockCheck(... embers: EMBERS -Rad BID, dented: DENTED +Int (2 ^Int ID)) 
+
+    rule derive(flopBlockCheck(... embers: EMBERS, dented: DENTED), FlopKick(_, _, BID, _)) => flopBlockCheck(... embers: EMBERS +Rad BID, dented: DENTED)
+
+    rule derive(flopBlockCheck(... embers: EMBERS, dented: DENTED), LogNote(_ , Flop . dent ID _ BID)) => flopBlockCheck(... embers: EMBERS -Rad BID, dented: DENTED +Int (2 ^Int ID))
         requires ( ( ( DENTED /Int ( 2 ^Int ID ) ) modInt 2 ) ==Int 0 )
     rule derive(flopBlockCheck(... embers: EMBERS, dented: DENTED), LogNote(_ , Flop . dent ID _ BID)) => flopBlockCheck(... embers: EMBERS, dented: DENTED) [owise]
 ```
