@@ -104,8 +104,8 @@ Flap Events
 -----------
 
 ```k
-    syntax Event ::= FlapKick(Address, Int, Rad, Wad) [klabel(FlapKick), symbol]
- // ----------------------------------------------------------------------------
+    syntax CustomEvent ::= FlapKick(Address, Int, Rad, Wad) [klabel(FlapKick), symbol]
+ // ----------------------------------------------------------------------------------
 ```
 
 Flap Semantics

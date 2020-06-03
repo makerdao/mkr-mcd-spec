@@ -151,8 +151,8 @@ Flop Events
 -----------
 
 ```k
-    syntax Event ::= FlopKick(Int, Wad, Rad, Address) [klabel(FlopKick), symbol]
- // ----------------------------------------------------------------------------
+    syntax CustomEvent ::= FlopKick(Int, Wad, Rad, Address) [klabel(FlopKick), symbol]
+ // ----------------------------------------------------------------------------------
 ```
 
 Flop Semantics
