@@ -301,7 +301,7 @@ def extractCallEvents(logEvent):
         strArgs = solidityArgs(args)
         return [ caller + '.' + contract + '_' + function + '(' + strArgs + ');' ]
     elif pyk.isKApply(logEvent) and logEvent['label'] == 'LogTimeStep':
-        return [ 'warpForward(' + printMCD(logEvent['args'][0]) + ');' ]
+        return [ 'this.warpForward(' + printMCD(logEvent['args'][0]) + ');' ]
     elif pyk.isKApply(logEvent) and logEvent['label'] == 'LogException':
         return [ unimplemented('assertRevert( ' + printMCD(logEvent) + ');') ]
     elif pyk.isKApply(logEvent) and ( logEvent['label'] in [ 'LogMeasure' , 'LogGenStep' , 'LogGenStepFailed' ] ):
