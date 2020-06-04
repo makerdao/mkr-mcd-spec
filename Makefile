@@ -7,6 +7,7 @@ DEFN_DIR:=$(BUILD_DIR)/defn
 DEPS_DIR                := deps
 K_SUBMODULE             := $(DEPS_DIR)/k
 PANDOC_TANGLE_SUBMODULE := $(DEPS_DIR)/pandoc-tangle
+SOLTEST_SUBMODULE       := tests/mkr-mcd-spec-sol-tests
 
 ifneq (,$(wildcard $(K_SUBMODULE)/k-distribution/target/release/k/bin/*))
     K_RELEASE ?= $(abspath $(K_SUBMODULE)/k-distribution/target/release/k)
@@ -37,7 +38,7 @@ LUA_PATH:=$(PANDOC_TANGLE_SUBMODULE)/?.lua;;
 export TANGLER
 export LUA_PATH
 
-.PHONY: all clean                                                           \
+.PHONY: all clean clean-test                                                \
         deps deps-k deps-media                                              \
         defn defn-llvm defn-haskell                                         \
         build build-llvm build-haskell                                      \
@@ -46,8 +47,11 @@ export LUA_PATH
 
 all: build
 
-clean:
+clean: clean-test
 	rm -rf $(BUILD_DIR)
+
+clean-test:
+	cd $(SOLTEST_SUBMODULE) && git clean -dffx ./
 
 # Dependencies
 # ------------
@@ -141,16 +145,20 @@ init_random_seeds :=
 test-random: mcd-pyk.py
 	python3 $< random-test 1 1 $(init_random_seeds) --emit-solidity
 
-test-solidity:
+test-solidity: $(patsubst %, $(SOLTEST_SUBMODULE)/src/%.t.sol, 01 02 03 04 05 06 07 08 09 10)
 	cd tests/mkr-mcd-spec-sol-tests \
 	    && dapp build               \
-	    && dapp test
+	    && dapp test                \
+	    || true
 
 ### Testing Parameters
 
 TEST_BACKEND := llvm
 KMCD         := ./kmcd
 CHECK        := git --no-pager diff --no-index --ignore-all-space -R
+
+RANDOM_TEST_RUNS  := 5
+RANDOM_TEST_DEPTH := 200
 
 TEST_KOMPILED := $(llvm_kompiled)
 ifeq ($(TEST_BACKEND), haskell)
@@ -172,3 +180,6 @@ tests/%.mcd.python-out: mcd-pyk.py $(TEST_KOMPILED)
 
 tests/%.mcd.run: tests/%.mcd.out
 	$(CHECK) tests/$*.mcd.out tests/$*.mcd.expected
+
+$(SOLTEST_SUBMODULE)/%.t.sol: mcd-pyk.py $(TEST_KOMPILED)
+	python3 $< random-test $(RANDOM_TEST_DEPTH) $(RANDOM_TEST_RUNS) $(KMCD_RANDOMSEED) --emit-solidity --emit-solidity-file $@

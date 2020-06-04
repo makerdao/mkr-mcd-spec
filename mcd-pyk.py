@@ -257,7 +257,7 @@ def argify(arg):
        or newArg in ['cat', 'dai', 'end', 'flap', 'flop', 'jug', 'pot', 'spotter', 'vat', 'vow'] \
        or newArg.endswith('Flip') or newArg.endswith('Join'):
         newArg = 'address(' + newArg + ')'
-    if newArg in ['gold', 'line', 'mat', 'par', 'dsr']:
+    if newArg in ['gold', 'line', 'mat', 'par', 'dsr', 'Line', 'sump', 'hump', 'dump', 'bump', 'tau']:
         newArg = '"' + newArg + '"'
     return newArg
 
@@ -301,7 +301,7 @@ def extractCallEvents(logEvent):
         strArgs = solidityArgs(args)
         return [ caller + '.' + contract + '_' + function + '(' + strArgs + ');' ]
     elif pyk.isKApply(logEvent) and logEvent['label'] == 'LogTimeStep':
-        return [ 'hevm.warp(' + printMCD(logEvent['args'][0]) + ');' ]
+        return [ 'this.warpForward(' + printMCD(logEvent['args'][0]) + ');' ]
     elif pyk.isKApply(logEvent) and logEvent['label'] == 'LogException':
         return [ unimplemented('assertRevert( ' + printMCD(logEvent) + ');') ]
     elif pyk.isKApply(logEvent) and ( logEvent['label'] in [ 'LogMeasure' , 'LogGenStep' , 'LogGenStepFailed' ] ):
@@ -384,6 +384,29 @@ def extractAsserts(config):
     stateDelta = pyk.collapseDots(stateDelta)
     return (printMCD(stateDelta), asserts)
 
+def emitTestFunction(calls, asserts, name = 'Example'):
+    return 'function test' + name + '() public {' + '\n' \
+         + ''                                     + '\n' \
+         + '    // Test Run'                      + '\n' \
+         + '\n    ' + '\n    '.join(calls)        + '\n' \
+         + ''                                     + '\n' \
+         + '    // Assertions'                    + '\n' \
+         + '\n    ' + '\n    '.join(asserts)      + '\n' \
+         + ''                                     + '\n' \
+         + '}'
+
+def emitTestContract(output_pairs, name = 'Example'):
+    test_functions = '\n\n'.join([emitTestFunction(c, a, name = str(i)) for (i, (c, a)) in enumerate(output_pairs)])
+    return 'pragma solidity ^0.5.12;'                              + '\n' \
+         + ''                                                      + '\n' \
+         + 'import "./MkrMcdSpecSolTests.t.sol";'                  + '\n' \
+         + ''                                                      + '\n' \
+         + 'contract Test' + name + ' is MkrMcdSpecSolTestsTest {' + '\n' \
+         + ''                                                      + '\n' \
+         + '\n    ' + '\n    '.join(test_functions.split('\n'))    + '\n' \
+         + ''                                                      + '\n' \
+         + '}'
+
 # Main Functionality
 # ------------------
 
@@ -392,10 +415,11 @@ mcdArgs = argparse.ArgumentParser()
 mcdCommands = mcdArgs.add_subparsers()
 
 mcdRandomTestArgs = mcdCommands.add_parser('random-test', help = 'Run random tester and check for property violations.')
-mcdRandomTestArgs.add_argument( 'depth'           , type = int  ,               help = 'Number of bytes to feed as random input into each run' )
-mcdRandomTestArgs.add_argument( 'numRuns'         , type = int  ,               help = 'Number of runs per random seed.'                       )
-mcdRandomTestArgs.add_argument( 'initSeeds'       , type = str  , nargs = '*' , help = 'Random seeds to use as run prefixes.'                  )
-mcdRandomTestArgs.add_argument( '--emit-solidity' , action = 'store_true'     , help = 'Emit Solidity code reproducing the trace.'             )
+mcdRandomTestArgs.add_argument( 'depth'                , type = int ,               help = 'Number of bytes to feed as random input into each run' )
+mcdRandomTestArgs.add_argument( 'numRuns'              , type = int ,               help = 'Number of runs per random seed.'                       )
+mcdRandomTestArgs.add_argument( 'initSeeds'            , type = str , nargs = '*' , help = 'Random seeds to use as run prefixes.'                  )
+mcdRandomTestArgs.add_argument( '--emit-solidity'      , action = 'store_true'    , help = 'Emit Solidity code reproducing the trace.'             )
+mcdRandomTestArgs.add_argument( '--emit-solidity-file' , type = argparse.FileType('w') , default = '-' , help = 'File to emit Solidity code to.'   )
 mcdRandomTestArgs.set_defaults(emit_solidity = False)
 
 if __name__ == '__main__':
@@ -409,7 +433,8 @@ if __name__ == '__main__':
     if len(randseeds) == 0:
         randseeds = [""]
 
-    config_loader = mcdSteps( [ steps(KConstant('ATTACK-PRELUDE'))
+    config_loader = mcdSteps( [ steps(KConstant('DEPLOY-PRELUDE'))
+                              , steps(KConstant('ATTACK-PRELUDE'))
                               , addGenerator(generator_lucash_pot_end)
                               , addGenerator(generator_lucash_pot)
                               , addGenerator(generator_lucash_flap_end)
@@ -422,6 +447,7 @@ if __name__ == '__main__':
 
     all_violations = []
     startTime = time.time()
+    solidityTests = []
     for randseed in randseeds:
         for i in range(numruns):
             curRandSeed = bytearray(randseed, 'utf-8') + randombytes(gendepth)
@@ -442,29 +468,21 @@ if __name__ == '__main__':
                 print('    Seed: ' + violation['seed'])
                 print('    Properties: ' + '\n              , '.join(violation['properties']))
                 print(printMCD(violation['output']))
-            if emitSol:
-                trace = extractTrace(output)
-                (stateDelta, asserts) = extractAsserts(output)
-                print()
-                print('### Solidity')
-                print('#### ID:'+str(i))
-                print('------------')
-                print()
-                print('    // Test Run')
-                print('    ' + '\n    '.join(trace))
-                print()
-                print('    // Assertions')
-                print('    ' + '\n    '.join(asserts))
-                print()
-                print('------------')
-                print('### /Solidity')
-                print()
-                print('### State Delta')
-                print('---------------')
-                print()
-                print(stateDelta)
-            sys.stdout.flush()
+            trace = extractTrace(output)
+            (stateDelta, asserts) = extractAsserts(output)
+            solidityTests.append((trace, asserts))
     stopTime = time.time()
+
+    if emitSol:
+        solidityContract = emitTestContract(solidityTests)
+        print()
+        print('Writing Solidity File: ' + args['emit_solidity_file'].name)
+        print()
+        sys.stdout.flush()
+        args['emit_solidity_file'].write('// Generated Test\n')
+        args['emit_solidity_file'].write('// --------------\n')
+        args['emit_solidity_file'].write('\n')
+        args['emit_solidity_file'].write(solidityContract)
 
     elapsedTime = stopTime - startTime
     perRunTime  = elapsedTime / (numruns * len(randseeds))
