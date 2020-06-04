@@ -62,9 +62,9 @@ Dai Events
 ----------
 
 ```k
-    syntax Event ::= Transfer(Address, Address, Wad) [klabel(Transfer), symbol]
-                   | Approval(Address, Address, Wad) [klabel(Approval), symbol]
- // ---------------------------------------------------------------------------
+    syntax CustomEvent ::= Transfer(Address, Address, Wad) [klabel(Transfer), symbol]
+                         | Approval(Address, Address, Wad) [klabel(Approval), symbol]
+ // ---------------------------------------------------------------------------------
 ```
 
 Dai Semantics
