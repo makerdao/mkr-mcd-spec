@@ -34,7 +34,6 @@ export PYTHONPATH
 
 .PHONY: all clean clean-test                                                \
         deps deps-k deps-media                                              \
-        defn defn-llvm defn-haskell                                         \
         build build-llvm build-haskell                                      \
         test test-execution test-python-generator test-random test-solidity
 .SECONDARY:
@@ -88,7 +87,6 @@ ALL_FILES          := $(patsubst %, %.md, $(SOURCE_FILES)) $(EXTRA_SOURCE_FILES)
 tangle_concrete := k & (concrete | ! symbolic)
 tangle_symbolic := k & (symbolic | ! concrete)
 
-defn:  defn-llvm  defn-haskell
 build: build-llvm build-haskell
 
 KOMPILE_OPTS += --emit-json
@@ -121,7 +119,6 @@ llvm_dir           := $(DEFN_DIR)/llvm
 llvm_files         := $(ALL_FILES)
 llvm_kompiled      := $(llvm_dir)/$(llvm_main_file)-kompiled/interpreter
 
-defn-llvm:  $(llvm_files)
 build-llvm: $(llvm_kompiled)
 
 $(llvm_kompiled): $(llvm_files)
@@ -139,7 +136,6 @@ haskell_dir           := $(DEFN_DIR)/haskell
 haskell_files         := $(ALL_FILES)
 haskell_kompiled      := $(haskell_dir)/$(haskell_main_file)-kompiled/definition.kore
 
-defn-haskell:  $(haskell_files)
 build-haskell: $(haskell_kompiled)
 
 $(haskell_kompiled): $(haskell_files)
