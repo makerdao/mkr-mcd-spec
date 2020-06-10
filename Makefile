@@ -91,6 +91,9 @@ EXTRA_SOURCE_FILES :=
 
 ALL_FILES          := $(patsubst %, %.k, $(SOURCE_FILES)) $(EXTRA_SOURCE_FILES)
 
+concrete_tangle := .k:not(.symbolic),.concrete
+symbolic_tangle := .k:not(.concrete),.symbolic
+
 defn:  defn-llvm  defn-haskell
 build: build-llvm build-haskell
 
@@ -112,11 +115,7 @@ KOMPILE_HASKELL_OPTS :=
 KOMPILE_LLVM    := kompile --backend llvm    $(KOMPILE_OPTS) $(addprefix -ccopt ,$(KOMPILE_LLVM_OPTS))
 KOMPILE_HASKELL := kompile --backend haskell $(KOMPILE_OPTS) $(KOMPILE_HASKELL_OPTS)
 
-concrete_tangle := .k:not(.symbolic),.concrete
-symbolic_tangle := .k:not(.concrete),.symbolic
-
 # LLVM Backend
-
 
 llvm_main_module   := KMCD-GEN
 llvm_syntax_module := $(llvm_main_module)
