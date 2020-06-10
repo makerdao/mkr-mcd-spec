@@ -79,37 +79,24 @@ endif
 
 k_files := $(MAIN_DEFN_FILE).k kmcd-prelude.k kmcd-props.k kmcd.k fixed-int.k kmcd-data.k kmcd-driver.k cat.k dai.k end.k flap.k flip.k flop.k gem.k join.k jug.k pot.k spot.k vat.k vow.k
 
-llvm_dir    := $(DEFN_DIR)/llvm
-haskell_dir := $(DEFN_DIR)/haskell
-
-llvm_files    := $(patsubst %,$(llvm_dir)/%,$(k_files))
-haskell_files := $(patsubst %,$(haskell_dir)/%,$(k_files))
-
-llvm_kompiled    := $(llvm_dir)/$(MAIN_DEFN_FILE)-kompiled/interpreter
-haskell_kompiled := $(haskell_dir)/$(MAIN_DEFN_FILE)-kompiled/definition.kore
-
+defn:  defn-llvm  defn-haskell
 build: build-llvm build-haskell
-build-llvm:    $(llvm_kompiled)
-build-haskell: $(haskell_kompiled)
-
-# Generate definitions from source files
-
-defn: defn-llvm defn-haskell
-defn-llvm:    $(llvm_files)
-defn-haskell: $(haskell_files)
 
 concrete_tangle := .k:not(.symbolic),.concrete
 symbolic_tangle := .k:not(.concrete),.symbolic
 
+# LLVM Backend
+
+llvm_dir      := $(DEFN_DIR)/llvm
+llvm_files    := $(patsubst %,$(llvm_dir)/%,$(k_files))
+llvm_kompiled := $(llvm_dir)/$(MAIN_DEFN_FILE)-kompiled/interpreter
+
+defn-llvm:  $(llvm_files)
+build-llvm: $(llvm_kompiled)
+
 $(llvm_dir)/%.k: %.md
 	@mkdir -p $(llvm_dir)
 	pandoc --from markdown --to "$(TANGLER)" --metadata=code:"$(concrete_tangle)" $< > $@
-
-$(haskell_dir)/%.k: %.md
-	@mkdir -p $(haskell_dir)
-	pandoc --from markdown --to "$(TANGLER)" --metadata=code:"$(symbolic_tangle)" $< > $@
-
-# LLVM Backend
 
 $(llvm_kompiled): $(llvm_files)
 	kompile --debug --main-module $(MAIN_MODULE) --backend llvm              \
@@ -119,6 +106,17 @@ $(llvm_kompiled): $(llvm_files)
 	        $(KOMPILE_OPTS)
 
 # Haskell Backend
+
+haskell_dir      := $(DEFN_DIR)/haskell
+haskell_files    := $(patsubst %,$(haskell_dir)/%,$(k_files))
+haskell_kompiled := $(haskell_dir)/$(MAIN_DEFN_FILE)-kompiled/definition.kore
+
+defn-haskell:  $(haskell_files)
+build-haskell: $(haskell_kompiled)
+
+$(haskell_dir)/%.k: %.md
+	@mkdir -p $(haskell_dir)
+	pandoc --from markdown --to "$(TANGLER)" --metadata=code:"$(symbolic_tangle)" $< > $@
 
 $(haskell_kompiled): $(haskell_files)
 	kompile --debug --main-module $(MAIN_MODULE) --backend haskell              \
