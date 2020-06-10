@@ -67,11 +67,29 @@ $(K_JAR):
 # Building
 # --------
 
-MAIN_MODULE    := KMCD-GEN
-SYNTAX_MODULE  := $(MAIN_MODULE)
-MAIN_DEFN_FILE := kmcd-prelude
+SOURCE_FILES       := cat          \
+                      dai          \
+                      end          \
+                      fixed-int    \
+                      flap         \
+                      flip         \
+                      flop         \
+                      gem          \
+                      join         \
+                      jug          \
+                      kmcd         \
+                      kmcd-data    \
+                      kmcd-driver  \
+                      kmcd-prelude \
+                      kmcd-props   \
+                      pot          \
+                      spot         \
+                      vat          \
+                      vow
 
-k_files := $(MAIN_DEFN_FILE).k kmcd-prelude.k kmcd-props.k kmcd.k fixed-int.k kmcd-data.k kmcd-driver.k cat.k dai.k end.k flap.k flip.k flop.k gem.k join.k jug.k pot.k spot.k vat.k vow.k
+EXTRA_SOURCE_FILES :=
+
+ALL_FILES          := $(patsubst %, %.k, $(SOURCE_FILES)) $(EXTRA_SOURCE_FILES)
 
 defn:  defn-llvm  defn-haskell
 build: build-llvm build-haskell
@@ -99,9 +117,13 @@ symbolic_tangle := .k:not(.concrete),.symbolic
 
 # LLVM Backend
 
-llvm_dir      := $(DEFN_DIR)/llvm
-llvm_files    := $(patsubst %,$(llvm_dir)/%,$(k_files))
-llvm_kompiled := $(llvm_dir)/$(MAIN_DEFN_FILE)-kompiled/interpreter
+
+llvm_main_module   := KMCD-GEN
+llvm_syntax_module := $(llvm_main_module)
+llvm_main_file     := kmcd-prelude
+llvm_dir           := $(DEFN_DIR)/llvm
+llvm_files         := $(patsubst %,$(llvm_dir)/%,$(ALL_FILES))
+llvm_kompiled      := $(llvm_dir)/$(llvm_main_file)-kompiled/interpreter
 
 defn-llvm:  $(llvm_files)
 build-llvm: $(llvm_kompiled)
@@ -111,16 +133,19 @@ $(llvm_dir)/%.k: %.md
 	pandoc --from markdown --to "$(TANGLER)" --metadata=code:"$(concrete_tangle)" $< > $@
 
 $(llvm_kompiled): $(llvm_files)
-	$(KOMPILE_LLVM) $(llvm_dir)/$(MAIN_DEFN_FILE).k \
-	        --main-module $(MAIN_MODULE)            \
-	        --syntax-module $(SYNTAX_MODULE)        \
+	$(KOMPILE_LLVM) $(llvm_dir)/$(llvm_main_file).k \
+	        --main-module $(llvm_main_module)       \
+	        --syntax-module $(llvm_syntax_module)   \
 	        --directory $(llvm_dir) -I $(llvm_dir)
 
 # Haskell Backend
 
-haskell_dir      := $(DEFN_DIR)/haskell
-haskell_files    := $(patsubst %,$(haskell_dir)/%,$(k_files))
-haskell_kompiled := $(haskell_dir)/$(MAIN_DEFN_FILE)-kompiled/definition.kore
+haskell_main_module   := KMCD-GEN
+haskell_syntax_module := $(haskell_main_module)
+haskell_main_file     := kmcd-prelude
+haskell_dir           := $(DEFN_DIR)/haskell
+haskell_files         := $(patsubst %,$(haskell_dir)/%,$(ALL_FILES))
+haskell_kompiled      := $(haskell_dir)/$(haskell_main_file)-kompiled/definition.kore
 
 defn-haskell:  $(haskell_files)
 build-haskell: $(haskell_kompiled)
@@ -130,9 +155,9 @@ $(haskell_dir)/%.k: %.md
 	pandoc --from markdown --to "$(TANGLER)" --metadata=code:"$(symbolic_tangle)" $< > $@
 
 $(haskell_kompiled): $(haskell_files)
-	$(KOMPILE_HASKELL) $(haskell_dir)/$(MAIN_DEFN_FILE).k \
-	        --main-module $(MAIN_MODULE)                  \
-	        --syntax-module $(SYNTAX_MODULE)              \
+	$(KOMPILE_HASKELL) $(haskell_dir)/$(haskell_main_file).k \
+	        --main-module $(haskell_main_module)             \
+	        --syntax-module $(haskell_syntax_module)         \
 	        --directory $(haskell_dir) -I $(haskell_dir)
 
 # Test
