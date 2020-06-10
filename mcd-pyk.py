@@ -288,18 +288,16 @@ def extractCallEvents(logEvent):
             return []
         if function.endswith('Cage'):
             function = 'cage'
-        args = []
+        args = ""
         if function.endswith('file'):
             fileable = functionCall['args'][0]['label'].split('_')[0]
             if fileable.endswith('-file'):
                 fileable = fileable[0:-5]
             fileargs = functionCall['args'][0]['args']
-            args.append(stringToken(fileable))
-            args.extend(fileargs)
+            args = '"' + fileable + '", ' + solidityArgs(fileargs)
         else:
-            args = functionCall['args']
-        strArgs = solidityArgs(args)
-        return [ caller + '.' + contract + '_' + function + '(' + strArgs + ');' ]
+            args = solidityArgs(functionCall['args'])
+        return [ caller + '.' + contract + '_' + function + '(' + args + ');' ]
     elif pyk.isKApply(logEvent) and logEvent['label'] == 'LogTimeStep':
         return [ 'this.warpForward(' + printMCD(logEvent['args'][0]) + ');' ]
     elif pyk.isKApply(logEvent) and logEvent['label'] == 'LogException':
