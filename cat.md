@@ -1,8 +1,8 @@
 ```k
-requires "kmcd-driver.k"
-requires "flip.k"
-requires "vat.k"
-requires "vow.k"
+requires "kmcd-driver.md"
+requires "flip.md"
+requires "vat.md"
+requires "vow.md"
 
 module CAT
     imports KMCD-DRIVER

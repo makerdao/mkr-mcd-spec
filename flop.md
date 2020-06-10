@@ -1,8 +1,8 @@
 ```k
-requires "kmcd-driver.k"
-requires "gem.k"
-requires "vat.k"
-requires "vow.k"
+requires "kmcd-driver.md"
+requires "gem.md"
+requires "vat.md"
+requires "vow.md"
 ```
 
 - dent(uint id, uint lot, uint bid)

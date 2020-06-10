@@ -1,8 +1,8 @@
 ```k
-requires "kmcd-driver.k"
-requires "flap.k"
-requires "flop.k"
-requires "vat.k"
+requires "kmcd-driver.md"
+requires "flap.md"
+requires "flop.md"
+requires "vat.md"
 
 module VOW
     imports KMCD-DRIVER
