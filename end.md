@@ -1,11 +1,11 @@
 ```k
-requires "kmcd-driver.k"
-requires "cat.k"
-requires "flip.k"
-requires "pot.k"
-requires "spot.k"
-requires "vow.k"
-requires "vat.k"
+requires "kmcd-driver.md"
+requires "cat.md"
+requires "flip.md"
+requires "pot.md"
+requires "spot.md"
+requires "vow.md"
+requires "vat.md"
 
 module END
     imports KMCD-DRIVER

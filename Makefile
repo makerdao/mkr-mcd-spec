@@ -4,10 +4,9 @@
 BUILD_DIR:=.build
 DEFN_DIR:=$(BUILD_DIR)/defn
 
-DEPS_DIR                := deps
-K_SUBMODULE             := $(DEPS_DIR)/k
-PANDOC_TANGLE_SUBMODULE := $(DEPS_DIR)/pandoc-tangle
-SOLTEST_SUBMODULE       := tests/mkr-mcd-spec-sol-tests
+DEPS_DIR          := deps
+K_SUBMODULE       := $(DEPS_DIR)/k
+SOLTEST_SUBMODULE := tests/mkr-mcd-spec-sol-tests
 
 ifneq (,$(wildcard $(K_SUBMODULE)/k-distribution/target/release/k/bin/*))
     K_RELEASE ?= $(abspath $(K_SUBMODULE)/k-distribution/target/release/k)
@@ -32,11 +31,6 @@ export PATH
 
 PYTHONPATH:=$(K_LIB)
 export PYTHONPATH
-
-TANGLER:=$(PANDOC_TANGLE_SUBMODULE)/tangle.lua
-LUA_PATH:=$(PANDOC_TANGLE_SUBMODULE)/?.lua;;
-export TANGLER
-export LUA_PATH
 
 .PHONY: all clean clean-test                                                \
         deps deps-k deps-media                                              \
@@ -67,65 +61,92 @@ $(K_JAR):
 # Building
 # --------
 
-MAIN_MODULE    := KMCD-GEN
-SYNTAX_MODULE  := $(MAIN_MODULE)
-MAIN_DEFN_FILE := kmcd-prelude
+SOURCE_FILES       := cat          \
+                      dai          \
+                      end          \
+                      fixed-int    \
+                      flap         \
+                      flip         \
+                      flop         \
+                      gem          \
+                      join         \
+                      jug          \
+                      kmcd         \
+                      kmcd-data    \
+                      kmcd-driver  \
+                      kmcd-prelude \
+                      kmcd-props   \
+                      pot          \
+                      spot         \
+                      vat          \
+                      vow
 
-KOMPILE_OPTS :=
+EXTRA_SOURCE_FILES :=
+
+ALL_FILES          := $(patsubst %, %.md, $(SOURCE_FILES)) $(EXTRA_SOURCE_FILES)
+
+tangle_concrete := k & (concrete | ! symbolic)
+tangle_symbolic := k & (symbolic | ! concrete)
+
+defn:  defn-llvm  defn-haskell
+build: build-llvm build-haskell
+
+KOMPILE_OPTS += --emit-json
 
 ifneq (,$(RELEASE))
     KOMPILE_OPTS += -O3
 endif
 
-k_files := $(MAIN_DEFN_FILE).k kmcd-prelude.k kmcd-props.k kmcd.k fixed-int.k kmcd-data.k kmcd-driver.k cat.k dai.k end.k flap.k flip.k flop.k gem.k join.k jug.k pot.k spot.k vat.k vow.k
+KOMPILE_LLVM_OPTS :=
 
-llvm_dir    := $(DEFN_DIR)/llvm
-haskell_dir := $(DEFN_DIR)/haskell
+ifeq (,$(RELEASE))
+    KOMPILE_LLVM_OPTS += -g
+    KOMPILE_OPTS      += --debug
+endif
 
-llvm_files    := $(patsubst %,$(llvm_dir)/%,$(k_files))
-haskell_files := $(patsubst %,$(haskell_dir)/%,$(k_files))
+KOMPILE_HASKELL_OPTS :=
 
-llvm_kompiled    := $(llvm_dir)/$(MAIN_DEFN_FILE)-kompiled/interpreter
-haskell_kompiled := $(haskell_dir)/$(MAIN_DEFN_FILE)-kompiled/definition.kore
+KOMPILE_LLVM    := kompile --backend llvm    --md-selector "$(tangle_concrete)" \
+                   $(KOMPILE_OPTS) $(addprefix -ccopt ,$(KOMPILE_LLVM_OPTS))
 
-build: build-llvm build-haskell
-build-llvm:    $(llvm_kompiled)
-build-haskell: $(haskell_kompiled)
-
-# Generate definitions from source files
-
-defn: defn-llvm defn-haskell
-defn-llvm:    $(llvm_files)
-defn-haskell: $(haskell_files)
-
-concrete_tangle := .k:not(.symbolic),.concrete
-symbolic_tangle := .k:not(.concrete),.symbolic
-
-$(llvm_dir)/%.k: %.md
-	@mkdir -p $(llvm_dir)
-	pandoc --from markdown --to "$(TANGLER)" --metadata=code:"$(concrete_tangle)" $< > $@
-
-$(haskell_dir)/%.k: %.md
-	@mkdir -p $(haskell_dir)
-	pandoc --from markdown --to "$(TANGLER)" --metadata=code:"$(symbolic_tangle)" $< > $@
+KOMPILE_HASKELL := kompile --backend haskell --md-selector "$(tangle_symbolic)" \
+                   $(KOMPILE_OPTS) $(KOMPILE_HASKELL_OPTS)
 
 # LLVM Backend
 
+llvm_main_module   := KMCD-GEN
+llvm_syntax_module := $(llvm_main_module)
+llvm_main_file     := kmcd-prelude
+llvm_dir           := $(DEFN_DIR)/llvm
+llvm_files         := $(ALL_FILES)
+llvm_kompiled      := $(llvm_dir)/$(llvm_main_file)-kompiled/interpreter
+
+defn-llvm:  $(llvm_files)
+build-llvm: $(llvm_kompiled)
+
 $(llvm_kompiled): $(llvm_files)
-	kompile --debug --main-module $(MAIN_MODULE) --backend llvm              \
-	        --syntax-module $(SYNTAX_MODULE) $(llvm_dir)/$(MAIN_DEFN_FILE).k \
-	        --directory $(llvm_dir) -I $(llvm_dir)                           \
-	        --emit-json                                                      \
-	        $(KOMPILE_OPTS)
+	$(KOMPILE_LLVM) $(llvm_main_file).md          \
+	        --main-module $(llvm_main_module)     \
+	        --syntax-module $(llvm_syntax_module) \
+	        --directory $(llvm_dir) -I $(CURDIR)
 
 # Haskell Backend
 
+haskell_main_module   := KMCD-GEN
+haskell_syntax_module := $(haskell_main_module)
+haskell_main_file     := kmcd-prelude
+haskell_dir           := $(DEFN_DIR)/haskell
+haskell_files         := $(ALL_FILES)
+haskell_kompiled      := $(haskell_dir)/$(haskell_main_file)-kompiled/definition.kore
+
+defn-haskell:  $(haskell_files)
+build-haskell: $(haskell_kompiled)
+
 $(haskell_kompiled): $(haskell_files)
-	kompile --debug --main-module $(MAIN_MODULE) --backend haskell              \
-	        --syntax-module $(SYNTAX_MODULE) $(haskell_dir)/$(MAIN_DEFN_FILE).k \
-	        --directory $(haskell_dir) -I $(haskell_dir)                        \
-	        --emit-json                                                         \
-	        $(KOMPILE_OPTS)
+	$(KOMPILE_HASKELL) $(haskell_main_file).md       \
+	        --main-module $(haskell_main_module)     \
+	        --syntax-module $(haskell_syntax_module) \
+	        --directory $(haskell_dir) -I $(CURDIR)
 
 # Test
 # ----

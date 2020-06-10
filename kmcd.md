@@ -4,20 +4,20 @@ KMCD - K Semantics of Multi Collateral Dai
 This module combines all sub-modules to model the entire MCD system.
 
 ```k
-requires "kmcd-driver.k"
-requires "cat.k"
-requires "dai.k"
-requires "end.k"
-requires "flap.k"
-requires "flip.k"
-requires "flop.k"
-requires "gem.k"
-requires "join.k"
-requires "jug.k"
-requires "pot.k"
-requires "spot.k"
-requires "vat.k"
-requires "vow.k"
+requires "kmcd-driver.md"
+requires "cat.md"
+requires "dai.md"
+requires "end.md"
+requires "flap.md"
+requires "flip.md"
+requires "flop.md"
+requires "gem.md"
+requires "join.md"
+requires "jug.md"
+requires "pot.md"
+requires "spot.md"
+requires "vat.md"
+requires "vow.md"
 
 module KMCD
     imports KMCD-DRIVER

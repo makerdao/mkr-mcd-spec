@@ -1,5 +1,5 @@
 ```k
-requires "kmcd-driver.k"
+requires "kmcd-driver.md"
 
 module VAT
     imports KMCD-DRIVER

@@ -2,7 +2,7 @@ KMCD Attack Prelude
 ===================
 
 ```k
-requires "kmcd-props.k"
+requires "kmcd-props.md"
 
 module KMCD-PRELUDE
     imports KMCD-PROPS

@@ -4,7 +4,7 @@ KMCD Driver
 This module defines common state and control flow between all the other KMCD modules.
 
 ```k
-requires "kmcd-data.k"
+requires "kmcd-data.md"
 
 module KMCD-DRIVER
     imports KMCD-DATA

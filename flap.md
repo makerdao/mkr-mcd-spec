@@ -1,7 +1,7 @@
 ```k
-requires "kmcd-driver.k"
-requires "gem.k"
-requires "vat.k"
+requires "kmcd-driver.md"
+requires "gem.md"
+requires "vat.md"
 
 module FLAP
     imports KMCD-DRIVER
