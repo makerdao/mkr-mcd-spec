@@ -71,16 +71,28 @@ MAIN_MODULE    := KMCD-GEN
 SYNTAX_MODULE  := $(MAIN_MODULE)
 MAIN_DEFN_FILE := kmcd-prelude
 
-KOMPILE_OPTS :=
+k_files := $(MAIN_DEFN_FILE).k kmcd-prelude.k kmcd-props.k kmcd.k fixed-int.k kmcd-data.k kmcd-driver.k cat.k dai.k end.k flap.k flip.k flop.k gem.k join.k jug.k pot.k spot.k vat.k vow.k
+
+defn:  defn-llvm  defn-haskell
+build: build-llvm build-haskell
+
+KOMPILE_OPTS += --emit-json
 
 ifneq (,$(RELEASE))
     KOMPILE_OPTS += -O3
 endif
 
-k_files := $(MAIN_DEFN_FILE).k kmcd-prelude.k kmcd-props.k kmcd.k fixed-int.k kmcd-data.k kmcd-driver.k cat.k dai.k end.k flap.k flip.k flop.k gem.k join.k jug.k pot.k spot.k vat.k vow.k
+KOMPILE_LLVM_OPTS :=
 
-defn:  defn-llvm  defn-haskell
-build: build-llvm build-haskell
+ifeq (,$(RELEASE))
+    KOMPILE_LLVM_OPTS += -g
+    KOMPILE_OPTS      += --debug
+endif
+
+KOMPILE_HASKELL_OPTS :=
+
+KOMPILE_LLVM    := kompile --backend llvm    $(KOMPILE_OPTS) $(addprefix -ccopt ,$(KOMPILE_LLVM_OPTS))
+KOMPILE_HASKELL := kompile --backend haskell $(KOMPILE_OPTS) $(KOMPILE_HASKELL_OPTS)
 
 concrete_tangle := .k:not(.symbolic),.concrete
 symbolic_tangle := .k:not(.concrete),.symbolic
@@ -99,11 +111,10 @@ $(llvm_dir)/%.k: %.md
 	pandoc --from markdown --to "$(TANGLER)" --metadata=code:"$(concrete_tangle)" $< > $@
 
 $(llvm_kompiled): $(llvm_files)
-	kompile --debug --main-module $(MAIN_MODULE) --backend llvm              \
-	        --syntax-module $(SYNTAX_MODULE) $(llvm_dir)/$(MAIN_DEFN_FILE).k \
-	        --directory $(llvm_dir) -I $(llvm_dir)                           \
-	        --emit-json                                                      \
-	        $(KOMPILE_OPTS)
+	$(KOMPILE_LLVM) $(llvm_dir)/$(MAIN_DEFN_FILE).k \
+	        --main-module $(MAIN_MODULE)            \
+	        --syntax-module $(SYNTAX_MODULE)        \
+	        --directory $(llvm_dir) -I $(llvm_dir)
 
 # Haskell Backend
 
@@ -119,11 +130,10 @@ $(haskell_dir)/%.k: %.md
 	pandoc --from markdown --to "$(TANGLER)" --metadata=code:"$(symbolic_tangle)" $< > $@
 
 $(haskell_kompiled): $(haskell_files)
-	kompile --debug --main-module $(MAIN_MODULE) --backend haskell              \
-	        --syntax-module $(SYNTAX_MODULE) $(haskell_dir)/$(MAIN_DEFN_FILE).k \
-	        --directory $(haskell_dir) -I $(haskell_dir)                        \
-	        --emit-json                                                         \
-	        $(KOMPILE_OPTS)
+	$(KOMPILE_HASKELL) $(haskell_dir)/$(MAIN_DEFN_FILE).k \
+	        --main-module $(MAIN_MODULE)                  \
+	        --syntax-module $(SYNTAX_MODULE)              \
+	        --directory $(haskell_dir) -I $(haskell_dir)
 
 # Test
 # ----
