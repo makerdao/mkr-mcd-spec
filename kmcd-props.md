@@ -2,7 +2,7 @@ KMCD - Properties
 =================
 
 ```k
-requires "kmcd.k"
+requires "kmcd.md"
 
 module KMCD-PROPS
     imports KMCD

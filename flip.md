@@ -1,6 +1,6 @@
 ```k
-requires "kmcd-driver.k"
-requires "vat.k"
+requires "kmcd-driver.md"
+requires "vat.md"
 
 module FLIP
     imports KMCD-DRIVER

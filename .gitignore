@@ -1,5 +1,8 @@
 /.build
-/tests/*/*.out
-/tests/*/*.python-out
+.kompile*
+.kprove*
+.krun*
 /kserver.log
 /random-test.out
+/tests/*/*.out
+/tests/*/*.python-out

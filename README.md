@@ -92,7 +92,7 @@ Running Random Tester
 Make sure that `pyk` library is on `PYTHONPATH`, and `krun` is on `PATH`:
 
 ```sh
-export PYTHONPATH=./deps/k/k-distribution/target/release/k/lib
+export PYTHONPATH=./deps/k/k-distribution/target/release/k/lib/kframework
 export PATH=./deps/k/k-distribution/target/release/k/bin:$PATH
 ```
 

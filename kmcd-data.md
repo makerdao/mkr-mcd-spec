@@ -4,7 +4,7 @@ KMCD Data
 This module defines base data-types needed for the KMCD system.
 
 ```k
-requires "fixed-int.k"
+requires "fixed-int.md"
 
 module KMCD-DATA
     imports BOOL

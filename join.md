@@ -1,8 +1,8 @@
 ```k
-requires "kmcd-driver.k"
-requires "dai.k"
-requires "gem.k"
-requires "vat.k"
+requires "kmcd-driver.md"
+requires "dai.md"
+requires "gem.md"
+requires "vat.md"
 
 module JOIN
     imports KMCD-DRIVER
