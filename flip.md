@@ -55,6 +55,27 @@ Flip Configuration
       [owise]
 ```
 
+### Constructor
+
+```k
+    syntax FlipStep ::= "constructor" Address
+ // -----------------------------------------
+    rule <k> Flip ILK_ID . constructor _ ... </k>
+         ( <flip> <flip-ilk> ILK_ID </flip-ilk> ... </flip> => .Bag )
+
+    rule <k> Flip ILK_ID . constructor FLIP_VAT => . ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         ( .Bag
+        => <flip>
+             <flip-ilk> ILK_ID </flip-ilk>
+             <flip-vat> FLIP_VAT </flip-vat>
+             <flip-wards> SetItem(MSGSENDER) </flip-wards>
+             ...
+           </flip>
+         )
+      [owise]
+```
+
 Flip Authorization
 ------------------
 
