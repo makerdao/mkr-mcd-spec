@@ -72,6 +72,111 @@ State Storage/Revert Semantics
          <pre-state> <kmcd-state> STATE </kmcd-state> => .K </pre-state>
 ```
 
+Deployment
+----------
+
+Here we model the deployment contract of the MCD system.
+At it's core, it calls the constructors of all the sub-contracts with appropriate arguments.
+
+```k
+    syntax MCDContract ::= DeployContract
+    syntax DeployContract ::= "Deploy"
+    syntax MCDStep ::= DeployContract "." DeployStep [klabel(deployStep)]
+ // ---------------------------------------------------------------------
+
+    syntax DeployStep ::= "constructor" Address
+ // -------------------------------------------
+    rule <k> Deploy . constructor GOV
+          => call Deploy . deployVat
+          ~> call Deploy . deployDai
+          ~> call Deploy . deployTaxation
+          ~> call Deploy . deployAuctions GOV
+          ~> call Deploy . deployLiquidator
+          ~> call Deploy . deployShutdown GOV
+          ~> call Deploy . deployAdmin
+         ...
+         </k>
+
+    syntax DeployStep ::= "deployVat"
+ // ---------------------------------
+    rule <k> Deploy . deployVat
+          => call Vat  . constructor
+          ~> call Spot . constructor Vat
+          ~> call Vat  . rely Spot
+         ...
+         </k>
+
+    syntax DeployStep ::= "deployDai"
+ // ---------------------------------
+    rule <k> Deploy . deployDai
+          => call Dai     . constructor
+          ~> call DaiJoin . constructor Vat Dai
+          ~> call Dai     . rely DaiJoin
+         ...
+         </k>
+
+    syntax DeployStep ::= "deployTaxation"
+ // --------------------------------------
+    rule <k> Deploy . deployTaxation
+          ~> call Jug . constructor Vat
+          ~> call Pot . constructor Vat
+          ~> call Vat . rely Jug
+          ~> call Vat . rely Pot
+         ...
+         </k>
+
+    syntax DeployStep ::= "deployAuctions" Address
+ // ----------------------------------------------
+    rule <k> Deploy . deployAuctions GOV
+          => call Flap . constructor Vat GOV
+          ~> call Flop . constructor Vat GOV
+          ~> call Vow  . constructor Vat Flap Flop
+          ~> call Jug  . file vow-file Vow
+          ~> call Pot  . file vow-file Vow
+          ~> call Vat  . rely Flop
+          ~> call Flap . rely Vow
+          ~> call Flop . rely Vow
+         ...
+         </k>
+
+    syntax DeployStep ::= "deployLiquidator"
+ // ----------------------------------------
+    rule <k> Deploy . deployLiquidator
+          ~> call Cat . constructor Vat
+          ~> call Cat . file vow-file Vow
+          ~> call Vat . rely Cat
+          ~> call Vow . rely Cat
+         ...
+         </k>
+
+    syntax DeployStep ::= "deployShutdown" Address
+ // ----------------------------------------------
+    rule <k> Deploy . deployShutdown GOV
+          => End  . constructor
+          ~> Vat  . rely End
+          ~> Cat  . rely End
+          ~> Vow  . rely End
+          ~> Pot  . rely End
+          ~> Spot . rely End
+         ...
+         </k>
+
+    syntax DeployStep ::= "deployAdmin"
+ // -----------------------------------
+    rule <k> Deploy . deployAdmin
+          ~> call Vat  . rely ADMIN
+          ~> call Cat  . rely ADMIN
+          ~> call Vow  . rely ADMIN
+          ~> call Jug  . rely ADMIN
+          ~> call Pot  . rely ADMIN
+          ~> call Spot . rely ADMIN
+          ~> call Flap . rely ADMIN
+          ~> call Flop . rely ADMIN
+          ~> call End  . rely ADMIN
+         ...
+         </k>
+```
+
 ```k
 endmodule
 ```
