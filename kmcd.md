@@ -169,17 +169,18 @@ At it's core, it calls the constructors of all the sub-contracts with appropriat
     syntax DeployStep ::= "deployAdmin"
  // -----------------------------------
     rule <k> Deploy . deployAdmin
-          => call Vat  . rely ADMIN
-          ~> call Cat  . rely ADMIN
-          ~> call Vow  . rely ADMIN
-          ~> call Jug  . rely ADMIN
-          ~> call Pot  . rely ADMIN
-          ~> call Spot . rely ADMIN
-          ~> call Flap . rely ADMIN
-          ~> call Flop . rely ADMIN
-          ~> call End  . rely ADMIN
+          => call Vat  . rely MSGSENDER
+          ~> call Cat  . rely MSGSENDER
+          ~> call Vow  . rely MSGSENDER
+          ~> call Jug  . rely MSGSENDER
+          ~> call Pot  . rely MSGSENDER
+          ~> call Spot . rely MSGSENDER
+          ~> call Flap . rely MSGSENDER
+          ~> call Flop . rely MSGSENDER
+          ~> call End  . rely MSGSENDER
          ...
          </k>
+         <msg-sender> MSGSENDER </msg-sender>
 ```
 
 ```k
