@@ -19,26 +19,7 @@ module KMCD-PRELUDE
          // Contract Authorizations
          // -----------------------
 
-         // Auhthorize Pot/End/Spot for Vat
-         transact ADMIN Vat . rely Pot
-         transact ADMIN Vat . rely End
-         transact ADMIN Vat . rely Spot
-
-         // Authorize End for Pot
-         transact ADMIN Pot . rely End
-
-         // Auhthorize Pot/End for Vow
-         transact ADMIN Vow . rely Pot
-         transact ADMIN Vow . rely End
-
-         // Authorize End for Cat/Pot
-         transact ADMIN Cat . rely End
-
-         // Authorize Vow for Flap
-         transact ADMIN Flap . rely Vow
-
-         // Authorize Vow for Flop
-         transact ADMIN Flop . rely Vow
+         transact ADMIN Deploy . deploy Gem "MKR"
 
          // Account Initializations
          // -----------------------
@@ -62,9 +43,6 @@ module KMCD-PRELUDE
 
          // Miscellaneous Setup
          // -------------------
-
-         // File Vow contract for Pot
-         transact ADMIN Pot . file vow-file Vow
 
          // Allow the Flap to manipulate the Vow's balances
          transact Vow Vat . hope Flap
