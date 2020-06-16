@@ -84,9 +84,9 @@ At it's core, it calls the constructors of all the sub-contracts with appropriat
     syntax MCDStep ::= DeployContract "." DeployStep [klabel(deployStep)]
  // ---------------------------------------------------------------------
 
-    syntax DeployStep ::= "constructor" Address
- // -------------------------------------------
-    rule <k> Deploy . constructor GOV
+    syntax DeployStep ::= "deploy" Address
+ // --------------------------------------
+    rule <k> Deploy . deploy GOV
           => call Deploy . deployVat
           ~> call Deploy . deployDai
           ~> call Deploy . deployTaxation
