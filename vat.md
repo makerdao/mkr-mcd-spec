@@ -177,11 +177,9 @@ Because data isn't explicitely initialized to 0 in KMCD, we need explicit initia
       requires notBool ILKID in_keys(ILKS)
 
     rule <k> Vat . initUser ADDR => . ... </k>
-         <vat-can> CAN => CAN [ ADDR <- .Set ] </vat-can>
          <vat-dai> DAI => DAI [ ADDR <- rad(0) ] </vat-dai>
          <vat-sin> SIN => SIN [ ADDR <- rad(0) ] </vat-sin>
-      requires notBool ADDR in_keys(CAN)
-       andBool notBool ADDR in_keys(DAI)
+      requires notBool ADDR in_keys(DAI)
        andBool notBool ADDR in_keys(SIN)
 
     rule <k> Vat . initGem ILKID ADDR => . ... </k>
@@ -242,6 +240,16 @@ This is quite permissive, and would allow the account to drain all your locked c
     rule <k> Vat . nope ADDRTO => . ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <vat-can> ... MSGSENDER |-> (CANADDRS => CANADDRS -Set SetItem(ADDRTO)) ... </vat-can>
+
+    rule <k> Vat . hope ADDRTO ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         <vat-can> VAT_CANS => VAT_CANS [ MSGSENDER <- .Set ] </vat-can>
+      requires notBool MSGSENDER in_keys(VAT_CANS)
+
+    rule <k> Vat . nope ADDRTO => . ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         <vat-can> VAT_CANS </vat-can>
+      requires notBool MSGSENDER in_keys(VAT_CANS)
 ```
 
 -   `Vat.safe` checks that a given `Urn` of a certain `ilk` is not over-leveraged.
