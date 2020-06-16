@@ -153,6 +153,11 @@ At it's core, it calls the constructors of all the sub-contracts with appropriat
  // ----------------------------------------------
     rule <k> Deploy . deployShutdown GOV
           => End  . constructor
+          ~> End  . file vat-file  Vat
+          ~> End  . file cat-file  Cat
+          ~> End  . file vow-file  Vow
+          ~> End  . file pot-file  Pot
+          ~> end  . file spot-file Spot
           ~> Vat  . rely End
           ~> Cat  . rely End
           ~> Vow  . rely End
