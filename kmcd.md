@@ -118,7 +118,7 @@ At it's core, it calls the constructors of all the sub-contracts with appropriat
     syntax DeployStep ::= "deployTaxation"
  // --------------------------------------
     rule <k> Deploy . deployTaxation
-          ~> call Jug . constructor Vat
+          => call Jug . constructor Vat
           ~> call Pot . constructor Vat
           ~> call Vat . rely Jug
           ~> call Vat . rely Pot
