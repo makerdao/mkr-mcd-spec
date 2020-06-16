@@ -93,7 +93,6 @@ At it's core, it calls the constructors of all the sub-contracts with appropriat
           ~> call Deploy . deployAuctions GOV
           ~> call Deploy . deployLiquidator
           ~> call Deploy . deployShutdown GOV
-          ~> call Deploy . deployAdmin
          ...
          </k>
 
@@ -165,22 +164,6 @@ At it's core, it calls the constructors of all the sub-contracts with appropriat
           ~> Spot . rely End
          ...
          </k>
-
-    syntax DeployStep ::= "deployAdmin"
- // -----------------------------------
-    rule <k> Deploy . deployAdmin
-          => call Vat  . rely MSGSENDER
-          ~> call Cat  . rely MSGSENDER
-          ~> call Vow  . rely MSGSENDER
-          ~> call Jug  . rely MSGSENDER
-          ~> call Pot  . rely MSGSENDER
-          ~> call Spot . rely MSGSENDER
-          ~> call Flap . rely MSGSENDER
-          ~> call Flop . rely MSGSENDER
-          ~> call End  . rely MSGSENDER
-         ...
-         </k>
-         <msg-sender> MSGSENDER </msg-sender>
 ```
 
 ```k
