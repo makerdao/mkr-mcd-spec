@@ -147,7 +147,7 @@ Vow Semantics
  // -----------------------------
     rule <k> Vow . heal AMOUNT => call VOW_VAT . heal AMOUNT ... </k>
          <this> THIS </this>
-         <vow-vat> VOW_VAT </vow-vat>
+         <vow-vat> VOW_VAT:VatContract </vow-vat>
          <vat-dai> ... THIS |-> VATDAI ... </vat-dai>
          <vat-sin> ... THIS |-> VATSIN ... </vat-sin>
          <vow-sin> SIN </vow-sin>
@@ -160,7 +160,7 @@ Vow Semantics
  // -----------------------------
     rule <k> Vow . kiss AMOUNT => call VOW_VAT . heal AMOUNT ... </k>
          <this> THIS </this>
-         <vow-vat> VOW_VAT </vow-vat>
+         <vow-vat> VOW_VAT:VatContract </vow-vat>
          <vat-dai> ... THIS |-> VATDAI ... </vat-dai>
          <vow-ash> ASH => ASH -Rad AMOUNT </vow-ash>
        requires AMOUNT >=Rad rad(0)
@@ -204,7 +204,7 @@ Vow Semantics
          ...
          </k>
          <this> THIS </this>
-         <vow-vat> VOW_VAT </vow-vat>
+         <vow-vat> VOW_VAT:VatContract </vow-vat>
          <vow-flopper> VOW_FLOPPER:FlopContract </vow-flopper>
          <vow-flapper> VOW_FLAPPER:FlapContract </vow-flapper>
          <vat-sin> ... THIS |-> VATSIN ... </vat-sin>
