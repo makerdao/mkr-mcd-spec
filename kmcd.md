@@ -83,6 +83,7 @@ At it's core, it calls the constructors of all the sub-contracts with appropriat
     syntax DeployContract ::= "Deploy"
     syntax MCDStep ::= DeployContract "." DeployStep [klabel(deployStep)]
  // ---------------------------------------------------------------------
+    rule contract(Deploy . _) => Deploy
 
     syntax DeployStep ::= "deploy" Address
  // --------------------------------------
