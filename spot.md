@@ -13,10 +13,11 @@ Spot Configuration
 ```k
     configuration
       <spot>
-        <spot-wards> .Set   </spot-wards>
-        <spot-ilks>  .Map   </spot-ilks> // mapping (bytes32 => ilk)  String  |-> SpotIlk
-        <spot-par>   ray(1) </spot-par>
-        <spot-live>  true   </spot-live>
+        <spot-vat>   0:Address </spot-vat>
+        <spot-wards> .Set      </spot-wards>
+        <spot-ilks>  .Map      </spot-ilks> // mapping (bytes32 => ilk)  String  |-> SpotIlk
+        <spot-par>   ray(1)    </spot-par>
+        <spot-live>  true      </spot-live>
       </spot>
 ```
 
@@ -135,7 +136,8 @@ Spot Semantics
 ```k
     syntax SpotStep ::= "poke" String
  // ---------------------------------
-    rule <k> Spot . poke ILK_ID => call Vat . file spot ILK_ID ((Wad2Ray(VALUE) /Ray PAR) /Ray MAT) ... </k>
+    rule <k> Spot . poke ILK_ID => call SPOT_VAT . file spot ILK_ID ((Wad2Ray(VALUE) /Ray PAR) /Ray MAT) ... </k>
+         <spot-vat> SPOT_VAT </spot-vat>
          <spot-ilks> ... ILK_ID |-> SpotIlk (... pip: VALUE, mat: MAT ) ... </spot-ilks>
          <spot-par> PAR </spot-par>
          <frame-events> ... (.List => ListItem(Poke(ILK_ID, VALUE, (Wad2Ray(VALUE) /Ray PAR) /Ray MAT))) </frame-events>

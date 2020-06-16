@@ -17,10 +17,11 @@ Cat Configuration
 ```k
     configuration
       <cat>
+        <cat-vat>   0:Address </cat-vat>
+        <cat-vow>   0:Address </cat-vow>
         <cat-wards> .Set      </cat-wards>
         <cat-ilks>  .Map      </cat-ilks>
         <cat-live>  true      </cat-live>
-        <cat-vow>   0:Address </cat-vow>
       </cat>
 ```
 

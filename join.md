@@ -20,11 +20,15 @@ Join Configuration
         <gem-joins>
           <gem-join multiplicity="*" type="Map">
             <gem-join-gem> "":String </gem-join-gem>
+            <gem-join-vat> 0:Address </gem-join-vat>
+            <gem-join-gem-addr> 0:Address </gem-join-gem-addr>
             <gem-join-wards> .Set </gem-join-wards>
             <gem-join-live> true </gem-join-live>
           </gem-join>
         </gem-joins>
         <dai-join>
+          <dai-join-vat> 0:Address </dai-join-vat>
+          <dai-join-gem-addr> 0:Address </dai-join-gem-addr>
           <dai-join-wards> .Set </dai-join-wards>
           <dai-join-live> true </dai-join-live>
         </dai-join>
@@ -105,14 +109,16 @@ Join Semantics
     syntax GemJoinStep ::= "join" Address Wad
  // -----------------------------------------
     rule <k> GemJoin GEMID . join USR AMOUNT
-          => call Vat . slip GEMID USR AMOUNT
-          ~> call Gem GEMID . transferFrom MSGSENDER THIS AMOUNT
+          => call GEM_JOIN_VAT . slip GEMID USR AMOUNT
+          ~> call GEM_JOIN_GEM . transferFrom MSGSENDER THIS AMOUNT
          ...
          </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
          <gem-join>
            <gem-join-gem> GEMID </gem-join-gem>
+           <gem-join-vat> GEM_JOIN_VAT:VatContract </gem-join-vat>
+           <gem-join-gem-addr> GEM_JOIN_GEM:GemContract </gem-join-gem-addr>
            <gem-join-live> true </gem-join-live>
            ...
          </gem-join>
@@ -121,34 +127,44 @@ Join Semantics
     syntax GemJoinStep ::= "exit" Address Wad
  // -----------------------------------------
     rule <k> GemJoin GEMID . exit USR AMOUNT
-          => call Vat . slip GEMID MSGSENDER (wad(0) -Wad AMOUNT)
-          ~> call Gem GEMID . transfer USR AMOUNT
+          => call GEM_JOIN_VAT . slip GEMID MSGSENDER (wad(0) -Wad AMOUNT)
+          ~> call GEM_JOIN_GEM . transfer USR AMOUNT
          ...
          </k>
          <msg-sender> MSGSENDER </msg-sender>
+         <gem-join>
+           <gem-join-gem> GEMID </gem-join-gem>
+           <gem-join-vat> GEM_JOIN_VAT:VatContract </gem-join-vat>
+           <gem-join-gem-addr> GEM_JOIN_GEM:GemContract </gem-join-gem-addr>
+           ...
+         </gem-join>
       requires AMOUNT >=Wad wad(0)
 
     syntax DaiJoinStep ::= "join" Address Wad
  // -----------------------------------------
     rule <k> DaiJoin . join USR AMOUNT
-          => call Vat . move THIS USR Wad2Rad(AMOUNT)
-          ~> call Dai . burn MSGSENDER AMOUNT
+          => call DAI_JOIN_VAT . move THIS USR Wad2Rad(AMOUNT)
+          ~> call DAI_JOIN_GEM . burn MSGSENDER AMOUNT
          ...
          </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
          <dai-join-live> true </dai-join-live>
+         <dai-join-vat> DAI_JOIN_VAT:VatContract </dai-join-vat>
+         <dai-join-gem-addr> DAI_JOIN_GEM:DaiContract </dai-join-gem-addr>
       requires AMOUNT >=Wad wad(0)
 
     syntax DaiJoinStep ::= "exit" Address Wad
  // -----------------------------------------
     rule <k> DaiJoin . exit USR AMOUNT
-          => call Vat . move MSGSENDER THIS Wad2Rad(AMOUNT)
-          ~> call Dai . mint USR AMOUNT
+          => call DAI_JOIN_VAT . move MSGSENDER THIS Wad2Rad(AMOUNT)
+          ~> call DAI_JOIN_GEM . mint USR AMOUNT
          ...
          </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
+         <dai-join-vat> DAI_JOIN_VAT:VatContract </dai-join-vat>
+         <dai-join-gem-addr> DAI_JOIN_GEM:DaiContract </dai-join-gem-addr>
       requires AMOUNT >=Wad wad(0)
 ```
 

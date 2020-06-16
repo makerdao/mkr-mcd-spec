@@ -13,6 +13,7 @@ Pot Configuration
 ```k
     configuration
       <pot>
+        <pot-vat>   0:Address </pot-vat>
         <pot-wards> .Set      </pot-wards>
         <pot-pies>  .Map      </pot-pies> // mapping (address => uint256) Address |-> Wad
         <pot-pie>   wad(0)    </pot-pie>
@@ -100,9 +101,10 @@ Pot Semantics
 ```k
     syntax PotStep ::= "drip"
  // -------------------------
-    rule <k> Pot . drip => call Vat . suck VOW THIS ( PIE *Rate ( CHI *Ray ( DSR ^Ray (NOW -Int RHO) -Ray ray(1) ) ) ) ... </k>
+    rule <k> Pot . drip => call POT_VAT . suck VOW THIS ( PIE *Rate ( CHI *Ray ( DSR ^Ray (NOW -Int RHO) -Ray ray(1) ) ) ) ... </k>
          <this> THIS </this>
          <current-time> NOW </current-time>
+         <pot-vat> POT_VAT </pot-vat>
          <pot-chi> CHI => CHI *Ray (DSR ^Ray (NOW -Int RHO)) </pot-chi>
          <pot-rho> RHO => NOW </pot-rho>
          <pot-dsr> DSR </pot-dsr>
@@ -113,10 +115,11 @@ Pot Semantics
 
     syntax PotStep ::= "join" Wad
  // -----------------------------
-    rule <k> Pot . join AMOUNT => call Vat . move MSGSENDER THIS ( AMOUNT *Rate CHI ) ... </k>
+    rule <k> Pot . join AMOUNT => call POT_VAT . move MSGSENDER THIS ( AMOUNT *Rate CHI ) ... </k>
          <this> THIS </this>
          <current-time> NOW </current-time>
          <msg-sender> MSGSENDER </msg-sender>
+         <pot-vat> POT_VAT </pot-vat>
          <pot-pies> ... MSGSENDER |-> ( MSGSENDER_PIE => MSGSENDER_PIE +Wad AMOUNT ) ... </pot-pies>
          <pot-pie> PIE => PIE +Wad AMOUNT </pot-pie>
          <pot-chi> CHI </pot-chi>
@@ -126,9 +129,10 @@ Pot Semantics
 
     syntax PotStep ::= "exit" Wad
  // -----------------------------
-    rule <k> Pot . exit AMOUNT => call Vat . move THIS MSGSENDER ( AMOUNT *Rate CHI ) ... </k>
+    rule <k> Pot . exit AMOUNT => call POT_VAT . move THIS MSGSENDER ( AMOUNT *Rate CHI ) ... </k>
          <this> THIS </this>
          <msg-sender> MSGSENDER </msg-sender>
+         <pot-vat> POT_VAT </pot-vat>
          <pot-pies> ... MSGSENDER |-> ( MSGSENDER_PIE => MSGSENDER_PIE -Wad AMOUNT ) ... </pot-pies>
          <pot-pie> PIE => PIE -Wad AMOUNT </pot-pie>
          <pot-chi> CHI </pot-chi>

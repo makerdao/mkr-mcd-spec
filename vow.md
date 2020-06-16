@@ -17,16 +17,19 @@ Vow Configuration
 ```k
     configuration
       <vow>
-        <vow-wards> .Set   </vow-wards>
-        <vow-sins>  .Map   </vow-sins> // mapping (uint256 => uint256) Int |-> Rad
-        <vow-sin>   rad(0) </vow-sin>
-        <vow-ash>   rad(0) </vow-ash>
-        <vow-wait>  0      </vow-wait>
-        <vow-dump>  wad(0) </vow-dump>
-        <vow-sump>  rad(0) </vow-sump>
-        <vow-bump>  rad(0) </vow-bump>
-        <vow-hump>  rad(0) </vow-hump>
-        <vow-live>  true   </vow-live>
+        <vow-vat>     0:Address </vow-vat>
+        <vow-flapper> 0:Address </vow-flapper>
+        <vow-flopper> 0:Address </vow-flopper>
+        <vow-wards>   .Set      </vow-wards>
+        <vow-sins>    .Map      </vow-sins> // mapping (uint256 => uint256) Int |-> Rad
+        <vow-sin>     rad(0)    </vow-sin>
+        <vow-ash>     rad(0)    </vow-ash>
+        <vow-wait>    0         </vow-wait>
+        <vow-dump>    wad(0)    </vow-dump>
+        <vow-sump>    rad(0)    </vow-sump>
+        <vow-bump>    rad(0)    </vow-bump>
+        <vow-hump>    rad(0)    </vow-hump>
+        <vow-live>    true      </vow-live>
       </vow>
 ```
 
@@ -123,8 +126,9 @@ Vow Semantics
 
     syntax VowStep ::= "heal" Rad
  // -----------------------------
-    rule <k> Vow . heal AMOUNT => call Vat . heal AMOUNT ... </k>
+    rule <k> Vow . heal AMOUNT => call VOW_VAT . heal AMOUNT ... </k>
          <this> THIS </this>
+         <vow-vat> VOW_VAT </vow-vat>
          <vat-dai> ... THIS |-> VATDAI ... </vat-dai>
          <vat-sin> ... THIS |-> VATSIN ... </vat-sin>
          <vow-sin> SIN </vow-sin>
@@ -135,8 +139,9 @@ Vow Semantics
 
     syntax VowStep ::= "kiss" Rad
  // -----------------------------
-    rule <k> Vow . kiss AMOUNT => call Vat . heal AMOUNT ... </k>
+    rule <k> Vow . kiss AMOUNT => call VOW_VAT . heal AMOUNT ... </k>
          <this> THIS </this>
+         <vow-vat> VOW_VAT </vow-vat>
          <vat-dai> ... THIS |-> VATDAI ... </vat-dai>
          <vow-ash> ASH => ASH -Rad AMOUNT </vow-ash>
        requires AMOUNT >=Rad rad(0)
@@ -145,8 +150,9 @@ Vow Semantics
 
     syntax VowStep ::= "flop"
  // -------------------------
-    rule <k> Vow . flop => call Flop . kick THIS DUMP SUMP ... </k>
+    rule <k> Vow . flop => call VOW_FLOPPER . kick THIS DUMP SUMP ... </k>
          <this> THIS </this>
+         <vow-flopper> VOW_FLOPPER:FlopContract </vow-flopper>
          <vat-sin> ... THIS |-> VATSIN ... </vat-sin>
          <vat-dai> ... THIS |-> VATDAI ... </vat-dai>
          <vow-sin> SIN </vow-sin>
@@ -158,8 +164,9 @@ Vow Semantics
 
     syntax VowStep ::= "flap"
  // -------------------------
-    rule <k> Vow . flap => call Flap . kick BUMP wad(0) ... </k>
+    rule <k> Vow . flap => call VOW_FLAPPER . kick BUMP wad(0) ... </k>
          <this> THIS </this>
+         <vow-flapper> VOW_FLAPPER:FlapContract </vow-flapper>
          <vat-sin> ... THIS |-> VATSIN ... </vat-sin>
          <vat-dai> ... THIS |-> VATDAI ... </vat-dai>
          <vow-sin> SIN </vow-sin>
@@ -172,17 +179,20 @@ Vow Semantics
     syntax VowAuthStep ::= "cage"
  // -----------------------------
     rule <k> Vow . cage
-          => call Flap . cage FLAPDAI
-          ~> call Flop . cage
-          ~> call Vat . heal minRad(VATDAI, VATSIN)
+          => call VOW_FLAPPER . cage FLAPDAI
+          ~> call VOW_FLOPPER . cage
+          ~> call VOW_VAT . heal minRad(VATDAI, VATSIN)
          ...
          </k>
          <this> THIS </this>
+         <vow-vat> VOW_VAT </vow-vat>
+         <vow-flopper> VOW_FLOPPER:FlopContract </vow-flopper>
+         <vow-flapper> VOW_FLAPPER:FlapContract </vow-flapper>
          <vat-sin> ... THIS |-> VATSIN ... </vat-sin>
          <vat-dai>
            ...
            THIS |-> VATDAI
-           Flap |-> FLAPDAI
+           VOW_FLAPPER |-> FLAPDAI
            ...
          </vat-dai>
          <vow-live> _ => false </vow-live>

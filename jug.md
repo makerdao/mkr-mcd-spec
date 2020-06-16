@@ -13,6 +13,7 @@ Jug Configuration
 ```k
     configuration
       <jug>
+        <jug-vat>   0:Address </jug-vat>
         <jug-wards> .Set      </jug-wards>
         <jug-ilks>  .Map      </jug-ilks> // mapping (bytes32 => JugIlk) String  |-> JugIlk
         <jug-vow>   0:Address </jug-vow>  //                             Address
@@ -110,8 +111,9 @@ Jug Semantics
 ```k
     syntax JugStep ::= "drip" String
  // --------------------------------
-    rule <k> Jug . drip ILK_ID => call Vat . fold ILK_ID ADDRESS ( ( (BASE +Ray ILKDUTY) ^Ray (TIME -Int ILKRHO) ) *Ray ILKRATE ) -Ray ILKRATE ... </k>
+    rule <k> Jug . drip ILK_ID => call JUG_VAT . fold ILK_ID ADDRESS ( ( (BASE +Ray ILKDUTY) ^Ray (TIME -Int ILKRHO) ) *Ray ILKRATE ) -Ray ILKRATE ... </k>
          <current-time> TIME </current-time>
+         <jug-vat> JUG_VAT </jug-vat>
          <vat-ilks> ... ILK_ID |-> Ilk ( ... rate: ILKRATE ) ... </vat-ilks>
          <jug-ilks> ... ILK_ID |-> Ilk ( ... duty: ILKDUTY, rho: ILKRHO => TIME ) ... </jug-ilks>
          <jug-vow> ADDRESS </jug-vow>
