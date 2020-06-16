@@ -142,7 +142,7 @@ At it's core, it calls the constructors of all the sub-contracts with appropriat
     syntax DeployStep ::= "deployLiquidator"
  // ----------------------------------------
     rule <k> Deploy . deployLiquidator
-          ~> call Cat . constructor Vat
+          => call Cat . constructor Vat
           ~> call Cat . file vow-file Vow
           ~> call Vat . rely Cat
           ~> call Vow . rely Cat
@@ -157,7 +157,7 @@ At it's core, it calls the constructors of all the sub-contracts with appropriat
           ~> End  . file cat-file  Cat
           ~> End  . file vow-file  Vow
           ~> End  . file pot-file  Pot
-          ~> end  . file spot-file Spot
+          ~> End  . file spot-file Spot
           ~> Vat  . rely End
           ~> Cat  . rely End
           ~> Vow  . rely End
@@ -169,7 +169,7 @@ At it's core, it calls the constructors of all the sub-contracts with appropriat
     syntax DeployStep ::= "deployAdmin"
  // -----------------------------------
     rule <k> Deploy . deployAdmin
-          ~> call Vat  . rely ADMIN
+          => call Vat  . rely ADMIN
           ~> call Cat  . rely ADMIN
           ~> call Vow  . rely ADMIN
           ~> call Jug  . rely ADMIN
