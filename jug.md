@@ -105,6 +105,7 @@ Jug Semantics
     rule <k> Jug . init ILK ... </k>
          <current-time> NOW </current-time>
          <jug-ilks> JUG_ILKS => JUG_ILKS [ ILK <- Ilk ( ... duty: ray(0) , rho: 0 ) ] </jug-ilks>
+      requires notBool ILK in_keys(JUG_ILKS)
 ```
 
 ```k
