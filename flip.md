@@ -15,8 +15,8 @@ Flip Configuration
       <flips>
         <flip multiplicity="*" type="Map">
           <flip-ilk>   ""                     </flip-ilk>
-          <flip-wards> .Set                   </flip-wards>
           <flip-vat>   0:Address              </flip-vat>
+          <flip-wards> .Set                   </flip-wards>
           <flip-bids>  .Map                   </flip-bids> // mapping (uint => Bid) Int |-> FlipBid
           <flip-beg>   wad(105) /Wad wad(100) </flip-beg>  // Minimum Bid Increase
           <flip-ttl>   3 hours                </flip-ttl>  // Single Bid Lifetime
@@ -60,20 +60,20 @@ Flip Configuration
 ```k
     syntax FlipStep ::= "constructor" Address
  // -----------------------------------------
-    rule <k> Flip ILK_ID . constructor _ ... </k>
-         ( <flip> <flip-ilk> ILK_ID </flip-ilk> ... </flip> => .Bag )
-
     rule <k> Flip ILK_ID . constructor FLIP_VAT => . ... </k>
          <msg-sender> MSGSENDER </msg-sender>
-         ( .Bag
-        => <flip>
-             <flip-ilk> ILK_ID </flip-ilk>
-             <flip-vat> FLIP_VAT </flip-vat>
-             <flip-wards> SetItem(MSGSENDER) </flip-wards>
-             ...
-           </flip>
-         )
-      [owise]
+         <flips>
+           ...
+           ( .Bag
+          => <flip>
+               <flip-ilk> ILK_ID </flip-ilk>
+               <flip-vat> FLIP_VAT </flip-vat>
+               <flip-wards> SetItem(MSGSENDER) </flip-wards>
+               ...
+             </flip>
+           )
+           ...
+         </flips>
 ```
 
 Flip Authorization

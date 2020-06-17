@@ -54,21 +54,22 @@ Join Configuration
 ```k
     syntax GemJoinStep ::= "constructor" Address Address
  // ----------------------------------------------------
-    rule <k> GemJoin ILK_ID . constructor _:Address _:Address ... </k>
-         ( <gem-join> <gem-join-gem> ILK_ID </gem-join-gem> ... </gem-join> => .Bag )
-
     rule <k> GemJoin ILK_ID . constructor GEM_JOIN_VAT GEM_JOIN_GEM => . ... </k>
          <msg-sender> MSGSENDER </msg-sender>
-         ( .Bag
-        => <gem-join>
-             <gem-join-gem> ILK_ID </gem-join-gem>
-             <gem-join-vat> GEM_JOIN_VAT </gem-join-vat>
-             <gem-join-gem-addr> GEM_JOIN_GEM </gem-join-gem-addr>
-             <gem-join-wards> SetItem(MSGSENDER) </gem-join-wards>
-             <gem-join-live> true </gem-join-live>
-             ...
-           </gem-join>
-         )
+         <gem-joins>
+           ...
+           ( .Bag
+          => <gem-join>
+               <gem-join-gem> ILK_ID </gem-join-gem>
+               <gem-join-vat> GEM_JOIN_VAT </gem-join-vat>
+               <gem-join-gem-addr> GEM_JOIN_GEM </gem-join-gem-addr>
+               <gem-join-wards> SetItem(MSGSENDER) </gem-join-wards>
+               <gem-join-live> true </gem-join-live>
+               ...
+             </gem-join>
+           )
+           ...
+         </gem-joins>
 ```
 
 ```k

@@ -41,7 +41,16 @@ Because data isn't explicitely initialized to 0 in KMCD, we need explicit initia
                          | "initUser" Address
  // -----------------------------------------
     rule <k> Gem GEMID . init => . ... </k>
-         <gems> ... ( .Bag => <gem> <gem-id> GEMID </gem-id> ... </gem> ) ... </gems>
+         <gems>
+           ...
+           ( .Bag
+          => <gem>
+               <gem-id> GEMID </gem-id>
+               ...
+             </gem>
+           )
+           ...
+         </gems>
 
     rule <k> Gem GEMID . initUser ADDR => . ... </k>
          <gem>
