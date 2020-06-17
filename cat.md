@@ -59,8 +59,8 @@ Cat Data
     -   `lump`: maximum liquidation lot quantity.
 
 ```k
-    syntax CatIlk ::= Ilk ( chop: Ray, lump: Wad ) [klabel(#CatIlk), symbol]
- // ------------------------------------------------------------------------
+    syntax CatIlk ::= Ilk ( flip: Address, chop: Ray, lump: Wad ) [klabel(#CatIlk), symbol]
+ // ---------------------------------------------------------------------------------------
 ```
 
 **NOTE**: The `flip` liquidator address is not included in `CatIlk` because we assume a unique `Flipper` for each `Ilk`.
@@ -89,13 +89,14 @@ The parameters controlled by governance are:
 -   `lump`: liquidation lot quantity.
 
 ```k
+    syntax CatAuthStep ::= "file" CatFile
+ // -------------------------------------
+
     syntax CatFile ::= "vow-file" Address
                      | "chop" String Ray
                      | "lump" String Wad
- // ------------------------------------
-
-    syntax CatAuthStep ::= "file" CatFile
- // -------------------------------------
+                     | "flip" String Address
+ // ----------------------------------------
     rule <k> Cat . file vow-file ADDR => . ... </k>
          <cat-vow> _ => ADDR </cat-vow>
 
@@ -106,6 +107,9 @@ The parameters controlled by governance are:
     rule <k> Cat . file lump ILK_ID LUMP => . ... </k>
          <cat-ilks> ... ILK_ID |-> Ilk ( ... lump: (_ => LUMP) ) ... </cat-ilks>
       requires LUMP >=Wad wad(0)
+
+    rule <k> Cat . file flip ILK_ID CAT_FLIP => . ... </k>
+         <cat-ilks> ... ILK_ID |-> Ilk ( ... flip: (_ => CAT_FLIP) ) ... </cat-ilks>
 ```
 
 **NOTE**: `flip` is not fileable since we are assuming a unique liquidator for each ilk.
@@ -122,9 +126,9 @@ Cat Semantics
           => #fun(LOT
           => #fun(ART
           => #fun(TAB
-          => call Vat . grab ILK_ID URN THIS VOWADDR (wad(0) -Wad LOT) (wad(0) -Wad ART)
-          ~> call Vow . fess TAB
-          ~> call Flip ILK_ID . kick URN VOWADDR rmul(TAB, CHOP) LOT rad(0)
+          => call CAT_VAT  . grab ILK_ID URN THIS CAT_VOW (wad(0) -Wad LOT) (wad(0) -Wad ART)
+          ~> call CAT_VOW  . fess TAB
+          ~> call CAT_FLIP . kick URN CAT_VOW rmul(TAB, CHOP) LOT rad(0)
           ~> emitBite ILK_ID URN LOT ART TAB)
           (ART *Rate RATE))
           (minWad(URNART, (LOT *Wad URNART) /Wad INK)))
@@ -132,11 +136,12 @@ Cat Semantics
          ...
          </k>
          <this> THIS </this>
+         <cat-vat> CAT_VAT </cat-vat>
+         <cat-vow> CAT_VOW </cat-vow>
          <cat-live> true </cat-live>
-         <cat-ilks> ... ILK_ID |-> Ilk(... chop: CHOP, lump: LUMP) ... </cat-ilks>
+         <cat-ilks> ... ILK_ID |-> Ilk(... flip: CAT_FLIP, chop: CHOP, lump: LUMP) ... </cat-ilks>
          <vat-ilks> ... ILK_ID |-> Ilk(... rate: RATE, spot: SPOT) ... </vat-ilks>
-         <vat-urns> ... { ILK_ID , URN } |-> Urn(... ink: INK, art: URNART ) ... </vat-urns>
-         <cat-vow> VOWADDR </cat-vow>
+         <vat-urns> ... { ILK_ID, URN } |-> Urn(... ink: INK, art: URNART ) ... </vat-urns>
       requires (INK *Rate SPOT) <Rad (URNART *Rate RATE)
 
     syntax CatAuthStep ::= "cage" [klabel(#CatCage), symbol]
