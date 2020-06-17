@@ -101,6 +101,10 @@ Jug Semantics
     rule <k> Jug . init ILK => . ... </k>
          <current-time> NOW </current-time>
          <jug-ilks> ... ILK |-> Ilk ( ... duty: ray(0) => ray(1), rho: _ => NOW ) ... </jug-ilks>
+
+    rule <k> Jug . init ILK ... </k>
+         <current-time> NOW </current-time>
+         <jug-ilks> JUG_ILKS => JUG_ILKS [ ILK <- Ilk ( ... duty: ray(0) , rho: 0 ) ] </jug-ilks>
 ```
 
 ```k

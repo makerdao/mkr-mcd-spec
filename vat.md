@@ -167,15 +167,10 @@ Because data isn't explicitely initialized to 0 in KMCD, we need explicit initia
 -   `initCDP`: Create an empty CDP of a given ilk for a given user.
 
 ```k
-    syntax VatAuthStep ::= "initIlk" String
-                         | "initUser" Address
+    syntax VatAuthStep ::= "initUser" Address
                          | "initGem" String Address
                          | "initCDP" String Address
  // -----------------------------------------------
-    rule <k> Vat . initIlk ILKID => . ... </k>
-         <vat-ilks> ILKS => ILKS [ ILKID <- Ilk ( ... Art: wad(0) , rate: ray(1) , spot: ray(0) , line: rad(0) , dust: rad(0) ) ] </vat-ilks>
-      requires notBool ILKID in_keys(ILKS)
-
     rule <k> Vat . initUser ADDR => . ... </k>
          <vat-dai> DAI => DAI [ ADDR <- rad(0) ] </vat-dai>
          <vat-sin> SIN => SIN [ ADDR <- rad(0) ] </vat-sin>
@@ -281,6 +276,10 @@ This is quite permissive, and would allow the account to drain all your locked c
  // ------------------------------------
     rule <k> Vat . init ILKID => . ... </k>
          <vat-ilks> ... ILKID |-> Ilk(... rate: ray(0) => ray(1)) ... </vat-ilks>
+
+    rule <k> Vat . init ILKID ... </k>
+         <vat-ilks> VAT_ILKS => VAT_ILKS [ ILKID <- Ilk (... Art: wad(0) , rate: ray(0) , spot: ray(0) , line: rad(0) , dust: rad(0) ) ] </vat-ilks>
+      requires notBool ILKID in_keys(VAT_ILKS)
 ```
 
 ### Collateral manipulation (`<vat-gem>`)
