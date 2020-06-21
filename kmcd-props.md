@@ -126,13 +126,13 @@ Art of an ilk = Sum of all urn art across all users for that ilk.
 ```k
     syntax Wad ::= sumOfUrnArt(Map, String, Wad) [function, functional]
  // -------------------------------------------------------------------
-    rule sumOfUrnArt( {ILKID , ADDR} |-> Urn (... art: ART) URNS, ILKID', SUM)
-      => #if ILKID ==K ILKID'
-            #then sumOfUrnArt( URNS, ILKID', SUM +Wad ART)
-            #else sumOfUrnArt( URNS, ILKID', SUM)
+    rule sumOfUrnArt( {ILK_ID , ADDR} |-> Urn (... art: ART) URNS, ILK_ID', SUM)
+      => #if ILK_ID ==K ILK_ID'
+            #then sumOfUrnArt( URNS, ILK_ID', SUM +Wad ART)
+            #else sumOfUrnArt( URNS, ILK_ID', SUM)
          #fi
 
-    rule sumOfUrnArt( _ |-> _ URNS, ILKID', SUM ) => sumOfUrnArt( URNS, ILKID', SUM ) [owise]
+    rule sumOfUrnArt( _ |-> _ URNS, ILK_ID', SUM ) => sumOfUrnArt( URNS, ILK_ID', SUM ) [owise]
 
     rule sumOfUrnArt(.Map, _, SUM) => SUM
 ```

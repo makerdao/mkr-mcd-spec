@@ -354,9 +354,9 @@ module KMCD-GEN
          <vat-gem> ... CDPID |-> VAT_GEM ... </vat-gem>
       requires lengthBytes(BS) >Int 0
 
-    rule <k> GenVatFrob { ILKID , ADDRESS } DINK
+    rule <k> GenVatFrob { ILK_ID , ADDRESS } DINK
           => #fun( DARTBOUND
-                => LogGen ( transact ADDRESS Vat . frob ILKID ADDRESS ADDRESS ADDRESS DINK ((wad(2) *Wad randWadBounded(head(BS), DARTBOUND)) -Wad DARTBOUND) )
+                => LogGen ( transact ADDRESS Vat . frob ILK_ID ADDRESS ADDRESS ADDRESS DINK ((wad(2) *Wad randWadBounded(head(BS), DARTBOUND)) -Wad DARTBOUND) )
                  ) ((((URNINK +Wad DINK) *Rate SPOT) /Rate RATE) -Wad URNART)
          ...
          </k>
@@ -364,12 +364,12 @@ module KMCD-GEN
          <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
          <vat-ilks>
            ...
-           ILKID |-> Ilk ( ... rate: RATE, spot: SPOT )
+           ILK_ID |-> Ilk ( ... rate: RATE, spot: SPOT )
            ...
          </vat-ilks>
          <vat-urns>
            ...
-           { ILKID , ADDRESS } |-> Urn ( ... ink: URNINK, art: URNART )
+           { ILK_ID , ADDRESS } |-> Urn ( ... ink: URNINK, art: URNART )
            ...
          </vat-urns>
       requires lengthBytes(BS) >Int 0
@@ -419,7 +419,7 @@ module KMCD-GEN
                             | "GenGemJoinJoin" String
                             | "GenGemJoinJoin" String Address
  // ---------------------------------------------------------
-    // **TODO**: Would be better to choose from an ILK with <gem-id>
+    // **TODO**: Would be better to choose from an ILK_ID with <gem-id>
     rule <k> GenGemJoinJoin => GenGemJoinJoin chooseString(head(BS), (ListItem("MKR") ListItem("gold"))) ... </k>
          <random> BS => tail(BS) </random>
          <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
@@ -527,7 +527,7 @@ module KMCD-GEN
          <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
       requires lengthBytes(BS) >Int 0
 
-    rule <k> GenFlipKick { ILKID , ADDRESS } STORAGE BENEFICIARY LOT BID => LogGen ( transact ADDRESS Flip ILKID . kick STORAGE BENEFICIARY rad(1000) LOT BID ) ... </k>
+    rule <k> GenFlipKick { ILK_ID , ADDRESS } STORAGE BENEFICIARY LOT BID => LogGen ( transact ADDRESS Flip ILK_ID . kick STORAGE BENEFICIARY rad(1000) LOT BID ) ... </k>
 
     syntax GenStep ::= GenPotStep
     syntax GenPotStep ::= "GenPotJoin"
@@ -595,7 +595,7 @@ module KMCD-GEN
       requires lengthBytes(BS) >Int 0
        andBool size(ILKS) >Int 0
 
-    // **TODO**: Would be better to choose from an ILK with <end-tag> and <end-gap> too
+    // **TODO**: Would be better to choose from an ILK_ID with <end-tag> and <end-gap> too
     rule <k> GenEndSkim => GenEndSkim chooseCDPID(head(BS), keys_list(VAT_URNS)) ... </k>
          <random> BS => tail(BS) </random>
          <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
@@ -603,7 +603,7 @@ module KMCD-GEN
       requires lengthBytes(BS) >Int 0
        andBool size(VAT_URNS) >Int 0
 
-    rule <k> GenEndSkim { ILKID , ADDRESS } => LogGen ( transact ANYONE End . skim ILKID ADDRESS ) ... </k>
+    rule <k> GenEndSkim { ILK_ID , ADDRESS } => LogGen ( transact ANYONE End . skim ILK_ID ADDRESS ) ... </k>
 
     rule <k> GenEndFlow => LogGen ( transact ANYONE End . flow chooseString(head(BS), keys_list(ILKS)) ) ... </k>
          <random> BS => tail(BS) </random>
@@ -612,7 +612,7 @@ module KMCD-GEN
       requires lengthBytes(BS) >Int 0
        andBool size(ILKS) >Int 0
 
-    // **TODO**: Would be better to pick an ILKID from <flips>
+    // **TODO**: Would be better to pick an ILK_ID from <flips>
     rule <k> GenEndSkip => GenEndSkip chooseString(head(BS), keys_list(ILKS)) ... </k>
          <random> BS => tail(BS) </random>
          <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
@@ -620,11 +620,11 @@ module KMCD-GEN
       requires lengthBytes(BS) >Int 0
        andBool size(ILKS) >Int 0
 
-    rule <k> GenEndSkip ILKID => LogGen ( transact ANYONE End . skip ILKID chooseInt(head(BS), keys_list(FLIP_BIDS)) ) ... </k>
+    rule <k> GenEndSkip ILK_ID => LogGen ( transact ANYONE End . skip ILK_ID chooseInt(head(BS), keys_list(FLIP_BIDS)) ) ... </k>
          <random> BS => tail(BS) </random>
          <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
          <flip>
-           <flip-ilk> ILKID </flip-ilk>
+           <flip-ilk> ILK_ID </flip-ilk>
            <flip-bids> FLIP_BIDS </flip-bids>
            ...
          </flip>
@@ -651,10 +651,10 @@ module KMCD-GEN
       requires lengthBytes(BS) >Int 0
        andBool size(END_OUTS) >Int 0
 
-    rule <k> GenEndCash { ILKID , ADDRESS } => LogGen ( transact ADDRESS End . cash ILKID randWadBounded(head(BS), BAG -Wad OUT) ) ... </k>
+    rule <k> GenEndCash { ILK_ID , ADDRESS } => LogGen ( transact ADDRESS End . cash ILK_ID randWadBounded(head(BS), BAG -Wad OUT) ) ... </k>
          <random> BS => tail(BS) </random>
          <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
-         <end-out> ... { ILKID , ADDRESS } |-> OUT ... </end-out>
+         <end-out> ... { ILK_ID , ADDRESS } |-> OUT ... </end-out>
          <end-bag> ... ADDRESS |-> BAG ... </end-bag>
       requires lengthBytes(BS) >Int 0
 endmodule

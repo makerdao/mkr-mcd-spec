@@ -30,7 +30,7 @@ Flip Configuration
     syntax FlipContract ::= "Flip" String
     syntax MCDStep ::= FlipContract "." FlipStep [klabel(flipStep)]
  // ---------------------------------------------------------------
-    rule contract(Flip ILKID . _) => Flip ILKID
+    rule contract(Flip ILK_ID . _) => Flip ILK_ID
 ```
 
 Flip Authorization
@@ -40,20 +40,20 @@ Flip Authorization
     syntax FlipStep ::= FlipAuthStep
     syntax AuthStep ::= FlipContract "." FlipAuthStep [klabel(flipStep)]
  // --------------------------------------------------------------------
-    rule [[ wards(Flip ILKID) => WARDS ]] <flip> <flip-ilk> ILKID </flip-ilk> <flip-wards> WARDS </flip-wards> ... </flip>
+    rule [[ wards(Flip ILK_ID) => WARDS ]] <flip> <flip-ilk> ILK_ID </flip-ilk> <flip-wards> WARDS </flip-wards> ... </flip>
 
     syntax FlipAuthStep ::= WardStep
  // --------------------------------
-    rule <k> Flip ILKID . rely ADDR => . ... </k>
+    rule <k> Flip ILK_ID . rely ADDR => . ... </k>
          <flip>
-           <flip-ilk> ILKID </flip-ilk>
+           <flip-ilk> ILK_ID </flip-ilk>
            <flip-wards> ... (.Set => SetItem(ADDR)) </flip-wards>
            ...
          </flip>
 
-    rule <k> Flip ILKID . deny ADDR => . ... </k>
+    rule <k> Flip ILK_ID . deny ADDR => . ... </k>
          <flip>
-           <flip-ilk> ILKID </flip-ilk>
+           <flip-ilk> ILK_ID </flip-ilk>
            <flip-wards> WARDS => WARDS -Set SetItem(ADDR) </flip-wards>
            ...
          </flip>
@@ -95,25 +95,25 @@ The parameters controlled by governance are:
                       | "ttl" Int
                       | "tau" Int
  // -----------------------------
-    rule <k> Flip ILKID . file beg BEG => . ... </k>
+    rule <k> Flip ILK_ID . file beg BEG => . ... </k>
          <flip>
-           <flip-ilk> ILKID </flip-ilk>
+           <flip-ilk> ILK_ID </flip-ilk>
            <flip-beg> _ => BEG </flip-beg>
            ...
          </flip>
       requires BEG >=Wad wad(0)
 
-    rule <k> Flip ILKID . file ttl TTL => . ... </k>
+    rule <k> Flip ILK_ID . file ttl TTL => . ... </k>
          <flip>
-           <flip-ilk> ILKID </flip-ilk>
+           <flip-ilk> ILK_ID </flip-ilk>
            <flip-ttl> _ => TTL </flip-ttl>
            ...
          </flip>
       requires TTL >=Int 0
 
-    rule <k> Flip ILKID . file tau TAU => . ... </k>
+    rule <k> Flip ILK_ID . file tau TAU => . ... </k>
          <flip>
-           <flip-ilk> ILKID </flip-ilk>
+           <flip-ilk> ILK_ID </flip-ilk>
            <flip-tau> _ => TAU </flip-tau>
            ...
          </flip>
@@ -136,8 +136,8 @@ Flip Initialization
 ```k
     syntax FlipAuthStep ::= "init"
  // ------------------------------
-    rule <k> Flip ILK . init => . ... </k>
-         <flips> ... (.Bag => <flip> <flip-ilk> ILK </flip-ilk> ... </flip>) ... </flips>
+    rule <k> Flip ILK_ID . init => . ... </k>
+         <flips> ... (.Bag => <flip> <flip-ilk> ILK_ID </flip-ilk> ... </flip>) ... </flips>
 ```
 
 Flip Semantics
@@ -146,8 +146,8 @@ Flip Semantics
 ```k
     syntax FlipAuthStep ::= "kick" Address Address Rad Wad Rad
  // ----------------------------------------------------------
-    rule <k> Flip ILK . kick USR GAL TAB LOT BID
-          => call Vat . flux ILK MSGSENDER THIS LOT
+    rule <k> Flip ILK_ID . kick USR GAL TAB LOT BID
+          => call Vat . flux ILK_ID MSGSENDER THIS LOT
           ~> KICKS +Int 1
          ...
          </k>
@@ -155,23 +155,23 @@ Flip Semantics
          <this> THIS </this>
          <current-time> NOW </current-time>
          <flip>
-           <flip-ilk> ILK </flip-ilk>
+           <flip-ilk> ILK_ID </flip-ilk>
            <flip-tau> TAU </flip-tau>
            <flip-kicks> KICKS => KICKS +Int 1 </flip-kicks>
            <flip-bids> ... .Map => KICKS +Int 1 |-> FlipBid( ... bid: BID, lot: LOT, guy: MSGSENDER, tic: 0, end: NOW +Int TAU, usr: USR, gal: GAL, tab: TAB ) ... </flip-bids>
            ...
          </flip>
-         <frame-events> ... (.List => ListItem(FlipKick(MSGSENDER, ILK, KICKS +Int 1, LOT, BID, TAB, USR, GAL))) </frame-events>
+         <frame-events> ... (.List => ListItem(FlipKick(MSGSENDER, ILK_ID, KICKS +Int 1, LOT, BID, TAB, USR, GAL))) </frame-events>
       requires TAB >=Rad rad(0)
        andBool LOT >=Wad wad(0)
        andBool BID >=Rad rad(0)
 
     syntax FlipStep ::= "tick" Int
  // ------------------------------
-    rule <k> Flip ILK . tick ID => . ... </k>
+    rule <k> Flip ILK_ID . tick ID => . ... </k>
          <current-time> NOW </current-time>
          <flip>
-           <flip-ilk> ILK </flip-ilk>
+           <flip-ilk> ILK_ID </flip-ilk>
            <flip-tau> TAU </flip-tau>
            <flip-bids> ... ID |-> FlipBid(... tic: TIC, end: END => NOW +Int TAU) ... </flip-bids>
            ...
@@ -181,7 +181,7 @@ Flip Semantics
 
     syntax FlipStep ::= "tend" Int Wad Rad
  // --------------------------------------
-    rule <k> Flip ILK . tend ID LOT BID
+    rule <k> Flip ILK_ID . tend ID LOT BID
           => #if MSGSENDER =/=K GUY #then call Vat . move MSGSENDER GUY BID' #else . #fi
           ~> call Vat . move MSGSENDER GAL (BID -Rad BID')
          ...
@@ -189,7 +189,7 @@ Flip Semantics
          <msg-sender> MSGSENDER </msg-sender>
          <current-time> NOW </current-time>
          <flip>
-           <flip-ilk> ILK </flip-ilk>
+           <flip-ilk> ILK_ID </flip-ilk>
            <flip-beg> BEG </flip-beg>
            <flip-ttl> TTL </flip-ttl>
            <flip-bids> ... ID |-> FlipBid(... bid: BID' => BID, lot: LOT', guy: GUY => MSGSENDER, tic: TIC => NOW +Int TTL, end: END, gal: GAL, tab: TAB) ... </flip-bids>
@@ -207,16 +207,16 @@ Flip Semantics
 
     syntax FlipStep ::= "dent" Int Wad Rad
  // --------------------------------------
-    rule <k> Flip ILK . dent ID LOT BID
+    rule <k> Flip ILK_ID . dent ID LOT BID
           => #if MSGSENDER =/=K GUY #then call Vat . move MSGSENDER GUY BID #else . #fi
-          ~> call Vat.flux ILK THIS USR (LOT' -Wad LOT)
+          ~> call Vat.flux ILK_ID THIS USR (LOT' -Wad LOT)
          ...
          </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
          <current-time> NOW </current-time>
          <flip>
-           <flip-ilk> ILK </flip-ilk>
+           <flip-ilk> ILK_ID </flip-ilk>
            <flip-beg> BEG </flip-beg>
            <flip-ttl> TTL </flip-ttl>
            <flip-bids> ... ID |-> FlipBid(... bid: BID', lot: LOT' => LOT, guy: GUY => MSGSENDER, tic: TIC => NOW +Int TTL, end: END, usr: USR, tab: TAB) ... </flip-bids>
@@ -234,11 +234,11 @@ Flip Semantics
 
     syntax FlipStep ::= "deal" Int
  // ------------------------------
-    rule <k> Flip ILK . deal ID => call Vat . flux ILK THIS GUY LOT ... </k>
+    rule <k> Flip ILK_ID . deal ID => call Vat . flux ILK_ID THIS GUY LOT ... </k>
          <this> THIS </this>
          <current-time> NOW </current-time>
          <flip>
-           <flip-ilk> ILK </flip-ilk>
+           <flip-ilk> ILK_ID </flip-ilk>
            <flip-bids> ... ID |-> FlipBid(... lot: LOT, guy: GUY, tic: TIC, end: END) => .Map ... </flip-bids>
            ...
          </flip>
@@ -247,15 +247,15 @@ Flip Semantics
 
     syntax FlipAuthStep ::= "yank" Int
  // ----------------------------------
-    rule <k> Flip ILK . yank ID
-          => call Vat . flux ILK THIS MSGSENDER LOT
+    rule <k> Flip ILK_ID . yank ID
+          => call Vat . flux ILK_ID THIS MSGSENDER LOT
           ~> call Vat . move MSGSENDER GUY BID
          ...
          </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
          <flip>
-           <flip-ilk> ILK </flip-ilk>
+           <flip-ilk> ILK_ID </flip-ilk>
            <flip-bids> ... ID |-> FlipBid(... bid: BID, lot: LOT, guy: GUY, tab: TAB) => .Map ... </flip-bids>
            ...
          </flip>

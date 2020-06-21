@@ -93,24 +93,24 @@ End Initialization
 Because data isn't explicitely initialized to 0 in KMCD, we need explicit initializers for various pieces of data.
 
 -   `initGap`: Initialize the gap for a given ilk to 0.
-    **TODO**: Should `End . initGap ILKID` happen directly when `End . cage ILKID` happens?
+    **TODO**: Should `End . initGap ILK_ID` happen directly when `End . cage ILK_ID` happens?
 
 ```k
     syntax EndAuthStep ::= "initGap" String
                          | "initBag" Address
                          | "initOut" String Address
  // -----------------------------------------------
-    rule <k> End . initGap ILKID => . ... </k>
-         <end-gap> GAPS => GAPS [ ILKID <- wad(0) ] </end-gap>
-      requires notBool ILKID in_keys(GAPS)
+    rule <k> End . initGap ILK_ID => . ... </k>
+         <end-gap> GAPS => GAPS [ ILK_ID <- wad(0) ] </end-gap>
+      requires notBool ILK_ID in_keys(GAPS)
 
     rule <k> End . initBag ADDR => . ... </k>
          <end-bag> BAGS => BAGS [ ADDR <- wad(0) ] </end-bag>
       requires notBool ADDR in_keys(BAGS)
 
-    rule <k> End . initOut ILKID ADDR => . ... </k>
-         <end-out> OUTS => OUTS [ { ILKID , ADDR } <- wad(0) ] </end-out>
-      requires notBool { ILKID , ADDR } in_keys(OUTS)
+    rule <k> End . initOut ILK_ID ADDR => . ... </k>
+         <end-out> OUTS => OUTS [ { ILK_ID , ADDR } <- wad(0) ] </end-out>
+      requires notBool { ILK_ID , ADDR } in_keys(OUTS)
 ```
 
 End Semantics
@@ -132,31 +132,31 @@ End Semantics
 
     syntax EndStep ::= "cage" String
  // --------------------------------
-    rule <k> End . cage ILK:String => . ... </k>
+    rule <k> End . cage ILK_ID:String => . ... </k>
          <end-live> false </end-live>
-         <end-tag> TAGS => TAGS [ ILK <- wdiv(PAR, PIP) ] </end-tag>
-         <end-art> ARTS => ARTS [ ILK <- ART ] </end-art>
+         <end-tag> TAGS => TAGS [ ILK_ID <- wdiv(PAR, PIP) ] </end-tag>
+         <end-art> ARTS => ARTS [ ILK_ID <- ART ] </end-art>
          <spot-par> PAR </spot-par>
-         <spot-ilks> ... ILK |-> SpotIlk(... pip: PIP) ... </spot-ilks>
-         <vat-ilks> ... ILK |-> Ilk(... Art: ART)::VatIlk ... </vat-ilks>
-       requires notBool ILK in_keys(TAGS)
+         <spot-ilks> ... ILK_ID |-> SpotIlk(... pip: PIP) ... </spot-ilks>
+         <vat-ilks> ... ILK_ID |-> Ilk(... Art: ART)::VatIlk ... </vat-ilks>
+       requires notBool ILK_ID in_keys(TAGS)
 
     syntax EndStep ::= "skip" String Int
  // ------------------------------------
-    rule <k> End . skip ILK ID
+    rule <k> End . skip ILK_ID ID
           => call Vat . suck Vow Vow  TAB
           ~> call Vat . suck Vow THIS BID
-          ~> call Vat . hope Flip ILK
-          ~> call Flip ILK . yank ID
-          ~> call Vat . grab ILK USR THIS Vow LOT (TAB /Rate RATE)
+          ~> call Vat . hope Flip ILK_ID
+          ~> call Flip ILK_ID . yank ID
+          ~> call Vat . grab ILK_ID USR THIS Vow LOT (TAB /Rate RATE)
          ...
          </k>
          <this> THIS </this>
-         <end-tag> ... ILK |-> TAG ... </end-tag>
-         <end-art> ... ILK |-> (ART => ART +Wad (TAB /Rate RATE)) ... </end-art>
-         <vat-ilks> ... ILK |-> Ilk(... rate: RATE)::VatIlk ... </vat-ilks>
+         <end-tag> ... ILK_ID |-> TAG ... </end-tag>
+         <end-art> ... ILK_ID |-> (ART => ART +Wad (TAB /Rate RATE)) ... </end-art>
+         <vat-ilks> ... ILK_ID |-> Ilk(... rate: RATE)::VatIlk ... </vat-ilks>
          <flip>
-           <flip-ilk> ILK </flip-ilk>
+           <flip-ilk> ILK_ID </flip-ilk>
            <flip-bids> ... ID |-> FlipBid(... bid: BID, lot: LOT, usr: USR, tab: TAB) ... </flip-bids>
            ...
          </flip>
@@ -166,26 +166,26 @@ End Semantics
 
     syntax EndStep ::= "skim" String Address
  // ----------------------------------------
-    rule <k> End . skim ILK ADDR
-          => call Vat . grab ILK ADDR THIS Vow (wad(0) -Wad minWad(INK, rmul(rmul(ART, RATE), TAG))) (wad(0) -Wad ART)
+    rule <k> End . skim ILK_ID ADDR
+          => call Vat . grab ILK_ID ADDR THIS Vow (wad(0) -Wad minWad(INK, rmul(rmul(ART, RATE), TAG))) (wad(0) -Wad ART)
          ...
          </k>
          <this> THIS </this>
-         <end-tag> ... ILK |-> TAG ... </end-tag>
-         <end-gap> ... ILK |-> (GAP => GAP +Wad (rmul(rmul(ART, RATE), TAG) -Wad minWad(INK, rmul(rmul(ART, RATE), TAG)))) ... </end-gap>
-         <vat-ilks> ... ILK |-> Ilk(... rate: RATE)::VatIlk ... </vat-ilks>
-         <vat-urns> ... {ILK, ADDR} |-> Urn(... ink: INK, art: ART) ... </vat-urns>
+         <end-tag> ... ILK_ID |-> TAG ... </end-tag>
+         <end-gap> ... ILK_ID |-> (GAP => GAP +Wad (rmul(rmul(ART, RATE), TAG) -Wad minWad(INK, rmul(rmul(ART, RATE), TAG)))) ... </end-gap>
+         <vat-ilks> ... ILK_ID |-> Ilk(... rate: RATE)::VatIlk ... </vat-ilks>
+         <vat-urns> ... {ILK_ID, ADDR} |-> Urn(... ink: INK, art: ART) ... </vat-urns>
       requires TAG =/=Ray ray(0)
 
     syntax EndStep ::= "free" String
  // --------------------------------
-    rule <k> End . free ILK
-          => call Vat . grab ILK MSGSENDER MSGSENDER Vow (wad(0) -Wad INK) wad(0)
+    rule <k> End . free ILK_ID
+          => call Vat . grab ILK_ID MSGSENDER MSGSENDER Vow (wad(0) -Wad INK) wad(0)
          ...
          </k>
          <msg-sender> MSGSENDER </msg-sender>
          <end-live> false </end-live>
-         <vat-urns> ... {ILK, MSGSENDER} |-> Urn(... ink: INK, art: ART) ... </vat-urns>
+         <vat-urns> ... {ILK_ID, MSGSENDER} |-> Urn(... ink: INK, art: ART) ... </vat-urns>
       requires ART ==Wad wad(0)
 
     syntax EndStep ::= "thaw"
@@ -202,16 +202,16 @@ End Semantics
 
     syntax EndStep ::= "flow" String
  // --------------------------------
-    rule <k> End . flow ILK => . ... </k>
+    rule <k> End . flow ILK_ID => . ... </k>
          <end-debt> DEBT </end-debt>
-         <end-fix> FIX => FIX [ ILK <- rdiv(Wad2Ray(rmul(rmul(ART, RATE), TAG) -Wad GAP), DEBT) ] </end-fix>
-         <end-tag> ... ILK |-> TAG ... </end-tag>
-         <end-gap> ... ILK |-> GAP ... </end-gap>
-         <end-art> ... ILK |-> ART ... </end-art>
-         <vat-ilks> ... ILK |-> Ilk(... rate: RATE)::VatIlk ... </vat-ilks>
+         <end-fix> FIX => FIX [ ILK_ID <- rdiv(Wad2Ray(rmul(rmul(ART, RATE), TAG) -Wad GAP), DEBT) ] </end-fix>
+         <end-tag> ... ILK_ID |-> TAG ... </end-tag>
+         <end-gap> ... ILK_ID |-> GAP ... </end-gap>
+         <end-art> ... ILK_ID |-> ART ... </end-art>
+         <vat-ilks> ... ILK_ID |-> Ilk(... rate: RATE)::VatIlk ... </vat-ilks>
       requires DEBT =/=Rad rad(0)
        andBool rmul(rmul(ART, RATE), TAG) >=Wad GAP
-       andBool notBool ILK in_keys(FIX)
+       andBool notBool ILK_ID in_keys(FIX)
 
     syntax EndStep ::= "pack" Wad
  // -----------------------------
@@ -227,14 +227,14 @@ End Semantics
 
     syntax EndStep ::= "cash" String Wad
  // ------------------------------------
-    rule <k> End . cash ILK AMOUNT
-          => call Vat . flux ILK THIS MSGSENDER rmul(AMOUNT, FIX)
+    rule <k> End . cash ILK_ID AMOUNT
+          => call Vat . flux ILK_ID THIS MSGSENDER rmul(AMOUNT, FIX)
          ...
          </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
-         <end-fix> ... ILK |-> FIX ... </end-fix>
-         <end-out> ... {ILK, MSGSENDER} |-> (OUT => OUT +Wad AMOUNT) ... </end-out>
+         <end-fix> ... ILK_ID |-> FIX ... </end-fix>
+         <end-out> ... {ILK_ID, MSGSENDER} |-> (OUT => OUT +Wad AMOUNT) ... </end-out>
          <end-bag> ... MSGSENDER |-> BAG ... </end-bag>
       requires AMOUNT >=Wad wad(0)
        andBool FIX =/=Ray ray(0)
