@@ -3,7 +3,7 @@
     <kmcd>
       <kmcd-driver>
         <k>
-          #assert-failure ~> dropState ~> assert .MCDSteps
+          #assert-failure ~> dropState ~> assert .MCDSteps ~> .
         </k>
         <return-value>
           .
@@ -389,7 +389,7 @@
                 true
               </vow-live>
             </vow>
-          </kmcd-state>
+          </kmcd-state> ~> .
         </pre-state>
         <events>
           .List
