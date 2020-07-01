@@ -308,9 +308,6 @@
                 SetItem ( Flip "gold" )
                 SetItem ( Flop )
                 SetItem ( Pot )
-                End |-> .Set
-                Flap |-> .Set
-                Pot |-> .Set
                 Vow |-> SetItem ( Flap )
               </vat-can>
               <vat-ilks>
@@ -688,9 +685,6 @@
             SetItem ( Flip "gold" )
             SetItem ( Flop )
             SetItem ( Pot )
-            End |-> .Set
-            Flap |-> .Set
-            Pot |-> .Set
             Vow |-> SetItem ( Flap )
           </vat-can>
           <vat-ilks>
@@ -1055,7 +1049,7 @@
       Vow |-> FInt ( 0 , 1000000000000000000000000000000000000000000000 ) , FInt ( 0 , 1000000000000000000 ) , Flap |-> FInt ( 0 , 1000000000000000000 )
       GemJoin "MKR" |-> FInt ( 0 , 1000000000000000000 )
       Vow |-> FInt ( 0 , 1000000000000000000 ) , FInt ( 0 , 1000000000000000000000000000000000000000000000 ) ) )
-      ListItem ( LogNote ( ADMIN , Vat . initIlk "gold" ) )
+      ListItem ( LogNote ( ADMIN , Vat . init "gold" ) )
       ListItem ( Measure ( FInt ( 0 , 1000000000000000000000000000000000000000000000 ) , End |-> FInt ( 0 , 1000000000000000000000000000000000000000000000 )
       Flap |-> FInt ( 0 , 1000000000000000000000000000000000000000000000 )
       Pot |-> FInt ( 0 , 1000000000000000000000000000000000000000000000 )
