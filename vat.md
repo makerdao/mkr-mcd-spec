@@ -236,12 +236,12 @@ This is quite permissive, and would allow the account to drain all your locked c
          <msg-sender> MSGSENDER </msg-sender>
          <vat-can> ... MSGSENDER |-> (CANADDRS => CANADDRS -Set SetItem(ADDRTO)) ... </vat-can>
 
-    rule <k> Vat . hope ADDRTO ... </k>
+    rule <k> Vat . hope _ADDRTO ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <vat-can> VAT_CANS => VAT_CANS [ MSGSENDER <- .Set ] </vat-can>
       requires notBool MSGSENDER in_keys(VAT_CANS)
 
-    rule <k> Vat . nope ADDRTO => . ... </k>
+    rule <k> Vat . nope _ADDRTO => . ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <vat-can> VAT_CANS </vat-can>
       requires notBool MSGSENDER in_keys(VAT_CANS)
@@ -363,7 +363,7 @@ This is quite permissive, and would allow the account to drain all your locked c
          <vat-urns>
            ...
            { ILK_ID , ADDRFROM } |-> Urn ( INKFROM => INKFROM -Wad DINK , ARTFROM => ARTFROM -Wad DART )
-           { ILK_ID , ADDRTO   } |-> Urn ( INKTO   => INKTO   +Wad DINK , ARTTO   => ARTFROM +Wad DART )
+           { ILK_ID , ADDRTO   } |-> Urn ( INKTO   => INKTO   +Wad DINK , ARTTO   => ARTTO   +Wad DART )
            ...
          </vat-urns>
       requires INKFROM >=Wad DINK

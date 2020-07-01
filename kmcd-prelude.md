@@ -254,7 +254,7 @@ module KMCD-GEN
          <used-random> _ => headAsBytes(BS) </used-random>
          <generator-next> N </generator-next>
          <generator-current> _ => head(BS) modInt N </generator-current>
-         <generator-remainder> GSS => .GenStep </generator-remainder>
+         <generator-remainder> _ => .GenStep </generator-remainder>
       requires lengthBytes(BS) >Int 0
        andBool N >Int 0
 
@@ -310,7 +310,7 @@ module KMCD-GEN
     rule <k> .GenStep | GSS => GSS ... </k> [priority(49)]
     rule <k> GSS | .GenStep => GSS ... </k> [priority(49)]
 
-    rule <k> .GenStep DB:DepthBound => . ... </k> [priority(49)]
+    rule <k> .GenStep _:DepthBound => . ... </k> [priority(49)]
 
     rule <k> GSS DB:DepthBound => #if DB ==K 0 #then . #else (GSS ; (GSS decrement(DB))) | .GenStep #fi ... </k>
 

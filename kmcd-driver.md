@@ -139,7 +139,7 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
 
     rule <k> . => CONT </k>
          <msg-sender> MSGSENDER => PREVSENDER </msg-sender>
-         <this> THIS => MSGSENDER </this>
+         <this> _THIS => MSGSENDER </this>
          <call-stack> ListItem(frame(PREVSENDER, PREVEVENTS, CONT)) => .List ... </call-stack>
          <tx-log> Transaction(... events: L => L EVENTS) </tx-log>
          <frame-events> EVENTS => PREVEVENTS </frame-events>
@@ -153,12 +153,12 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
 
     rule <k> exception E ~> _ => exception E ~> CONT </k>
          <msg-sender> MSGSENDER => PREVSENDER </msg-sender>
-         <this> THIS => MSGSENDER </this>
+         <this> _THIS => MSGSENDER </this>
          <call-stack> ListItem(frame(PREVSENDER, PREVEVENTS, CONT)) => .List ... </call-stack>
          <tx-log> Transaction(... events: L => L EVENTS) </tx-log>
          <frame-events> EVENTS => PREVEVENTS </frame-events>
 
-    rule <k> exception MCDSTEP ~> dropState => popState ... </k>
+    rule <k> exception _MCDSTEP ~> dropState => popState ... </k>
          <call-stack> .List </call-stack>
 
     rule <k> exception _ ~> (assert => .) ... </k>

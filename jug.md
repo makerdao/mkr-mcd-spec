@@ -103,7 +103,6 @@ Jug Semantics
          <jug-ilks> ... ILK_ID |-> Ilk ( ... duty: ray(0) => ray(1), rho: _ => NOW ) ... </jug-ilks>
 
     rule <k> Jug . init ILK_ID ... </k>
-         <current-time> NOW </current-time>
          <jug-ilks> JUG_ILKS => JUG_ILKS [ ILK_ID <- Ilk ( ... duty: ray(0) , rho: 0 ) ] </jug-ilks>
       requires notBool ILK_ID in_keys(JUG_ILKS)
 ```
