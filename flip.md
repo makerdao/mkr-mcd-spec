@@ -171,18 +171,6 @@ Flip Events
  // -----------------------------------------------------------------------------------------------------------
 ```
 
-Flip Initialization
--------------------
-
--   `init` initializes a `<flip>` sub-configuration contract for a given ilk.
-
-```k
-    syntax FlipAuthStep ::= "init"
- // ------------------------------
-    rule <k> Flip ILK_ID . init => . ... </k>
-         <flips> ... (.Bag => <flip> <flip-ilk> ILK_ID </flip-ilk> ... </flip>) ... </flips>
-```
-
 Flip Semantics
 --------------
 

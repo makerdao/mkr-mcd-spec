@@ -87,7 +87,6 @@ module KMCD-PRELUDE
          transact ADMIN Spot . file       par ray(1)
 
          // Initialize Flipper for gold
-         transact ADMIN Flip "gold" . init
          transact ADMIN Flip "gold" . rely End
 
          // Initialize "gold" for End
