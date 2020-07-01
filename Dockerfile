@@ -22,7 +22,8 @@ USER user:user
 ENV USER=user
 WORKDIR /home/user
 
-RUN curl https://dapp.tools/install | sh
+RUN curl -L https://nixos.org/nix/install | sh
+RUN curl -L https://dapp.tools/install    | sh
 ENV PATH="$PATH:/home/user/.nix-profile/bin"
 
 RUN    git config --global user.email "admin@runtimeverification.com" \
