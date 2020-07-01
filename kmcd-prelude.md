@@ -93,7 +93,6 @@ module KMCD-PRELUDE
          transact ADMIN End . initGap "gold"
 
          // Initialize "gold for Vat
-         transact ADMIN Vat . init "gold"
          transact ADMIN Vat . file line "gold" rad(1000 ether)
          transact ANYONE Spot . poke "gold"
 
