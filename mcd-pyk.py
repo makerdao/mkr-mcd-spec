@@ -261,6 +261,13 @@ def argify(arg):
         newArg = '"' + newArg + '"'
     return newArg
 
+def functionify(fname):
+    if fname == 'pie':
+        return 'Pie'
+    if fname == 'pies':
+        return 'pie'
+    return fname
+
 def solidityKeys(k):
     if pyk.isKApply(k) and k['label'] == 'CDPID':
         return [ a for a in k['args'] ]
@@ -325,14 +332,14 @@ def noRewriteToDots(config):
 def stateAssertions(contract, field, value, subkeys = []):
     assertionData = []
     if pyk.isKToken(value) and value['sort'] == 'Bool':
-        actual     = contract + '.' + field + '(' + solidityArgs(subkeys) + ')'
+        actual     = contract + '.' + functionify(field) + '(' + solidityArgs(subkeys) + ')'
         comparator = '=='
         expected   = printMCD(intToken(0))
         if value['token'] == 'true':
             comparator = '!='
         assertionData.append((actual, comparator, expected, True))
     elif pyk.isKApply(value) and value['label'] == 'FInt':
-        actual     = contract + '.' + field + '(' + solidityArgs(subkeys) + ')'
+        actual     = contract + '.' + functionify(field) + '(' + solidityArgs(subkeys) + ')'
         comparator = '=='
         expected   = printMCD(value['args'][0])
         assertionData.append((actual, comparator, expected, True))
@@ -345,12 +352,12 @@ def stateAssertions(contract, field, value, subkeys = []):
             elif pyk.isKApply(v) and v['label'] == 'FInt':
                 assertionData.extend(stateAssertions(contract, field, v, subkeys = keys))
             else:
-                actual     = contract + '.' + field + '(' + solidityArgs(keys) + ')'
+                actual     = contract + '.' + functionify(field) + '(' + solidityArgs(keys) + ')'
                 comparator = '=='
                 expected   = printMCD(v)
                 assertionData.append((actual, comparator, expected, False))
     else:
-        actual = contract + '.' + field + '()'
+        actual = contract + '.' + functionify(field) + '()'
         assertionData.append((actual, '==', printMCD(value), False))
     return assertionData
 
