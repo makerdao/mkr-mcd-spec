@@ -33,6 +33,23 @@ Cat Configuration
     rule contract(Cat . _) => Cat
 ```
 
+### Constructor
+
+```k
+    syntax CatStep ::= "constructor" Address
+ // ----------------------------------------
+    rule <k> Cat . constructor CAT_VAT => . ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         ( <cat> _ </cat>
+        => <cat>
+             <cat-vat> CAT_VAT </cat-vat>
+             <cat-wards> SetItem(MSGSENDER) </cat-wards>
+             <cat-live> true </cat-live>
+             ...
+           </cat>
+         )
+```
+
 Cat Authorization
 -----------------
 

@@ -41,6 +41,25 @@ Vow Configuration
     rule contract(Vow . _) => Vow
 ```
 
+### Constructor
+
+```k
+    syntax VowStep ::= "constructor" Address Address Address
+ // --------------------------------------------------------
+    rule <k> Vow . constructor VOW_VAT VOW_FLAPPER VOW_FLOPPER => VOW_VAT . hope VOW_FLAPPER ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         ( <vow> _ </vow>
+        => <vow>
+             <vow-vat> VOW_VAT </vow-vat>
+             <vow-flapper> VOW_FLAPPER </vow-flapper>
+             <vow-flopper> VOW_FLOPPER </vow-flopper>
+             <vow-wards> SetItem(MSGSENDER) </vow-wards>
+             <vow-live> true </vow-live>
+             ...
+           </vow>
+         )
+```
+
 Vow Authorization
 -----------------
 

@@ -29,6 +29,24 @@ Spot Configuration
     rule contract(Spot . _) => Spot
 ```
 
+### Constructor
+
+```k
+    syntax SpotStep ::= "constructor" Address
+ // -----------------------------------------
+    rule <k> Spot . constructor SPOT_VAT => . ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         ( <spot> _ </spot>
+        => <spot>
+             <spot-vat> SPOT_VAT </spot-vat>
+             <spot-wards> SetItem(MSGSENDER) </spot-wards>
+             <spot-par> ray(1) </spot-par>
+             <spot-live> true </spot-live>
+             ...
+           </spot>
+         )
+```
+
 Spot Authorization
 ------------------
 

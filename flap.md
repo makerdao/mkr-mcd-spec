@@ -38,6 +38,24 @@ Flap Semantics
     rule contract(Flap . _) => Flap
 ```
 
+### Constructor
+
+```k
+    syntax FlapStep ::= "constructor" Address Address
+ // -------------------------------------------------
+    rule <k> Flap . constructor FLAP_VAT FLAP_MKR => . ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         ( <flap-state> _ </flap-state>
+        => <flap-state>
+             <flap-vat> FLAP_VAT:VatContract </flap-vat>
+             <flap-mkr> FLAP_MKR:GemContract </flap-mkr>
+             <flap-wards> SetItem(MSGSENDER) </flap-wards>
+             <flap-live> true </flap-live>
+             ...
+           </flap-state>
+         )
+```
+
 Flap Authorization
 ------------------
 

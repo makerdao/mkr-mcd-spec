@@ -49,6 +49,22 @@ For convenience, total Dai/Sin are tracked:
     rule contract(Vat . _) => Vat
 ```
 
+### Constructor
+
+```k
+    syntax VatStep ::= "constructor"
+ // --------------------------------
+    rule <k> Vat . constructor => . ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         ( <vat> _ </vat>
+        => <vat>
+             <vat-wards> SetItem(MSGSENDER) </vat-wards>
+             <vat-live> true </vat-live>
+             ...
+           </vat>
+         )
+```
+
 Vat Authorization
 -----------------
 

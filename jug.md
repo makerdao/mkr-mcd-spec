@@ -29,6 +29,22 @@ Jug Configuration
     rule contract(Jug . _) => Jug
 ```
 
+### Constructor
+
+```k
+    syntax JugStep ::= "constructor" Address
+ // ----------------------------------------
+    rule <k> Jug . constructor JUG_VAT => . ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         ( <jug> _ </jug>
+        => <jug>
+             <jug-vat> JUG_VAT </jug-vat>
+             <jug-wards> SetItem(MSGSENDER) </jug-wards>
+             ...
+           </jug>
+         )
+```
+
 Jug Authorization
 -----------------
 

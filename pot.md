@@ -33,6 +33,22 @@ Pot Configuration
     rule contract(Pot . _) => Pot
 ```
 
+### Constructor
+
+```k
+    syntax PotStep ::= "constructor" Address
+ // ----------------------------------------
+    rule <k> Pot . constructor POT_VAT => . ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         ( <pot> _ </pot>
+        => <pot>
+             <pot-vat> POT_VAT </pot-vat>
+             <pot-wards> SetItem(MSGSENDER) </pot-wards>
+             ...
+           </pot>
+         )
+```
+
 Pot Authorization
 -----------------
 

@@ -76,6 +76,24 @@ Flop Configuration
     rule contract(Flop . _) => Flop
 ```
 
+### Constructor
+
+```k
+    syntax FlopStep ::= "constructor" Address Address
+ // -------------------------------------------------
+    rule <k> Flop . constructor FLOP_VAT FLOP_MKR => . ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         ( <flop-state> _ </flop-state>
+        => <flop-state>
+             <flop-vat> FLOP_VAT </flop-vat>
+             <flop-mkr> FLOP_MKR </flop-mkr>
+             <flop-wards> SetItem(MSGSENDER) </flop-wards>
+             <flop-live> true </flop-live>
+             ...
+           </flop-state>
+         )
+```
+
 Flop Authorization
 ------------------
 

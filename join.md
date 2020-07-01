@@ -49,6 +49,63 @@ Join Configuration
     rule contract(DaiJoin . _) => DaiJoin
 ```
 
+### Constructor
+
+```k
+    syntax GemJoinStep ::= "constructor" Address Address
+ // ----------------------------------------------------
+    rule <k> GemJoin ILK_ID . constructor _:Address _:Address ... </k>
+         ( <gem-join> <gem-join-gem> ILK_ID </gem-join-gem> ... </gem-join> => .Bag )
+
+    rule <k> GemJoin ILK_ID . constructor GEM_JOIN_VAT GEM_JOIN_GEM => . ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         ( .Bag
+        => <gem-join>
+             <gem-join-gem> ILK_ID </gem-join-gem>
+             <gem-join-vat> GEM_JOIN_VAT </gem-join-vat>
+             <gem-join-gem-addr> GEM_JOIN_GEM </gem-join-gem-addr>
+             <gem-join-wards> SetItem(MSGSENDER) </gem-join-wards>
+             <gem-join-live> true </gem-join-live>
+             ...
+           </gem-join>
+         )
+```
+
+```k
+    syntax GemJoinStep ::= "constructor" Address
+ // --------------------------------------------
+    rule <k> GemJoin ILK_ID . constructor _:Address ... </k>
+         ( <gem-join> <gem-join-gem> ILK_ID </gem-join-gem> ... </gem-join> => .Bag )
+
+    rule <k> GemJoin ILK_ID . constructor GEM_JOIN_VAT => . ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         ( .Bag
+        => <gem-join>
+             <gem-join-gem> ILK_ID </gem-join-gem>
+             <gem-join-vat> GEM_JOIN_VAT </gem-join-vat>
+             <gem-join-wards> SetItem(MSGSENDER) </gem-join-wards>
+             <gem-join-live> true </gem-join-live>
+             ...
+           </gem-join>
+         )
+```
+
+```k
+    syntax DaiJoinStep ::= "constructor" Address Address
+ // ----------------------------------------------------
+    rule <k> DaiJoin . constructor DAI_JOIN_VAT DAI_JOIN_GEM => . ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         ( <dai-join> _ </dai-join>
+        => <dai-join>
+             <dai-join-vat> DAI_JOIN_VAT </dai-join-vat>
+             <dai-join-gem-addr> DAI_JOIN_GEM </dai-join-gem-addr>
+             <dai-join-wards> SetItem(MSGSENDER) </dai-join-wards>
+             <dai-join-live> true </dai-join-live>
+             ...
+           </dai-join>
+         )
+```
+
 Join Authorization
 ------------------
 
