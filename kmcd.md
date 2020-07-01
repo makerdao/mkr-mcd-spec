@@ -165,6 +165,20 @@ At it's core, it calls the constructors of all the sub-contracts with appropriat
           ~> Spot . rely End
          ...
          </k>
+
+    syntax DeployStep ::= "deployCollateral" String Address
+ // -------------------------------------------------------
+    rule <k> Deploy . deployCollateral ILK_ID JOIN
+          => call Flip ILK_ID . constructor Vat
+          // ~> call Spot . file pip ILK_ID PIP
+          ~> call Cat . file flip ILK_ID Flip ILK_ID
+          ~> call Vat . init ILK_ID
+          ~> call Jug . init ILK_ID
+          ~> call Vat . rely JOIN
+          ~> call Flip ILK_ID . rely Cat
+          ~> call Flip ILK_ID . rely End
+         ...
+         </k>
 ```
 
 ```k

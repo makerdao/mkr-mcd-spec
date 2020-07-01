@@ -16,10 +16,17 @@ module KMCD-PRELUDE
  // ---------------------------------------------------------------------
     rule DEPLOY-PRELUDE
       =>
-         // Contract Authorizations
-         // -----------------------
+         // Main Deployments
+         // ----------------
+
+         transact ADMIN Gem     "MKR" . init
+         transact ADMIN GemJoin "MKR" . init
 
          transact ADMIN Deploy . deploy Gem "MKR"
+         transact ADMIN Deploy . deployCollateral "MKR" (GemJoin "MKR")
+
+         transact ADMIN Gem "MKR" . initUser Vow
+         transact ADMIN Gem "MKR" . initUser Flap
 
          // Account Initializations
          // -----------------------
@@ -29,17 +36,6 @@ module KMCD-PRELUDE
          transact ADMIN Vat . initUser Pot
          transact ADMIN Vat . initUser Flap
          transact ADMIN Vat . initUser End
-
-         // MKR Token Setup
-         // ---------------
-
-         // "MKR" collateral and joiner
-         transact ADMIN Gem "MKR" . init
-         transact ADMIN GemJoin "MKR" . init
-
-         // Setup Flap account on MKR
-         transact ADMIN Gem "MKR" . initUser Vow
-         transact ADMIN Gem "MKR" . initUser Flap
 
          // Miscellaneous Setup
          // -------------------
