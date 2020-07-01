@@ -19,11 +19,12 @@ module KMCD-PRELUDE
          // Main Deployments
          // ----------------
 
-         transact ADMIN Gem     "MKR" . init
-         transact ADMIN GemJoin "MKR" . init
-
+         transact ADMIN Gem "MKR" . init
          transact ADMIN Deploy . deploy Gem "MKR"
-         transact ADMIN Deploy . deployCollateral "MKR" (GemJoin "MKR")
+
+         transact ADMIN GemJoin "MKR" . constructor Vat Gem "MKR"
+         transact ADMIN Gem     "MKR" . initUser GemJoin "MKR"
+         transact ADMIN Deploy . deployCollateral "MKR" GemJoin "MKR"
 
          transact ADMIN Gem "MKR" . initUser Vow
          transact ADMIN Gem "MKR" . initUser Flap
@@ -66,7 +67,12 @@ module KMCD-PRELUDE
 
          // "gold" collateral and joiner
          transact ADMIN Gem "gold" . init
-         transact ADMIN GemJoin "gold" . init
+         transact ADMIN GemJoin "gold" . constructor Vat Gem "gold"
+         transact ADMIN Gem     "gold" . initUser GemJoin "gold"
+         transact ADMIN Deploy . deployCollateral "gold" GemJoin "gold"
+
+         transact ADMIN Gem "gold" . initUser Vow
+         transact ADMIN Gem "gold" . initUser Flap
 
          // Initialize "gold" for Vat
          transact ADMIN Vat . rely GemJoin "gold"
