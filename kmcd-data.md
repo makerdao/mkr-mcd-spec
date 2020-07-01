@@ -87,7 +87,7 @@ We model everything with arbitrary precision rationals, but use sort information
                  | Wad "-Wad" Wad [function]
  // ----------------------------------------
     rule FI1 *Wad FI2    => FI1 *FInt FI2
-    rule FI1 /Wad wad(0) => wad(0)
+    rule _   /Wad wad(0) => wad(0)
     rule FI1 /Wad FI2    => FI1 /FInt FI2 [owise]
     rule FI1 ^Wad I      => FI1 ^FInt I
     rule FI1 +Wad FI2    => FI1 +FInt FI2
@@ -100,7 +100,7 @@ We model everything with arbitrary precision rationals, but use sort information
                  | Ray "-Ray" Ray [function]
  // ----------------------------------------
     rule FI1 *Ray FI2    => FI1 *FInt FI2
-    rule FI1 /Ray ray(0) => ray(0)
+    rule _   /Ray ray(0) => ray(0)
     rule FI1 /Ray FI2    => FI1 /FInt FI2 [owise]
     rule FI1 ^Ray I      => FI1 ^FInt I
     rule FI1 +Ray FI2    => FI1 +FInt FI2
@@ -113,7 +113,7 @@ We model everything with arbitrary precision rationals, but use sort information
                  | Rad "-Rad" Rad [function]
  // ----------------------------------------
     rule FI1 *Rad FI2    => FI1 *FInt FI2
-    rule FI1 /Rad rad(0) => rad(0)
+    rule _   /Rad rad(0) => rad(0)
     rule FI1 /Rad FI2    => FI1 /FInt FI2 [owise]
     rule FI1 ^Rad I      => FI1 ^FInt I
     rule FI1 +Rad FI2    => FI1 +FInt FI2

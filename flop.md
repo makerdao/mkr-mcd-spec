@@ -168,8 +168,6 @@ Flop Semantics
           => KICKS +Int 1
          ...
          </k>
-         <msg-sender> MSGSENDER </msg-sender>
-         <this> THIS </this>
          <current-time> NOW </current-time>
          <flop-live> true </flop-live>
          <flop-bids> ... .Map => KICKS +Int 1 |-> FlopBid(... bid: BID, lot: LOT, guy: GAL, tic: 0, end: NOW +Int TAU) ... </flop-bids>
@@ -231,7 +229,6 @@ Flop Semantics
           => call Vat . suck VOWADDR GUY BID
          ...
          </k>
-         <this> THIS </this>
          <flop-bids> ... ID |-> FlopBid(... bid: BID, guy: GUY) => .Map ... </flop-bids>
          <flop-live> false </flop-live>
          <flop-vow> VOWADDR </flop-vow>

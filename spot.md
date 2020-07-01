@@ -78,18 +78,18 @@ These parameters are controlled by governance/oracles:
                       | "mat" String Ray
                       | "par" Ray
  // -----------------------------
-    rule <k> Spot . file pip ILKID .Wad => . ... </k>
+    rule <k> Spot . file pip ILK_ID .Wad => . ... </k>
          <spot-live> true </spot-live>
-         <spot-ilks> ... ILKID |-> SpotIlk ( ... pip: (_ => .Wad) ) ... </spot-ilks>
+         <spot-ilks> ... ILK_ID |-> SpotIlk ( ... pip: (_ => .Wad) ) ... </spot-ilks>
 
-    rule <k> Spot . file pip ILKID PRICE:Wad => . ... </k>
+    rule <k> Spot . file pip ILK_ID PRICE:Wad => . ... </k>
          <spot-live> true </spot-live>
-         <spot-ilks> ... ILKID |-> SpotIlk ( ... pip: (_ => PRICE) ) ... </spot-ilks>
+         <spot-ilks> ... ILK_ID |-> SpotIlk ( ... pip: (_ => PRICE) ) ... </spot-ilks>
       requires PRICE >=Wad wad(0)
 
-    rule <k> Spot . file mat ILKID MAT => . ... </k>
+    rule <k> Spot . file mat ILK_ID MAT => . ... </k>
          <spot-live> true </spot-live>
-         <spot-ilks> ... ILKID |-> SpotIlk ( ... mat: (_ => MAT) ) ... </spot-ilks>
+         <spot-ilks> ... ILK_ID |-> SpotIlk ( ... mat: (_ => MAT) ) ... </spot-ilks>
       requires MAT >=Ray ray(0)
 
     rule <k> Spot . file par PAR => . ... </k>
@@ -121,12 +121,12 @@ Because data isn't explicitely initialized to 0 in KMCD, we need explicit initia
     syntax SpotAuthStep ::= "init"     String
                           | "setPrice" String Wad
  // ---------------------------------------------
-    rule <k> Spot . init ILKID => . ... </k>
-         <spot-ilks> ILKS => ILKS [ ILKID <- SpotIlk( ... pip: .Wad, mat: ray(0) ) ] </spot-ilks>
-      requires notBool ILKID in_keys(ILKS)
+    rule <k> Spot . init ILK_ID => . ... </k>
+         <spot-ilks> ILKS => ILKS [ ILK_ID <- SpotIlk( ... pip: .Wad, mat: ray(0) ) ] </spot-ilks>
+      requires notBool ILK_ID in_keys(ILKS)
 
-    rule <k> Spot . setPrice ILKID PRICE => . ... </k>
-         <spot-ilks> ... ILKID |-> SpotIlk( ... pip: (_ => PRICE) ) ... </spot-ilks>
+    rule <k> Spot . setPrice ILK_ID PRICE => . ... </k>
+         <spot-ilks> ... ILK_ID |-> SpotIlk( ... pip: (_ => PRICE) ) ... </spot-ilks>
 ```
 
 Spot Semantics
@@ -135,15 +135,15 @@ Spot Semantics
 ```k
     syntax SpotStep ::= "poke" String
  // ---------------------------------
-    rule <k> Spot . poke ILK => call Vat . file spot ILK ((Wad2Ray(VALUE) /Ray PAR) /Ray MAT) ... </k>
-         <spot-ilks> ... ILK |-> SpotIlk (... pip: VALUE, mat: MAT ) ... </spot-ilks>
+    rule <k> Spot . poke ILK_ID => call Vat . file spot ILK_ID ((Wad2Ray(VALUE) /Ray PAR) /Ray MAT) ... </k>
+         <spot-ilks> ... ILK_ID |-> SpotIlk (... pip: VALUE, mat: MAT ) ... </spot-ilks>
          <spot-par> PAR </spot-par>
-         <frame-events> ... (.List => ListItem(Poke(ILK, VALUE, (Wad2Ray(VALUE) /Ray PAR) /Ray MAT))) </frame-events>
+         <frame-events> ... (.List => ListItem(Poke(ILK_ID, VALUE, (Wad2Ray(VALUE) /Ray PAR) /Ray MAT))) </frame-events>
       requires VALUE =/=K .Wad
 
-    rule <k> Spot . poke ILK => . ... </k>
-         <spot-ilks> ... ILK |-> SpotIlk (... pip: .Wad) ... </spot-ilks>
-         <frame-events> ... (.List => ListItem(NoPoke(ILK))) </frame-events>
+    rule <k> Spot . poke ILK_ID => . ... </k>
+         <spot-ilks> ... ILK_ID |-> SpotIlk (... pip: .Wad) ... </spot-ilks>
+         <frame-events> ... (.List => ListItem(NoPoke(ILK_ID))) </frame-events>
 ```
 Spot Deactivation
 -----------------

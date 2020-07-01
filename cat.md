@@ -74,9 +74,9 @@ Cat Events
 
     syntax CatStep ::= "emitBite" String Address Wad Wad Rad
  // --------------------------------------------------------
-    rule <k> emitBite ILK URN INK ART TAB => ID ... </k>
+    rule <k> emitBite ILK_ID URN INK ART TAB => ID ... </k>
          <return-value> ID:Int </return-value>
-         <frame-events> ... (.List => ListItem(Bite(ILK, URN, INK, ART, TAB, Flip ILK, ID))) </frame-events>
+         <frame-events> ... (.List => ListItem(Bite(ILK_ID, URN, INK, ART, TAB, Flip ILK_ID, ID))) </frame-events>
 ```
 
 File-able Fields
@@ -99,12 +99,12 @@ The parameters controlled by governance are:
     rule <k> Cat . file vow-file ADDR => . ... </k>
          <cat-vow> _ => ADDR </cat-vow>
 
-    rule <k> Cat . file chop ILKID CHOP => . ... </k>
-         <cat-ilks> ... ILKID |-> Ilk ( ... chop: (_ => CHOP) ) ... </cat-ilks>
+    rule <k> Cat . file chop ILK_ID CHOP => . ... </k>
+         <cat-ilks> ... ILK_ID |-> Ilk ( ... chop: (_ => CHOP) ) ... </cat-ilks>
       requires CHOP >=Ray ray(0)
 
-    rule <k> Cat . file lump ILKID LUMP => . ... </k>
-         <cat-ilks> ... ILKID |-> Ilk ( ... lump: (_ => LUMP) ) ... </cat-ilks>
+    rule <k> Cat . file lump ILK_ID LUMP => . ... </k>
+         <cat-ilks> ... ILK_ID |-> Ilk ( ... lump: (_ => LUMP) ) ... </cat-ilks>
       requires LUMP >=Wad wad(0)
 ```
 
@@ -118,14 +118,14 @@ Cat Semantics
 ```k
     syntax CatStep ::= "bite" String Address
  // ----------------------------------------
-    rule <k> Cat . bite ILK URN
+    rule <k> Cat . bite ILK_ID URN
           => #fun(LOT
           => #fun(ART
           => #fun(TAB
-          => call Vat . grab ILK URN THIS VOWADDR (wad(0) -Wad LOT) (wad(0) -Wad ART)
+          => call Vat . grab ILK_ID URN THIS VOWADDR (wad(0) -Wad LOT) (wad(0) -Wad ART)
           ~> call Vow . fess TAB
-          ~> call Flip ILK . kick URN VOWADDR rmul(TAB, CHOP) LOT rad(0)
-          ~> emitBite ILK URN LOT ART TAB)
+          ~> call Flip ILK_ID . kick URN VOWADDR rmul(TAB, CHOP) LOT rad(0)
+          ~> emitBite ILK_ID URN LOT ART TAB)
           (ART *Rate RATE))
           (minWad(URNART, (LOT *Wad URNART) /Wad INK)))
           (minWad(INK, LUMP))
@@ -133,9 +133,9 @@ Cat Semantics
          </k>
          <this> THIS </this>
          <cat-live> true </cat-live>
-         <cat-ilks> ... ILK |-> Ilk(... chop: CHOP, lump: LUMP) ... </cat-ilks>
-         <vat-ilks> ... ILK |-> Ilk(... rate: RATE, spot: SPOT) ... </vat-ilks>
-         <vat-urns> ... { ILK, URN } |-> Urn(... ink: INK, art: URNART ) ... </vat-urns>
+         <cat-ilks> ... ILK_ID |-> Ilk(... chop: CHOP, lump: LUMP) ... </cat-ilks>
+         <vat-ilks> ... ILK_ID |-> Ilk(... rate: RATE, spot: SPOT) ... </vat-ilks>
+         <vat-urns> ... { ILK_ID , URN } |-> Urn(... ink: INK, art: URNART ) ... </vat-urns>
          <cat-vow> VOWADDR </cat-vow>
       requires (INK *Rate SPOT) <Rad (URNART *Rate RATE)
 

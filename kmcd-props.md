@@ -25,18 +25,18 @@ Sometimes you need a lookup to default to zero, and want to cast the result as a
 ```k
     syntax Wad ::= #lookupWad ( Map , Address ) [function]
  // ------------------------------------------------------
-    rule #lookupWad(M, A) => { M[A] }:>Wad requires A in_keys(M)
-    rule #lookupWad(M, A) => wad(0)        [owise]
+    rule #lookupWad( M,  A) => { M[A] }:>Wad requires A in_keys(M)
+    rule #lookupWad(_M, _A) => wad(0)        [owise]
 
     syntax Ray ::= #lookupRay ( Map , Address ) [function]
  // ------------------------------------------------------
-    rule #lookupRay(M, A) => { M[A] }:>Ray requires A in_keys(M)
-    rule #lookupRay(M, A) => ray(0)        [owise]
+    rule #lookupRay( M,  A) => { M[A] }:>Ray requires A in_keys(M)
+    rule #lookupRay(_M, _A) => ray(0)        [owise]
 
     syntax Rad ::= #lookupRad ( Map , Address ) [function]
  // ------------------------------------------------------
-    rule #lookupRad(M, A) => { M[A] }:>Rad requires A in_keys(M)
-    rule #lookupRad(M, A) => rad(0)        [owise]
+    rule #lookupRad( M,  A) => { M[A] }:>Rad requires A in_keys(M)
+    rule #lookupRad(_M, _A) => rad(0)        [owise]
 ```
 
 ### Measure Event
@@ -126,13 +126,13 @@ Art of an ilk = Sum of all urn art across all users for that ilk.
 ```k
     syntax Wad ::= sumOfUrnArt(Map, String, Wad) [function, functional]
  // -------------------------------------------------------------------
-    rule sumOfUrnArt( {ILKID , ADDR} |-> Urn (... art: ART) URNS, ILKID', SUM)
-      => #if ILKID ==K ILKID'
-            #then sumOfUrnArt( URNS, ILKID', SUM +Wad ART)
-            #else sumOfUrnArt( URNS, ILKID', SUM)
+    rule sumOfUrnArt( {ILK_ID , _} |-> Urn (... art: ART) URNS, ILK_ID', SUM)
+      => #if ILK_ID ==K ILK_ID'
+            #then sumOfUrnArt( URNS, ILK_ID', SUM +Wad ART)
+            #else sumOfUrnArt( URNS, ILK_ID', SUM)
          #fi
 
-    rule sumOfUrnArt( _ |-> _ URNS, ILKID', SUM ) => sumOfUrnArt( URNS, ILKID', SUM ) [owise]
+    rule sumOfUrnArt( _ |-> _ URNS, ILK_ID', SUM ) => sumOfUrnArt( URNS, ILK_ID', SUM ) [owise]
 
     rule sumOfUrnArt(.Map, _, SUM) => SUM
 ```
@@ -240,7 +240,7 @@ You can inject `checkViolated(_)` steps to each FSM to see whether we should hal
  // ------------------------------------------------
     rule anyViolation(.List)                   => false
     rule anyViolation(ListItem(Violated(_)) _) => true
-    rule anyViolation(ListItem(VFSM)     REST) => anyViolation(REST) [owise]
+    rule anyViolation(ListItem(_VFSM)    REST) => anyViolation(REST) [owise]
 ```
 
 For each FSM, the user must define the `derive` function, which dictates how that FSM behaves.
@@ -262,7 +262,7 @@ A default `owise` rule is added which leaves the FSM state unchanged.
          </k>
          <processed-events> L => L ListItem(E) </processed-events>
 
-    rule <k> deriveVFSM(.List                 , E) => .                   ... </k>
+    rule <k> deriveVFSM(.List                 , _) => .                   ... </k>
     rule <k> deriveVFSM(ListItem(VFSMID) REST , E) => deriveVFSM(REST, E) ... </k>
          <properties> ... VFSMID |-> (VFSM => derive(VFSM, E)) ... </properties>
 ```
@@ -298,12 +298,12 @@ The Debt growth should be bounded in principle by the interest rates available i
  // --------------------------------------------------------------------
     rule derive(totalDebtBounded(... dsr: DSR), Measure(... debt: DEBT)) => totalDebtBoundedRun(... debt: DEBT, dsr: DSR)
 
-    rule derive( totalDebtBoundedRun(... debt: DEBT, dsr: _  ) #as PREV , Measure(... debt: DEBT')            ) => Violated(PREV) requires DEBT' >Rad DEBT
+    rule derive( totalDebtBoundedRun(... debt: DEBT          ) #as PREV , Measure(... debt: DEBT')            ) => Violated(PREV) requires DEBT' >Rad DEBT
     rule derive( totalDebtBoundedRun(... debt: DEBT, dsr: DSR)          , TimeStep(TIME, _)                   ) => totalDebtBoundedRun(... debt: DEBT +Rad rmul(vatDaiForUser(Pot), (DSR ^Ray TIME) -Ray ray(1)), dsr: DSR)
-    rule derive( totalDebtBoundedRun(... debt: DEBT, dsr: DSR)          , LogNote(_ , Vat . frob _ _ _ _ _ _) ) => totalDebtBounded(... dsr: DSR)
+    rule derive( totalDebtBoundedRun(...             dsr: DSR)          , LogNote(_ , Vat . frob _ _ _ _ _ _) ) => totalDebtBounded(... dsr: DSR)
     rule derive( totalDebtBoundedRun(... debt: DEBT, dsr: DSR)          , LogNote(_ , Vat . suck _ _ AMOUNT)  ) => totalDebtBoundedRun(... debt: DEBT +Rad AMOUNT, dsr: DSR)
-    rule derive( totalDebtBoundedRun(... debt: DEBT, dsr: DSR)          , LogNote(_ , Pot . file dsr DSR')    ) => totalDebtBoundedRun(... debt: DEBT, dsr: DSR')
-    rule derive( totalDebtBoundedRun(... debt: DEBT, dsr: _  )          , LogNote(_ , End . cage         )    ) => totalDebtBoundedEnd(... debt: DEBT)
+    rule derive( totalDebtBoundedRun(... debt: DEBT          )          , LogNote(_ , Pot . file dsr DSR')    ) => totalDebtBoundedRun(... debt: DEBT, dsr: DSR')
+    rule derive( totalDebtBoundedRun(... debt: DEBT          )          , LogNote(_ , End . cage         )    ) => totalDebtBoundedEnd(... debt: DEBT)
 
     rule derive(totalDebtBoundedEnd(... debt: DEBT) #as PREV, Measure(... debt: DEBT')) => Violated(PREV) requires DEBT' =/=Rad DEBT
 ```
@@ -393,7 +393,7 @@ The property checks if a successful `Pot . join` is preceded by a `TimeStep` mor
 
     rule derive(flopBlockCheck(... embers: EMBERS, dented: DENTED), LogNote(_ , Flop . dent ID _ BID)) => flopBlockCheck(... embers: EMBERS -Rad BID, dented: DENTED +Int (2 ^Int ID))
         requires ( ( ( DENTED /Int ( 2 ^Int ID ) ) modInt 2 ) ==Int 0 )
-    rule derive(flopBlockCheck(... embers: EMBERS, dented: DENTED), LogNote(_ , Flop . dent ID _ BID)) => flopBlockCheck(... embers: EMBERS, dented: DENTED) [owise]
+    rule derive(flopBlockCheck(... embers: EMBERS, dented: DENTED), LogNote(_ , Flop . dent _ _ _)) => flopBlockCheck(... embers: EMBERS, dented: DENTED) [owise]
 ```
 
 ```k

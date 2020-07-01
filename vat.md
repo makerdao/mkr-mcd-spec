@@ -140,19 +140,19 @@ The parameters controlled by governance are:
          <vat-Line> _ => LINE </vat-Line>
       requires LINE >=Rad rad(0)
 
-    rule <k> Vat . file spot ILKID SPOT => . ... </k>
+    rule <k> Vat . file spot ILK_ID SPOT => . ... </k>
          <vat-live> true </vat-live>
-         <vat-ilks> ... ILKID |-> Ilk ( ... spot: (_ => SPOT) ) ... </vat-ilks>
+         <vat-ilks> ... ILK_ID |-> Ilk ( ... spot: (_ => SPOT) ) ... </vat-ilks>
       requires SPOT >=Ray ray(0)
 
-    rule <k> Vat . file line ILKID LINE => . ... </k>
+    rule <k> Vat . file line ILK_ID LINE => . ... </k>
          <vat-live> true </vat-live>
-         <vat-ilks> ... ILKID |-> Ilk ( ... line: (_ => LINE) ) ... </vat-ilks>
+         <vat-ilks> ... ILK_ID |-> Ilk ( ... line: (_ => LINE) ) ... </vat-ilks>
       requires LINE >=Rad rad(0)
 
-    rule <k> Vat . file dust ILKID DUST => . ... </k>
+    rule <k> Vat . file dust ILK_ID DUST => . ... </k>
          <vat-live> true </vat-live>
-         <vat-ilks> ... ILKID |-> Ilk ( ... dust: (_ => DUST) ) ... </vat-ilks>
+         <vat-ilks> ... ILK_ID |-> Ilk ( ... dust: (_ => DUST) ) ... </vat-ilks>
       requires DUST >=Rad rad(0)
 ```
 
@@ -167,30 +167,23 @@ Because data isn't explicitely initialized to 0 in KMCD, we need explicit initia
 -   `initCDP`: Create an empty CDP of a given ilk for a given user.
 
 ```k
-    syntax VatAuthStep ::= "initIlk" String
-                         | "initUser" Address
+    syntax VatAuthStep ::= "initUser" Address
                          | "initGem" String Address
                          | "initCDP" String Address
  // -----------------------------------------------
-    rule <k> Vat . initIlk ILKID => . ... </k>
-         <vat-ilks> ILKS => ILKS [ ILKID <- Ilk ( ... Art: wad(0) , rate: ray(1) , spot: ray(0) , line: rad(0) , dust: rad(0) ) ] </vat-ilks>
-      requires notBool ILKID in_keys(ILKS)
-
     rule <k> Vat . initUser ADDR => . ... </k>
-         <vat-can> CAN => CAN [ ADDR <- .Set ] </vat-can>
          <vat-dai> DAI => DAI [ ADDR <- rad(0) ] </vat-dai>
          <vat-sin> SIN => SIN [ ADDR <- rad(0) ] </vat-sin>
-      requires notBool ADDR in_keys(CAN)
-       andBool notBool ADDR in_keys(DAI)
+      requires notBool ADDR in_keys(DAI)
        andBool notBool ADDR in_keys(SIN)
 
-    rule <k> Vat . initGem ILKID ADDR => . ... </k>
-         <vat-gem> GEMS => GEMS [ { ILKID , ADDR } <- wad(0) ] </vat-gem>
-      requires notBool { ILKID , ADDR } in_keys(GEMS)
+    rule <k> Vat . initGem ILK_ID ADDR => . ... </k>
+         <vat-gem> GEMS => GEMS [ { ILK_ID , ADDR } <- wad(0) ] </vat-gem>
+      requires notBool { ILK_ID , ADDR } in_keys(GEMS)
 
-    rule <k> Vat . initCDP ILKID ADDR => . ... </k>
-         <vat-urns> URNS => URNS [ { ILKID , ADDR } <- Urn( ... ink: wad(0) , art: wad(0) ) ] </vat-urns>
-      requires notBool { ILKID , ADDR } in_keys(URNS)
+    rule <k> Vat . initCDP ILK_ID ADDR => . ... </k>
+         <vat-urns> URNS => URNS [ { ILK_ID , ADDR } <- Urn( ... ink: wad(0) , art: wad(0) ) ] </vat-urns>
+      requires notBool { ILK_ID , ADDR } in_keys(URNS)
 ```
 
 Vat Semantics
@@ -242,6 +235,16 @@ This is quite permissive, and would allow the account to drain all your locked c
     rule <k> Vat . nope ADDRTO => . ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <vat-can> ... MSGSENDER |-> (CANADDRS => CANADDRS -Set SetItem(ADDRTO)) ... </vat-can>
+
+    rule <k> Vat . hope _ADDRTO ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         <vat-can> VAT_CANS => VAT_CANS [ MSGSENDER <- .Set ] </vat-can>
+      requires notBool MSGSENDER in_keys(VAT_CANS)
+
+    rule <k> Vat . nope _ADDRTO => . ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         <vat-can> VAT_CANS </vat-can>
+      requires notBool MSGSENDER in_keys(VAT_CANS)
 ```
 
 -   `Vat.safe` checks that a given `Urn` of a certain `ilk` is not over-leveraged.
@@ -250,17 +253,17 @@ This is quite permissive, and would allow the account to drain all your locked c
 ```k
     syntax VatStep ::= "safe" String Address
  // ----------------------------------------
-    rule <k> Vat . safe ILKID ADDR => . ... </k>
-         <vat-ilks> ...   ILKID          |-> ILK ... </vat-ilks>
-         <vat-urns> ... { ILKID , ADDR } |-> URN ... </vat-urns>
+    rule <k> Vat . safe ILK_ID ADDR => . ... </k>
+         <vat-ilks> ...   ILK_ID          |-> ILK ... </vat-ilks>
+         <vat-urns> ... { ILK_ID , ADDR } |-> URN ... </vat-urns>
       requires rad(0) <=Rad urnBalance(ILK, URN)
        andBool urnDebt(ILK, URN) <=Rad line(ILK)
 
     syntax VatStep ::= "nondusty" String Address
  // --------------------------------------------
-    rule <k> Vat . nondusty ILKID ADDR => . ... </k>
-         <vat-ilks> ...   ILKID          |-> ILK ... </vat-ilks>
-         <vat-urns> ... { ILKID , ADDR } |-> URN ... </vat-urns>
+    rule <k> Vat . nondusty ILK_ID ADDR => . ... </k>
+         <vat-ilks> ...   ILK_ID          |-> ILK ... </vat-ilks>
+         <vat-urns> ... { ILK_ID , ADDR } |-> URN ... </vat-urns>
       requires dust(ILK) <=Rad urnDebt(ILK, URN) orBool rad(0) ==Rad urnDebt(ILK, URN)
 ```
 
@@ -271,8 +274,12 @@ This is quite permissive, and would allow the account to drain all your locked c
 ```k
     syntax VatAuthStep ::= "init" String
  // ------------------------------------
-    rule <k> Vat . init ILKID => . ... </k>
-         <vat-ilks> ... ILKID |-> Ilk(... rate: ray(0) => ray(1)) ... </vat-ilks>
+    rule <k> Vat . init ILK_ID => . ... </k>
+         <vat-ilks> ... ILK_ID |-> Ilk(... rate: ray(0) => ray(1)) ... </vat-ilks>
+
+    rule <k> Vat . init ILK_ID ... </k>
+         <vat-ilks> VAT_ILKS => VAT_ILKS [ ILK_ID <- Ilk (... Art: wad(0) , rate: ray(0) , spot: ray(0) , line: rad(0) , dust: rad(0) ) ] </vat-ilks>
+      requires notBool ILK_ID in_keys(VAT_ILKS)
 ```
 
 ### Collateral manipulation (`<vat-gem>`)
@@ -288,25 +295,25 @@ This is quite permissive, and would allow the account to drain all your locked c
 ```k
     syntax VatAuthStep ::= "slip" String Address Wad
  // ------------------------------------------------
-    rule <k> Vat . slip ILKID ADDRTO NEWCOL => . ... </k>
-         <vat-gem> ... { ILKID , ADDRTO } |-> ( COL => COL +Wad NEWCOL ) ... </vat-gem>
+    rule <k> Vat . slip ILK_ID ADDRTO NEWCOL => . ... </k>
+         <vat-gem> ... { ILK_ID , ADDRTO } |-> ( COL => COL +Wad NEWCOL ) ... </vat-gem>
       requires NEWCOL >=Wad wad(0)
 
     syntax VatStep ::= "flux" String Address Address Wad
  // ----------------------------------------------------
-    rule <k> Vat . flux ILKID ADDRFROM ADDRTO COL => . ... </k>
+    rule <k> Vat . flux ILK_ID ADDRFROM ADDRTO COL => . ... </k>
          <vat-gem>
            ...
-           { ILKID , ADDRFROM } |-> ( COLFROM => COLFROM -Wad COL )
-           { ILKID , ADDRTO   } |-> ( COLTO   => COLTO   +Wad COL )
+           { ILK_ID , ADDRFROM } |-> ( COLFROM => COLFROM -Wad COL )
+           { ILK_ID , ADDRTO   } |-> ( COLTO   => COLTO   +Wad COL )
            ...
          </vat-gem>
       requires COL     >=Wad wad(0)
        andBool COLFROM >=Wad COL
        andBool wish ADDRFROM
 
-    rule <k> Vat . flux ILKID ADDRFROM ADDRFROM COL => . ... </k>
-         <vat-gem> ... { ILKID , ADDRFROM } |-> COLFROM ... </vat-gem>
+    rule <k> Vat . flux ILK_ID ADDRFROM ADDRFROM COL => . ... </k>
+         <vat-gem> ... { ILK_ID , ADDRFROM } |-> COLFROM ... </vat-gem>
       requires COL     >=Wad wad(0)
        andBool COLFROM >=Wad COL
        andBool wish ADDRFROM
@@ -348,15 +355,15 @@ This is quite permissive, and would allow the account to drain all your locked c
 ```k
     syntax VatStep ::= "fork" String Address Address Wad Wad
  // --------------------------------------------------------
-    rule <k> Vat . fork ILKID ADDRFROM ADDRTO DINK DART
-          => Vat . safe     ILKID ADDRFROM ~> Vat . safe     ILKID ADDRTO
-          ~> Vat . nondusty ILKID ADDRFROM ~> Vat . nondusty ILKID ADDRTO
+    rule <k> Vat . fork ILK_ID ADDRFROM ADDRTO DINK DART
+          => Vat . safe     ILK_ID ADDRFROM ~> Vat . safe     ILK_ID ADDRTO
+          ~> Vat . nondusty ILK_ID ADDRFROM ~> Vat . nondusty ILK_ID ADDRTO
          ...
          </k>
          <vat-urns>
            ...
-           { ILKID , ADDRFROM } |-> Urn ( INKFROM => INKFROM -Wad DINK , ARTFROM => ARTFROM -Wad DART )
-           { ILKID , ADDRTO   } |-> Urn ( INKTO   => INKTO   +Wad DINK , ARTTO   => ARTFROM +Wad DART )
+           { ILK_ID , ADDRFROM } |-> Urn ( INKFROM => INKFROM -Wad DINK , ARTFROM => ARTFROM -Wad DART )
+           { ILK_ID , ADDRTO   } |-> Urn ( INKTO   => INKTO   +Wad DINK , ARTTO   => ARTTO   +Wad DART )
            ...
          </vat-urns>
       requires INKFROM >=Wad DINK
@@ -364,12 +371,12 @@ This is quite permissive, and would allow the account to drain all your locked c
        andBool wish ADDRFROM
        andBool wish ADDRTO
 
-    rule <k> Vat . fork ILKID ADDRFROM ADDRFROM DINK DART
-          => Vat . safe     ILKID ADDRFROM ~> Vat . safe     ILKID ADDRFROM
-          ~> Vat . nondusty ILKID ADDRFROM ~> Vat . nondusty ILKID ADDRFROM
+    rule <k> Vat . fork ILK_ID ADDRFROM ADDRFROM DINK DART
+          => Vat . safe     ILK_ID ADDRFROM ~> Vat . safe     ILK_ID ADDRFROM
+          ~> Vat . nondusty ILK_ID ADDRFROM ~> Vat . nondusty ILK_ID ADDRFROM
          ...
          </k>
-         <vat-urns> ... { ILKID , ADDRFROM } |-> Urn ( INKFROM , ARTFROM ) ... </vat-urns>
+         <vat-urns> ... { ILK_ID , ADDRFROM } |-> Urn ( INKFROM , ARTFROM ) ... </vat-urns>
       requires INKFROM >=Wad DINK
        andBool ARTFROM >=Wad DART
        andBool wish ADDRFROM
@@ -384,11 +391,11 @@ This is quite permissive, and would allow the account to drain all your locked c
 ```k
     syntax VatAuthStep ::= "grab" String Address Address Address Wad Wad
  // --------------------------------------------------------------------
-    rule <k> Vat . grab ILKID ADDRU ADDRV ADDRW DINK DART => . ... </k>
+    rule <k> Vat . grab ILK_ID ADDRU ADDRV ADDRW DINK DART => . ... </k>
          <vat-vice> VICE => VICE -Rad (DART *Rate RATE) </vat-vice>
-         <vat-urns> ... { ILKID , ADDRU } |-> Urn ( INK => INK +Wad DINK , URNART => URNART +Wad DART ) ... </vat-urns>
-         <vat-ilks> ... ILKID |-> Ilk ( ILKART => ILKART +Wad DART , RATE , _ , _ , _ ) ... </vat-ilks>
-         <vat-gem> ... { ILKID , ADDRV } |-> ( ILKV => ILKV -Wad DINK ) ... </vat-gem>
+         <vat-urns> ... { ILK_ID , ADDRU } |-> Urn ( INK => INK +Wad DINK , URNART => URNART +Wad DART ) ... </vat-urns>
+         <vat-ilks> ... ILK_ID |-> Ilk ( ILKART => ILKART +Wad DART , RATE , _ , _ , _ ) ... </vat-ilks>
+         <vat-gem> ... { ILK_ID , ADDRV } |-> ( ILKV => ILKV -Wad DINK ) ... </vat-gem>
          <vat-sin> ... ADDRW |-> ( SINW => SINW -Rad (DART *Rate RATE) ) ... </vat-sin>
       requires ILKV >=Wad DINK
        andBool SINW >=Rad (DART *Rate RATE)
@@ -396,12 +403,12 @@ This is quite permissive, and would allow the account to drain all your locked c
 
     syntax VatStep ::= "frob" String Address Address Address Wad Wad
  // ----------------------------------------------------------------
-    rule <k> Vat . frob ILKID ADDRU ADDRV ADDRW DINK DART => . ... </k>
+    rule <k> Vat . frob ILK_ID ADDRU ADDRV ADDRW DINK DART => . ... </k>
          <vat-live> true </vat-live>
          <vat-debt> DEBT => DEBT +Rad (DART *Rate RATE) </vat-debt>
-         <vat-urns> ... { ILKID , ADDRU } |-> Urn ( INK => INK +Wad DINK , URNART => URNART +Wad DART ) ... </vat-urns>
-         <vat-ilks> ... ILKID |-> Ilk (... Art: ILKART => ILKART +Wad DART , rate: RATE , spot: SPOT, line: ILKLINE, dust: DUST ) ... </vat-ilks>
-         <vat-gem> ... { ILKID , ADDRV } |-> ( ILKV => ILKV -Wad DINK ) ... </vat-gem>
+         <vat-urns> ... { ILK_ID , ADDRU } |-> Urn ( INK => INK +Wad DINK , URNART => URNART +Wad DART ) ... </vat-urns>
+         <vat-ilks> ... ILK_ID |-> Ilk (... Art: ILKART => ILKART +Wad DART , rate: RATE , spot: SPOT, line: ILKLINE, dust: DUST ) ... </vat-ilks>
+         <vat-gem> ... { ILK_ID , ADDRV } |-> ( ILKV => ILKV -Wad DINK ) ... </vat-gem>
          <vat-dai> ... ADDRW |-> ( DAIW => DAIW +Rad (DART *Rate RATE) ) ... </vat-dai>
          <vat-Line> LINE </vat-Line>
       requires ILKV >=Wad DINK
@@ -456,10 +463,10 @@ This is quite permissive, and would allow the account to drain all your locked c
 ```k
     syntax VatAuthStep ::= "fold" String Address Ray
  // ------------------------------------------------
-    rule <k> Vat . fold ILKID ADDRU RATE => . ... </k>
+    rule <k> Vat . fold ILK_ID ADDRU RATE => . ... </k>
          <vat-live> true </vat-live>
          <vat-debt> DEBT => DEBT +Rad (ILKART *Rate RATE) </vat-debt>
-         <vat-ilks> ... ILKID |-> Ilk ( ILKART , ILKRATE => ILKRATE +Ray RATE , _ , _ , _ ) ... </vat-ilks>
+         <vat-ilks> ... ILK_ID |-> Ilk ( ILKART , ILKRATE => ILKRATE +Ray RATE , _ , _ , _ ) ... </vat-ilks>
          <vat-dai> ... ADDRU |-> ( DAI => DAI +Rad (ILKART *Rate RATE) ) ... </vat-dai>
 ```
 

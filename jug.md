@@ -76,8 +76,8 @@ These parameters are controlled by governance:
                      | "base" Ray
                      | "vow-file" Address
  // -------------------------------------
-    rule <k> Jug . file duty ILKID DUTY => . ... </k>
-         <jug-ilks> ... ILK |-> Ilk ( ... duty: (_ => DUTY) , rho: RHO ) ... </jug-ilks>
+    rule <k> Jug . file duty ILK_ID DUTY => . ... </k>
+         <jug-ilks> ... ILK_ID |-> Ilk ( ... duty: (_ => DUTY) , rho: RHO ) ... </jug-ilks>
          <current-time> NOW </current-time>
       requires NOW ==Int RHO
        andBool DUTY >=Ray ray(0)
@@ -98,18 +98,22 @@ Jug Semantics
 ```k
     syntax JugAuthStep ::= "init" String
  // ------------------------------------
-    rule <k> Jug . init ILK => . ... </k>
+    rule <k> Jug . init ILK_ID => . ... </k>
          <current-time> NOW </current-time>
-         <jug-ilks> ... ILK |-> Ilk ( ... duty: ray(0) => ray(1), rho: _ => NOW ) ... </jug-ilks>
+         <jug-ilks> ... ILK_ID |-> Ilk ( ... duty: ray(0) => ray(1), rho: _ => NOW ) ... </jug-ilks>
+
+    rule <k> Jug . init ILK_ID ... </k>
+         <jug-ilks> JUG_ILKS => JUG_ILKS [ ILK_ID <- Ilk ( ... duty: ray(0) , rho: 0 ) ] </jug-ilks>
+      requires notBool ILK_ID in_keys(JUG_ILKS)
 ```
 
 ```k
     syntax JugStep ::= "drip" String
  // --------------------------------
-    rule <k> Jug . drip ILK => call Vat . fold ILK ADDRESS ( ( (BASE +Ray ILKDUTY) ^Ray (TIME -Int ILKRHO) ) *Ray ILKRATE ) -Ray ILKRATE ... </k>
+    rule <k> Jug . drip ILK_ID => call Vat . fold ILK_ID ADDRESS ( ( (BASE +Ray ILKDUTY) ^Ray (TIME -Int ILKRHO) ) *Ray ILKRATE ) -Ray ILKRATE ... </k>
          <current-time> TIME </current-time>
-         <vat-ilks> ... ILK |-> Ilk ( ... rate: ILKRATE ) ... </vat-ilks>
-         <jug-ilks> ... ILK |-> Ilk ( ... duty: ILKDUTY, rho: ILKRHO => TIME ) ... </jug-ilks>
+         <vat-ilks> ... ILK_ID |-> Ilk ( ... rate: ILKRATE ) ... </vat-ilks>
+         <jug-ilks> ... ILK_ID |-> Ilk ( ... duty: ILKDUTY, rho: ILKRHO => TIME ) ... </jug-ilks>
          <jug-vow> ADDRESS </jug-vow>
          <jug-base> BASE </jug-base>
       requires TIME >=Int ILKRHO

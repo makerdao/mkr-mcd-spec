@@ -50,13 +50,14 @@ In all cases, the returned integers will be in the width of the first operand.
                   > FInt "+FInt" FInt [function]
                   | FInt "-FInt" FInt [function]
  // --------------------------------------------
-    rule FInt(VALUE1, ONE1) *FInt FInt(VALUE2, ONE2) => FInt((VALUE1 *Int VALUE2) /Int ONE2, ONE1)
-    rule FInt(VALUE1, ONE1) /FInt FInt(VALUE2, ONE2) => FInt((VALUE1 *Int ONE2) /Int VALUE2, ONE1) requires VALUE2 =/=Int 0
-    rule FInt(VALUE, ONE) ^FInt E                    => FInt((VALUE ^Int E) /Int (ONE ^Int (E -Int 1)), ONE)          requires E  >Int 0
-    rule FInt(VALUE, ONE) ^FInt E                    => 1FInt(ONE)                                                    requires E ==Int 0
-    rule FInt(VALUE, ONE) ^FInt E                    => FInt((ONE ^Int (1 -Int E)) /Int (VALUE ^Int (0 -Int E)), ONE) requires E  <Int 0
-    rule FInt(VALUE1, ONE1) +FInt FInt(VALUE2, ONE2) => FInt(VALUE1 +Int ((VALUE2 *Int ONE1) /Int ONE2), ONE1)
-    rule FInt(VALUE1, ONE1) -FInt FInt(VALUE2, ONE2) => FInt(VALUE1 -Int ((VALUE2 *Int ONE1) /Int ONE2), ONE1)
+    rule FInt(VALUE1, ONE1) *FInt FInt(VALUE2, ONE2) => FInt((VALUE1 *Int VALUE2) /Int ONE2             , ONE1)
+    rule FInt(VALUE1, ONE1) /FInt FInt(VALUE2, ONE2) => FInt((VALUE1 *Int ONE2) /Int VALUE2             , ONE1) requires VALUE2 =/=Int 0
+    rule FInt(VALUE1, ONE1) +FInt FInt(VALUE2, ONE2) => FInt(VALUE1 +Int ((VALUE2 *Int ONE1) /Int ONE2) , ONE1)
+    rule FInt(VALUE1, ONE1) -FInt FInt(VALUE2, ONE2) => FInt(VALUE1 -Int ((VALUE2 *Int ONE1) /Int ONE2) , ONE1)
+
+    rule FInt( VALUE, ONE) ^FInt E => FInt((VALUE ^Int E) /Int (ONE ^Int (E -Int 1)), ONE)          requires E  >Int 0
+    rule FInt(_VALUE, ONE) ^FInt E => 1FInt(ONE)                                                    requires E ==Int 0
+    rule FInt( VALUE, ONE) ^FInt E => FInt((ONE ^Int (1 -Int E)) /Int (VALUE ^Int (0 -Int E)), ONE) requires E  <Int 0
 ```
 
 Comparisons
