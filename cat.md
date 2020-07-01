@@ -129,7 +129,7 @@ The parameters controlled by governance are:
     rule <k> Cat . file flip ILK_ID CAT_FLIP => . ... </k>
          <cat-ilks> ... ILK_ID |-> Ilk ( ... flip: (_ => CAT_FLIP) ) ... </cat-ilks>
 
-    rule <k> Cat . file flip ILK_ID CAT_FLIP ... </k>
+    rule <k> Cat . file flip ILK_ID _ ... </k>
          <cat-ilks> CAT_ILKS => CAT_ILKS [ ILK_ID <- Ilk(... flip: 0, chop: ray(0), lump: wad(0)) ] </cat-ilks>
       requires notBool ILK_ID in_keys(CAT_ILKS)
 ```

@@ -93,7 +93,7 @@ At it's core, it calls the constructors of all the sub-contracts with appropriat
           ~> call Deploy . deployTaxation
           ~> call Deploy . deployAuctions GOV
           ~> call Deploy . deployLiquidator
-          ~> call Deploy . deployShutdown GOV
+          ~> call Deploy . deployShutdown
          ...
          </k>
 
@@ -149,9 +149,9 @@ At it's core, it calls the constructors of all the sub-contracts with appropriat
          ...
          </k>
 
-    syntax DeployStep ::= "deployShutdown" Address
- // ----------------------------------------------
-    rule <k> Deploy . deployShutdown GOV
+    syntax DeployStep ::= "deployShutdown"
+ // --------------------------------------
+    rule <k> Deploy . deployShutdown
           => End  . constructor
           ~> End  . file vat-file  Vat
           ~> End  . file cat-file  Cat
