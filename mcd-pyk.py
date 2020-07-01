@@ -291,7 +291,7 @@ def extractCallEvents(logEvent):
         contract = solidify(printMCD(logEvent['args'][1]['args'][0]))
         functionCall = logEvent['args'][1]['args'][1]
         function = functionCall['label'].split('_')[0]
-        if function.startswith('init') or function.startswith('deploy') or function.startswith('constructor'):
+        if function.startswith('init') or function.startswith('deploy') or function.startswith('constructor') or function.startswith('poke'):
             return []
         if function.endswith('Cage'):
             function = 'cage'
