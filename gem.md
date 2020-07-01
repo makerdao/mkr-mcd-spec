@@ -58,7 +58,7 @@ Because data isn't explicitely initialized to 0 in KMCD, we need explicit initia
             ...
          </gem>
 
-    rule <k> (. => Gem GEMID . init) ~> Gem GEMID . initUser ADDR ... </k> [owise]
+    rule <k> (. => Gem GEMID . init) ~> Gem GEMID . initUser _ ... </k> [owise]
 ```
 
 Gem Semantics
