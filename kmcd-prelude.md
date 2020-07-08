@@ -66,9 +66,6 @@ module KMCD-PRELUDE
          transact ADMIN Gem     "gold" . initUser GemJoin "gold"
          transact ADMIN Deploy . deployCollateral "gold" GemJoin "gold"
 
-         transact ADMIN Gem "gold" . initUser Vow
-         transact ADMIN Gem "gold" . initUser Flap
-
          // Initialize "gold" for Vat
          transact ADMIN Vat . rely GemJoin "gold"
          transact ADMIN Vat . initGem "gold" End
