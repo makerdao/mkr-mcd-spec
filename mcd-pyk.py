@@ -261,6 +261,13 @@ def argify(arg):
         newArg = '"' + newArg + '"'
     return newArg
 
+def functionify(fname):
+    if fname == 'pie':
+        return 'Pie'
+    if fname == 'pies':
+        return 'pie'
+    return fname
+
 def solidityKeys(k):
     if pyk.isKApply(k) and k['label'] == 'CDPID':
         return [ a for a in k['args'] ]
@@ -284,22 +291,20 @@ def extractCallEvents(logEvent):
         contract = solidify(printMCD(logEvent['args'][1]['args'][0]))
         functionCall = logEvent['args'][1]['args'][1]
         function = functionCall['label'].split('_')[0]
-        if function.startswith('init'):
+        if function.startswith('init') or function.startswith('deploy') or function.startswith('constructor') or function.startswith('poke'):
             return []
         if function.endswith('Cage'):
             function = 'cage'
-        args = []
+        args = ""
         if function.endswith('file'):
             fileable = functionCall['args'][0]['label'].split('_')[0]
             if fileable.endswith('-file'):
                 fileable = fileable[0:-5]
             fileargs = functionCall['args'][0]['args']
-            args.append(stringToken(fileable))
-            args.extend(fileargs)
+            args = '"' + fileable + '", ' + solidityArgs(fileargs)
         else:
-            args = functionCall['args']
-        strArgs = solidityArgs(args)
-        return [ caller + '.' + contract + '_' + function + '(' + strArgs + ');' ]
+            args = solidityArgs(functionCall['args'])
+        return [ caller + '.' + contract + '_' + function + '(' + args + ');' ]
     elif pyk.isKApply(logEvent) and logEvent['label'] == 'LogTimeStep':
         return [ 'this.warpForward(' + printMCD(logEvent['args'][0]) + ');' ]
     elif pyk.isKApply(logEvent) and logEvent['label'] == 'LogException':
@@ -327,14 +332,14 @@ def noRewriteToDots(config):
 def stateAssertions(contract, field, value, subkeys = []):
     assertionData = []
     if pyk.isKToken(value) and value['sort'] == 'Bool':
-        actual     = contract + '.' + field + '(' + solidityArgs(subkeys) + ')'
+        actual     = contract + '.' + functionify(field) + '(' + solidityArgs(subkeys) + ')'
         comparator = '=='
         expected   = printMCD(intToken(0))
         if value['token'] == 'true':
             comparator = '!='
         assertionData.append((actual, comparator, expected, True))
     elif pyk.isKApply(value) and value['label'] == 'FInt':
-        actual     = contract + '.' + field + '(' + solidityArgs(subkeys) + ')'
+        actual     = contract + '.' + functionify(field) + '(' + solidityArgs(subkeys) + ')'
         comparator = '=='
         expected   = printMCD(value['args'][0])
         assertionData.append((actual, comparator, expected, True))
@@ -347,12 +352,12 @@ def stateAssertions(contract, field, value, subkeys = []):
             elif pyk.isKApply(v) and v['label'] == 'FInt':
                 assertionData.extend(stateAssertions(contract, field, v, subkeys = keys))
             else:
-                actual     = contract + '.' + field + '(' + solidityArgs(keys) + ')'
+                actual     = contract + '.' + functionify(field) + '(' + solidityArgs(keys) + ')'
                 comparator = '=='
                 expected   = printMCD(v)
                 assertionData.append((actual, comparator, expected, False))
     else:
-        actual = contract + '.' + field + '()'
+        actual = contract + '.' + functionify(field) + '()'
         assertionData.append((actual, '==', printMCD(value), False))
     return assertionData
 
