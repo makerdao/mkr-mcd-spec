@@ -305,7 +305,7 @@
             SetItem ( Spot )
           </vat-wards>
           <vat-can>
-            Deploy |-> SetItem ( Flap )
+            Vow |-> SetItem ( Flap )
           </vat-can>
           <vat-ilks>
             .Map
