@@ -25,17 +25,22 @@ End Configuration
       <end-state>
         <endPhase> false </endPhase>
         <end>
-          <end-wards> .Set   </end-wards>
-          <end-live>  true   </end-live>
-          <end-when>  0      </end-when>
-          <end-wait>  0      </end-wait>
-          <end-debt>  rad(0) </end-debt>
-          <end-tag>   .Map   </end-tag>  // mapping (bytes32 => uint256)                      String  |-> Ray
-          <end-gap>   .Map   </end-gap>  // mapping (bytes32 => uint256)                      String  |-> Wad
-          <end-art>   .Map   </end-art>  // mapping (bytes32 => uint256)                      String  |-> Wad
-          <end-fix>   .Map   </end-fix>  // mapping (bytes32 => uint256)                      String  |-> Ray
-          <end-bag>   .Map   </end-bag>  // mapping (address => uint256)                      Address |-> Wad
-          <end-out>   .Map   </end-out>  // mapping (bytes32 => mapping (address => uint256)) CDPID   |-> Wad
+          <end-vat>   0:Address </end-vat>
+          <end-cat>   0:Address </end-cat>
+          <end-vow>   0:Address </end-vow>
+          <end-pot>   0:Address </end-pot>
+          <end-spot>  0:Address </end-spot>
+          <end-wards> .Set      </end-wards>
+          <end-live>  true      </end-live>
+          <end-when>  0         </end-when>
+          <end-wait>  0         </end-wait>
+          <end-debt>  rad(0)    </end-debt>
+          <end-tag>   .Map      </end-tag>  // mapping (bytes32 => uint256)                      String  |-> Ray
+          <end-gap>   .Map      </end-gap>  // mapping (bytes32 => uint256)                      String  |-> Wad
+          <end-art>   .Map      </end-art>  // mapping (bytes32 => uint256)                      String  |-> Wad
+          <end-fix>   .Map      </end-fix>  // mapping (bytes32 => uint256)                      String  |-> Ray
+          <end-bag>   .Map      </end-bag>  // mapping (address => uint256)                      Address |-> Wad
+          <end-out>   .Map      </end-out>  // mapping (bytes32 => mapping (address => uint256)) CDPID   |-> Wad
         </end>
       </end-state>
 ```
@@ -46,6 +51,22 @@ End Configuration
     syntax MCDStep ::= EndContract "." EndStep [klabel(endStep)]
  // ------------------------------------------------------------
     rule contract(End . _) => End
+```
+
+### Constructor
+
+```k
+    syntax EndStep ::= "constructor"
+ // --------------------------------
+    rule <k> End . constructor => . ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         ( <end> _ </end>
+        => <end>
+             <end-wards> SetItem(MSGSENDER) </end-wards>
+             <end-live> true </end-live>
+             ...
+           </end>
+         )
 ```
 
 End Authorization
@@ -78,14 +99,37 @@ These parameters are controlled by governance:
  // -------------------------------------
 
     syntax EndFile ::= "wait" Int
- // -----------------------------
+                     | "vat-file"  Address
+                     | "cat-file"  Address
+                     | "vow-file"  Address
+                     | "pot-file"  Address
+                     | "spot-file" Address
+ // --------------------------------------
     rule <k> End . file wait WAIT => . ... </k>
          <end-live> true </end-live>
          <end-wait> _ => WAIT </end-wait>
       requires WAIT >=Int 0
-```
 
-**NOTE**: We have not added `file` steps for `vat`, `cat`, `vow`, `pot`, or `spot` because this model does not deal with swapping out implementations.
+    rule <k> End . file vat-file END_VAT => . ... </k>
+         <end-live> true </end-live>
+         <end-vat> _ => END_VAT </end-vat>
+
+    rule <k> End . file cat-file END_CAT => . ... </k>
+         <end-live> true </end-live>
+         <end-cat> _ => END_CAT </end-cat>
+
+    rule <k> End . file vow-file END_VOW => . ... </k>
+         <end-live> true </end-live>
+         <end-vow> _ => END_VOW </end-vow>
+
+    rule <k> End . file pot-file END_POT => . ... </k>
+         <end-live> true </end-live>
+         <end-pot> _ => END_POT </end-pot>
+
+    rule <k> End . file spot-file END_SPOT => . ... </k>
+         <end-live> true </end-live>
+         <end-spot> _ => END_SPOT </end-spot>
+```
 
 End Initialization
 ------------------
@@ -120,15 +164,19 @@ End Semantics
     syntax EndAuthStep ::= "cage"
  // -----------------------------
     rule <k> End . cage
-          => call Vat . cage
-          ~> call Cat . cage
-          ~> call Vow . cage
-          ~> call Pot . cage
+          => call END_VAT . cage
+          ~> call END_CAT . cage
+          ~> call END_VOW . cage
+          ~> call END_POT . cage
          ...
          </k>
          <current-time> NOW </current-time>
          <end-live> true => false </end-live>
          <end-when> _ => NOW </end-when>
+         <end-vat> END_VAT:VatContract </end-vat>
+         <end-cat> END_CAT:CatContract </end-cat>
+         <end-vow> END_VOW:VowContract </end-vow>
+         <end-pot> END_POT:PotContract </end-pot>
 
     syntax EndStep ::= "cage" String
  // --------------------------------
@@ -144,14 +192,15 @@ End Semantics
     syntax EndStep ::= "skip" String Int
  // ------------------------------------
     rule <k> End . skip ILK_ID ID
-          => call Vat . suck Vow Vow  TAB
-          ~> call Vat . suck Vow THIS BID
-          ~> call Vat . hope Flip ILK_ID
+          => call END_VAT . suck Vow Vow  TAB
+          ~> call END_VAT . suck Vow THIS BID
+          ~> call END_VAT . hope Flip ILK_ID
           ~> call Flip ILK_ID . yank ID
-          ~> call Vat . grab ILK_ID USR THIS Vow LOT (TAB /Rate RATE)
+          ~> call END_VAT . grab ILK_ID USR THIS Vow LOT (TAB /Rate RATE)
          ...
          </k>
          <this> THIS </this>
+         <end-vat> END_VAT:VatContract </end-vat>
          <end-tag> ... ILK_ID |-> TAG ... </end-tag>
          <end-art> ... ILK_ID |-> (ART => ART +Wad (TAB /Rate RATE)) ... </end-art>
          <vat-ilks> ... ILK_ID |-> Ilk(... rate: RATE)::VatIlk ... </vat-ilks>
@@ -167,10 +216,11 @@ End Semantics
     syntax EndStep ::= "skim" String Address
  // ----------------------------------------
     rule <k> End . skim ILK_ID ADDR
-          => call Vat . grab ILK_ID ADDR THIS Vow (wad(0) -Wad minWad(INK, rmul(rmul(ART, RATE), TAG))) (wad(0) -Wad ART)
+          => call END_VAT . grab ILK_ID ADDR THIS Vow (wad(0) -Wad minWad(INK, rmul(rmul(ART, RATE), TAG))) (wad(0) -Wad ART)
          ...
          </k>
          <this> THIS </this>
+         <end-vat> END_VAT:VatContract </end-vat>
          <end-tag> ... ILK_ID |-> TAG ... </end-tag>
          <end-gap> ... ILK_ID |-> (GAP => GAP +Wad (rmul(rmul(ART, RATE), TAG) -Wad minWad(INK, rmul(rmul(ART, RATE), TAG)))) ... </end-gap>
          <vat-ilks> ... ILK_ID |-> Ilk(... rate: RATE)::VatIlk ... </vat-ilks>
@@ -180,11 +230,12 @@ End Semantics
     syntax EndStep ::= "free" String
  // --------------------------------
     rule <k> End . free ILK_ID
-          => call Vat . grab ILK_ID MSGSENDER MSGSENDER Vow (wad(0) -Wad INK) wad(0)
+          => call END_VAT . grab ILK_ID MSGSENDER MSGSENDER Vow (wad(0) -Wad INK) wad(0)
          ...
          </k>
          <msg-sender> MSGSENDER </msg-sender>
          <end-live> false </end-live>
+         <end-vat> END_VAT:VatContract </end-vat>
          <vat-urns> ... {ILK_ID, MSGSENDER} |-> Urn(... ink: INK, art: ART) ... </vat-urns>
       requires ART ==Wad wad(0)
 
@@ -216,10 +267,11 @@ End Semantics
     syntax EndStep ::= "pack" Wad
  // -----------------------------
     rule <k> End . pack AMOUNT
-          => call Vat . move MSGSENDER Vow Wad2Rad(AMOUNT)
+          => call END_VAT . move MSGSENDER Vow Wad2Rad(AMOUNT)
          ...
          </k>
          <msg-sender> MSGSENDER </msg-sender>
+         <end-vat> END_VAT:VatContract </end-vat>
          <end-debt> DEBT </end-debt>
          <end-bag> ... MSGSENDER |-> (BAG => BAG +Wad AMOUNT) ... </end-bag>
       requires AMOUNT >=Wad wad(0)
@@ -228,11 +280,12 @@ End Semantics
     syntax EndStep ::= "cash" String Wad
  // ------------------------------------
     rule <k> End . cash ILK_ID AMOUNT
-          => call Vat . flux ILK_ID THIS MSGSENDER rmul(AMOUNT, FIX)
+          => call END_VAT . flux ILK_ID THIS MSGSENDER rmul(AMOUNT, FIX)
          ...
          </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
+         <end-vat> END_VAT:VatContract </end-vat>
          <end-fix> ... ILK_ID |-> FIX ... </end-fix>
          <end-out> ... {ILK_ID, MSGSENDER} |-> (OUT => OUT +Wad AMOUNT) ... </end-out>
          <end-bag> ... MSGSENDER |-> BAG ... </end-bag>

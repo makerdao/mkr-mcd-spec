@@ -16,12 +16,13 @@ module FLOP
     syntax FlopStep ::= "dent" Int Wad Rad
  // --------------------------------------
     rule <k> Flop . dent ID LOT BID
-          => #if MSGSENDER =/=K GUY #then call Vat . move MSGSENDER GUY BID #else . #fi
+          => #if MSGSENDER =/=K GUY #then call FLOP_VAT . move MSGSENDER GUY BID #else . #fi
           ~> #if TIC ==Int 0 #then call GUY . kiss ( minRad(BID, ASH) ) #else . #fi
          ...
          </k>
          <msg-sender> MSGSENDER </msg-sender>
          <current-time> NOW </current-time>
+         <flop-vat> FLOP_VAT:VatContract </flop-vat>
          <vow-ash> ASH </vow-ash>
          <flop-bids> ... ID |-> FlopBid(... bid: BID', lot: LOT' => LOT, guy: GUY => MSGSENDER, tic: TIC => TIC +Int TTL, end: END) ... </flop-bids>
          <flop-live> true </flop-live>
@@ -53,6 +54,8 @@ Flop Configuration
 ```k
     configuration
       <flop-state>
+        <flop-vat>   0:Address               </flop-vat>
+        <flop-mkr>   0:Address               </flop-mkr>
         <flop-wards> .Set                    </flop-wards>
         <flop-bids>  .Map                    </flop-bids>  // mapping (uint => Bid) Int |-> FlopBid
         <flop-kicks>  0                      </flop-kicks>
@@ -71,6 +74,24 @@ Flop Configuration
     syntax MCDStep ::= FlopContract "." FlopStep [klabel(flopStep)]
  // ---------------------------------------------------------------
     rule contract(Flop . _) => Flop
+```
+
+### Constructor
+
+```k
+    syntax FlopStep ::= "constructor" Address Address
+ // -------------------------------------------------
+    rule <k> Flop . constructor FLOP_VAT FLOP_MKR => . ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         ( <flop-state> _ </flop-state>
+        => <flop-state>
+             <flop-vat> FLOP_VAT </flop-vat>
+             <flop-mkr> FLOP_MKR </flop-mkr>
+             <flop-wards> SetItem(MSGSENDER) </flop-wards>
+             <flop-live> true </flop-live>
+             ...
+           </flop-state>
+         )
 ```
 
 Flop Authorization
@@ -199,10 +220,11 @@ Flop Semantics
     syntax FlopStep ::= "deal" Int [klabel(FlopDeal),symbol]
  // --------------------------------------------------------
     rule <k> Flop . deal ID
-          => call Gem "MKR" . mint GUY LOT
+          => call FLOP_MKR . mint GUY LOT
          ...
          </k>
          <current-time> NOW </current-time>
+         <flop-mkr> FLOP_MKR:GemContract </flop-mkr>
          <flop-bids> ... ID |-> FlopBid(... lot: LOT, guy: GUY, tic: TIC, end: END) => .Map ... </flop-bids>
          <flop-live> true </flop-live>
       requires TIC =/=Int 0
@@ -226,9 +248,10 @@ Flop Semantics
     syntax FlopStep ::= "yank" Int [klabel(FlopYank),symbol]
  // --------------------------------------------------------
     rule <k> Flop . yank ID
-          => call Vat . suck VOWADDR GUY BID
+          => call FLOP_VAT . suck VOWADDR GUY BID
          ...
          </k>
+         <flop-vat> FLOP_VAT:VatContract </flop-vat>
          <flop-bids> ... ID |-> FlopBid(... bid: BID, guy: GUY) => .Map ... </flop-bids>
          <flop-live> false </flop-live>
          <flop-vow> VOWADDR </flop-vow>

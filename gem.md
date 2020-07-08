@@ -50,6 +50,15 @@ Because data isn't explicitely initialized to 0 in KMCD, we need explicit initia
             ...
          </gem>
       requires notBool ADDR in_keys(BALS)
+
+    rule <k> Gem GEMID . initUser ADDR => . ... </k>
+         <gem>
+            <gem-id> GEMID </gem-id>
+            <gem-balances> ... ADDR |-> _ ... </gem-balances>
+            ...
+         </gem>
+
+    rule <k> (. => Gem GEMID . init) ~> Gem GEMID . initUser _ ... </k> [owise]
 ```
 
 Gem Semantics

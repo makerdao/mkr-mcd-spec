@@ -16,29 +16,13 @@ module KMCD-PRELUDE
  // ---------------------------------------------------------------------
     rule DEPLOY-PRELUDE
       =>
-         // Contract Authorizations
-         // -----------------------
+         // Main Deployments
+         // ----------------
 
-         // Auhthorize Pot/End/Spot for Vat
-         transact ADMIN Vat . rely Pot
-         transact ADMIN Vat . rely End
-         transact ADMIN Vat . rely Spot
+         transact ADMIN Gem "MKR" . init
+         transact ADMIN Deploy . deploy Gem "MKR"
 
-         // Authorize End for Pot
-         transact ADMIN Pot . rely End
-
-         // Auhthorize Pot/End for Vow
-         transact ADMIN Vow . rely Pot
-         transact ADMIN Vow . rely End
-
-         // Authorize End for Cat/Pot
-         transact ADMIN Cat . rely End
-
-         // Authorize Vow for Flap
-         transact ADMIN Flap . rely Vow
-
-         // Authorize Vow for Flop
-         transact ADMIN Flop . rely Vow
+         transact ADMIN Gem "MKR" . initUser Flap
 
          // Account Initializations
          // -----------------------
@@ -49,22 +33,8 @@ module KMCD-PRELUDE
          transact ADMIN Vat . initUser Flap
          transact ADMIN Vat . initUser End
 
-         // MKR Token Setup
-         // ---------------
-
-         // "MKR" collateral and joiner
-         transact ADMIN Gem "MKR" . init
-         transact ADMIN GemJoin "MKR" . init
-
-         // Setup Flap account on MKR
-         transact ADMIN Gem "MKR" . initUser Vow
-         transact ADMIN Gem "MKR" . initUser Flap
-
          // Miscellaneous Setup
          // -------------------
-
-         // File Vow contract for Pot
-         transact ADMIN Pot . file vow-file Vow
 
          // Allow the Flap to manipulate the Vow's balances
          transact Vow Vat . hope Flap
@@ -92,7 +62,9 @@ module KMCD-PRELUDE
 
          // "gold" collateral and joiner
          transact ADMIN Gem "gold" . init
-         transact ADMIN GemJoin "gold" . init
+         transact ADMIN GemJoin "gold" . constructor Vat Gem "gold"
+         transact ADMIN Gem     "gold" . initUser GemJoin "gold"
+         transact ADMIN Deploy . deployCollateral "gold" GemJoin "gold"
 
          // Initialize "gold" for Vat
          transact ADMIN Vat . rely GemJoin "gold"
@@ -107,14 +79,12 @@ module KMCD-PRELUDE
          transact ADMIN Spot . file       par ray(1)
 
          // Initialize Flipper for gold
-         transact ADMIN Flip "gold" . init
          transact ADMIN Flip "gold" . rely End
 
          // Initialize "gold" for End
          transact ADMIN End . initGap "gold"
 
          // Initialize "gold for Vat
-         transact ADMIN Vat . init "gold"
          transact ADMIN Vat . file line "gold" rad(1000 ether)
          transact ANYONE Spot . poke "gold"
 

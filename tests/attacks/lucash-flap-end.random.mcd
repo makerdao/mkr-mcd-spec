@@ -1,6 +1,8 @@
 STEPS ( DEPLOY-PRELUDE )
 STEPS ( ATTACK-PRELUDE )
 
+transact ADMIN Gem "MKR" . initUser Vow
+
 AddGenerator ( GenVatMove "Alice" Vow
              ; GenGemJoinJoin "gold" "Bobby"
              ; GenVatHope "Alice" Flap

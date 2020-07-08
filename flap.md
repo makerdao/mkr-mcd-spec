@@ -15,6 +15,8 @@ Flap Configuration
 ```k
     configuration
       <flap-state>
+        <flap-vat>   0:Address              </flap-vat>
+        <flap-mkr>   0:Address              </flap-mkr>
         <flap-wards> .Set                   </flap-wards>
         <flap-bids>  .Map                   </flap-bids>  // mapping (uint => Bid) Int |-> FlapBid
         <flap-kicks> 0                      </flap-kicks>
@@ -34,6 +36,24 @@ Flap Semantics
     syntax MCDStep ::= FlapContract "." FlapStep [klabel(flapStep)]
  // ---------------------------------------------------------------
     rule contract(Flap . _) => Flap
+```
+
+### Constructor
+
+```k
+    syntax FlapStep ::= "constructor" Address Address
+ // -------------------------------------------------
+    rule <k> Flap . constructor FLAP_VAT FLAP_MKR => . ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         ( <flap-state> _ </flap-state>
+        => <flap-state>
+             <flap-vat> FLAP_VAT:VatContract </flap-vat>
+             <flap-mkr> FLAP_MKR:GemContract </flap-mkr>
+             <flap-wards> SetItem(MSGSENDER) </flap-wards>
+             <flap-live> true </flap-live>
+             ...
+           </flap-state>
+         )
 ```
 
 Flap Authorization
@@ -118,13 +138,14 @@ Flap Semantics
     syntax FlapAuthStep ::= "kick" Rad Wad
  // --------------------------------------
     rule <k> Flap . kick LOT BID
-          => call Vat . move MSGSENDER THIS LOT
+          => call FLAP_VAT . move MSGSENDER THIS LOT
           ~> KICKS +Int 1
          ...
          </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
          <current-time> NOW </current-time>
+         <flap-vat> FLAP_VAT:VatContract </flap-vat>
          <flap-bids> ... .Map => KICKS +Int 1 |-> FlapBid(... bid: BID, lot: LOT, guy: MSGSENDER, tic: 0, end: NOW +Int TAU) ... </flap-bids>
          <flap-kicks> KICKS => KICKS +Int 1 </flap-kicks>
          <flap-live> true </flap-live>
@@ -154,13 +175,14 @@ Flap Semantics
     syntax FlapStep ::= "tend" Int Rad Wad
  // --------------------------------------
     rule <k> Flap . tend ID LOT BID
-          => #if MSGSENDER =/=K GUY #then call Gem "MKR" . move MSGSENDER GUY BID' #else . #fi
-          ~> call Gem "MKR" . move MSGSENDER THIS (BID -Wad BID')
+          => #if MSGSENDER =/=K GUY #then call FLAP_MKR . move MSGSENDER GUY BID' #else . #fi
+          ~> call FLAP_MKR . move MSGSENDER THIS (BID -Wad BID')
          ...
          </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
          <current-time> NOW </current-time>
+         <flap-mkr> FLAP_MKR:GemContract </flap-mkr>
          <flap-bids> ... ID |-> FlapBid(... bid: BID' => BID, lot: LOT', guy: GUY => MSGSENDER, tic: TIC => TIC +Int TTL, end: END) ... </flap-bids>
          <flap-live> true </flap-live>
          <flap-ttl> TTL </flap-ttl>
@@ -181,12 +203,14 @@ Flap Semantics
     syntax FlapStep ::= "deal" Int [klabel(FlapDeal),symbol]
  // --------------------------------------------------------
     rule <k> Flap . deal ID
-          => call Vat . move THIS GUY LOT
-          ~> call Gem "MKR" . burn THIS BID
+          => call FLAP_VAT . move THIS GUY LOT
+          ~> call FLAP_MKR . burn THIS BID
          ...
          </k>
          <this> THIS </this>
          <current-time> NOW </current-time>
+         <flap-vat> FLAP_VAT:VatContract </flap-vat>
+         <flap-mkr> FLAP_MKR:GemContract </flap-mkr>
          <flap-bids> ... ID |-> FlapBid(... bid: BID, lot: LOT, guy: GUY, tic: TIC, end: END) => .Map ... </flap-bids>
          <flap-live> true </flap-live>
       requires TIC =/=Int 0
@@ -199,9 +223,10 @@ Flap Semantics
 ```k
     syntax FlapAuthStep ::= "cage" Rad
  // ----------------------------------
-    rule <k> Flap . cage AMOUNT => call Vat . move THIS MSGSENDER AMOUNT ... </k>
+    rule <k> Flap . cage AMOUNT => call FLAP_VAT . move THIS MSGSENDER AMOUNT ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <this> THIS </this>
+         <flap-vat> FLAP_VAT:VatContract </flap-vat>
          <flap-live> _ => false </flap-live>
       requires AMOUNT >=Rad rad(0)
 ```
@@ -212,8 +237,9 @@ Flap Semantics
 ```k
     syntax FlapStep ::= "yank" Int [klabel(FlapYank), symbol]
  // ---------------------------------------------------------
-    rule <k> Flap . yank ID => call Gem "MKR" . move THIS GUY BID ... </k>
+    rule <k> Flap . yank ID => call FLAP_MKR . move THIS GUY BID ... </k>
          <this> THIS </this>
+         <flap-mkr> FLAP_MKR:GemContract </flap-mkr>
          <flap-bids> ... ID |-> FlapBid(... bid: BID, guy: GUY) => .Map ... </flap-bids>
          <flap-live> false </flap-live>
 ```

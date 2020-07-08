@@ -30,6 +30,21 @@ module DAI
     rule contract(Dai . _) => Dai
 ```
 
+### Constructor
+
+```k
+    syntax DaiStep ::= "constructor"
+ // --------------------------------
+    rule <k> Dai . constructor => . ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         ( <dai> _ </dai>
+        => <dai>
+             <dai-wards> SetItem(MSGSENDER) </dai-wards>
+             ...
+           </dai>
+         )
+```
+
 Dai Authorization
 -----------------
 
