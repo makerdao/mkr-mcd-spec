@@ -404,7 +404,7 @@ def emitTestContract(output_pairs, name = 'Example'):
     test_functions = '\n\n'.join([emitTestFunction(c, a, name = str(i)) for (i, (c, a)) in enumerate(output_pairs)])
     return 'pragma solidity ^0.5.12;'                              + '\n' \
          + ''                                                      + '\n' \
-         + 'import "./MkrMcdSpecSolTests.t.sol";'                  + '\n' \
+         + 'import "../MkrMcdSpecSolTests.sol";'                   + '\n' \
          + ''                                                      + '\n' \
          + 'contract Test' + name + ' is MkrMcdSpecSolTestsTest {' + '\n' \
          + ''                                                      + '\n' \
