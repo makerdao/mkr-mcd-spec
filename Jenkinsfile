@@ -11,17 +11,18 @@ pipeline {
       when { changeRequest() }
       steps { script { currentBuild.displayName = "PR ${env.CHANGE_ID}: ${env.CHANGE_TITLE}" } }
     }
-    stage('Build and Test') {
+    stage('Build') { steps { sh 'make build -j4 RELEASE=true' } }
+    stage('Test') {
+      options { timeout(time: 15, unit: 'MINUTES') }
       stages {
-        stage('Build') { steps { sh 'make build -j4 RELEASE=true' } }
-        stage('Unit Test') {
+        stage('Unit') {
           parallel {
             stage('Run Simulation Tests') { steps { sh 'make test-execution -j6'        } }
             stage('Python Runner')        { steps { sh 'make test-python-generator -j6' } }
             stage('Random Generation')    { steps { sh 'make test-random'               } }
           }
         }
-        stage('Solidity Test') { steps { sh 'make test-solidity -j6' } }
+        stage('Solidity Generation') { steps { sh 'make test-solidity -j6' } }
       }
     }
     // stage('Deploy') {
