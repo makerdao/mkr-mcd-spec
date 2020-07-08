@@ -33,12 +33,6 @@ module KMCD-PRELUDE
          transact ADMIN Vat . initUser Flap
          transact ADMIN Vat . initUser End
 
-         // Miscellaneous Setup
-         // -------------------
-
-         // Allow the Flap to manipulate the Vow's balances
-         transact Vow Vat . hope Flap
-
          // Set sane parameter defaults for stuff that starts out at zero
          // -------------------------------------------------------------
 
