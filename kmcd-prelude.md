@@ -22,7 +22,6 @@ module KMCD-PRELUDE
          transact ADMIN Gem "MKR" . init
          transact ADMIN Deploy . deploy Gem "MKR"
 
-         transact ADMIN Gem "MKR" . initUser Vow
          transact ADMIN Gem "MKR" . initUser Flap
 
          // Account Initializations
