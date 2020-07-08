@@ -166,8 +166,7 @@ test-random: mcd-pyk.py
 test-solidity: $(patsubst %, $(SOLIDITY_TESTS)/src/%.t.sol, 01 02 03 04 05 06 07 08 09 10)
 	cd $(SOLIDITY_TESTS) \
 	    && dapp build    \
-	    && dapp test     \
-	    || true
+	    && dapp test
 
 ### Testing Parameters
 
