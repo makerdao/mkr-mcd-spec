@@ -46,7 +46,10 @@ Vow Configuration
 ```k
     syntax VowStep ::= "constructor" Address Address Address
  // --------------------------------------------------------
-    rule <k> Vow . constructor VOW_VAT VOW_FLAPPER VOW_FLOPPER => VOW_VAT . hope VOW_FLAPPER ... </k>
+    rule <k> Vow . constructor VOW_VAT VOW_FLAPPER VOW_FLOPPER
+          => call VOW_VAT . hope VOW_FLAPPER
+         ...
+         </k>
          <msg-sender> MSGSENDER </msg-sender>
          ( <vow> _ </vow>
         => <vow>
