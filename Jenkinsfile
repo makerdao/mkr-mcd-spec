@@ -13,7 +13,7 @@ pipeline {
     }
     stage('Build') { steps { sh 'make build -j4 RELEASE=true' } }
     stage('Test') {
-      options { timeout(time: 15, unit: 'MINUTES') }
+      options { timeout(time: 10, unit: 'MINUTES') }
       stages {
         stage('Unit') {
           parallel {
