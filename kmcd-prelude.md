@@ -197,6 +197,16 @@ module KMCD-GEN
         </kmcd-gen>
       </kmcd-random>
 
+    syntax Address ::= chooseSender ( Int , List ) [function]
+ // ---------------------------------------------------------
+    rule chooseSender(RAND, ADDRS) => chooseAddress(RAND, #validSenders(ADDRS))
+
+    syntax List ::= #validSenders ( List ) [function]
+ // -------------------------------------------------
+    rule #validSenders(.List) => ListItem(ANYONE)
+    rule #validSenders(ListItem(_:MCDContract) REST => REST)
+    rule #validSenders(ListItem(I) REST) => ListItem(I) #validSenders(REST) [owise]
+
     syntax AdminStep ::= "snapshot"
  // -------------------------------
     rule <k> snapshot => . ... </k>
@@ -374,7 +384,7 @@ module KMCD-GEN
          </vat-urns>
       requires lengthBytes(BS) >Int 0
 
-    rule <k> GenVatMove => GenVatMove chooseAddress(head(BS), keys_list(VAT_DAIS)) ... </k>
+    rule <k> GenVatMove => GenVatMove chooseSender(head(BS), keys_list(VAT_DAIS)) ... </k>
          <random> BS => tail(BS) </random>
          <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
          <vat-dai> VAT_DAIS </vat-dai>
@@ -398,7 +408,7 @@ module KMCD-GEN
          </vat-dai>
       requires lengthBytes(BS) >Int 0
 
-    rule <k> GenVatHope => GenVatHope chooseAddress(head(BS), keys_list(VAT_DAI)) ... </k>
+    rule <k> GenVatHope => GenVatHope chooseSender(head(BS), keys_list(VAT_DAI)) ... </k>
          <random> BS => tail(BS) </random>
          <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
          <vat-dai> VAT_DAI </vat-dai>
@@ -427,7 +437,7 @@ module KMCD-GEN
 //         <gem-joins> GEM_JOINS </gem-joins>
 //      requires size(GEM_JOINS) >Int 0
 
-    rule <k> GenGemJoinJoin GEM_JOIN_ID => GenGemJoinJoin GEM_JOIN_ID chooseAddress(head(BS), keys_list(GEM_BALANCES)) ... </k>
+    rule <k> GenGemJoinJoin GEM_JOIN_ID => GenGemJoinJoin GEM_JOIN_ID chooseSender(head(BS), keys_list(GEM_BALANCES)) ... </k>
          <random> BS => tail(BS) </random>
          <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
          <gem>
@@ -455,7 +465,7 @@ module KMCD-GEN
                          | "GenFlapKick" Address Rad Wad
                          | "GenFlapYank"
  // ------------------------------------
-    rule <k> GenFlapKick => GenFlapKick chooseAddress(head(BS), keys_list(VAT_DAIS)) ... </k>
+    rule <k> GenFlapKick => GenFlapKick chooseSender(head(BS), keys_list(VAT_DAIS)) ... </k>
          <random> BS => tail(BS) </random>
          <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
          <vat-dai> VAT_DAIS </vat-dai>
@@ -541,7 +551,7 @@ module KMCD-GEN
     rule <k> GenPotCage => LogGen ( transact ADMIN  Pot . cage ) ... </k>
     rule <k> GenPotDrip => LogGen ( transact ANYONE Pot . drip ) ... </k>
 
-    rule <k> GenPotJoin => GenPotJoin chooseAddress(head(BS), keys_list(POT_PIES)) ... </k>
+    rule <k> GenPotJoin => GenPotJoin chooseSender(head(BS), keys_list(POT_PIES)) ... </k>
          <random> BS => tail(BS) </random>
          <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
          <pot-pies> POT_PIES </pot-pies>
@@ -560,7 +570,7 @@ module KMCD-GEN
          <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
       requires lengthBytes(BS) >Int 0
 
-    rule <k> GenPotExit => GenPotExit chooseAddress(head(BS), keys_list(POT_PIES)) ... </k>
+    rule <k> GenPotExit => GenPotExit chooseSender(head(BS), keys_list(POT_PIES)) ... </k>
          <random> BS => tail(BS) </random>
          <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
          <pot-pies> POT_PIES </pot-pies>
@@ -631,7 +641,7 @@ module KMCD-GEN
       requires lengthBytes(BS) >Int 0
        andBool size(FLIP_BIDS) >Int 0
 
-    rule <k> GenEndPack => GenEndPack chooseAddress(head(BS), keys_list(END_BAGS)) ... </k>
+    rule <k> GenEndPack => GenEndPack chooseSender(head(BS), keys_list(END_BAGS)) ... </k>
          <random> BS => tail(BS) </random>
          <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
          <end-bag> END_BAGS </end-bag>
