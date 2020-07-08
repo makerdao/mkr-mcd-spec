@@ -2,7 +2,6 @@ STEPS ( DEPLOY-PRELUDE )
 STEPS ( ATTACK-PRELUDE )
 
 transact ADMIN Gem "MKR" . initUser Vow
-transact Vow Vat . hope Flap
 
 // Attack Sequence
 // ---------------
