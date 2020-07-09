@@ -285,6 +285,9 @@ def solidityArgs(ks):
 def unimplemented(s):
     return '// UNIMPLEMENTED << ' + '\n    //'.join(s.split('\n')) + ' >>'
 
+def assertTrue(s):
+    return 'assertTrue(' + s + ')'
+
 def extractCallEvents(logEvent):
     if pyk.isKApply(logEvent) and logEvent['label'] == 'LogNote':
         caller = solidify(printMCD(logEvent['args'][0]))
@@ -304,7 +307,7 @@ def extractCallEvents(logEvent):
             args = '"' + fileable + '", ' + solidityArgs(fileargs)
         else:
             args = solidityArgs(functionCall['args'])
-        return [ caller + '.' + contract + '_' + function + '(' + args + ');' ]
+        return [ assertTrue(caller + '.' + contract + '_' + function + '(' + args + ')') + ';' ]
     elif pyk.isKApply(logEvent) and logEvent['label'] == 'LogTimeStep':
         return [ 'this.warpForward(' + printMCD(logEvent['args'][0]) + ');' ]
     elif pyk.isKApply(logEvent) and logEvent['label'] == 'LogException':
