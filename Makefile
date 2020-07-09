@@ -4,9 +4,8 @@
 BUILD_DIR:=.build
 DEFN_DIR:=$(BUILD_DIR)/defn
 
-DEPS_DIR          := deps
-K_SUBMODULE       := $(DEPS_DIR)/k
-SOLTEST_SUBMODULE := tests/mkr-mcd-spec-sol-tests
+DEPS_DIR    := deps
+K_SUBMODULE := $(DEPS_DIR)/k
 
 ifneq (,$(wildcard $(K_SUBMODULE)/k-distribution/target/release/k/bin/*))
     K_RELEASE ?= $(abspath $(K_SUBMODULE)/k-distribution/target/release/k)
@@ -32,6 +31,8 @@ export PATH
 PYTHONPATH:=$(K_LIB)
 export PYTHONPATH
 
+SOLIDITY_TESTS := tests/solidity-test
+
 .PHONY: all clean clean-test                                                \
         deps deps-k deps-media                                              \
         build build-llvm build-haskell                                      \
@@ -44,7 +45,7 @@ clean: clean-test
 	rm -rf $(BUILD_DIR)
 
 clean-test:
-	cd $(SOLTEST_SUBMODULE) && git clean -dffx ./
+	cd $(SOLIDITY_TESTS) && git clean -dffx ./
 
 # Dependencies
 # ------------
@@ -162,11 +163,10 @@ init_random_seeds :=
 test-random: mcd-pyk.py
 	python3 $< random-test 1 1 $(init_random_seeds) --emit-solidity
 
-test-solidity: $(patsubst %, $(SOLTEST_SUBMODULE)/src/%.t.sol, 01 02 03 04 05 06 07 08 09 10)
-	cd tests/mkr-mcd-spec-sol-tests \
-	    && dapp build               \
-	    && dapp test                \
-	    || true
+test-solidity: $(patsubst %, $(SOLIDITY_TESTS)/src/%.t.sol, 01 02 03 04 05 06 07 08 09 10)
+	cd $(SOLIDITY_TESTS) \
+	    && dapp build    \
+	    && dapp test
 
 ### Testing Parameters
 
@@ -198,5 +198,6 @@ tests/%.mcd.python-out: mcd-pyk.py $(TEST_KOMPILED)
 tests/%.mcd.run: tests/%.mcd.out
 	$(CHECK) tests/$*.mcd.out tests/$*.mcd.expected
 
-$(SOLTEST_SUBMODULE)/%.t.sol: mcd-pyk.py $(TEST_KOMPILED)
+$(SOLIDITY_TESTS)/%.t.sol: mcd-pyk.py $(TEST_KOMPILED)
+	@mkdir -p $(dir $@)
 	python3 $< random-test $(RANDOM_TEST_DEPTH) $(RANDOM_TEST_RUNS) $(KMCD_RANDOMSEED) --emit-solidity --emit-solidity-file $@

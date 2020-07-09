@@ -6,3 +6,4 @@
 /random-test.out
 /tests/*/*.out
 /tests/*/*.python-out
+/tests/solidity-test/src/*.t.sol
