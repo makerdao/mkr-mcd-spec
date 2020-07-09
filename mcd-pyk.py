@@ -304,27 +304,27 @@ def extractCallEvents(logEvent):
             args = '"' + fileable + '", ' + solidityArgs(fileargs)
         else:
             args = solidityArgs(functionCall['args'])
-        return [ (caller + '.' + contract + '_' + function + '(' + args + ')', True) ]
+        return [ (caller + '.' + contract + '_' + function + '(' + args + ')', 'succeeds') ]
     elif pyk.isKApply(logEvent) and logEvent['label'] == 'LogTimeStep':
-        return [ ('this.warpForward(' + printMCD(logEvent['args'][0]) + ')', "") ]
+        return [ ('this.warpForward(' + printMCD(logEvent['args'][0]) + ')', '') ]
     elif pyk.isKApply(logEvent) and logEvent['label'] == 'LogException':
-        return [ (ce, False) for ce in extractCallEvents(pyk.KApply('LogNote', logEvent['args'])) ]
+        return [ (ce, 'unimplemented') for (ce, status) in extractCallEvents(pyk.KApply('LogNote', logEvent['args'])) ]
     elif pyk.isKApply(logEvent) and ( logEvent['label'] in [ 'LogMeasure' , 'LogGenStep' , 'LogGenStepFailed' ] ):
         return []
     elif pyk.isKApply(logEvent) and ( logEvent['label'] in [ 'Bite' , 'Transfer' , 'Approval' , 'FlapKick' , 'FlipKick' , 'FlopKick' , 'Poke' , 'NoPoke' ] ):
-        return [ ('assertEvent( ' + printMCD(logEvent) + ')', None) ]
+        return [ ('assertEvent( ' + printMCD(logEvent) + ')', 'unimplemented') ]
     else:
-        return [ (printMCD(logEvent), None) ]
+        return [ (printMCD(logEvent), 'unimplemented') ]
 
-def makeSolidityCall(e, succeeds = True):
-    if succeeds is None:
+def makeSolidityCall(e, status):
+    if status == 'unimplemented':
         return unimplemented(e)
-    if type(succeeds) is bool:
-        if succeeds:
-            return 'assertTrue(' + e + ');'
-        else:
-            return 'assertTrue(!' + e + ');'
-    return e + ';'
+    elif status == 'succeeds':
+        return 'assertTrue(' + e + ');'
+    elif status == 'fails':
+        return 'assertTrue(!' + e + ');'
+    else:
+        return e + ';'
 
 def extractTrace(config):
     (_, subst) = pyk.splitConfigFrom(config)
