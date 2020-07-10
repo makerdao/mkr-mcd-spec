@@ -7,6 +7,7 @@ RUN    apt-get update        \
         cmake                \
         curl                 \
         libprocps-dev        \
+        jq                   \
         pandoc               \
         pkg-config           \
         python3              \
@@ -23,7 +24,7 @@ ENV USER=user
 WORKDIR /home/user
 
 RUN curl -L https://nixos.org/nix/install | sh
-RUN curl -L https://dapp.tools/install    | sh
+RUN curl -L https://dapp.tools/install    | bash
 ENV PATH="$PATH:/home/user/.nix-profile/bin"
 
 RUN    git config --global user.email "admin@runtimeverification.com" \
