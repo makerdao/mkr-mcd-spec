@@ -304,23 +304,33 @@ def extractCallEvents(logEvent):
             args = '"' + fileable + '", ' + solidityArgs(fileargs)
         else:
             args = solidityArgs(functionCall['args'])
-        return [ caller + '.' + contract + '_' + function + '(' + args + ');' ]
+        return [ (caller + '.' + contract + '_' + function + '(' + args + ')', 'succeeds') ]
     elif pyk.isKApply(logEvent) and logEvent['label'] == 'LogTimeStep':
-        return [ 'this.warpForward(' + printMCD(logEvent['args'][0]) + ');' ]
+        return [ ('this.warpForward(' + printMCD(logEvent['args'][0]) + ')', '') ]
     elif pyk.isKApply(logEvent) and logEvent['label'] == 'LogException':
-        return [ unimplemented('assertRevert( ' + printMCD(logEvent) + ');') ]
+        return [ (ce, 'unimplemented') for (ce, status) in extractCallEvents(pyk.KApply('LogNote', logEvent['args'])) ]
     elif pyk.isKApply(logEvent) and ( logEvent['label'] in [ 'LogMeasure' , 'LogGenStep' , 'LogGenStepFailed' ] ):
         return []
     elif pyk.isKApply(logEvent) and ( logEvent['label'] in [ 'Bite' , 'Transfer' , 'Approval' , 'FlapKick' , 'FlipKick' , 'FlopKick' , 'Poke' , 'NoPoke' ] ):
-        return [ unimplemented('assertEvent( ' + printMCD(logEvent) + ');') ]
+        return [ ('assertEvent( ' + printMCD(logEvent) + ')', 'unimplemented') ]
     else:
-        return [ unimplemented(printMCD(logEvent)) ]
+        return [ (printMCD(logEvent), 'unimplemented') ]
+
+def makeSolidityCall(e, status):
+    if status == 'unimplemented':
+        return unimplemented(e)
+    elif status == 'succeeds':
+        return 'assertTrue(' + e + ');'
+    elif status == 'fails':
+        return 'assertTrue(!' + e + ');'
+    else:
+        return e + ';'
 
 def extractTrace(config):
     (_, subst) = pyk.splitConfigFrom(config)
     pEvents = subst['PROCESSED_EVENTS_CELL']
     log_events = flattenList(pEvents)
-    return [ e for event in log_events for e in extractCallEvents(event) ]
+    return [ makeSolidityCall(e, succeeds) for event in log_events for (e, succeeds) in extractCallEvents(event) ]
 
 def noRewriteToDots(config):
     (cfg, subst) = pyk.splitConfigFrom(config)

@@ -61,141 +61,141 @@ contract UserLike {
         goldFlip = goldFlip_;
     }
 
-    function vat_file(bytes32 what, uint256 data) external {
-        vat.file(what, data);
+    function vat_file(bytes32 what, uint256 data) external returns (bool ok) {
+        (ok,) = address(vat).call(abi.encodeWithSignature("file(bytes32,uint256)", what, data));
     }
 
-    function vat_file(bytes32 what, bytes32 ilk, uint256 data) external {
-        vat.file(ilk, what, data);
+    function vat_file(bytes32 what, bytes32 ilk, uint256 data) external returns (bool ok) {
+        (ok,) = address(vat).call(abi.encodeWithSignature("file(bytes32,bytes32,uint256)", ilk, what, data));
     }
 
-    function vat_hope(address usr) external {
-        vat.hope(usr);
+    function vat_hope(address usr) external returns (bool ok) {
+        (ok,) = address(vat).call(abi.encodeWithSignature("hope(address)", usr));
     }
 
-    function vat_move(address src, address dst, uint256 rad) external {
-        vat.move(src, dst, rad);
+    function vat_move(address src, address dst, uint256 rad) external returns (bool ok) {
+        (ok,) = address(vat).call(abi.encodeWithSignature("move(address,address,uint256)", src, dst, rad));
     }
 
-    function vat_rely(address usr) external {
-        vat.rely(usr);
+    function vat_rely(address usr) external returns (bool ok) {
+        (ok,) = address(vat).call(abi.encodeWithSignature("rely(address)", usr));
     }
 
-    function vat_frob(bytes32 ilk, address u, address v, address w, int256 dink, int256 dart) external {
-        vat.frob(ilk, u, v, w, dink, dart);
+    function vat_frob(bytes32 ilk, address u, address v, address w, int256 dink, int256 dart) external returns (bool ok) {
+        (ok,) = address(vat).call(abi.encodeWithSignature("frob(bytes32,address,address,address,int256,int256)", ilk, u, v, w, dink, dart));
     }
 
-    function vat_init(bytes32 ilk) external {
-        vat.init(ilk);
+    function vat_init(bytes32 ilk) external returns (bool ok) {
+        (ok,) = address(vat).call(abi.encodeWithSignature("init(bytes32)", ilk));
     }
 
-    function vow_file(bytes32 what, uint256 data) external {
-        vow.file(what, data);
+    function vow_file(bytes32 what, uint256 data) external returns (bool ok) {
+        (ok,) = address(vow).call(abi.encodeWithSignature("file(bytes32,uint256)", what, data));
     }
 
-    function vow_rely(address usr) external {
-        vow.rely(usr);
+    function vow_rely(address usr) external returns (bool ok) {
+        (ok,) = address(vow).call(abi.encodeWithSignature("rely(address)", usr));
     }
 
-    function cat_rely(address usr) external {
-        cat.rely(usr);
+    function cat_rely(address usr) external returns (bool ok) {
+        (ok,) = address(cat).call(abi.encodeWithSignature("rely(address)", usr));
     }
 
-    function pot_file(bytes32 what, uint256 data) external {
-        pot.file(what, data);
+    function pot_file(bytes32 what, uint256 data) external returns (bool ok) {
+        (ok,) = address(pot).call(abi.encodeWithSignature("file(bytes32,uint256)", what, data));
     }
 
-    function pot_file(bytes32 what, address data) external {
-        pot.file(what, data);
+    function pot_file(bytes32 what, address data) external returns (bool ok) {
+        (ok,) = address(pot).call(abi.encodeWithSignature("file(bytes32,address)", what, data));
     }
 
-    function pot_rely(address usr) external {
-        pot.rely(usr);
+    function pot_rely(address usr) external returns (bool ok) {
+        (ok,) = address(pot).call(abi.encodeWithSignature("rely(address)", usr));
     }
 
-    function pot_drip() external {
-        pot.drip();
+    function pot_drip() external returns (bool ok) {
+        (ok,) = address(pot).call(abi.encodeWithSignature("drip()"));
     }
 
-    function pot_join(uint wad) external {
-        pot.join(wad);
+    function pot_join(uint256 wad) external returns (bool ok) {
+        (ok,) = address(pot).call(abi.encodeWithSignature("join(uint256)", wad));
     }
 
-    function pot_exit(uint wad) external {
-        pot.exit(wad);
+    function pot_exit(uint256 wad) external returns (bool ok) {
+        (ok,) = address(pot).call(abi.encodeWithSignature("exit(uint256)", wad));
     }
 
-    function flap_rely(address usr) external {
-        flap.rely(usr);
+    function flap_rely(address usr) external returns (bool ok) {
+        (ok,) = address(flap).call(abi.encodeWithSignature("rely(address)", usr));
     }
 
-    function flop_rely(address usr) external {
-        flop.rely(usr);
+    function flop_rely(address usr) external returns (bool ok) {
+        (ok,) = address(flop).call(abi.encodeWithSignature("rely(address)", usr));
     }
 
-    function flop_file(bytes32 what, uint data) external {
-        flop.file(what, data);
+    function flop_file(bytes32 what, uint256 data) external returns (bool ok) {
+        (ok,) = address(flop).call(abi.encodeWithSignature("file(bytes32,uint256)", what, data));
     }
 
-    function spotter_setPrice(bytes32 ilk, uint256 price) external {
+    function spotter_setPrice(bytes32 ilk, uint256 price) external returns (bool ok) {
         if (ilk == "gold") {
-            pipGold.poke(bytes32(price));
+            (ok,) = address(pipGold).call(abi.encodeWithSignature("poke(bytes32)", bytes32(price)));
+            if (!ok) return false;
         }
-        spotter.poke(ilk);
+        (ok,) = address(spotter).call(abi.encodeWithSignature("poke(bytes32)", ilk));
     }
 
-    function spotter_file(bytes32 what, bytes32 ilk, uint256 data) external {
-        spotter.file(ilk, what, data);
+    function spotter_file(bytes32 what, bytes32 ilk, uint256 data) external returns (bool ok) {
+        (ok,) = address(spotter).call(abi.encodeWithSignature("file(bytes32,bytes32,uint256)", ilk, what, data));
     }
 
-    function spotter_file(bytes32 what, uint256 data) external {
-        spotter.file(what, data);
+    function spotter_file(bytes32 what, uint256 data) external returns (bool ok) {
+        (ok,) = address(spotter).call(abi.encodeWithSignature("file(bytes32,uint256)", what, data));
     }
 
-    function end_cage() external {
-        end.cage();
+    function end_cage() external returns (bool ok) {
+        (ok,) = address(end).call(abi.encodeWithSignature("cage()"));
     }
 
-    function end_cage(bytes32 ilk) external {
-        end.cage(ilk);
+    function end_cage(bytes32 ilk) external returns (bool ok) {
+        (ok,) = address(end).call(abi.encodeWithSignature("cage(bytes32)", ilk));
     }
 
-    function end_flow(bytes32 ilk) external {
-        end.flow(ilk);
+    function end_flow(bytes32 ilk) external returns (bool ok) {
+        (ok,) = address(end).call(abi.encodeWithSignature("flow(bytes32)", ilk));
     }
 
-    function end_thaw() external {
-        end.thaw();
+    function end_thaw() external returns (bool ok) {
+        (ok,) = address(end).call(abi.encodeWithSignature("thaw()"));
     }
 
-    function end_pack(uint256 wad) external {
-        end.pack(wad);
+    function end_pack(uint256 wad) external returns (bool ok) {
+        (ok,) = address(end).call(abi.encodeWithSignature("pack(uint256)", wad));
     }
 
-    function end_skim(bytes32 ilk, address urn) external {
-        end.skim(ilk, urn);
+    function end_skim(bytes32 ilk, address urn) external returns (bool ok) {
+        (ok,) = address(end).call(abi.encodeWithSignature("skim(bytes32,address)", ilk, urn));
     }
 
-    function goldFlip_rely(address usr) external {
-        goldFlip.rely(usr);
+    function goldFlip_rely(address usr) external returns (bool ok) {
+        (ok,) = address(goldFlip).call(abi.encodeWithSignature("rely(address)", usr));
     }
 
-    function Gem_MKR_mint(address usr, uint256 wad) external {
-        gov.mint(usr, wad);
+    function Gem_MKR_mint(address usr, uint256 wad) external returns (bool ok) {
+        (ok,) = address(gov).call(abi.encodeWithSignature("mint(address,uint256)", usr, wad));
     }
 
-    function Gem_gold_mint(address usr, uint256 wad) external {
-        gold.mint(usr, wad);
+    function Gem_gold_mint(address usr, uint256 wad) external returns (bool ok) {
+        (ok,) = address(gold).call(abi.encodeWithSignature("mint(address,uint256)", usr, wad));
     }
 
-    function goldJoin_join(address usr, uint256 wad) external {
-        goldJoin.join(usr, wad);
+    function goldJoin_join(address usr, uint256 wad) external returns (bool ok) {
+        (ok,) = address(goldJoin).call(abi.encodeWithSignature("join(address,uint256)", usr, wad));
     }
 
-    function Gem_gold_approve(address usr) external {
-        gold.approve(usr);
+    function Gem_gold_approve(address usr) external returns (bool ok) {
+        (ok,) = address(gold).call(abi.encodeWithSignature("approve(address)", usr));
     }
-
 }
 
 contract MkrMcdSpecSolTestsTest is DssDeployTestBase {
@@ -264,19 +264,19 @@ contract MkrMcdSpecSolTestsTest is DssDeployTestBase {
         gold.setOwner(address(admin));
         pipGold.setOwner(address(admin));
 
-        admin.vat_init("gold");
-        admin.vat_rely(address(goldJoin));
-        admin.spotter_file("par", 1000000000000000000000000000);
-        admin.spotter_file("mat", "gold", 1000000000000000000000000000);
-        admin.spotter_setPrice("gold", 3000000000000000000000000000);
-        admin.goldFlip_rely(address(end));
-        admin.vat_file("Line", 1000000000000);
-        admin.vat_file("spot", "gold", 3000000000);
-        admin.vat_file("line", "gold", 1000000000000);
-        admin.vow_file("bump", 1000000000);
-        admin.vow_file("hump", 0);
+        assertTrue(admin.vat_init("gold"));
+        assertTrue(admin.vat_rely(address(goldJoin)));
+        assertTrue(admin.spotter_file("par", 1000000000000000000000000000));
+        assertTrue(admin.spotter_file("mat", "gold", 1000000000000000000000000000));
+        assertTrue(admin.spotter_setPrice("gold", 3000000000000000000000000000));
+        assertTrue(admin.goldFlip_rely(address(end)));
+        assertTrue(admin.vat_file("Line", 1000000000000));
+        assertTrue(admin.vat_file("spot", "gold", 3000000000));
+        assertTrue(admin.vat_file("line", "gold", 1000000000000));
+        assertTrue(admin.vow_file("bump", 1000000000));
+        assertTrue(admin.vow_file("hump", 0));
 
-        alice.Gem_gold_approve(address(goldJoin));
-        bobby.Gem_gold_approve(address(goldJoin));
+        assertTrue(alice.Gem_gold_approve(address(goldJoin)));
+        assertTrue(bobby.Gem_gold_approve(address(goldJoin)));
     }
 }

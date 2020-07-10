@@ -394,10 +394,7 @@ module KMCD-GEN
                             | "GenGemJoinJoin" String Address
  // ---------------------------------------------------------
     // **TODO**: Would be better to choose from an ILK_ID with <gem-id>
-    rule <k> GenGemJoinJoin => GenGemJoinJoin chooseString(head(BS), (ListItem("MKR") ListItem("gold"))) ... </k>
-         <random> BS => tail(BS) </random>
-         <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
-      requires lengthBytes(BS) >Int 0
+    rule <k> GenGemJoinJoin => GenGemJoinJoin "gold" ... </k>
 //         <gem-joins> GEM_JOINS </gem-joins>
 //      requires size(GEM_JOINS) >Int 0
 
