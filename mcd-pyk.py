@@ -422,7 +422,7 @@ def emitTestFunction(calls, asserts, name = 'Example'):
 
 def emitTestContract(output_pairs, name = 'Example'):
     test_functions = '\n\n'.join([emitTestFunction(c, a, name = str(i)) for (i, (c, a)) in enumerate(output_pairs)])
-    return 'pragma solidity ^0.5.12;'                              + '\n' \
+    return 'pragma solidity ^0.6.7;'                               + '\n' \
          + ''                                                      + '\n' \
          + 'import "../MkrMcdSpecSolTests.sol";'                   + '\n' \
          + ''                                                      + '\n' \
