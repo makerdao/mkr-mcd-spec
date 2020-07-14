@@ -20,6 +20,7 @@ from pyk import KApply, KConstant, KSequence, KVariable, KToken, _notif, _warnin
 _assertCounter = 0
 
 def assertNum():
+    global _assertCounter
     _assertCounter = _assertCounter + 1
     return _assertCounter
 
