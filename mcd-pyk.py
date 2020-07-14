@@ -14,6 +14,11 @@ from functools import reduce
 import pyk
 from pyk import KApply, KConstant, KSequence, KVariable, KToken, _notif, _warning, _fatal
 
+# Globals
+# -------
+
+assertCounter = 0
+
 # Definition Loading/Running
 # --------------------------
 
@@ -320,9 +325,11 @@ def makeSolidityCall(e, status):
     if status == 'unimplemented':
         return unimplemented(e)
     elif status == 'succeeds':
-        return 'assertTrue(' + e + ');'
+        assertCounter += 1
+        return 'assertTrue(' + e + ', "' + str(assertCounter) + '");'
     elif status == 'fails':
-        return 'assertTrue(!' + e + ');'
+        assertCounter += 1
+        return 'assertTrue(!' + e + ', "' + str(assertCounter) + '");'
     else:
         return e + ';'
 
@@ -375,7 +382,8 @@ def buildAsserts(contract, field, value):
     assertionData = stateAssertions(contract, field, value)
     assertions = []
     for (actual, comparator, expected, implemented) in assertionData:
-        aStr = 'assertTrue( ' + actual + ' ' + comparator + ' ' + expected + ' );'
+        assertCounter += 1
+        aStr = 'assertTrue(' + actual + ' ' + comparator + ' ' + expected + ', "' + str(assertCounter) + '");'
         assertions.append(aStr if implemented else unimplemented(aStr))
     return [ variablize(a) for a in assertions ]
 
