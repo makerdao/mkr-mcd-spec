@@ -232,6 +232,13 @@ contract MkrMcdSpecSolTestsTest is DssDeployTestBase {
         hevm.warp(now + time);
     }
 
+    function assertTrue(bool condition, bytes32 message) internal {
+        if (!condition) {
+            emit log_bytes32(message);
+            fail();
+        }
+    }
+
     function setUp() public {
         super.setUp();
         deploy();
@@ -264,19 +271,19 @@ contract MkrMcdSpecSolTestsTest is DssDeployTestBase {
         gold.setOwner(address(admin));
         pipGold.setOwner(address(admin));
 
-        assertTrue(admin.vat_init("gold"));
-        assertTrue(admin.vat_rely(address(goldJoin)));
-        assertTrue(admin.spotter_file("par", 1000000000000000000000000000));
-        assertTrue(admin.spotter_file("mat", "gold", 1000000000000000000000000000));
-        assertTrue(admin.spotter_setPrice("gold", 3000000000000000000000000000));
-        assertTrue(admin.goldFlip_rely(address(end)));
-        assertTrue(admin.vat_file("Line", 1000000000000));
-        assertTrue(admin.vat_file("spot", "gold", 3000000000));
-        assertTrue(admin.vat_file("line", "gold", 1000000000000));
-        assertTrue(admin.vow_file("bump", 1000000000));
-        assertTrue(admin.vow_file("hump", 0));
+        assertTrue(admin.vat_init("gold"), "errorX");
+        assertTrue(admin.vat_rely(address(goldJoin)), "errorX");
+        assertTrue(admin.spotter_file("par", 1000000000000000000000000000), "errorX");
+        assertTrue(admin.spotter_file("mat", "gold", 1000000000000000000000000000), "errorX");
+        assertTrue(admin.spotter_setPrice("gold", 3000000000000000000000000000), "errorX");
+        assertTrue(admin.goldFlip_rely(address(end)), "errorX");
+        assertTrue(admin.vat_file("Line", 1000000000000), "errorX");
+        assertTrue(admin.vat_file("spot", "gold", 3000000000), "errorX");
+        assertTrue(admin.vat_file("line", "gold", 1000000000000), "errorX");
+        assertTrue(admin.vow_file("bump", 1000000000), "errorX");
+        assertTrue(admin.vow_file("hump", 0), "errorX");
 
-        assertTrue(alice.Gem_gold_approve(address(goldJoin)));
-        assertTrue(bobby.Gem_gold_approve(address(goldJoin)));
+        assertTrue(alice.Gem_gold_approve(address(goldJoin)), "errorX");
+        assertTrue(bobby.Gem_gold_approve(address(goldJoin)), "errorX");
     }
 }
