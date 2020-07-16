@@ -413,6 +413,7 @@ def emitTestFunction(calls, asserts, name = 'Example'):
     return 'function test' + name + '() public {' + '\n' \
          + ''                                     + '\n' \
          + '    // Test Run'                      + '\n' \
+         + '    setUp2();'                        + '\n' \
          + '\n    ' + '\n    '.join(calls)        + '\n' \
          + ''                                     + '\n' \
          + '    // Assertions'                    + '\n' \

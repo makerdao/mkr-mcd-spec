@@ -208,16 +208,6 @@ contract MkrMcdSpecSolTestsTest is DssDeployTestBase {
     UserLike admin;
     UserLike anyone;
 
-    function rely(address who, address to) external {
-        address      usr = address(govActions);
-        bytes32      tag;  assembly { tag := extcodehash(usr) }
-        bytes memory fax = abi.encodeWithSignature("rely(address,address)", who, to);
-        uint         eta = now;
-
-        pause.plot(usr, tag, fax, eta);
-        pause.exec(usr, tag, fax, eta);
-    }
-
     function file(address who, bytes32 ilk, bytes32 what, address data) external {
         address      usr = address(govActions);
         bytes32      tag;  assembly { tag := extcodehash(usr) }
@@ -239,8 +229,7 @@ contract MkrMcdSpecSolTestsTest is DssDeployTestBase {
         }
     }
 
-    function setUp() public {
-        super.setUp();
+    function setUp2() public {
         deploy();
 
         // Create gold contracts
