@@ -14,6 +14,16 @@ from functools import reduce
 import pyk
 from pyk import KApply, KConstant, KSequence, KVariable, KToken, _notif, _warning, _fatal
 
+# Globals
+# -------
+
+_assertCounter = 0
+
+def assertNum():
+    global _assertCounter
+    _assertCounter = _assertCounter + 1
+    return _assertCounter
+
 # Definition Loading/Running
 # --------------------------
 
@@ -320,9 +330,9 @@ def makeSolidityCall(e, status):
     if status == 'unimplemented':
         return unimplemented(e)
     elif status == 'succeeds':
-        return 'assertTrue(' + e + ');'
+        return 'assertTrue(' + e + ', "' + str(assertNum()) + '");'
     elif status == 'fails':
-        return 'assertTrue(!' + e + ');'
+        return 'assertTrue(!' + e + ', "' + str(assertNum()) + '");'
     else:
         return e + ';'
 
@@ -375,7 +385,7 @@ def buildAsserts(contract, field, value):
     assertionData = stateAssertions(contract, field, value)
     assertions = []
     for (actual, comparator, expected, implemented) in assertionData:
-        aStr = 'assertTrue( ' + actual + ' ' + comparator + ' ' + expected + ' );'
+        aStr = 'assertTrue(' + actual + ' ' + comparator + ' ' + expected + ', "' + str(assertNum()) + '");'
         assertions.append(aStr if implemented else unimplemented(aStr))
     return [ variablize(a) for a in assertions ]
 
@@ -403,6 +413,7 @@ def emitTestFunction(calls, asserts, name = 'Example'):
     return 'function test' + name + '() public {' + '\n' \
          + ''                                     + '\n' \
          + '    // Test Run'                      + '\n' \
+         + '    setUp2();'                        + '\n' \
          + '\n    ' + '\n    '.join(calls)        + '\n' \
          + ''                                     + '\n' \
          + '    // Assertions'                    + '\n' \
@@ -412,7 +423,7 @@ def emitTestFunction(calls, asserts, name = 'Example'):
 
 def emitTestContract(output_pairs, name = 'Example'):
     test_functions = '\n\n'.join([emitTestFunction(c, a, name = str(i)) for (i, (c, a)) in enumerate(output_pairs)])
-    return 'pragma solidity ^0.5.12;'                              + '\n' \
+    return 'pragma solidity ^0.6.7;'                               + '\n' \
          + ''                                                      + '\n' \
          + 'import "../MkrMcdSpecSolTests.sol";'                   + '\n' \
          + ''                                                      + '\n' \
