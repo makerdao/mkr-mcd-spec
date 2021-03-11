@@ -180,8 +180,8 @@ module KMCD-GEN
     rule <k> (. => snapshot) ~> #assert-failure ... </k>
          <kmcd-snapshots> ListItem(_) </kmcd-snapshots>
 
-    syntax Int ::= #timeStepMax() [function]
- // ----------------------------------------
+    syntax Int ::= #timeStepMax()
+ // -----------------------------
     rule #timeStepMax() => 2 [macro]
 
     syntax Ray ::= #dsrSpread() [function]
