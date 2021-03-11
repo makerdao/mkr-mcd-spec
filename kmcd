@@ -37,7 +37,7 @@ pretty_diff() {
 
 run_krun() {
     export K_OPTS=-Xss500m
-    krun --directory "$backend_dir" "$run_file" "$@" -cRANDOMSEED=$cRANDOMSEED -pRANDOMSEED='printf %s'
+    krun --directory "$backend_dir" "$run_file" "$@" -cRANDOMSEED=$cRANDOMSEED -pRANDOMSEED='cat'
 }
 
 run_kast() {
@@ -114,7 +114,7 @@ if [[ "$run_file" == '-' ]]; then
 fi
 [[ -f "$run_file" ]] || fatal "File does not exist: $run_file"
 
-cRANDOMSEED="#token(\"${RANDOMSEED:-}\",\"Bytes\")"
+cRANDOMSEED="\dv{SortBytes{}}(\"${RANDOMSEED:-}\")"
 
 case "$run_command-$backend" in
     run-@(llvm|haskell)    ) run_krun   "$@" ;;
