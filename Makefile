@@ -16,12 +16,6 @@ K_BIN := $(K_RELEASE)/bin
 K_LIB := $(K_RELEASE)/lib/kframework
 export K_RELEASE
 
-ifneq (,$(RELEASE))
-    K_BUILD_TYPE := Release
-else
-    K_BUILD_TYPE := FastBuild
-endif
-
 K_OPTS += -Xmx8G
 export K_OPTS
 
@@ -56,7 +50,7 @@ deps: deps-k
 deps-k: $(K_JAR)
 
 $(K_JAR):
-	cd $(K_SUBMODULE) && mvn package -DskipTests -Dproject.build.type=$(K_BUILD_TYPE)
+	cd $(K_SUBMODULE) && mvn package -DskipTests
 
 # Building
 # --------
