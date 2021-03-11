@@ -37,7 +37,7 @@ def krun(inputJSON, *krunArgs):
     return pyk.krunJSON(MCD_definition_llvm_dir, inputJSON, krunArgs = list(krunArgs))
 
 def randomSeedArgs(seedbytes = b''):
-    return [ '-cRANDOMSEED=' + '#token("' + seedbytes.decode('latin-1') + '", "Bytes")', '-pRANDOMSEED=printf %s' ]
+    return [ '-cRANDOMSEED=' + '#token("b\\"' + seedbytes.decode('latin-1') + '\\"", "Bytes")', '-pRANDOMSEED=printf %s' ]
 
 def get_init_config(init_term):
     kast_json = { 'format': 'KAST', 'version': 1, 'term': init_term }
@@ -53,8 +53,10 @@ def randombytes(size):
 def sanitizeBytes(kast):
     def _sanitizeBytes(_kast):
         if pyk.isKToken(_kast) and _kast['sort'] == 'Bytes':
-            if len(_kast['token']) > 2 and _kast['token'][0:2] == 'b"' and _kast['token'][-1] == '"':
-                return KToken(_kast['token'][2:-1], 'Bytes')
+            if len(_kast['token']) < 3:
+                return KToken('b\"' + _kast['token'] + '\"', 'Bytes')
+            if len(_kast['token']) >= 3 and not (_kast['token'][0:2] == 'b\"' and _kast['token'][-1] == '\"'):
+                return KToken('b\"' + _kast['token'] + '\"', 'Bytes')
         return _kast
     return pyk.traverseBottomUp(kast, _sanitizeBytes)
 
