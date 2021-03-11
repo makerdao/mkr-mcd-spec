@@ -50,16 +50,6 @@ def get_init_config(init_term):
 def randombytes(size):
     return bytearray(random.getrandbits(8) for _ in range(size))
 
-def sanitizeBytes(kast):
-    def _sanitizeBytes(_kast):
-        if pyk.isKToken(_kast) and _kast['sort'] == 'Bytes':
-            if len(_kast['token']) < 3:
-                return KToken('b\"' + _kast['token'] + '\"', 'Bytes')
-            if len(_kast['token']) >= 3 and not (_kast['token'][0:2] == 'b\"' and _kast['token'][-1] == '\"'):
-                return KToken('b\"' + _kast['token'] + '\"', 'Bytes')
-        return _kast
-    return pyk.traverseBottomUp(kast, _sanitizeBytes)
-
 def fromItem(input):
     if pyk.isKApply(input) and input['label'] in [ 'ListItem' , 'SetItem' ]:
         return input['args'][0]
@@ -110,7 +100,7 @@ def printMCD(k):
 # Building KAST MCD Terms
 # -----------------------
 
-bytesToken   = lambda x: KToken(x.decode('latin-1'), 'Bytes')
+bytesToken   = lambda x: KToken('b"' + x.decode('latin-1') + '"', 'Bytes')
 intToken     = lambda x: KToken(str(x), 'Int')
 boolToken    = lambda x: KToken(str(x).lower(), 'Bool')
 stringToken  = lambda x: KToken('"' + str(x) + '"', 'String')
@@ -483,7 +473,7 @@ if __name__ == '__main__':
             init_cells['RANDOM_CELL'] = bytesToken(curRandSeed)
             init_cells['K_CELL']      = KSequence([snapshot, genSteps, snapshot])
 
-            initial_configuration = sanitizeBytes(pyk.substitute(symbolic_configuration, init_cells))
+            initial_configuration = pyk.substitute(symbolic_configuration, init_cells)
             (_, output, _) = krun({ 'format': 'KAST' , 'version': 1 , 'term': initial_configuration }, '--term', '--no-sort-collections')
             print()
             violations = detect_violations(output)
