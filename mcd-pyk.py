@@ -33,15 +33,15 @@ MCD_definition_llvm_dir      = '.build/defn/llvm'
 MCD_definition_llvm_kompiled = MCD_definition_llvm_dir    + '/' + MCD_main_file_name + '-kompiled/compiled.json'
 MCD_definition_llvm          = pyk.readKastTerm(MCD_definition_llvm_kompiled)
 
-def krun(inputJSON, *krunArgs):
-    return pyk.krunJSON(MCD_definition_llvm_dir, inputJSON, krunArgs = list(krunArgs))
+def krun(inputJSON, kastArgs = [], krunArgs = [], keepTemp = False):
+    return pyk.krunJSON(MCD_definition_llvm_dir, inputJSON, kastArgs = kastArgs, krunArgs = krunArgs, keepTemp = keepTemp)
 
 def randomSeedArgs(seedbytes = b''):
     return [ '-cRANDOMSEED=' + '\dv{SortBytes{}}(\"' + seedbytes.decode('latin-1') + '\")', '-pRANDOMSEED=cat' ]
 
 def get_init_config(init_term):
     kast_json = { 'format': 'KAST', 'version': 1, 'term': init_term }
-    (_, init_config, _) = krun(kast_json, *randomSeedArgs())
+    (_, init_config, _) = krun(kast_json, krunArgs = randomSeedArgs())
     return pyk.splitConfigFrom(init_config)
 
 # Misc Utilities
@@ -474,7 +474,7 @@ if __name__ == '__main__':
             init_cells['K_CELL']      = KSequence([snapshot, genSteps, snapshot])
 
             initial_configuration = pyk.substitute(symbolic_configuration, init_cells)
-            (_, output, _) = krun({ 'format': 'KAST' , 'version': 1 , 'term': initial_configuration }, '--term')
+            (_, output, _) = krun({ 'format': 'KAST' , 'version': 1 , 'term': initial_configuration }, krunArgs = ['--term'], kastArgs = ['--sort', 'GeneratedTopCell'])
             print()
             violations = detect_violations(output)
             if len(violations) > 0:
