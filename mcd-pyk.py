@@ -37,7 +37,7 @@ def krun(inputJSON, *krunArgs):
     return pyk.krunJSON(MCD_definition_llvm_dir, inputJSON, krunArgs = list(krunArgs))
 
 def randomSeedArgs(seedbytes = b''):
-    return [ '-cRANDOMSEED=' + '#token("b\\"' + seedbytes.decode('latin-1') + '\\"", "Bytes")', '-pRANDOMSEED=printf %s' ]
+    return [ '-cRANDOMSEED=' + '\dv{SortBytes{}}(\"' + seedbytes.decode('latin-1') + '\")', '-pRANDOMSEED=cat' ]
 
 def get_init_config(init_term):
     kast_json = { 'format': 'KAST', 'version': 1, 'term': init_term }
@@ -474,7 +474,7 @@ if __name__ == '__main__':
             init_cells['K_CELL']      = KSequence([snapshot, genSteps, snapshot])
 
             initial_configuration = pyk.substitute(symbolic_configuration, init_cells)
-            (_, output, _) = krun({ 'format': 'KAST' , 'version': 1 , 'term': initial_configuration }, '--term', '--no-sort-collections')
+            (_, output, _) = krun({ 'format': 'KAST' , 'version': 1 , 'term': initial_configuration }, '--term')
             print()
             violations = detect_violations(output)
             if len(violations) > 0:
