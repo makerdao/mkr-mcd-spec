@@ -187,9 +187,9 @@ tests/%.mcd.python-out: mcd-pyk.py $(TEST_KOMPILED)
 	python3 $< random-test 0 1 $(KMCD_RANDOMSEED) 2>&1 > $@
 
 tests/%.mcd.run: tests/%.mcd $(TEST_KOMPILED)
-	RANDOMSEED=$(KMCD_RANDOMSEED) $(KMCD) run --backend $(TEST_BACKEND) $< > $@
-	$(CHECK) tests/$*.mcd.out tests/$*.mcd.expected
-	rm -rf tests/$*.mcd.ouuuu
+	RANDOMSEED=$(KMCD_RANDOMSEED) $(KMCD) run --backend $(TEST_BACKEND) $< > $@.out
+	$(CHECK) $@.out $@.expected
+	rm -rf $@.out
 
 $(SOLIDITY_TESTS)/%.t.sol: mcd-pyk.py $(TEST_KOMPILED)
 	@mkdir -p $(dir $@)
