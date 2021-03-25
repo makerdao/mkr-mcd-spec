@@ -37,7 +37,7 @@ pretty_diff() {
 
 run_krun() {
     export K_OPTS=-Xss500m
-    krun --directory "$backend_dir" "$run_file" "$@" -cRANDOMSEED=$cRANDOMSEED -pRANDOMSEED='cat'
+    krun --directory "$backend_dir" "$run_file" -cRANDOMSEED=$cRANDOMSEED -pRANDOMSEED='cat' "$@"
 }
 
 run_kast() {
@@ -100,9 +100,9 @@ random_seed=""
 while [[ $# -gt 0 ]]; do
     arg="$1"
     case $arg in
-        --random-seed) random_seed="" ; shift 2 ;;
-        --backend)     backend="$2"   ; shift 2 ;;
-        *)             break                    ;;
+        --random-seed) random_seed="$2" ; shift 2 ;;
+        --backend)     backend="$2"     ; shift 2 ;;
+        *)             break                      ;;
     esac
 done
 backend_dir="$defn_dir/$backend"
