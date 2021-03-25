@@ -186,8 +186,8 @@ tests/attacks/lucash-flip-end.random.mcd.%: KMCD_RANDOMSEED="caccacaccacaaca"
 tests/%.mcd.python-out: mcd-pyk.py $(TEST_KOMPILED)
 	python3 $< random-test 0 1 $(KMCD_RANDOMSEED) 2>&1 > $@
 
-tests/%.mcd.run: tests/%.mcd $(TEST_KOMPILED)
-	RANDOMSEED=$(KMCD_RANDOMSEED) $(KMCD) run --backend $(TEST_BACKEND) $< > $@.out
+tests/%.mcd.run: tests/%.mcd
+	$(KMCD) run --backend $(TEST_BACKEND) --random-seed $(KMCD_RANDOMSEED) $< > $@.out
 	$(CHECK) $@.out $@.expected
 	rm -rf $@.out
 

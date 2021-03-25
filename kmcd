@@ -65,13 +65,13 @@ run_command="$1" ; shift
 
 if [[ "$run_command" == 'help' ]]; then
     echo "
-        usage: $0 run        [--backend (llvm|haskell)] <pgm>  <K arg>*
-               $0 kast       [--backend (llvm|haskell)] <pgm>  <output format> <K arg>*
-               $0 prove      [--backend (haskell)]      <spec> <K arg>* -m <def_module>
-               $0 search     [--backend (haskell)]      <pgm>  <pattern> <K arg>*
-               $0 klab-run                              <pgm>  <K arg>*
-               $0 klab-prove                            <spec> <K arg>* -m <def_module>
-               $0 klab-view                             <spec>
+        usage: $0 run        [--backend (llvm|haskell)] [--random-seed <random-seed>] <pgm>  <K arg>*
+               $0 kast       [--backend (llvm|haskell)]                               <pgm>  <output format> <K arg>*
+               $0 prove      [--backend (haskell)]                                    <spec> <K arg>* -m <def_module>
+               $0 search     [--backend (haskell)]                                    <pgm>  <pattern> <K arg>*
+               $0 klab-run                                                            <pgm>  <K arg>*
+               $0 klab-prove                                                          <spec> <K arg>* -m <def_module>
+               $0 klab-view                                                           <spec>
 
            $0 run       : Run a single MCD simulation
            $0 kast      : Parse an MCD simulation and output it in a supported format
@@ -86,6 +86,7 @@ if [[ "$run_command" == 'help' ]]; then
                  <output format> is the format for Kast to output the term in.
                  <pattern> is the configuration pattern to search for.
                  <def_module> is the module to take as axioms when doing verification.
+                 <random-seed> is a hex-string to be taken as a random input seed.
 
            klab-view: Make sure that the 'klab/bin' directory is on your PATH to use this option.
     "
@@ -94,12 +95,14 @@ fi
 
 backend="llvm"
 debug=false
+random_seed=""
 [[ ! "$run_command" == 'prove' ]] || backend='haskell'
 while [[ $# -gt 0 ]]; do
     arg="$1"
     case $arg in
-        --backend) backend="$2" ; shift 2 ;;
-        *)         break                  ;;
+        --random-seed) random_seed="" ; shift 2 ;;
+        --backend)     backend="$2"   ; shift 2 ;;
+        *)             break                    ;;
     esac
 done
 backend_dir="$defn_dir/$backend"
@@ -114,7 +117,7 @@ if [[ "$run_file" == '-' ]]; then
 fi
 [[ -f "$run_file" ]] || fatal "File does not exist: $run_file"
 
-cRANDOMSEED="\dv{SortBytes{}}(\"${RANDOMSEED:-}\")"
+cRANDOMSEED="\dv{SortString{}}(\"${random_seed}\")"
 
 case "$run_command-$backend" in
     run-@(llvm|haskell)    ) run_krun   "$@" ;;
