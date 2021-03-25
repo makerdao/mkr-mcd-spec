@@ -36,19 +36,16 @@ MCD_definition_llvm          = pyk.readKastTerm(MCD_definition_llvm_kompiled)
 def krun(inputJSON, kastArgs = [], krunArgs = [], keepTemp = False):
     return pyk.krunJSON(MCD_definition_llvm_dir, inputJSON, kastArgs = kastArgs, krunArgs = krunArgs, keepTemp = keepTemp)
 
-def randomSeedArgs(seedbytes = b''):
-    return [ '-cRANDOMSEED=' + '\dv{SortBytes{}}(\"' + seedbytes.decode('latin-1') + '\")', '-pRANDOMSEED=cat' ]
-
 def get_init_config(init_term):
     kast_json = { 'format': 'KAST', 'version': 1, 'term': init_term }
-    (_, init_config, _) = krun(kast_json, krunArgs = randomSeedArgs())
+    (_, init_config, _) = krun(kast_json, krunArgs = [ '-cRANDOMSEED=' + '\dv{SortString{}}(\"\")', '-pRANDOMSEED=cat' ])
     return pyk.splitConfigFrom(init_config)
 
 # Misc Utilities
 # --------------
 
-def randombytes(size):
-    return bytearray(random.getrandbits(8) for _ in range(size))
+def randomstring(size):
+    return '%x' % random.randrange(16**size)
 
 def fromItem(input):
     if pyk.isKApply(input) and input['label'] in [ 'ListItem' , 'SetItem' ]:
@@ -468,9 +465,9 @@ if __name__ == '__main__':
     solidityTests = []
     for randseed in randseeds:
         for i in range(numruns):
-            curRandSeed = bytearray(randseed, 'utf-8') + randombytes(gendepth)
+            currRandSeed = randseed + randomstring(gendepth)
 
-            init_cells['RANDOM_CELL'] = bytesToken(curRandSeed)
+            init_cells['RANDOM_CELL'] = KApply('String2Bytes(_)_BYTES-HOOKED_Bytes_String', [stringToken(currRandSeed)])
             init_cells['K_CELL']      = KSequence([snapshot, genSteps, snapshot])
 
             initial_configuration = pyk.substitute(symbolic_configuration, init_cells)
@@ -478,7 +475,7 @@ if __name__ == '__main__':
             print()
             violations = detect_violations(output)
             if len(violations) > 0:
-                violation = { 'properties': violations , 'seed': str(curRandSeed), 'output': output }
+                violation = { 'properties': violations , 'seed': str(currRandSeed), 'output': output }
                 all_violations.append(violation)
                 print()
                 print('### Violation Found')
