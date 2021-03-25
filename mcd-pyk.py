@@ -97,7 +97,6 @@ def printMCD(k):
 # Building KAST MCD Terms
 # -----------------------
 
-bytesToken   = lambda x: KToken('b"' + x.decode('latin-1') + '"', 'Bytes')
 intToken     = lambda x: KToken(str(x), 'Int')
 boolToken    = lambda x: KToken(str(x).lower(), 'Bool')
 stringToken  = lambda x: KToken('"' + str(x) + '"', 'String')
