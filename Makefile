@@ -150,7 +150,7 @@ execution_tests_random := $(wildcard tests/*/*.random.mcd)
 execution_tests := $(wildcard tests/*/*.mcd)
 
 test-execution: $(execution_tests:=.run)
-test-python-generator: $(execution_tests_random:=.python-out)
+test-python-generator: $(execution_tests_random:=.python-gen)
 
 init_random_seeds :=
 
@@ -183,8 +183,8 @@ tests/attacks/lucash-flip-end.random.mcd.%: KMCD_RANDOMSEED="caccacaccacaaca"
 
 ### Testing Harnesses
 
-tests/%.mcd.python-out: mcd-pyk.py
-	python3 $< random-test 0 1 $(KMCD_RANDOMSEED) 2>&1 > $@
+tests/%.mcd.python-gen: mcd-pyk.py
+	python3 $< random-test 0 1 $(KMCD_RANDOMSEED) 2>&1 > $@.out
 
 tests/%.mcd.run: tests/%.mcd
 	$(KMCD) run --backend $(TEST_BACKEND) --random-seed $(KMCD_RANDOMSEED) $< > $@.out
