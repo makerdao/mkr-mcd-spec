@@ -183,7 +183,7 @@ tests/attacks/lucash-flip-end.random.mcd.%: KMCD_RANDOMSEED="caccacaccacaaca"
 
 ### Testing Harnesses
 
-tests/%.mcd.python-out: mcd-pyk.py $(TEST_KOMPILED)
+tests/%.mcd.python-out: mcd-pyk.py
 	python3 $< random-test 0 1 $(KMCD_RANDOMSEED) 2>&1 > $@
 
 tests/%.mcd.run: tests/%.mcd
@@ -191,6 +191,6 @@ tests/%.mcd.run: tests/%.mcd
 	$(CHECK) $@.out $@.expected
 	rm -rf $@.out
 
-$(SOLIDITY_TESTS)/%.t.sol: mcd-pyk.py $(TEST_KOMPILED)
+$(SOLIDITY_TESTS)/%.t.sol: mcd-pyk.py
 	@mkdir -p $(dir $@)
 	python3 $< random-test $(RANDOM_TEST_DEPTH) $(RANDOM_TEST_RUNS) $(KMCD_RANDOMSEED) --emit-solidity --emit-solidity-file $@
