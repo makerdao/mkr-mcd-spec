@@ -13,16 +13,19 @@ pipeline {
     }
     stage('Build') { steps { sh 'make build -j4 RELEASE=true' } }
     stage('Test') {
-      options { timeout(time: 10, unit: 'MINUTES') }
       stages {
         stage('Unit') {
+          options { timeout(time: 3, unit: 'MINUTES') }
           parallel {
             stage('Run Simulation Tests') { steps { sh 'make test-execution -j6'        } }
             stage('Python Runner')        { steps { sh 'make test-python-generator -j6' } }
             stage('Random Generation')    { steps { sh 'make test-random'               } }
           }
         }
-        stage('Solidity Generation') { steps { sh 'make test-solidity -j6' } }
+        stage('Solidity Generation') {
+          options { timeout(time: 12, unit: 'MINUTES') }
+          steps { sh 'make test-solidity -j6' }
+        }
       }
     }
     // stage('Deploy') {

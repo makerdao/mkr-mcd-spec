@@ -147,7 +147,7 @@ module KMCD-GEN
         <kmcd-properties/>
         <kmcd-snapshots> .List </kmcd-snapshots>
         <kmcd-gen>
-          <random> $RANDOMSEED:Bytes </random>
+          <random> String2Bytes($RANDOMSEED:String) </random>
           <used-random> .Bytes </used-random>
           <generator-next> 0 </generator-next>
           <generator-current> 0 </generator-current>
@@ -180,8 +180,8 @@ module KMCD-GEN
     rule <k> (. => snapshot) ~> #assert-failure ... </k>
          <kmcd-snapshots> ListItem(_) </kmcd-snapshots>
 
-    syntax Int ::= #timeStepMax() [function]
- // ----------------------------------------
+    syntax Int ::= #timeStepMax()
+ // -----------------------------
     rule #timeStepMax() => 2 [macro]
 
     syntax Ray ::= #dsrSpread() [function]

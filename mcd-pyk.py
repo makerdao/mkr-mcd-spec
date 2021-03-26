@@ -33,30 +33,19 @@ MCD_definition_llvm_dir      = '.build/defn/llvm'
 MCD_definition_llvm_kompiled = MCD_definition_llvm_dir    + '/' + MCD_main_file_name + '-kompiled/compiled.json'
 MCD_definition_llvm          = pyk.readKastTerm(MCD_definition_llvm_kompiled)
 
-def krun(inputJSON, *krunArgs):
-    return pyk.krunJSON(MCD_definition_llvm_dir, inputJSON, krunArgs = list(krunArgs))
-
-def randomSeedArgs(seedbytes = b''):
-    return [ '-cRANDOMSEED=' + '#token("' + seedbytes.decode('latin-1') + '", "Bytes")', '-pRANDOMSEED=printf %s' ]
+def krun(inputJSON, kastArgs = [], krunArgs = [], keepTemp = False):
+    return pyk.krunJSON(MCD_definition_llvm_dir, inputJSON, kastArgs = kastArgs, krunArgs = krunArgs, keepTemp = keepTemp)
 
 def get_init_config(init_term):
     kast_json = { 'format': 'KAST', 'version': 1, 'term': init_term }
-    (_, init_config, _) = krun(kast_json, *randomSeedArgs())
+    (_, init_config, _) = krun(kast_json, krunArgs = [ '-cRANDOMSEED=' + '\dv{SortString{}}(\"\")', '-pRANDOMSEED=cat' ])
     return pyk.splitConfigFrom(init_config)
 
 # Misc Utilities
 # --------------
 
-def randombytes(size):
-    return bytearray(random.getrandbits(8) for _ in range(size))
-
-def sanitizeBytes(kast):
-    def _sanitizeBytes(_kast):
-        if pyk.isKToken(_kast) and _kast['sort'] == 'Bytes':
-            if len(_kast['token']) > 2 and _kast['token'][0:2] == 'b"' and _kast['token'][-1] == '"':
-                return KToken(_kast['token'][2:-1], 'Bytes')
-        return _kast
-    return pyk.traverseBottomUp(kast, _sanitizeBytes)
+def randomstring(size):
+    return '%x' % random.randrange(16**size)
 
 def fromItem(input):
     if pyk.isKApply(input) and input['label'] in [ 'ListItem' , 'SetItem' ]:
@@ -108,7 +97,6 @@ def printMCD(k):
 # Building KAST MCD Terms
 # -----------------------
 
-bytesToken   = lambda x: KToken(x.decode('latin-1'), 'Bytes')
 intToken     = lambda x: KToken(str(x), 'Int')
 boolToken    = lambda x: KToken(str(x).lower(), 'Bool')
 stringToken  = lambda x: KToken('"' + str(x) + '"', 'String')
@@ -476,17 +464,17 @@ if __name__ == '__main__':
     solidityTests = []
     for randseed in randseeds:
         for i in range(numruns):
-            curRandSeed = bytearray(randseed, 'utf-8') + randombytes(gendepth)
+            currRandSeed = randseed + randomstring(gendepth)
 
-            init_cells['RANDOM_CELL'] = bytesToken(curRandSeed)
+            init_cells['RANDOM_CELL'] = KApply('String2Bytes(_)_BYTES-HOOKED_Bytes_String', [stringToken(currRandSeed)])
             init_cells['K_CELL']      = KSequence([snapshot, genSteps, snapshot])
 
-            initial_configuration = sanitizeBytes(pyk.substitute(symbolic_configuration, init_cells))
-            (_, output, _) = krun({ 'format': 'KAST' , 'version': 1 , 'term': initial_configuration }, '--term', '--no-sort-collections')
+            initial_configuration = pyk.substitute(symbolic_configuration, init_cells)
+            (_, output, _) = krun({ 'format': 'KAST' , 'version': 1 , 'term': initial_configuration }, krunArgs = ['--term'], kastArgs = ['--sort', 'GeneratedTopCell'])
             print()
             violations = detect_violations(output)
             if len(violations) > 0:
-                violation = { 'properties': violations , 'seed': str(curRandSeed), 'output': output }
+                violation = { 'properties': violations , 'seed': str(currRandSeed), 'output': output }
                 all_violations.append(violation)
                 print()
                 print('### Violation Found')

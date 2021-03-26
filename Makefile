@@ -16,12 +16,6 @@ K_BIN := $(K_RELEASE)/bin
 K_LIB := $(K_RELEASE)/lib/kframework
 export K_RELEASE
 
-ifneq (,$(RELEASE))
-    K_BUILD_TYPE := Release
-else
-    K_BUILD_TYPE := FastBuild
-endif
-
 K_OPTS += -Xmx8G
 export K_OPTS
 
@@ -56,7 +50,7 @@ deps: deps-k
 deps-k: $(K_JAR)
 
 $(K_JAR):
-	cd $(K_SUBMODULE) && mvn package -DskipTests -Dproject.build.type=$(K_BUILD_TYPE)
+	cd $(K_SUBMODULE) && mvn package -DskipTests
 
 # Building
 # --------
@@ -156,7 +150,7 @@ execution_tests_random := $(wildcard tests/*/*.random.mcd)
 execution_tests := $(wildcard tests/*/*.mcd)
 
 test-execution: $(execution_tests:=.run)
-test-python-generator: $(execution_tests_random:=.python-out)
+test-python-generator: $(execution_tests_random:=.python-gen)
 
 init_random_seeds :=
 
@@ -164,9 +158,9 @@ test-random: mcd-pyk.py
 	python3 $< random-test 1 1 $(init_random_seeds) --emit-solidity
 
 test-solidity: $(patsubst %, $(SOLIDITY_TESTS)/src/%.t.sol, 01 02 03 04 05 06 07 08 09 10)
-	cd $(SOLIDITY_TESTS) \
-	    && dapp build    \
-	    && dapp test
+	#cd $(SOLIDITY_TESTS) \
+	#    && dapp build    \
+	#    && dapp test
 
 ### Testing Parameters
 
@@ -189,15 +183,14 @@ tests/attacks/lucash-flip-end.random.mcd.%: KMCD_RANDOMSEED="caccacaccacaaca"
 
 ### Testing Harnesses
 
-tests/%.mcd.out: tests/%.mcd $(TEST_KOMPILED)
-	RANDOMSEED=$(KMCD_RANDOMSEED) $(KMCD) run --backend $(TEST_BACKEND) $< > $@
+tests/%.mcd.python-gen: mcd-pyk.py
+	python3 $< random-test 0 1 $(KMCD_RANDOMSEED) 2>&1 > $@.out
 
-tests/%.mcd.python-out: mcd-pyk.py $(TEST_KOMPILED)
-	python3 $< random-test 0 1 $(KMCD_RANDOMSEED) 2>&1 > $@
+tests/%.mcd.run: tests/%.mcd
+	$(KMCD) run --backend $(TEST_BACKEND) --random-seed $(KMCD_RANDOMSEED) $< > $@.out
+	$(CHECK) $@.out $@.expected
+	rm -rf $@.out
 
-tests/%.mcd.run: tests/%.mcd.out
-	$(CHECK) tests/$*.mcd.out tests/$*.mcd.expected
-
-$(SOLIDITY_TESTS)/%.t.sol: mcd-pyk.py $(TEST_KOMPILED)
+$(SOLIDITY_TESTS)/%.t.sol: mcd-pyk.py
 	@mkdir -p $(dir $@)
 	python3 $< random-test $(RANDOM_TEST_DEPTH) $(RANDOM_TEST_RUNS) $(KMCD_RANDOMSEED) --emit-solidity --emit-solidity-file $@
