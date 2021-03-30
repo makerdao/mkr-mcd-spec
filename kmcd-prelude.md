@@ -185,9 +185,9 @@ module KMCD-GEN
  // -----------------------------
     rule #timeStepMax() => 2 [macro]
 
-    syntax Ray ::= #dsrSpread() [function]
- // --------------------------------------
-    rule #dsrSpread() => ray(20)
+    syntax Ray ::= #dsrSpread()
+ // ---------------------------
+    rule #dsrSpread() => ray(20) [macro]
 
     syntax Int   ::= head        ( Bytes ) [function]
     syntax Bytes ::= tail        ( Bytes ) [function]
