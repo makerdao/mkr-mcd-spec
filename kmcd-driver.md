@@ -151,13 +151,11 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
     rule <k> checkauth MCD          => .             ... </k>                     requires notBool isAuthStep(MCD)
     rule <k> checkauth MCD          => exception MCD ... </k>                     [owise]
 
-    rule <k> checklock MCD => lock MCD      ... </k> requires         isLockStep(MCD)
-    rule <k> checklock MCD => .             ... </k> requires notBool isLockStep(MCD)
-    rule <k> checklock MCD => exception MCD ... </k> [owise]
+    rule <k> checklock MCD:LockStep => lock MCD      ... </k>
+    rule <k> checklock MCD          => .             ... </k> requires notBool isLockStep(MCD)
 
-    rule <k> checkunlock MCD => unlock MCD    ... </k> requires         isLockStep(MCD)
-    rule <k> checkunlock MCD => .             ... </k> requires notBool isLockStep(MCD)
-    rule <k> checkunlock MCD => exception MCD ... </k> [owise]  
+    rule <k> checkunlock MCD:LockStep => unlock MCD    ... </k>
+    rule <k> checkunlock MCD          => .             ... </k> requires notBool isLockStep(MCD)
     rule <k> . => CONT </k>
          <msg-sender> MSGSENDER => PREVSENDER </msg-sender>
          <this> _THIS => MSGSENDER </this>
