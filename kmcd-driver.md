@@ -125,18 +125,52 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
  // ----------------------------------------------------------------------------------
 
     syntax AdminStep ::= "call" MCDStep
+                      | "checkauth" MCDStep
+                      | "checklock" MCDStep
+                      | "checkunlock" MCDStep
+                      | "makecall" MCDStep
+                  
+      
+    syntax LockStep ::= "lock" MCDStep
+                      | "unlock" MCDStep
+    
+    syntax MCDStep ::= LockStep
+
  // -----------------------------------
-    rule <k> call MCD:MCDStep ~> CONT => MCD </k>
+    rule <k> call MCD:MCDStep => checkauth MCD ~> checklock MCD ~> makecall MCD ~> checkunlock MCD ...  </k>
+
+    rule <k> makecall MCD:MCDStep ~> CONT => MCD </k>
          <msg-sender> MSGSENDER => THIS </msg-sender>
          <this> THIS => contract(MCD) </this>
          <call-stack> .List => ListItem(frame(MSGSENDER, EVENTS, CONT)) ... </call-stack>
          <frame-events> EVENTS => ListItem(LogNote(MSGSENDER, MCD)) </frame-events>
-      requires isAuthStep(MCD) impliesBool isAuthorized(THIS, contract(MCD))
 
-    rule <k> call MCD => exception MCD ... </k> [owise]
+    rule <k> makecall MCD => exception MCD ... </k> [owise]
 
     rule <k> V:Value => . ... </k> <return-value> _ => V </return-value>
 
+    rule <k> checkauth MCD => . ... </k>
+      <this> THIS </this>
+      requires isAuthStep(MCD) impliesBool isAuthorized(THIS, contract(MCD))
+
+    rule <k> checkauth MCD => exception MCD ... </k> [owise]
+
+    rule <k> checklock MCD => lock MCD ... </k>
+         requires isLockStep(MCD)
+
+    rule <k> checklock MCD => . ... </k>
+         requires notBool isLockStep(MCD)
+
+    rule <k> checklock MCD => exception MCD ... </k> [owise]
+
+    rule <k> checkunlock MCD => unlock MCD ... </k>
+         requires isLockStep(MCD)
+
+    rule <k> checkunlock MCD => . ... </k>
+         requires notBool isLockStep(MCD)
+
+    rule <k> checkunlock MCD => exception MCD ... </k> [owise]
+      
     rule <k> . => CONT </k>
          <msg-sender> MSGSENDER => PREVSENDER </msg-sender>
          <this> _THIS => MSGSENDER </this>
