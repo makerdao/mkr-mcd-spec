@@ -147,28 +147,17 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
 
     rule <k> V:Value => . ... </k> <return-value> _ => V </return-value>
 
-    rule <k> checkauth MCD => . ... </k>
-      <this> THIS </this>
-      requires isAuthStep(MCD) impliesBool isAuthorized(THIS, contract(MCD))
+    rule <k> checkauth MCD:AuthStep => .             ... </k> <this> THIS </this> requires isAuthorized(THIS, contract(MCD))
+    rule <k> checkauth MCD          => .             ... </k>                     requires notBool isAuthStep(MCD)
+    rule <k> checkauth MCD          => exception MCD ... </k>                     [owise]
 
-    rule <k> checkauth MCD => exception MCD ... </k> [owise]
-
-    rule <k> checklock MCD => lock MCD ... </k>
-         requires isLockStep(MCD)
-
-    rule <k> checklock MCD => . ... </k>
-         requires notBool isLockStep(MCD)
-
+    rule <k> checklock MCD => lock MCD      ... </k> requires         isLockStep(MCD)
+    rule <k> checklock MCD => .             ... </k> requires notBool isLockStep(MCD)
     rule <k> checklock MCD => exception MCD ... </k> [owise]
 
-    rule <k> checkunlock MCD => unlock MCD ... </k>
-         requires isLockStep(MCD)
-
-    rule <k> checkunlock MCD => . ... </k>
-         requires notBool isLockStep(MCD)
-
-    rule <k> checkunlock MCD => exception MCD ... </k> [owise]
-      
+    rule <k> checkunlock MCD => unlock MCD    ... </k> requires         isLockStep(MCD)
+    rule <k> checkunlock MCD => .             ... </k> requires notBool isLockStep(MCD)
+    rule <k> checkunlock MCD => exception MCD ... </k> [owise]  
     rule <k> . => CONT </k>
          <msg-sender> MSGSENDER => PREVSENDER </msg-sender>
          <this> _THIS => MSGSENDER </this>
