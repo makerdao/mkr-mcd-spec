@@ -124,19 +124,17 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
     syntax CallFrame ::= frame(prevSender: Address, prevEvents: List, continuation: K)
  // ----------------------------------------------------------------------------------
 
-    syntax AdminStep ::= "call" MCDStep
-                      | "checkauth" MCDStep
-                      | "checklock" MCDStep
-                      | "checkunlock" MCDStep
-                      | "makecall" MCDStep
-                  
-      
-    syntax LockStep ::= "lock" MCDStep
-                      | "unlock" MCDStep
-    
-    syntax MCDStep ::= LockStep
+    syntax AdminStep ::= "call"        MCDStep
+                       | "checkauth"   MCDStep
+                       | "checklock"   MCDStep
+                       | "checkunlock" MCDStep
+                       | "makecall"    MCDStep
+ // ------------------------------------------
 
- // -----------------------------------
+    syntax MCDStep  ::= LockStep
+    syntax LockStep ::= "lock"   MCDStep
+                      | "unlock" MCDStep
+ // ------------------------------------
     rule <k> call MCD:MCDStep => checkauth MCD ~> checklock MCD ~> makecall MCD ~> checkunlock MCD ...  </k>
 
     rule <k> makecall MCD:MCDStep ~> CONT => MCD </k>
