@@ -131,9 +131,14 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
                        | "makecall"    MCDStep
  // ------------------------------------------
 
-    syntax MCDStep  ::= LockStep
-    syntax LockStep ::= "lock"   MCDStep
-                      | "unlock" MCDStep
+    syntax MCDStep   ::= LockStep
+
+    syntax LockAuthStep
+    syntax LockStep ::= LockAuthStep
+    syntax AuthStep ::= LockAuthStep
+
+    syntax AdminStep ::= "lock"   MCDStep
+                       | "unlock" MCDStep
  // ------------------------------------
     rule <k> call MCD:MCDStep => checkauth MCD ~> checklock MCD ~> makecall MCD ~> checkunlock MCD ...  </k>
 
@@ -142,6 +147,13 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
          <this> THIS => contract(MCD) </this>
          <call-stack> .List => ListItem(frame(MSGSENDER, EVENTS, CONT)) ... </call-stack>
          <frame-events> EVENTS => ListItem(LogNote(MSGSENDER, MCD)) </frame-events>
+
+    rule <k> . => CONT </k>
+         <msg-sender> MSGSENDER => PREVSENDER </msg-sender>
+         <this> _THIS => MSGSENDER </this>
+         <call-stack> ListItem(frame(PREVSENDER, PREVEVENTS, CONT)) => .List ... </call-stack>
+         <tx-log> Transaction(... events: L => L EVENTS) </tx-log>
+         <frame-events> EVENTS => PREVEVENTS </frame-events>
 
     rule <k> makecall MCD => exception MCD ... </k> [owise]
 
@@ -156,12 +168,9 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
 
     rule <k> checkunlock MCD:LockStep => unlock MCD ... </k>
     rule <k> checkunlock MCD          => .          ... </k> requires notBool isLockStep(MCD)
-    rule <k> . => CONT </k>
-         <msg-sender> MSGSENDER => PREVSENDER </msg-sender>
-         <this> _THIS => MSGSENDER </this>
-         <call-stack> ListItem(frame(PREVSENDER, PREVEVENTS, CONT)) => .List ... </call-stack>
-         <tx-log> Transaction(... events: L => L EVENTS) </tx-log>
-         <frame-events> EVENTS => PREVEVENTS </frame-events>
+
+    rule <k> lock   MCD => exception MCD ... </k> [owise]
+    rule <k> unlock MCD => exception MCD ... </k> [owise]
 
     syntax Event ::= Exception ( Address , MCDStep ) [klabel(LogException), symbol]
  // -------------------------------------------------------------------------------
