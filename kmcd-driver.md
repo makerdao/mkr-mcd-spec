@@ -71,13 +71,6 @@ The special account `ANYONE` is not authorized to do anything, so represents any
  // -----------------------------------------------------------------
     rule isAuthorized( ADDR , MCDCONTRACT ) => ADDR ==K ADMIN orBool ADDR in wards(MCDCONTRACT)
 
-    syntax AuthStep
-    syntax MCDStep ::= AuthStep
- // ---------------------------
-
-    syntax WardStep ::= "rely" Address
-                      | "deny" Address
- // ----------------------------------
 ```
 
 Transactions
@@ -124,18 +117,17 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
     syntax CallFrame ::= frame(prevSender: Address, prevEvents: List, continuation: K)
  // ----------------------------------------------------------------------------------
 
-    syntax AdminStep ::= "call" MCDStep
- // -----------------------------------
-    rule <k> call MCD:MCDStep ~> CONT => MCD </k>
+    syntax AdminStep ::= "call"     MCDStep
+                       | "makecall" MCDStep
+                       | ModifierStep
+ // ---------------------------------
+    rule <k> call MCD:MCDStep => checkauth MCD ~> checklock MCD ~> makecall MCD ~> checkunlock MCD ...  </k>
+
+    rule <k> makecall MCD:MCDStep ~> CONT => MCD </k>
          <msg-sender> MSGSENDER => THIS </msg-sender>
          <this> THIS => contract(MCD) </this>
          <call-stack> .List => ListItem(frame(MSGSENDER, EVENTS, CONT)) ... </call-stack>
          <frame-events> EVENTS => ListItem(LogNote(MSGSENDER, MCD)) </frame-events>
-      requires isAuthStep(MCD) impliesBool isAuthorized(THIS, contract(MCD))
-
-    rule <k> call MCD => exception MCD ... </k> [owise]
-
-    rule <k> V:Value => . ... </k> <return-value> _ => V </return-value>
 
     rule <k> . => CONT </k>
          <msg-sender> MSGSENDER => PREVSENDER </msg-sender>
@@ -143,7 +135,62 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
          <call-stack> ListItem(frame(PREVSENDER, PREVEVENTS, CONT)) => .List ... </call-stack>
          <tx-log> Transaction(... events: L => L EVENTS) </tx-log>
          <frame-events> EVENTS => PREVEVENTS </frame-events>
+```
 
+### Modifier Calls
+
+Modifiers in Solidity are used to modify the behaviour of a function.
+At the moment these are typically used in the codebase to check prerequisite conditions when acessing functions in order to prevent unauthorized access and re-entrant calls.
+`AuthStep` is used as the modifier to check if a caller belongs to the contract's `wards`.
+`LockStep` is used as a non re-entrant check.
+
+```k
+    syntax AuthStep
+    syntax MCDStep ::= AuthStep
+ // ---------------------------
+
+    syntax WardStep ::= "rely" Address
+                      | "deny" Address
+ // ----------------------------------
+
+    syntax ModifierStep ::= "checkauth"   MCDStep
+                          | "checklock"   MCDStep
+                          | "checkunlock" MCDStep
+                          | "lock"        MCDStep
+                          | "unlock"      MCDStep
+ // ---------------------------------------------
+
+    syntax MCDStep   ::= LockStep
+
+    syntax LockAuthStep
+    syntax LockStep ::= LockAuthStep
+    syntax AuthStep ::= LockAuthStep
+ // --------------------------------
+
+    rule <k> makecall MCD => exception MCD ... </k> [owise]
+
+    rule <k> V:Value => . ... </k> <return-value> _ => V </return-value>
+
+    rule <k> checkauth MCD:AuthStep => .             ... </k> <this> THIS </this> requires isAuthorized(THIS, contract(MCD))
+    rule <k> checkauth MCD          => .             ... </k>                     requires notBool isAuthStep(MCD)
+    rule <k> checkauth MCD          => exception MCD ... </k>                     [owise]
+
+    rule <k> checklock MCD:LockStep => lock MCD ... </k>
+    rule <k> checklock MCD          => .        ... </k> requires notBool isLockStep(MCD)
+
+    rule <k> checkunlock MCD:LockStep => unlock MCD ... </k>
+    rule <k> checkunlock MCD          => .          ... </k> requires notBool isLockStep(MCD)
+
+    rule <k> lock   MCD => exception MCD ... </k> [owise]
+    rule <k> unlock MCD => exception MCD ... </k> [owise]
+```
+
+### Exception Handling
+
+Whenever an exception occurs the state must be rolled back.
+During the regular execution of a step this implies popping the `call-stack` and rolling back `frame-events`.
+
+```k
     syntax Event ::= Exception ( Address , MCDStep ) [klabel(LogException), symbol]
  // -------------------------------------------------------------------------------
 
@@ -161,7 +208,9 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
     rule <k> exception _MCDSTEP ~> dropState => popState ... </k>
          <call-stack> .List </call-stack>
 
-    rule <k> exception _ ~> (assert => .) ... </k>
+    rule <k> exception _ ~> (assert         => .) ... </k> 
+    rule <k> exception _ ~> (_:ModifierStep => .) ... </k>
+    rule <k> exception _ ~> (makecall _     => .) ... </k>
 ```
 
 Log Events

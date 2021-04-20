@@ -17,7 +17,7 @@ Precision Quantities
 
 We model everything with arbitrary precision rationals, but use sort information to indicate the EVM code precision.
 
--   `Way`: conversions between `Wad` and `Ray` (1e9).
+-   `Bln`: conversions between `Wad` and `Ray` (1e9).
 -   `Wad`: basic quantities (e.g. balances) (1e18).
 -   `Ray`: precise quantities (e.g. ratios) (1e27).
 -   `Rad`: result of multiplying `Wad` and `Ray` (highest precision) (1e45).
@@ -26,17 +26,17 @@ We model everything with arbitrary precision rationals, but use sort information
     syntax Value ::= Wad | Ray | Rad | Int
  // --------------------------------------
 
-    syntax Int ::= "WAY" | "WAD" | "RAY" | "RAD"
+    syntax Int ::= "BLN" | "WAD" | "RAY" | "RAD"
  // --------------------------------------------
-    rule WAY => 1000000000                                     [macro]
+    rule BLN => 1000000000                                     [macro]
     rule WAD => 1000000000000000000                            [macro]
     rule RAY => 1000000000000000000000000000                   [macro]
     rule RAD => 1000000000000000000000000000000000000000000000 [macro]
 
-    syntax Way = FInt
-    syntax Way ::= way ( Int )
+    syntax Bln = FInt
+    syntax Bln ::= Bln ( Int )
  // --------------------------
-    rule way(I) => FInt(I *Int WAY, WAY) [macro]
+    rule Bln(I) => FInt(I *Int BLN, BLN) [macro]
 
     syntax Wad = FInt
     syntax Wad ::= wad ( Int )
@@ -70,7 +70,7 @@ We model everything with arbitrary precision rationals, but use sort information
 
     syntax Ray ::= Wad2Ray ( Wad ) [function]
  // -----------------------------------------
-    rule Wad2Ray(FInt(W, WAD)) => FInt(W *Int WAY, RAY)
+    rule Wad2Ray(FInt(W, WAD)) => FInt(W *Int BLN, RAY)
 
     syntax Rad ::= Wad2Rad ( Wad ) [function]
                  | Ray2Rad ( Ray ) [function]
@@ -193,7 +193,18 @@ We model everything with arbitrary precision rationals, but use sort information
     rule rdiv(FI1, FI2) => FI1 /FInt FI2   requires value(FI2) =/=Int 0
     rule wdiv(FI1, FI2) => 0FInt(one(FI1)) requires value(FI2)  ==Int 0
     rule wdiv(FI1, FI2) => FI1 /FInt FI2   requires value(FI2) =/=Int 0
+
 ```
+
+Hardcoded Constants
+-------------------
+
+```k
+    syntax Int ::= "pow255" // 2 ^Int 255 
+ // -------------------------------------
+    rule pow255 => 57896044618658097711785492504343953926634992332820282019728792003956564819968  [macro]
+```
+
 
 Time Increments
 ---------------
