@@ -120,8 +120,7 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
     syntax AdminStep ::= "call"     MCDStep
                        | "makecall" MCDStep
                        | ModifierStep
-
- // ------------------------------------
+ // ---------------------------------
     rule <k> call MCD:MCDStep => checkauth MCD ~> checklock MCD ~> makecall MCD ~> checkunlock MCD ...  </k>
 
     rule <k> makecall MCD:MCDStep ~> CONT => MCD </k>
@@ -159,14 +158,14 @@ At the moment these are typically used in the codebase to check prerequisite con
                           | "checkunlock" MCDStep
                           | "lock"        MCDStep
                           | "unlock"      MCDStep
- // -----------------------------------------------
+ // ---------------------------------------------
 
     syntax MCDStep   ::= LockStep
 
     syntax LockAuthStep
     syntax LockStep ::= LockAuthStep
     syntax AuthStep ::= LockAuthStep
- // ----------------------------------
+ // --------------------------------
 
     rule <k> makecall MCD => exception MCD ... </k> [owise]
 
@@ -209,12 +208,9 @@ During the regular execution of a step this implies popping the `call-stack` and
     rule <k> exception _MCDSTEP ~> dropState => popState ... </k>
          <call-stack> .List </call-stack>
 
-    rule <k> exception _ ~> (assert => .) ... </k> 
-
+    rule <k> exception _ ~> (assert         => .) ... </k> 
     rule <k> exception _ ~> (_:ModifierStep => .) ... </k>
-
-    rule <k> exception _ ~> (makecall _ => .) ... </k>
-
+    rule <k> exception _ ~> (makecall _     => .) ... </k>
 ```
 
 Log Events
