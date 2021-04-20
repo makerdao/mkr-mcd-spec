@@ -209,9 +209,12 @@ During the regular execution of a step this implies popping the `call-stack` and
     rule <k> exception _MCDSTEP ~> dropState => popState ... </k>
          <call-stack> .List </call-stack>
 
-    rule <k> exception _ ~> (assert => .) ... </k>
+    rule <k> exception _ ~> (assert => .) ... </k> 
 
     rule <k> exception _ ~> (_:ModifierStep => .) ... </k>
+
+    rule <k> exception _ ~> (makecall _ => .) ... </k>
+
 ```
 
 Log Events
