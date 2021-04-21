@@ -229,18 +229,11 @@ This is quite permissive, and would allow the account to drain all your locked c
 **NOTE**: It is assumed that `<vat-can>` has already been initialized with the relevant accounts.
 
 ```k
-    syntax Bool ::= "wish" Address [function]
- // -----------------------------------------
-    rule [[ wish ADDRFROM => true ]]
-         <msg-sender> MSGSENDER </msg-sender>
-      requires ADDRFROM ==K MSGSENDER
-
-    rule [[ wish ADDRFROM => true ]]
-         <msg-sender> MSGSENDER </msg-sender>
-         <vat-can> ... ADDRFROM |-> CANADDRS:Set ... </vat-can>
-      requires MSGSENDER in CANADDRS
-
-    rule wish _ => false [owise]
+    syntax Bool ::= wish(Address, Address, Map) [function, functional]
+ // ------------------------------------------------------------------
+    rule wish(ADDRFROM, MSGSENDER,        _) => true                                   requires ADDRFROM ==K MSGSENDER
+    rule wish(ADDRFROM, MSGSENDER, CANADDRS) => MSGSENDER in {CANADDRS[ADDRFROM]}:>Set requires ADDRFROM in_keys(CANADDRS)
+    rule wish(       _,         _,        _) => false                                  [owise]
 
     syntax VatStep ::= "hope" Address | "nope" Address
  // --------------------------------------------------
@@ -318,6 +311,8 @@ This is quite permissive, and would allow the account to drain all your locked c
     syntax VatStep ::= "flux" String Address Address Wad
  // ----------------------------------------------------
     rule <k> Vat . flux ILK_ID ADDRFROM ADDRTO COL => . ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         <vat-can> VAT_CANS </vat-can>
          <vat-gem>
            ...
            { ILK_ID , ADDRFROM } |-> ( COLFROM => COLFROM -Wad COL )
@@ -326,13 +321,15 @@ This is quite permissive, and would allow the account to drain all your locked c
          </vat-gem>
       requires COL     >=Wad wad(0)
        andBool COLFROM >=Wad COL
-       andBool wish ADDRFROM
+       andBool wish(ADDRFROM, MSGSENDER, VAT_CANS)
 
     rule <k> Vat . flux ILK_ID ADDRFROM ADDRFROM COL => . ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         <vat-can> VAT_CANS </vat-can>
          <vat-gem> ... { ILK_ID , ADDRFROM } |-> COLFROM ... </vat-gem>
       requires COL     >=Wad wad(0)
        andBool COLFROM >=Wad COL
-       andBool wish ADDRFROM
+       andBool wish(ADDRFROM, MSGSENDER, VAT_CANS)
 ```
 
 -   `Vat.move` transfers Dai between users.
@@ -343,6 +340,8 @@ This is quite permissive, and would allow the account to drain all your locked c
     syntax VatStep ::= "move" Address Address Rad
  // ---------------------------------------------
     rule <k> Vat . move ADDRFROM ADDRTO DAI => . ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         <vat-can> VAT_CANS </vat-can>
          <vat-dai>
            ...
            ADDRFROM |-> (DAIFROM => DAIFROM -Rad DAI)
@@ -351,13 +350,15 @@ This is quite permissive, and would allow the account to drain all your locked c
          </vat-dai>
       requires DAI     >=Rad rad(0)
        andBool DAIFROM >=Rad DAI
-       andBool wish ADDRFROM
+       andBool wish(ADDRFROM, MSGSENDER, VAT_CANS)
 
     rule <k> Vat . move ADDRFROM ADDRFROM DAI => . ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         <vat-can> VAT_CANS </vat-can>
          <vat-dai> ... ADDRFROM |-> DAIFROM ... </vat-dai>
       requires DAI     >=Rad rad(0)
        andBool DAIFROM >=Rad DAI
-       andBool wish ADDRFROM
+       andBool wish(ADDRFROM, MSGSENDER, VAT_CANS)
 ```
 
 ### CDP Manipulation
@@ -376,6 +377,8 @@ This is quite permissive, and would allow the account to drain all your locked c
           ~> Vat . nondusty ILK_ID ADDRFROM ~> Vat . nondusty ILK_ID ADDRTO
          ...
          </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         <vat-can> VAT_CANS </vat-can>
          <vat-urns>
            ...
            { ILK_ID , ADDRFROM } |-> Urn ( INKFROM => INKFROM -Wad DINK , ARTFROM => ARTFROM -Wad DART )
@@ -384,18 +387,20 @@ This is quite permissive, and would allow the account to drain all your locked c
          </vat-urns>
       requires INKFROM >=Wad DINK
        andBool ARTFROM >=Wad DART
-       andBool wish ADDRFROM
-       andBool wish ADDRTO
+       andBool wish(ADDRFROM, MSGSENDER, VAT_CANS)
+       andBool wish(ADDRTO,   MSGSENDER, VAT_CANS)
 
     rule <k> Vat . fork ILK_ID ADDRFROM ADDRFROM DINK DART
           => Vat . safe     ILK_ID ADDRFROM ~> Vat . safe     ILK_ID ADDRFROM
           ~> Vat . nondusty ILK_ID ADDRFROM ~> Vat . nondusty ILK_ID ADDRFROM
          ...
          </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         <vat-can> VAT_CANS </vat-can>
          <vat-urns> ... { ILK_ID , ADDRFROM } |-> Urn ( INKFROM , ARTFROM ) ... </vat-urns>
       requires INKFROM >=Wad DINK
        andBool ARTFROM >=Wad DART
-       andBool wish ADDRFROM
+       andBool wish(ADDRFROM, MSGSENDER, VAT_CANS)
 ```
 
 -   `Vat.grab` uses collateral from user `V` to burn `<vat-sin>` for user `W` via one of `U`s CDPs.
@@ -420,6 +425,8 @@ This is quite permissive, and would allow the account to drain all your locked c
     syntax VatStep ::= "frob" String Address Address Address Wad Wad
  // ----------------------------------------------------------------
     rule <k> Vat . frob ILK_ID ADDRU ADDRV ADDRW DINK DART => . ... </k>
+         <msg-sender> MSGSENDER </msg-sender>
+         <vat-can> VAT_CANS </vat-can>
          <vat-live> true </vat-live>
          <vat-debt> DEBT => DEBT +Rad (DART *Rate RATE) </vat-debt>
          <vat-urns> ... { ILK_ID , ADDRU } |-> Urn ( INK => INK +Wad DINK , URNART => URNART +Wad DART ) ... </vat-urns>
@@ -435,10 +442,10 @@ This is quite permissive, and would allow the account to drain all your locked c
                orBool (URNART +Wad DART) *Rate RATE <=Rad (INK +Wad DINK) *Rate SPOT
                     )
        andBool      ( (DART <=Wad wad(0) andBool DINK >=Wad wad(0))
-               orBool wish ADDRU
+               orBool wish(ADDRU, MSGSENDER, VAT_CANS)
                     )
-       andBool (DINK <=Wad wad(0) orBool wish ADDRV)
-       andBool (DART >=Wad wad(0) orBool wish ADDRW)
+       andBool (DINK <=Wad wad(0) orBool wish(ADDRV, MSGSENDER, VAT_CANS))
+       andBool (DART >=Wad wad(0) orBool wish(ADDRW, MSGSENDER, VAT_CANS))
        andBool (URNART +Wad DART ==Wad wad(0) orBool (URNART +Wad DART) *Rate RATE >=Rad DUST)
 ```
 
