@@ -163,8 +163,6 @@ At the moment these are typically used in the codebase to check prerequisite con
     syntax LockStep ::= LockAuthStep
     syntax AuthStep ::= LockAuthStep
  // --------------------------------
-    rule <k> makecall MCD => exception MCD ... </k> [owise]
-
     rule <k> V:Value => . ... </k> <return-value> _ => V </return-value>
 
     rule <k> checkauth MCD:AuthStep => .             ... </k> <this> THIS </this> requires isAuthorized(THIS, contract(MCD))
