@@ -44,13 +44,13 @@ Sometimes you need a lookup to default to zero, and want to cast the result as a
 ```k
     syntax Event ::= Measure
     syntax Measure ::= Measure () [function]
-                     | Measure ( debt: Rad , controlDai: Map , potChi: Ray , potPie: Wad , sumOfScaledArts: Rad , vice: Rad , endDebt: Rad
-                               , sumOfAllFlapLots: Rad , dai: Map , sumOfAllFlapBids: Wad , mkrBalances: Map , ash: Rad) [klabel(LogMeasure), symbol]
+                     | Measure ( debt: Rad , vice: Rad ,controlDai: Map , potChi: Ray , potPie: Wad , sumOfScaledArts: Rad ,  endDebt: Rad
+                               , sumOfAllFlapLots: Rad , dai: Map , sumOfAllFlapBids: Wad , mkrBalances: Map , ash: Rad, sumOfDais: Rad )[klabel(LogMeasure), symbol]
  // -------------------------------------------------------------------------------------------------------------------------------------------------
-    rule [[ Measure() => Measure(... debt: DEBT, controlDai: controlDais(keys_list(VAT_DAIS)), potChi: POT_CHI, potPie: POT_PIE
-                                , sumOfScaledArts: calcSumOfScaledArts(VAT_ILKS, VAT_URNS), vice: VAT_VICE, endDebt: END_DEBT
+    rule [[ Measure() => Measure(... debt: DEBT, vice: VAT_VICE, controlDai: controlDais(keys_list(VAT_DAIS)), potChi: POT_CHI, potPie: POT_PIE
+                                , sumOfScaledArts: calcSumOfScaledArts(VAT_ILKS, VAT_URNS),  endDebt: END_DEBT
                                 , sumOfAllFlapLots: sumOfAllFlapLots(FLAP_BIDS), dai: VAT_DAIS, sumOfAllFlapBids: sumOfAllFlapBids(FLAP_BIDS)
-                                , mkrBalances: mkrBalances(), ash: VOW_ASH) ]]
+                                , mkrBalances: mkrBalances(), ash: VOW_ASH, sumOfDais: calcSumOfDais(VAT_DAIS)) ]]
          <vat-debt>  DEBT      </vat-debt>
          <vat-dai>   VAT_DAIS  </vat-dai>
          <vat-ilks>  VAT_ILKS  </vat-ilks>
@@ -149,6 +149,20 @@ Total backed debt (sum over each CDP's art times corresponding ilk's rate)
     rule calcSumOfScaledArtsAux( ListItem(ILK_ID) VAT_ILK_IDS , VAT_ILKS , VAT_URNS , TOTAL ) => calcSumOfScaledArtsAux(VAT_ILK_IDS, VAT_ILKS, VAT_URNS, TOTAL +Rad (sumOfUrnArt(VAT_URNS, ILK_ID, wad(0)) *Rate rate({VAT_ILKS[ILK_ID]}:>VatIlk)))
 ```
 
+Total ammount of Dai issued: Sum of `VAT_DAIS`
+
+```k
+    syntax Rad ::= calcSumOfDais(Map) [function]
+                 | calcSumOfDaisAux(List, Rad) [function]
+ // -----------------------------------------------------------
+    rule calcSumOfDais(VAT_DAIS) => calcSumOfDaisAux(values(VAT_DAIS), rad(0))
+
+    rule calcSumOfDaisAux( .List, TOTAL) => TOTAL
+
+    rule calcSumOfDaisAux( ListItem(AMOUNT) REST, SUM) => calcSumOfDaisAux(REST, SUM +Rad AMOUNT)
+
+```
+
 ### Flap Measures
 
 Sum of all lot values (i.e. total surplus dai up for auction).
@@ -189,6 +203,7 @@ A violation occurs if any of the properties above holds.
                            ( "Unauthorized Flap Kick"              |-> unAuthFlapKick                                )
                            ( "Total Bound on Debt"                 |-> totalDebtBounded(... dsr: ray(1))             )
                            ( "PotChi PotPie VatPot"                |-> potChiPieDai(... offset: rad(0))              )
+                           ( "Fundamental Dai Equation"            |-> fundamentalDaiEquation                        )
                            ( "Total Backed Debt Consistency"       |-> totalBackedDebtConsistency                    )
                            ( "Debt Constant After Thaw"            |-> debtConstantAfterThaw                         )
                            ( "Flap Dai Consistency"                |-> flapDaiConsistency                            )
@@ -267,6 +282,17 @@ A default `owise` rule is added which leaves the FSM state unchanged.
          <properties> ... VFSMID |-> (VFSM => derive(VFSM, E)) ... </properties>
 ```
 
+### Fundamental Equation of Dai
+
+Sum of Dai of all users should be equal to Vat.vice plus Sum of debts of all ilks of all users.
+
+```k
+    syntax ViolationFSM ::= "fundamentalDaiEquation"
+ // ------------------------------------------------
+    rule derive(fundamentalDaiEquation, Measure(... debt: DEBT, vice: VICE, sumOfDais: SUM))
+    => Violated(fundamentalDaiEquation) requires SUM =/=Rad (DEBT +Rad VICE)
+```
+
 ### Total Backed Debt Consistency
 
 Vat.debt minus Vat.vice should equal the sum over all ilks and CDP accounts of the CDP's art times the ilk's rate.
@@ -274,7 +300,7 @@ Vat.debt minus Vat.vice should equal the sum over all ilks and CDP accounts of t
 ```k
     syntax ViolationFSM ::= "totalBackedDebtConsistency"
  // ----------------------------------------------------
-    rule derive(totalBackedDebtConsistency, Measure(... debt: DEBT, sumOfScaledArts: SUM, vice: VICE)) => Violated(totalBackedDebtConsistency) requires SUM =/=Rad (DEBT -Rad VICE)
+    rule derive(totalBackedDebtConsistency, Measure(... debt: DEBT,  vice: VICE, sumOfScaledArts: SUM)) => Violated(totalBackedDebtConsistency) requires SUM =/=Rad (DEBT -Rad VICE)
 ```
 
 ### Debt Constant After Thaw
