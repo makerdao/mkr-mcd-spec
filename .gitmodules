@@ -10,3 +10,7 @@
 	path = tests/solidity-test/lib/dss-deploy
 	url = https://github.com/makerdao/dss-deploy
     ignore = untracked
+[submodule "deps/evm-semantics"]
+	path = deps/evm-semantics
+	url = https://github.com/kframework/evm-semantics
+	ignore = untracked
