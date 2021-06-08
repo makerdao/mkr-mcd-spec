@@ -231,9 +231,9 @@ This is quite permissive, and would allow the account to drain all your locked c
 ```k
     syntax Bool ::= wish(Address, Address, Map) [function, functional]
  // ------------------------------------------------------------------
-    rule wish(ADDRFROM, MSGSENDER,        _) => true                                   requires ADDRFROM ==K MSGSENDER
-    rule wish(ADDRFROM, MSGSENDER, CANADDRS) => MSGSENDER in {CANADDRS[ADDRFROM]}:>Set requires ADDRFROM in_keys(CANADDRS)
-    rule wish(       _,         _,        _) => false                                  [owise]
+    rule [wish.same]  : wish(ADDRFROM, MSGSENDER,        _) => true                                   requires ADDRFROM ==K MSGSENDER
+    rule [wish.check] : wish(ADDRFROM, MSGSENDER, CANADDRS) => MSGSENDER in {CANADDRS[ADDRFROM]}:>Set requires ADDRFROM in_keys(CANADDRS)
+    rule [wish.nope]  : wish(       _,         _,        _) => false                                  [owise]
 
     syntax VatStep ::= "hope" Address | "nope" Address
  // --------------------------------------------------
