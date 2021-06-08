@@ -33,7 +33,7 @@ export K_RELEASE
 K_OPTS += -Xmx8G
 export K_OPTS
 
-PATH:=$(INSTALL_BIN):$(CURDIR)/$(BUILD_DIR)$(KEVM_BIN):$(PATH)
+PATH:=$(KMCD_BIN):$(KMCD_LIB)/kevm/bin:$(PATH)
 export PATH
 
 PYTHONPATH:=$(K_LIB)
