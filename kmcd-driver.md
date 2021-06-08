@@ -18,7 +18,7 @@ module KMCD-DRIVER
           <msg-sender> 0:Address </msg-sender>
           <this> 0:Address </this>
           <current-time> 0:Int </current-time>
-          <call-stack> .List </call-stack>
+          <mcd-call-stack> .List </mcd-call-stack>
           <pre-state> .K </pre-state>
           <events> .List </events>
           <tx-log> .Transaction </tx-log>
@@ -85,7 +85,7 @@ Use `transact ...` for initiating top-level calls from a given user.
     rule <k> transact ADDR:Address MCD:MCDStep => pushState ~> call MCD ~> #end-transact ~> assert ~> dropState ... </k>
          <this> _ => ADDR </this>
          <msg-sender> _ => ADDR </msg-sender>
-         <call-stack> _ => .List </call-stack>
+         <mcd-call-stack> _ => .List </mcd-call-stack>
          <pre-state> _ => .K </pre-state>
          <tx-log> _ => Transaction(... acct: ADDR, call: MCD, events: .List, txException: false) </tx-log>
          <frame-events> _ => .List </frame-events>
@@ -110,7 +110,7 @@ Use `transact ...` for initiating top-level calls from a given user.
 Function Calls
 --------------
 
-Internal function calls utilize the `<call-stack>` to create call-frames and return values to their caller.
+Internal function calls utilize the `<mcd-call-stack>` to create call-frames and return values to their caller.
 On `exception`, the entire current call is discarded to trigger state roll-back (we assume no error handling on internal `exception`).
 
 ```k
@@ -126,13 +126,13 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
     rule <k> makecall MCD:MCDStep ~> CONT => MCD </k>
          <msg-sender> MSGSENDER => THIS </msg-sender>
          <this> THIS => contract(MCD) </this>
-         <call-stack> .List => ListItem(frame(MSGSENDER, EVENTS, CONT)) ... </call-stack>
+         <mcd-call-stack> .List => ListItem(frame(MSGSENDER, EVENTS, CONT)) ... </mcd-call-stack>
          <frame-events> EVENTS => ListItem(LogNote(MSGSENDER, MCD)) </frame-events>
 
     rule <k> . => CONT </k>
          <msg-sender> MSGSENDER => PREVSENDER </msg-sender>
          <this> _THIS => MSGSENDER </this>
-         <call-stack> ListItem(frame(PREVSENDER, PREVEVENTS, CONT)) => .List ... </call-stack>
+         <mcd-call-stack> ListItem(frame(PREVSENDER, PREVEVENTS, CONT)) => .List ... </mcd-call-stack>
          <tx-log> Transaction(... events: L => L EVENTS) </tx-log>
          <frame-events> EVENTS => PREVEVENTS </frame-events>
 ```
@@ -188,7 +188,7 @@ At the moment these are typically used in the codebase to check prerequisite con
 ### Exception Handling
 
 Whenever an exception occurs the state must be rolled back.
-During the regular execution of a step this implies popping the `call-stack` and rolling back `frame-events`.
+During the regular execution of a step this implies popping the `mcd-call-stack` and rolling back `frame-events`.
 
 ```k
     syntax Event ::= Exception ( Address , MCDStep ) [klabel(LogException), symbol]
@@ -201,12 +201,12 @@ During the regular execution of a step this implies popping the `call-stack` and
     rule <k> exception E ~> _ => exception E ~> CONT </k>
          <msg-sender> MSGSENDER => PREVSENDER </msg-sender>
          <this> _THIS => MSGSENDER </this>
-         <call-stack> ListItem(frame(PREVSENDER, PREVEVENTS, CONT)) => .List ... </call-stack>
+         <mcd-call-stack> ListItem(frame(PREVSENDER, PREVEVENTS, CONT)) => .List ... </mcd-call-stack>
          <tx-log> Transaction(... events: L => L EVENTS) </tx-log>
          <frame-events> EVENTS => PREVEVENTS </frame-events>
 
     rule <k> exception _MCDSTEP ~> dropState => popState ... </k>
-         <call-stack> .List </call-stack>
+         <mcd-call-stack> .List </mcd-call-stack>
 
     rule <k> exception _ ~> (assert         => .) ... </k> 
     rule <k> exception _ ~> (_:ModifierStep => .) ... </k>
