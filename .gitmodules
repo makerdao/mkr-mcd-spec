@@ -1,7 +1,3 @@
-[submodule "deps/k"]
-    path = deps/k
-    url = https://github.com/kframework/k
-    ignore = untracked
 [submodule "deps/dss"]
     path = deps/dss
     url = https://github.com/makerdao/dss
