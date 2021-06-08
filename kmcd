@@ -85,9 +85,11 @@ while [[ $# -gt 0 ]]; do
     case $arg in
         --random-seed) random_seed="$2" ; shift 2 ;;
         --backend)     backend="$2"     ; shift 2 ;;
+        --debug)       debug=true       ; shift   ;;
         *)             break                      ;;
     esac
 done
+! $debug || set -x
 backend_dir="${INSTALL_LIB}/$backend"
 
 # get the run file
