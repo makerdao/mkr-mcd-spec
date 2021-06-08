@@ -24,7 +24,7 @@ KMCD         := kmcd
 K_OPTS += -Xmx8G
 export K_OPTS
 
-PATH:=$(KMCD_BIN):$(KMCD_LIB)/kevm/bin:$(KMCD_LIB)/kevm/lib/kevm/kframework/bin:$(PATH)
+PATH:=$(CURDIR)/$(KMCD_BIN):$(CURDIR)/$(KMCD_LIB)/kevm/bin:$(CURDIR)/$(KMCD_LIB)/kevm/lib/kevm/kframework/bin:$(PATH)
 export PATH
 
 PYTHONPATH:=$(KMCD_LIB)/kevm/lib/kevm/kframework/lib/kframework:/usr/lib/kframework:$(PYTHONPATH)
