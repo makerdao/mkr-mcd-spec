@@ -21,22 +21,13 @@ KMCD_INCLUDE := $(KMCD_LIB)/include
 KMCD_K_BIN   := $(KMCD_LIB)/kframework/bin
 KMCD         := kmcd
 
-ifneq (,$(wildcard $(K_SUBMODULE)/k-distribution/target/release/k/bin/*))
-    K_RELEASE ?= $(abspath $(K_SUBMODULE)/k-distribution/target/release/k)
-else
-    K_RELEASE ?= $(dir $(shell which kompile))..
-endif
-K_BIN := $(K_RELEASE)/bin
-K_LIB := $(K_RELEASE)/lib/kframework
-export K_RELEASE
-
 K_OPTS += -Xmx8G
 export K_OPTS
 
-PATH:=$(KMCD_BIN):$(KMCD_LIB)/kevm/bin:$(PATH)
+PATH:=$(KMCD_BIN):$(KMCD_LIB)/kevm/bin:$(KMCD_LIB)/kevm/lib/kevm/kframework/bin:$(PATH)
 export PATH
 
-PYTHONPATH:=$(K_LIB)
+PYTHONPATH:=$(KMCD_LIB)/kevm/lib/kevm/kframework/lib/kframework:/usr/lib/kframework:$(PYTHONPATH)
 export PYTHONPATH
 
 SOLIDITY_TESTS := tests/solidity-test
