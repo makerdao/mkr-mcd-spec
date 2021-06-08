@@ -4,6 +4,7 @@ FROM runtimeverificationinc/kframework-evm-semantics:ubuntu-bionic-${KEVM_COMMIT
 RUN    apt-get update        \
     && apt-get upgrade --yes \
     && apt-get install --yes \
+        clang-8              \
         cmake                \
         curl                 \
         libprocps-dev        \
