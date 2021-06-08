@@ -33,7 +33,7 @@ export K_RELEASE
 K_OPTS += -Xmx8G
 export K_OPTS
 
-PATH:=$(CURDIR)/$(BUILD_DIR)$(KEVM_BIN):$(PATH)
+PATH:=$(INSTALL_BIN):$(CURDIR)/$(BUILD_DIR)$(KEVM_BIN):$(PATH)
 export PATH
 
 PYTHONPATH:=$(K_LIB)
@@ -181,7 +181,6 @@ test-solidity: $(patsubst %, $(SOLIDITY_TESTS)/src/%.t.sol, 01 02 03 04 05 06 07
 ### Testing Parameters
 
 TEST_BACKEND := llvm
-KMCD         := ./kmcd
 CHECK        := git --no-pager diff --no-index --ignore-all-space -R
 
 RANDOM_TEST_RUNS  := 5
