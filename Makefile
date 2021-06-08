@@ -27,7 +27,7 @@ export K_OPTS
 PATH:=$(CURDIR)/$(KMCD_BIN):$(CURDIR)/$(KMCD_LIB)/kevm/bin:$(CURDIR)/$(KMCD_LIB)/kevm/lib/kevm/kframework/bin:/usr/lib/kevm/kframework/bin:$(PATH)
 export PATH
 
-PYTHONPATH:=$(KMCD_LIB)/kevm/lib/kevm/kframework/lib/kframework:/usr/lib/kframework:$(PYTHONPATH)
+PYTHONPATH:=$(KMCD_LIB)/kevm/lib/kevm/kframework/lib/kframework:/usr/lib/kevm/kframework/lib/kframework:/usr/lib/kframework:$(PYTHONPATH)
 export PYTHONPATH
 
 SOLIDITY_TESTS := tests/solidity-test
