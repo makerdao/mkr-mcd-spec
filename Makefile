@@ -66,25 +66,25 @@ deps:
 # Building
 # --------
 
-SOURCE_FILES       := cat          \
-                      dai          \
-                      end          \
-                      fixed-int    \
-                      flap         \
-                      flip         \
-                      flop         \
-                      gem          \
-                      join         \
-                      jug          \
-                      kmcd         \
-                      kmcd-data    \
-                      kmcd-driver  \
-                      kmcd-prelude \
-                      kmcd-props   \
-                      pot          \
-                      spot         \
-                      vat          \
-                      vow
+SOURCE_FILES := cat          \
+                dai          \
+                end          \
+                fixed-int    \
+                flap         \
+                flip         \
+                flop         \
+                gem          \
+                join         \
+                jug          \
+                kmcd         \
+                kmcd-data    \
+                kmcd-driver  \
+                kmcd-prelude \
+                kmcd-props   \
+                pot          \
+                spot         \
+                vat          \
+                vow
 
 includes = $(patsubst %, $(KMCD_INCLUDE)/kframework/%.md, $(SOURCE_FILES))
 
@@ -124,7 +124,7 @@ llvm_main_module   := KMCD-GEN
 llvm_syntax_module := $(llvm_main_module)
 llvm_main_file     := kmcd-prelude.md
 llvm_main_filename := $(basename $(notdir $(llvm_main_file)))
-llvm_kompiled      := $(llvm_dir)/$(llvm_main_file)-kompiled/interpreter
+llvm_kompiled      := $(llvm_dir)/$(llvm_main_filename)-kompiled/interpreter
 
 build-llvm: $(KMCD_LIB)/$(llvm_kompiled) $(KMCD_BIN)/$(KMCD)
 
@@ -143,7 +143,7 @@ haskell_main_module   := KMCD-GEN
 haskell_syntax_module := $(haskell_main_module)
 haskell_main_file     := kmcd-prelude.md
 haskell_main_filename := $(basename $(notdir $(llvm_main_file)))
-haskell_kompiled      := $(haskell_dir)/$(haskell_main_file)-kompiled/definition.kore
+haskell_kompiled      := $(haskell_dir)/$(haskell_main_filename)-kompiled/definition.kore
 
 build-haskell: $(KMCD_LIB)/$(haskell_kompiled) $(KMCD_BIN)/$(KMCD)
 
