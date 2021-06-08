@@ -1,16 +1,25 @@
 # Settings
 # --------
 
-BUILD_DIR:=.build
-DEFN_DIR:=$(BUILD_DIR)/defn
+BUILD_DIR := .build
+DEPS_DIR  := deps
 
 INSTALL_PREFIX  := /usr
 INSTALL_BIN     ?= $(INSTALL_PREFIX)/bin
 INSTALL_LIB     ?= $(INSTALL_PREFIX)/lib/kmcd
 INSTALL_INCLUDE ?= $(INSTALL_LIB)/include
 
-DEPS_DIR    := deps
-K_SUBMODULE := $(DEPS_DIR)/k
+KEVM_SUBMODULE      := $(DEPS_DIR)/evm-semantics
+KEVM_INSTALL_PREFIX := $(INSTALL_LIB)/kevm
+KEVM_BIN            := $(KEVM_INSTALL_PREFIX)/bin
+KEVM_MAKE           := $(MAKE) --directory $(KEVM_SUBMODULE) INSTALL_PREFIX=$(KEVM_INSTALL_PREFIX)
+KEVM                := kevm
+
+KMCD_BIN     := $(BUILD_DIR)$(INSTALL_BIN)
+KMCD_LIB     := $(BUILD_DIR)$(INSTALL_LIB)
+KMCD_INCLUDE := $(KMCD_LIB)/include
+KMCD_K_BIN   := $(KMCD_LIB)/kframework/bin
+KMCD         := kmcd
 
 ifneq (,$(wildcard $(K_SUBMODULE)/k-distribution/target/release/k/bin/*))
     K_RELEASE ?= $(abspath $(K_SUBMODULE)/k-distribution/target/release/k)
@@ -23,12 +32,6 @@ export K_RELEASE
 
 K_OPTS += -Xmx8G
 export K_OPTS
-
-KEVM_SUBMODULE      := $(DEPS_DIR)/evm-semantics
-KEVM_INSTALL_PREFIX := $(INSTALL_LIB)/kevm
-KEVM_BIN            := $(KEVM_INSTALL_PREFIX)/bin
-KEVM_MAKE           := $(MAKE) --directory $(KEVM_SUBMODULE) INSTALL_PREFIX=$(KEVM_INSTALL_PREFIX)
-KEVM                := kevm
 
 PATH:=$(CURDIR)/$(BUILD_DIR)$(KEVM_BIN):$(PATH)
 export PATH
@@ -83,16 +86,15 @@ SOURCE_FILES       := cat          \
                       vat          \
                       vow
 
-EXTRA_SOURCE_FILES :=
-
-ALL_FILES          := $(patsubst %, %.md, $(SOURCE_FILES)) $(EXTRA_SOURCE_FILES)
+includes = $(patsubst %, $(KMCD_INCLUDE)/kframework/%.md, $(SOURCE_FILES))
 
 tangle_concrete := k & (concrete | ! symbolic)
 tangle_symbolic := k & (symbolic | ! concrete)
 
 build: build-llvm build-haskell
 
-KOMPILE_OPTS += --emit-json
+KOMPILE_INCLUDES = $(KMCD_INCLUDE)/kframework $(INSTALL_INCLUDE)/kframework
+KOMPILE_OPTS    += --emit-json $(addprefix -I , $(KOMPILE_INCLUDES))
 
 ifneq (,$(RELEASE))
     KOMPILE_OPTS += -O3
@@ -107,42 +109,50 @@ endif
 
 KOMPILE_HASKELL_OPTS :=
 
+$(KMCD_BIN)/$(KMCD): $(KMCD)
+	@mkdir -p $(dir $@)
+	install $< $@
+
+$(KMCD_INCLUDE)/kframework/%.md: %.md
+	@mkdir -p $(dir $@)
+	install $< $@
+
 # LLVM Backend
 
+llvm_dir           := llvm
 llvm_main_module   := KMCD-GEN
 llvm_syntax_module := $(llvm_main_module)
-llvm_main_file     := kmcd-prelude
-llvm_dir           := $(DEFN_DIR)/llvm
-llvm_files         := $(ALL_FILES)
+llvm_main_file     := kmcd-prelude.md
+llvm_main_filename := $(basename $(notdir $(llvm_main_file)))
 llvm_kompiled      := $(llvm_dir)/$(llvm_main_file)-kompiled/interpreter
 
-build-llvm: $(llvm_kompiled)
+build-llvm: $(KMCD_LIB)/$(llvm_kompiled) $(KMCD_BIN)/$(KMCD)
 
-$(llvm_kompiled): $(llvm_files)
-	kevm kompile --backend llvm $(llvm_main_file).md              \
-	    --md-selector "$(tangle_concrete)"                        \
+$(KMCD_LIB)/$(llvm_kompiled): $(includes)
+	$(KEVM) kompile --backend llvm $(llvm_main_file)              \
+	    --directory $(KMCD_LIB)/$(llvm_dir)                       \
 	    --main-module $(llvm_main_module)                         \
 	    --syntax-module $(llvm_syntax_module)                     \
-	    --directory $(llvm_dir) -I $(CURDIR)                      \
+	    --md-selector "$(tangle_concrete)"                        \
 	    $(KOMPILE_OPTS) $(addprefix -ccopt ,$(KOMPILE_LLVM_OPTS))
 
 # Haskell Backend
 
+haskell_dir           := haskell
 haskell_main_module   := KMCD-GEN
 haskell_syntax_module := $(haskell_main_module)
-haskell_main_file     := kmcd-prelude
-haskell_dir           := $(DEFN_DIR)/haskell
-haskell_files         := $(ALL_FILES)
+haskell_main_file     := kmcd-prelude.md
+haskell_main_filename := $(basename $(notdir $(llvm_main_file)))
 haskell_kompiled      := $(haskell_dir)/$(haskell_main_file)-kompiled/definition.kore
 
-build-haskell: $(haskell_kompiled)
+build-haskell: $(KMCD_LIB)/$(haskell_kompiled) $(KMCD_BIN)/$(KMCD)
 
-$(haskell_kompiled): $(haskell_files)
-	kevm kompile --backend haskell $(haskell_main_file).md \
-	    --md-selector "$(tangle_symbolic)"                 \
+$(KMCD_LIB)/$(haskell_kompiled): $(includes)
+	$(KEVM) kompile --backend haskell $(haskell_main_file) \
+	    --directory $(KMCD_LIB)/$(haskell_dir)             \
 	    --main-module $(haskell_main_module)               \
 	    --syntax-module $(haskell_syntax_module)           \
-	    --directory $(haskell_dir) -I $(CURDIR)            \
+	    --md-selector "$(tangle_symbolic)"                 \
 	    $(KOMPILE_OPTS) $(KOMPILE_HASKELL_OPTS)
 
 # Test
