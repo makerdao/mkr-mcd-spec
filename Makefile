@@ -24,13 +24,11 @@ export K_RELEASE
 K_OPTS += -Xmx8G
 export K_OPTS
 
-
 KEVM_SUBMODULE      := $(DEPS_DIR)/evm-semantics
 KEVM_INSTALL_PREFIX := $(INSTALL_LIB)/kevm
 KEVM_BIN            := $(KEVM_INSTALL_PREFIX)/bin
 KEVM_MAKE           := $(MAKE) --directory $(KEVM_SUBMODULE) INSTALL_PREFIX=$(KEVM_INSTALL_PREFIX)
 KEVM                := kevm
-
 
 PATH:=$(CURDIR)/$(BUILD_DIR)$(KEVM_BIN):$(PATH)
 export PATH
