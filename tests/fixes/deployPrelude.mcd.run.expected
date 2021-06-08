@@ -17,9 +17,9 @@
         <current-time>
           0
         </current-time>
-        <call-stack>
+        <mcd-call-stack>
           .List
-        </call-stack>
+        </mcd-call-stack>
         <pre-state>
           .
         </pre-state>

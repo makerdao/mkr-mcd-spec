@@ -17,9 +17,9 @@
         <current-time>
           0
         </current-time>
-        <call-stack>
+        <mcd-call-stack>
           .List
-        </call-stack>
+        </mcd-call-stack>
         <pre-state>
           .
         </pre-state>
@@ -235,10 +235,10 @@
               .Set
             </gem-wards>
             <gem-balances>
-              Vow |-> FInt ( 0 , 1000000000000000000 )
-              Flap |-> FInt ( 0 , 1000000000000000000 )
               "Bobby" |-> FInt ( 0 , 1000000000000000000 )
               "Alice" |-> FInt ( 0 , 1000000000000000000 )
+              Flap |-> FInt ( 0 , 1000000000000000000 )
+              Vow |-> FInt ( 0 , 1000000000000000000 )
             </gem-balances>
           </gem> <gem>
             <gem-id>
@@ -248,9 +248,9 @@
               .Set
             </gem-wards>
             <gem-balances>
-              GemJoin "gold" |-> FInt ( 21000000000000000000 , 1000000000000000000 )
               "Bobby" |-> FInt ( 9000000000000000000 , 1000000000000000000 )
               "Alice" |-> FInt ( 10000000000000000000 , 1000000000000000000 )
+              GemJoin "gold" |-> FInt ( 21000000000000000000 , 1000000000000000000 )
             </gem-balances>
           </gem>
         </gems>
@@ -370,8 +370,8 @@
             "Alice" |-> SetItem ( End )
             SetItem ( Pot )
             SetItem ( Flip "gold" )
-            SetItem ( Flap )
             SetItem ( Flop )
+            SetItem ( Flap )
             "Bobby" |-> SetItem ( End )
             SetItem ( Pot )
             SetItem ( Flip "gold" )
