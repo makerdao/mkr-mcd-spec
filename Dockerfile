@@ -7,8 +7,12 @@ RUN    apt-get update        \
         clang-8              \
         cmake                \
         curl                 \
-        libprocps-dev        \
         jq                   \
+        libgmp-dev           \
+        libjemalloc-dev      \
+        libmpfr-dev          \
+        libprocps-dev        \
+        lld-8                \
         pandoc               \
         pkg-config           \
         python3              \
