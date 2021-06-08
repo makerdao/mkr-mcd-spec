@@ -9,7 +9,11 @@ defn_dir="${KMCD_DEFN_DIR:-$build_dir/defn}"
 lib_dir="$build_dir/local/lib"
 k_release_dir="${K_RELEASE:-$kmcd_dir/deps/k/k-distribution/target/release/k}"
 
-export PATH="$k_release_dir/lib/native/linux:$k_release_dir/lib/native/linux64:$k_release_dir/bin/:$PATH"
+INSTALL_BIN=${build_dir}/usr/bin/
+INSTALL_LIB=${INSTALL_BIN}/../lib/kmcd
+KEVM_BIN=${INSTALL_LIB}/kevm/bin
+
+export PATH="$k_release_dir/lib/native/linux:$k_release_dir/lib/native/linux64:$k_release_dir/bin/:${KEVM_BIN}:$PATH"
 export LD_LIBRARY_PATH="$k_release_dir/lib/native/linux64:$lib_dir:${LD_LIBRARY_PATH:-}"
 
 test_logs="$build_dir/logs"

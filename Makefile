@@ -4,6 +4,11 @@
 BUILD_DIR:=.build
 DEFN_DIR:=$(BUILD_DIR)/defn
 
+INSTALL_PREFIX  := /usr
+INSTALL_BIN     ?= $(INSTALL_PREFIX)/bin
+INSTALL_LIB     ?= $(INSTALL_PREFIX)/lib/kmcd
+INSTALL_INCLUDE ?= $(INSTALL_LIB)/include
+
 DEPS_DIR    := deps
 K_SUBMODULE := $(DEPS_DIR)/k
 
@@ -19,7 +24,15 @@ export K_RELEASE
 K_OPTS += -Xmx8G
 export K_OPTS
 
-PATH:=$(K_BIN):$(PATH)
+
+KEVM_SUBMODULE      := $(DEPS_DIR)/evm-semantics
+KEVM_INSTALL_PREFIX := $(INSTALL_LIB)/kevm
+KEVM_BIN            := $(KEVM_INSTALL_PREFIX)/bin
+KEVM_MAKE           := $(MAKE) --directory $(KEVM_SUBMODULE) INSTALL_PREFIX=$(KEVM_INSTALL_PREFIX)
+KEVM                := kevm
+
+
+PATH:=$(CURDIR)/$(BUILD_DIR)$(KEVM_BIN):$(PATH)
 export PATH
 
 PYTHONPATH:=$(K_LIB)
@@ -44,13 +57,10 @@ clean-test:
 # Dependencies
 # ------------
 
-K_JAR := $(K_SUBMODULE)/k-distribution/target/release/k/lib/java/kernel-1.0-SNAPSHOT.jar
-
-deps: deps-k
-deps-k: $(K_JAR)
-
-$(K_JAR):
-	cd $(K_SUBMODULE) && mvn package -DskipTests
+deps:
+	$(KEVM_MAKE) -j4 deps
+	$(KEVM_MAKE) -j4 build-llvm build-haskell build-lemmas
+	$(KEVM_MAKE) -j4 install DESTDIR=$(CURDIR)/$(BUILD_DIR)
 
 # Building
 # --------
@@ -99,12 +109,6 @@ endif
 
 KOMPILE_HASKELL_OPTS :=
 
-KOMPILE_LLVM    := kompile --backend llvm    --md-selector "$(tangle_concrete)" \
-                   $(KOMPILE_OPTS) $(addprefix -ccopt ,$(KOMPILE_LLVM_OPTS))
-
-KOMPILE_HASKELL := kompile --backend haskell --md-selector "$(tangle_symbolic)" \
-                   $(KOMPILE_OPTS) $(KOMPILE_HASKELL_OPTS)
-
 # LLVM Backend
 
 llvm_main_module   := KMCD-GEN
@@ -117,10 +121,12 @@ llvm_kompiled      := $(llvm_dir)/$(llvm_main_file)-kompiled/interpreter
 build-llvm: $(llvm_kompiled)
 
 $(llvm_kompiled): $(llvm_files)
-	$(KOMPILE_LLVM) $(llvm_main_file).md          \
-	        --main-module $(llvm_main_module)     \
-	        --syntax-module $(llvm_syntax_module) \
-	        --directory $(llvm_dir) -I $(CURDIR)
+	kevm kompile --backend llvm $(llvm_main_file).md              \
+	    --md-selector "$(tangle_concrete)"                        \
+	    --main-module $(llvm_main_module)                         \
+	    --syntax-module $(llvm_syntax_module)                     \
+	    --directory $(llvm_dir) -I $(CURDIR)                      \
+	    $(KOMPILE_OPTS) $(addprefix -ccopt ,$(KOMPILE_LLVM_OPTS))
 
 # Haskell Backend
 
@@ -134,10 +140,12 @@ haskell_kompiled      := $(haskell_dir)/$(haskell_main_file)-kompiled/definition
 build-haskell: $(haskell_kompiled)
 
 $(haskell_kompiled): $(haskell_files)
-	$(KOMPILE_HASKELL) $(haskell_main_file).md       \
-	        --main-module $(haskell_main_module)     \
-	        --syntax-module $(haskell_syntax_module) \
-	        --directory $(haskell_dir) -I $(CURDIR)
+	kevm kompile --backend haskell $(haskell_main_file).md \
+	    --md-selector "$(tangle_symbolic)"                 \
+	    --main-module $(haskell_main_module)               \
+	    --syntax-module $(haskell_syntax_module)           \
+	    --directory $(haskell_dir) -I $(CURDIR)            \
+	    $(KOMPILE_OPTS) $(KOMPILE_HASKELL_OPTS)
 
 # Test
 # ----
