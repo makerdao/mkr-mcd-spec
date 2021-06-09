@@ -79,9 +79,6 @@ SOURCE_FILES := cat          \
 
 includes = $(patsubst %, $(KMCD_INCLUDE)/kframework/%.md, $(SOURCE_FILES))
 
-tangle_concrete := k & (concrete | ! symbolic)
-tangle_symbolic := k & (symbolic | ! concrete)
-
 build: build-llvm build-haskell
 
 KOMPILE_INCLUDES = $(KMCD_INCLUDE)/kframework $(INSTALL_INCLUDE)/kframework
@@ -124,7 +121,6 @@ $(KMCD_LIB)/$(llvm_kompiled): $(includes)
 	    --directory $(KMCD_LIB)/$(llvm_dir)                       \
 	    --main-module $(llvm_main_module)                         \
 	    --syntax-module $(llvm_syntax_module)                     \
-	    --md-selector "$(tangle_concrete)"                        \
 	    $(KOMPILE_OPTS) $(addprefix -ccopt ,$(KOMPILE_LLVM_OPTS))
 
 # Haskell Backend
@@ -143,7 +139,6 @@ $(KMCD_LIB)/$(haskell_kompiled): $(includes)
 	    --directory $(KMCD_LIB)/$(haskell_dir)             \
 	    --main-module $(haskell_main_module)               \
 	    --syntax-module $(haskell_syntax_module)           \
-	    --md-selector "$(tangle_symbolic)"                 \
 	    $(KOMPILE_OPTS) $(KOMPILE_HASKELL_OPTS)
 
 # Test
