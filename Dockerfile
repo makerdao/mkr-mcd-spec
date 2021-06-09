@@ -1,13 +1,18 @@
-ARG K_COMMIT
-FROM runtimeverificationinc/kframework-k:ubuntu-bionic-${K_COMMIT}
+ARG KEVM_COMMIT
+FROM runtimeverificationinc/kframework-evm-semantics:ubuntu-bionic-${KEVM_COMMIT}
 
 RUN    apt-get update        \
     && apt-get upgrade --yes \
     && apt-get install --yes \
+        clang-8              \
         cmake                \
         curl                 \
-        libprocps-dev        \
         jq                   \
+        libgmp-dev           \
+        libjemalloc-dev      \
+        libmpfr-dev          \
+        libprocps-dev        \
+        lld-8                \
         pandoc               \
         pkg-config           \
         python3              \

@@ -29,7 +29,7 @@ def assertNum():
 
 MCD_main_file_name = 'kmcd-prelude'
 
-MCD_definition_llvm_dir      = '.build/defn/llvm'
+MCD_definition_llvm_dir      = '.build/usr/lib/kmcd/llvm'
 MCD_definition_llvm_kompiled = MCD_definition_llvm_dir    + '/' + MCD_main_file_name + '-kompiled/compiled.json'
 MCD_definition_llvm          = pyk.readKastTerm(MCD_definition_llvm_kompiled)
 
