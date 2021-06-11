@@ -32,6 +32,9 @@ MCD Simulations
 ---------------
 
 ```k
+    syntax EthereumSimulation ::= MCDSteps
+ // --------------------------------------
+
     syntax MCDSteps ::= ".MCDSteps" | MCDStep MCDSteps
  // --------------------------------------------------
     rule <k> .MCDSteps => . ... </k>
