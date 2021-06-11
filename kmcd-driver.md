@@ -4,16 +4,17 @@ KMCD Driver
 This module defines common state and control flow between all the other KMCD modules.
 
 ```k
+requires "evm.md"
 requires "kmcd-data.md"
 
 module KMCD-DRIVER
     imports KMCD-DATA
     imports MAP
     imports STRING
+    imports EVM
 
     configuration
         <kmcd-driver>
-          <k> $PGM:MCDSteps </k>
           <return-value> .K </return-value>
           <msg-sender> 0:Address </msg-sender>
           <this> 0:Address </this>
@@ -23,6 +24,7 @@ module KMCD-DRIVER
           <events> .List </events>
           <tx-log> .Transaction </tx-log>
           <frame-events> .List </frame-events>
+          <kevm/>
         </kmcd-driver>
 ```
 
