@@ -82,10 +82,7 @@ includes = $(patsubst %, $(KMCD_INCLUDE)/kframework/%.md, $(SOURCE_FILES))
 build: build-llvm build-haskell
 
 KOMPILE_INCLUDES = $(KMCD_INCLUDE)/kframework $(INSTALL_INCLUDE)/kframework
-KOMPILE_OPTS    += --emit-json $(addprefix -I , $(KOMPILE_INCLUDES))
-
-tangle_concrete := k & ( ( ! ( symbolic | nobytes ) ) | concrete | bytes   )
-tangle_symbolic := k & ( ( ! ( concrete | nobytes ) ) | symbolic | bytes   )
+KOMPILE_OPTS    += $(addprefix -I , $(KOMPILE_INCLUDES))
 
 ifneq (,$(RELEASE))
     KOMPILE_OPTS += -O3
