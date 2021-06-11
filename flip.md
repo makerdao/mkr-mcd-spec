@@ -200,12 +200,12 @@ Flip Semantics
 
     syntax FlipStep ::= "tick" Int
  // ------------------------------
-    rule <k> Flip ILK_ID . tick ID => . ... </k>
+    rule <k> Flip ILK_ID . tick BID_ID => . ... </k>
          <current-time> NOW </current-time>
          <flip>
            <flip-ilk> ILK_ID </flip-ilk>
            <flip-tau> TAU </flip-tau>
-           <flip-bids> ... ID |-> FlipBid(... tic: TIC, end: END => NOW +Int TAU) ... </flip-bids>
+           <flip-bids> ... BID_ID |-> FlipBid(... tic: TIC, end: END => NOW +Int TAU) ... </flip-bids>
            ...
          </flip>
       requires END  <Int NOW
@@ -213,7 +213,7 @@ Flip Semantics
 
     syntax FlipStep ::= "tend" Int Wad Rad
  // --------------------------------------
-    rule <k> Flip ILK_ID . tend ID LOT BID
+    rule <k> Flip ILK_ID . tend BID_ID LOT BID
           => #if MSGSENDER =/=K GUY #then call FLIP_VAT . move MSGSENDER GUY BID' #else . #fi
           ~> call FLIP_VAT . move MSGSENDER GAL (BID -Rad BID')
          ...
@@ -225,7 +225,7 @@ Flip Semantics
            <flip-vat> FLIP_VAT </flip-vat>
            <flip-beg> BEG </flip-beg>
            <flip-ttl> TTL </flip-ttl>
-           <flip-bids> ... ID |-> FlipBid(... bid: BID' => BID, lot: LOT', guy: GUY => MSGSENDER, tic: TIC => NOW +Int TTL, end: END, gal: GAL, tab: TAB) ... </flip-bids>
+           <flip-bids> ... BID_ID |-> FlipBid(... bid: BID' => BID, lot: LOT', guy: GUY => MSGSENDER, tic: TIC => NOW +Int TTL, end: END, gal: GAL, tab: TAB) ... </flip-bids>
            ...
          </flip>
       requires LOT >=Wad wad(0)
@@ -240,7 +240,7 @@ Flip Semantics
 
     syntax FlipStep ::= "dent" Int Wad Rad
  // --------------------------------------
-    rule <k> Flip ILK_ID . dent ID LOT BID
+    rule <k> Flip ILK_ID . dent BID_ID LOT BID
           => #if MSGSENDER =/=K GUY #then call FLIP_VAT . move MSGSENDER GUY BID #else . #fi
           ~> call Vat.flux ILK_ID THIS USR (LOT' -Wad LOT)
          ...
@@ -253,7 +253,7 @@ Flip Semantics
            <flip-vat> FLIP_VAT </flip-vat>
            <flip-beg> BEG </flip-beg>
            <flip-ttl> TTL </flip-ttl>
-           <flip-bids> ... ID |-> FlipBid(... bid: BID', lot: LOT' => LOT, guy: GUY => MSGSENDER, tic: TIC => NOW +Int TTL, end: END, usr: USR, tab: TAB) ... </flip-bids>
+           <flip-bids> ... BID_ID |-> FlipBid(... bid: BID', lot: LOT' => LOT, guy: GUY => MSGSENDER, tic: TIC => NOW +Int TTL, end: END, usr: USR, tab: TAB) ... </flip-bids>
            ...
          </flip>
       requires LOT >=Wad wad(0)
@@ -268,13 +268,13 @@ Flip Semantics
 
     syntax FlipStep ::= "deal" Int
  // ------------------------------
-    rule <k> Flip ILK_ID . deal ID => call FLIP_VAT . flux ILK_ID THIS GUY LOT ... </k>
+    rule <k> Flip ILK_ID . deal BID_ID => call FLIP_VAT . flux ILK_ID THIS GUY LOT ... </k>
          <this> THIS </this>
          <current-time> NOW </current-time>
          <flip>
            <flip-ilk> ILK_ID </flip-ilk>
            <flip-vat> FLIP_VAT </flip-vat>
-           <flip-bids> ... ID |-> FlipBid(... lot: LOT, guy: GUY, tic: TIC, end: END) => .Map ... </flip-bids>
+           <flip-bids> ... BID_ID |-> FlipBid(... lot: LOT, guy: GUY, tic: TIC, end: END) => .Map ... </flip-bids>
            ...
          </flip>
       requires TIC =/=Int 0
@@ -282,7 +282,7 @@ Flip Semantics
 
     syntax FlipAuthStep ::= "yank" Int
  // ----------------------------------
-    rule <k> Flip ILK_ID . yank ID
+    rule <k> Flip ILK_ID . yank BID_ID
           => call FLIP_VAT . flux ILK_ID THIS MSGSENDER LOT
           ~> call FLIP_VAT . move MSGSENDER GUY BID
          ...
@@ -292,7 +292,7 @@ Flip Semantics
          <flip>
            <flip-ilk> ILK_ID </flip-ilk>
            <flip-vat> FLIP_VAT </flip-vat>
-           <flip-bids> ... ID |-> FlipBid(... bid: BID, lot: LOT, guy: GUY, tab: TAB) => .Map ... </flip-bids>
+           <flip-bids> ... BID_ID |-> FlipBid(... bid: BID, lot: LOT, guy: GUY, tab: TAB) => .Map ... </flip-bids>
            ...
          </flip>
       requires GUY =/=K 0 andBool BID <Rad TAB

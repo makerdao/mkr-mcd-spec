@@ -161,9 +161,9 @@ Flap Semantics
 ```k
     syntax FlapStep ::= "tick" Int [klabel(FlapTick),symbol]
  // --------------------------------------------------------
-    rule <k> Flap . tick ID => . ... </k>
+    rule <k> Flap . tick BID_ID => . ... </k>
          <current-time> NOW </current-time>
-         <flap-bids> ... ID |-> FlapBid(... tic: 0, end: END => NOW +Int TAU) ... </flap-bids>
+         <flap-bids> ... BID_ID |-> FlapBid(... tic: 0, end: END => NOW +Int TAU) ... </flap-bids>
          <flap-tau> TAU </flap-tau>
       requires END <Int NOW
 ```
@@ -174,7 +174,7 @@ Flap Semantics
 ```k
     syntax FlapStep ::= "tend" Int Rad Wad
  // --------------------------------------
-    rule <k> Flap . tend ID LOT BID
+    rule <k> Flap . tend BID_ID LOT BID
           => #if MSGSENDER =/=K GUY #then call FLAP_MKR . move MSGSENDER GUY BID' #else . #fi
           ~> call FLAP_MKR . move MSGSENDER THIS (BID -Wad BID')
          ...
@@ -183,7 +183,7 @@ Flap Semantics
          <this> THIS </this>
          <current-time> NOW </current-time>
          <flap-mkr> FLAP_MKR:GemContract </flap-mkr>
-         <flap-bids> ... ID |-> FlapBid(... bid: BID' => BID, lot: LOT', guy: GUY => MSGSENDER, tic: TIC => TIC +Int TTL, end: END) ... </flap-bids>
+         <flap-bids> ... BID_ID |-> FlapBid(... bid: BID' => BID, lot: LOT', guy: GUY => MSGSENDER, tic: TIC => TIC +Int TTL, end: END) ... </flap-bids>
          <flap-live> true </flap-live>
          <flap-ttl> TTL </flap-ttl>
          <flap-beg> BEG </flap-beg>
@@ -202,7 +202,7 @@ Flap Semantics
 ```k
     syntax FlapStep ::= "deal" Int [klabel(FlapDeal),symbol]
  // --------------------------------------------------------
-    rule <k> Flap . deal ID
+    rule <k> Flap . deal BID_ID
           => call FLAP_VAT . move THIS GUY LOT
           ~> call FLAP_MKR . burn THIS BID
          ...
@@ -211,7 +211,7 @@ Flap Semantics
          <current-time> NOW </current-time>
          <flap-vat> FLAP_VAT:VatContract </flap-vat>
          <flap-mkr> FLAP_MKR:GemContract </flap-mkr>
-         <flap-bids> ... ID |-> FlapBid(... bid: BID, lot: LOT, guy: GUY, tic: TIC, end: END) => .Map ... </flap-bids>
+         <flap-bids> ... BID_ID |-> FlapBid(... bid: BID, lot: LOT, guy: GUY, tic: TIC, end: END) => .Map ... </flap-bids>
          <flap-live> true </flap-live>
       requires TIC =/=Int 0
        andBool (TIC <Int NOW orBool END <Int NOW)
@@ -237,10 +237,10 @@ Flap Semantics
 ```k
     syntax FlapStep ::= "yank" Int [klabel(FlapYank), symbol]
  // ---------------------------------------------------------
-    rule <k> Flap . yank ID => call FLAP_MKR . move THIS GUY BID ... </k>
+    rule <k> Flap . yank BID_ID => call FLAP_MKR . move THIS GUY BID ... </k>
          <this> THIS </this>
          <flap-mkr> FLAP_MKR:GemContract </flap-mkr>
-         <flap-bids> ... ID |-> FlapBid(... bid: BID, guy: GUY) => .Map ... </flap-bids>
+         <flap-bids> ... BID_ID |-> FlapBid(... bid: BID, guy: GUY) => .Map ... </flap-bids>
          <flap-live> false </flap-live>
 ```
 
