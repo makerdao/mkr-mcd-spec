@@ -27,7 +27,8 @@ pretty_diff() {
 
 run_krun() {
     export K_OPTS=-Xss500m
-    krun --directory "$backend_dir" "$run_file" -cRANDOMSEED=$cRANDOMSEED -pRANDOMSEED='cat' "$@"
+    kevm run --backend "${backend}" --backend-dir "${backend_dir}" "${run_file}" \
+        -cRANDOMSEED=$cRANDOMSEED -pRANDOMSEED='cat' "$@"
 }
 
 run_kast() {
