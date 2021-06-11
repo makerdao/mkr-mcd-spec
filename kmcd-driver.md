@@ -37,7 +37,7 @@ MCD Simulations
 
     syntax MCDSteps ::= ".MCDSteps" | MCDStep MCDSteps
  // --------------------------------------------------
-    rule <k> .MCDSteps => . ... </k>
+    rule <k> .MCDSteps => . ... </k> <exit-code> _ => 0 </exit-code>
     rule <k> MCD:MCDStep MCDS:MCDSteps => MCD ~> MCDS ... </k>
 
     syntax MCDContract ::= contract(MCDStep) [function]
