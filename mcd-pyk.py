@@ -479,7 +479,6 @@ if __name__ == '__main__':
                             )
 
     (symbolic_configuration, init_cells) = get_init_config(config_loader, debug = debug)
-    print()
 
     all_violations = []
     startTime = time.time()
@@ -493,7 +492,6 @@ if __name__ == '__main__':
 
             initial_configuration = pyk.substitute(symbolic_configuration, init_cells)
             output = kmcdJSON(initial_configuration, krunArgs = ['--term'], kastArgs = ['--sort', 'GeneratedTopCell'])
-            print()
             violations = detect_violations(output)
             if len(violations) > 0:
                 violation = { 'properties': violations , 'seed': str(currRandSeed), 'output': output }
