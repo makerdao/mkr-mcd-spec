@@ -54,7 +54,7 @@ run_search() {
 
 run_command="$1" ; shift
 
-if [[ "$run_command" == 'help' ]]; then
+if [[ "${run_command}" == 'help' ]] || [[ "${run_command}" == '--help' ]]; then
     echo "
         usage: $0 run    [--backend (llvm|haskell)] [--random-seed <random-seed>] <pgm>  <K arg>*
                $0 kast   [--backend (llvm|haskell)]                               <pgm>  <output format> <K arg>*
