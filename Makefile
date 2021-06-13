@@ -51,7 +51,7 @@ clean-test:
 
 deps:
 	$(KEVM_MAKE) -j4 deps
-	$(KEVM_MAKE) -j4 build-llvm build-haskell build-lemmas
+	$(KEVM_MAKE) -j4 build-llvm build-haskell
 	$(KEVM_MAKE) -j4 install DESTDIR=$(CURDIR)/$(BUILD_DIR)
 
 # Building
