@@ -3,9 +3,12 @@ KMCD Attack Prelude
 
 ```k
 requires "kmcd-props.md"
+requires "evm.md"
+
 
 module KMCD-PRELUDE
     imports KMCD-PROPS
+    imports EVM
 
     syntax MCDStep ::= STEPS ( MCDSteps )
  // -------------------------------------
@@ -130,6 +133,12 @@ module KMCD-PRELUDE
          transact ADMIN End . initOut "gold" "Bobby"
          .MCDSteps
       [macro]
+
+
+    syntax MCDSteps ::= "DEPLOY-VAT"
+
+    rule <k> DEPLOY-VAT => .MCDSteps ... </k>
+
 
 endmodule
 ```

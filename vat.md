@@ -1,8 +1,10 @@
 ```k
 requires "kmcd-driver.md"
+requires "./deps/evm-semantics/tests/specs/mcd/storage.k"
 
 module VAT
     imports KMCD-DRIVER
+    imports DSS-STORAGE
 ```
 
 Vat Configuration
