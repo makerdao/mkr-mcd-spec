@@ -7,7 +7,24 @@ This module defines common state and control flow between all the other KMCD mod
 requires "evm.md"
 requires "kmcd-data.md"
 
+module KMCD-ACCOUNTS
+    imports STRING
+    imports INT
+
+    configuration
+      <mcd-accounts>
+        <mcd-account multiplicity="*" type="Map">
+            <mcd-id> "" </mcd-id>
+            <address> 0 </address>
+        </mcd-account>
+      </mcd-accounts>
+
+endmodule
+```
+
+```k
 module KMCD-DRIVER
+    imports KMCD-ACCOUNTS
     imports KMCD-DATA
     imports MAP
     imports STRING
@@ -25,6 +42,7 @@ module KMCD-DRIVER
           <tx-log> .Transaction </tx-log>
           <frame-events> .List </frame-events>
           <kevm/>
+          <mcd-accounts/>
         </kmcd-driver>
 ```
 
@@ -213,7 +231,7 @@ During the regular execution of a step this implies popping the `mcd-call-stack`
     rule <k> exception _MCDSTEP ~> dropState => popState ... </k>
          <mcd-call-stack> .List </mcd-call-stack>
 
-    rule <k> exception _ ~> (assert         => .) ... </k> 
+    rule <k> exception _ ~> (assert         => .) ... </k>
     rule <k> exception _ ~> (_:ModifierStep => .) ... </k>
     rule <k> exception _ ~> (makecall _     => .) ... </k>
 ```
