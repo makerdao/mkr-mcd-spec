@@ -2,10 +2,12 @@
 
 // Deploy helper data struct for EOA's in MCD/KEVM
 STEPS ( ACCOUNTS-PRELUDE )
-// Manually deploy on K cells Vat contract
+// Change Admin balance to test MCD KEVM accts
 STEPS ( TEST-ACCT ADMIN )
+// Manually deploy on K cells Vat contract
+STEPS (DEPLOY-VAT)
 // Manually do tx on K cells Vat rely from ADMIN EOA
-//transact ADMIN Vat . rely
+//transact ADMIN Vat . rely "Bobby"
 
 // Check KEVM state
 //assert

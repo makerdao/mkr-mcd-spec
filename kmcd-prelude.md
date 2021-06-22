@@ -4,11 +4,15 @@ KMCD Attack Prelude
 ```k
 requires "kmcd-props.md"
 requires "evm.md"
+requires "./deps/evm-semantics/tests/specs/mcd/storage.k"
+requires "./deps/evm-semantics/tests/specs/mcd/bin_runtime.k"
 
 
 module KMCD-PRELUDE
     imports KMCD-PROPS
     imports EVM
+    imports DSS-STORAGE
+    imports DSS-BIN-RUNTIME
 
     syntax MCDStep ::= STEPS ( MCDSteps )
  // -------------------------------------
@@ -188,6 +192,7 @@ module KMCD-PRELUDE
 
 
     syntax MCDSteps ::= "TEST-ACCT" Address
+                      | "DEPLOY-VAT"
 
     rule <k> TEST-ACCT ADDR:Address => .MCDSteps ... </k>
         <account>
@@ -200,6 +205,30 @@ module KMCD-PRELUDE
             <address> ACCT_ID </address>
         </mcd-account>
 
+    rule <k> DEPLOY-VAT => .MCDSteps ... </k>
+        <accounts>
+            ...
+            (.Bag =>
+            <account>
+                <acctID> 1000 </acctID> // Vat id = 1000
+                <balance> 0 </balance>
+                <code> Vat_bin_runtime </code>
+                <storage>     #Vat.live |-> 1 #Vat.wards[ACCT_ID] |-> 1 </storage>
+                <origStorage> #Vat.live |-> 1 #Vat.wards[ACCT_ID] |-> 1 </origStorage>
+                <nonce> 0 </nonce>
+            </account>
+            )
+            <account>
+                <acctID> ACCT_ID </acctID>
+                ...
+            </account>
+            ...
+        </accounts>
+        <activeAccounts> ... (.Set => SetItem(1000)) ... </activeAccounts>
+        <mcd-account>
+            <mcd-id> ADMIN:Address </mcd-id>
+            <address> ACCT_ID </address>
+        </mcd-account>
 
 endmodule
 ```
