@@ -10,6 +10,8 @@ module KMCD-DRIVER
     imports KMCD-DATA
     imports MAP
     imports STRING
+    imports BYTES
+    imports LIST
 
     configuration
         <kmcd-driver>
@@ -148,8 +150,13 @@ At the moment these are typically used in the codebase to check prerequisite con
     syntax MCDStep ::= LockStep | AuthStep
  // --------------------------------------
 
-    syntax WardStep ::= "rely" Address
-                      | "deny" Address
+    syntax WardOp ::= "rely" | "deny"
+    syntax WardArgs ::= Address
+    syntax WardStep ::= WardOp WardArgs
+
+    syntax Op ::= WardOp
+    syntax Args ::= WardArgs
+    syntax CallStep ::= WardStep
  // ----------------------------------
 
     syntax ModifierStep ::= "checkauth"   MCDStep
@@ -202,9 +209,44 @@ During the regular execution of a step this implies popping the `mcd-call-stack`
     rule <k> exception _MCDSTEP ~> dropState => popState ... </k>
          <mcd-call-stack> .List </mcd-call-stack>
 
-    rule <k> exception _ ~> (assert         => .) ... </k> 
+    rule <k> exception _ ~> (assert         => .) ... </k>
     rule <k> exception _ ~> (_:ModifierStep => .) ... </k>
     rule <k> exception _ ~> (makecall _     => .) ... </k>
+```
+
+### Function Signature and Arguments
+
+```k
+
+    syntax Op
+ // ----------
+
+    syntax Args
+ // -----------
+
+    syntax CallStep
+ // ---------------
+
+ // TODO token2String
+    syntax String ::= #OpToString ( Op ) [function, functional]
+ // --------------------------------------------------------------------------------------
+    rule #OpToString ( _Op ) => "Op"
+
+    syntax List ::= #args ( Args )         [function]
+                  | #argslist( Args, List) [function]
+ // -------------------------------------------------
+    rule #args( Args ) => #argslist( Args , .List )
+
+// TODO fix recursive function
+//rule #argslist( ARG1 REST, LIST) => #argslist(REST, LIST ListItem(#typeArg(ARG1)) )
+//rule #argslist( ARG1 , LIST) => LIST ListItem(ARG1)
+
+    rule #argslist( Args, LIST) => #argslist(Args, LIST ListItem(Args) )
+
+
+// TODO complete #typeArg for all types of arguments
+    syntax Bytes ::= #typeArg ( String ) [function]
+                // | #typeArg ( Wad )
 ```
 
 Log Events
