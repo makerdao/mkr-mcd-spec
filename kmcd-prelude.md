@@ -14,8 +14,9 @@ module KMCD-PRELUDE
  // -------------------------------------
     rule <k> STEPS ( MCDSTEPS ) => MCDSTEPS ... </k>
 
-    syntax MCDSteps ::= "ATTACK-PRELUDE" [klabel(ATTACK-PRELUDE), symbol]
-                      | "DEPLOY-PRELUDE" [klabel(DEPLOY-PRELUDE), symbol]
+    syntax MCDSteps ::= "ATTACK-PRELUDE"    [klabel(ATTACK-PRELUDE),   symbol]
+                      | "DEPLOY-PRELUDE"    [klabel(DEPLOY-PRELUDE),   symbol]
+                      | "ACCOUNTS-PRELUDE"  [klabel(ACCOUNTS-PRELUDE), symbol]
  // ---------------------------------------------------------------------
     rule DEPLOY-PRELUDE
       =>
@@ -133,6 +134,57 @@ module KMCD-PRELUDE
          transact ADMIN End . initOut "gold" "Bobby"
          .MCDSteps
       [macro]
+
+   rule <k> ACCOUNTS-PRELUDE => .MCDSteps ... </k>
+        ( <mcd-accounts> _ </mcd-accounts> =>
+        <mcd-accounts>
+            <mcd-account>
+                <mcd-id> "ADMIN" </mcd-id>
+               // <address> "0xa1bcc3def703b483506f9e3e128b44ec26bc41e4" </address>
+                <address> 1 </address>
+            </mcd-account>
+            <mcd-account>
+                <mcd-id> "ANYONE" </mcd-id>
+               // <address> "0x739b10ec884e5dfc3053d650d21e3893a8df8a01" </address>
+                <address> 2 </address>
+            </mcd-account>
+            <mcd-account>
+                <mcd-id> "Alice" </mcd-id>
+               // <address> "0x95ea5708e2db32daa51e40a2aa113323b58797e5" </address>
+                <address> 3 </address>
+            </mcd-account>
+            <mcd-account>
+                <mcd-id> "Bobby" </mcd-id>
+               // <address> "0x40d5be7ed6daccbb1c305e61fb4c669ea175aef0" </address>
+                <address> 4 </address>
+            </mcd-account>
+        </mcd-accounts> )
+        <activeAccounts> _ => SetItem(1) SetItem(2) SetItem(3) SetItem(4) </activeAccounts>
+        ( <accounts> _ </accounts>  =>
+        <accounts>
+            <account>
+                <acctID> 1 </acctID> //ADMIN
+                <balance> 10000000000000000000 </balance>
+                ...
+            </account>
+            <account>
+                <acctID> 2 </acctID> //ANYONE
+                <balance> 10000000000000000000 </balance>
+                ...
+            </account>
+            <account>
+                <acctID> 3 </acctID> //ALICE
+                <balance> 10000000000000000000 </balance>
+                ...
+            </account>
+            <account>
+                <acctID> 4 </acctID> //BOBBY
+                <balance> 10000000000000000000 </balance>
+                ...
+            </account>
+            ...
+        </accounts>
+        )
 
 
     syntax MCDSteps ::= "DEPLOY-VAT"
