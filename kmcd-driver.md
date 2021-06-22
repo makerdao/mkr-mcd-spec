@@ -6,15 +6,31 @@ This module defines common state and control flow between all the other KMCD mod
 ```k
 requires "evm.md"
 requires "kmcd-data.md"
+```
 
-module KMCD-ACCOUNTS
+`Address` is a unique identifier of an account on the network.
+They can be either an `Int` or a `String` (for readability).
+
+```k
+module KMCD-ADDRESS
     imports STRING
     imports INT
+
+    syntax Address ::= "ADMIN" | "ANYONE" | Int | String
+
+endmodule
+```
+
+`TODO`: Add comment
+
+```k
+module KMCD-ACCOUNTS
+    imports KMCD-ADDRESS
 
     configuration
       <mcd-accounts>
         <mcd-account multiplicity="*" type="Map">
-            <mcd-id> "" </mcd-id>
+            <mcd-id> 0:Address </mcd-id>
             <address> 0 </address>
         </mcd-account>
       </mcd-accounts>
@@ -24,11 +40,11 @@ endmodule
 
 ```k
 module KMCD-DRIVER
-    imports KMCD-ACCOUNTS
     imports KMCD-DATA
     imports MAP
     imports STRING
     imports EVM
+    imports KMCD-ACCOUNTS
 
     configuration
         <kmcd-driver>
@@ -50,6 +66,7 @@ MCD Simulations
 ---------------
 
 ```k
+
     syntax EthereumSimulation ::= MCDSteps
  // --------------------------------------
 
@@ -65,13 +82,11 @@ MCD Simulations
 Authorization Scheme
 --------------------
 
-`Address` is a unique identifier of an account on the network.
-They can be either an `Int` or a `String` (for readability).
-In addition, each `MCDContract` is automatically an `Address`, under the assumption that there is a unique live instance of each one at a time.
+Each `MCDContract` is automatically an `Address`, under the assumption that there is a unique live instance of each one at a time.
 
 ```k
-    syntax Address ::= Int | String | MCDContract
- // ---------------------------------------------
+    syntax Address ::= MCDContract
+ // -------------------------------
 ```
 
 Authorization happens at the `call` boundaries, which includes both transactions and calls between MCD contracts.
@@ -86,9 +101,6 @@ The special account `ANYONE` is not authorized to do anything, so represents any
     syntax Set ::= wards ( MCDContract ) [function]
  // -----------------------------------------------
     rule wards(_) => .Set [owise]
-
-    syntax Address ::= "ADMIN" | "ANYONE"
- // -------------------------------------
 
     syntax Bool ::= isAuthorized ( Address , MCDContract ) [function]
  // -----------------------------------------------------------------

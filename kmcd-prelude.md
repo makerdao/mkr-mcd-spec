@@ -139,7 +139,7 @@ module KMCD-PRELUDE
         ( <mcd-accounts> _ </mcd-accounts> =>
         <mcd-accounts>
             <mcd-account>
-                <mcd-id> "ADMIN" </mcd-id>
+                <mcd-id> ADMIN:Address </mcd-id>
                // <address> "0xa1bcc3def703b483506f9e3e128b44ec26bc41e4" </address>
                 <address> 1 </address>
             </mcd-account>
@@ -187,9 +187,18 @@ module KMCD-PRELUDE
         )
 
 
-    syntax MCDSteps ::= "DEPLOY-VAT"
+    syntax MCDSteps ::= "TEST-ACCT" Address
 
-    rule <k> DEPLOY-VAT => .MCDSteps ... </k>
+    rule <k> TEST-ACCT ADDR:Address => .MCDSteps ... </k>
+        <account>
+            <acctID> ACCT_ID </acctID>
+            <balance> _ => 666 </balance>
+            ...
+        </account>
+        <mcd-account>
+            <mcd-id> ADDR </mcd-id>
+            <address> ACCT_ID </address>
+        </mcd-account>
 
 
 endmodule

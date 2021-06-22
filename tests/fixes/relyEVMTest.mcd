@@ -1,11 +1,11 @@
 //Simple EVM integration test with Vat . rely
 
 // Deploy helper data struct for EOA's in MCD/KEVM
-STEPS ( DEPLOY-ACCOUNTS )
+STEPS ( ACCOUNTS-PRELUDE )
 // Manually deploy on K cells Vat contract
-STEPS ( DEPLOY-VAT )
+STEPS ( TEST-ACCT ADMIN )
 // Manually do tx on K cells Vat rely from ADMIN EOA
-transact ADMIN Vat . rely
+//transact ADMIN Vat . rely
 
 // Check KEVM state
 //assert
