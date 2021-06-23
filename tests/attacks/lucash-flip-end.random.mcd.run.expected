@@ -235,9 +235,9 @@
               .Set
             </gem-wards>
             <gem-balances>
+              Flap |-> FInt ( 0 , 1000000000000000000 )
               "Bobby" |-> FInt ( 0 , 1000000000000000000 )
               "Alice" |-> FInt ( 0 , 1000000000000000000 )
-              Flap |-> FInt ( 0 , 1000000000000000000 )
             </gem-balances>
           </gem> <gem>
             <gem-id>
@@ -247,9 +247,9 @@
               .Set
             </gem-wards>
             <gem-balances>
+              GemJoin "gold" |-> FInt ( 23000000000000000000 , 1000000000000000000 )
               "Bobby" |-> FInt ( 7000000000000000000 , 1000000000000000000 )
               "Alice" |-> FInt ( 10000000000000000000 , 1000000000000000000 )
-              GemJoin "gold" |-> FInt ( 23000000000000000000 , 1000000000000000000 )
             </gem-balances>
           </gem>
         </gems>
@@ -366,14 +366,14 @@
             SetItem ( Spot )
           </vat-wards>
           <vat-can>
-            "Alice" |-> SetItem ( End )
-            SetItem ( Pot )
+            "Alice" |-> SetItem ( Flop )
             SetItem ( Flip "gold" )
-            SetItem ( Flop )
-            "Bobby" |-> SetItem ( End )
+            SetItem ( End )
             SetItem ( Pot )
+            "Bobby" |-> SetItem ( Flop )
             SetItem ( Flip "gold" )
-            SetItem ( Flop )
+            SetItem ( End )
+            SetItem ( Pot )
             Vow |-> SetItem ( Flap )
           </vat-can>
           <vat-ilks>
