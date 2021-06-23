@@ -12,6 +12,7 @@ RUN    apt-get update        \
         libjemalloc-dev      \
         libmpfr-dev          \
         libprocps-dev        \
+        libssl-dev           \
         lld-8                \
         pandoc               \
         pkg-config           \
