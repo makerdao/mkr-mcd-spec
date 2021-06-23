@@ -1,5 +1,5 @@
 ARG KEVM_COMMIT
-FROM runtimeverificationinc/kframework-evm-semantics:ubuntu-bionic-${KEVM_COMMIT}
+FROM runtimeverificationinc/kframework-evm-semantics:ubuntu-focal-${KEVM_COMMIT}
 
 RUN    apt-get update        \
     && apt-get upgrade --yes \
