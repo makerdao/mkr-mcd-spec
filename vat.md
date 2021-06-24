@@ -257,8 +257,7 @@ This is quite permissive, and would allow the account to drain all your locked c
 
     syntax VatPermitOp ::= "nope" | "hope"
     syntax VatOp ::= VatPermitOp
-    syntax VatPermitStep ::= VatPermitOp VatAddressArgs
-    syntax VatStep ::= VatPermitStep
+    syntax VatStep ::= VatPermitOp VatAddressArgs
  // --------------------------------------------------
     rule <k> Vat . hope ADDRTO => . ... </k>
          <msg-sender> MSGSENDER </msg-sender>
