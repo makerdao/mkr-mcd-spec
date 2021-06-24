@@ -65,8 +65,8 @@ The special account `ANYONE` is not authorized to do anything, so represents any
     syntax MCDStep ::= AdminStep
  // ----------------------------
 
-    syntax Set ::= wards ( MCDContract ) [function]
- // -----------------------------------------------
+    syntax Set ::= wards ( MCDContract ) [function, functional]
+ // -----------------------------------------------------------
     rule wards(_) => .Set [owise]
 
     syntax Address ::= "ADMIN" | "ANYONE"
@@ -75,7 +75,6 @@ The special account `ANYONE` is not authorized to do anything, so represents any
     syntax Bool ::= isAuthorized ( Address , MCDContract ) [function]
  // -----------------------------------------------------------------
     rule isAuthorized( ADDR , MCDCONTRACT ) => ADDR ==K ADMIN orBool ADDR in wards(MCDCONTRACT)
-
 ```
 
 Transactions
@@ -151,8 +150,8 @@ At the moment these are typically used in the codebase to check prerequisite con
 
 ```k
     syntax AuthStep
-    syntax MCDStep ::= AuthStep
- // ---------------------------
+    syntax MCDStep ::= LockStep | AuthStep
+ // --------------------------------------
 
     syntax WardStep ::= "rely" Address
                       | "deny" Address
@@ -165,15 +164,10 @@ At the moment these are typically used in the codebase to check prerequisite con
                           | "unlock"      MCDStep
  // ---------------------------------------------
 
-    syntax MCDStep   ::= LockStep
-
     syntax LockAuthStep
     syntax LockStep ::= LockAuthStep
     syntax AuthStep ::= LockAuthStep
  // --------------------------------
-
-    rule <k> makecall MCD => exception MCD ... </k> [owise]
-
     rule <k> V:Value => . ... </k> <return-value> _ => V </return-value>
 
     rule <k> checkauth MCD:AuthStep => .             ... </k> <this> THIS </this> requires isAuthorized(THIS, contract(MCD))

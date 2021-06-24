@@ -1,5 +1,5 @@
 ARG KEVM_COMMIT
-FROM runtimeverificationinc/kframework-evm-semantics:ubuntu-bionic-${KEVM_COMMIT}
+FROM runtimeverificationinc/kframework-evm-semantics:ubuntu-focal-${KEVM_COMMIT}
 
 RUN    apt-get update        \
     && apt-get upgrade --yes \
@@ -12,6 +12,7 @@ RUN    apt-get update        \
         libjemalloc-dev      \
         libmpfr-dev          \
         libprocps-dev        \
+        libssl-dev           \
         lld-8                \
         pandoc               \
         pkg-config           \
