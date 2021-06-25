@@ -29,6 +29,10 @@ Pot Configuration
     syntax MCDContract ::= PotContract
     syntax PotContract ::= "Pot"
     syntax MCDStep ::= PotContract "." PotStep [klabel(potStep)]
+
+    syntax CallStep ::= PotStep
+    syntax Op       ::= PotOp
+    syntax Args     ::= PotArgs
  // ------------------------------------------------------------
     rule contract(Pot . _) => Pot
 ```
@@ -36,7 +40,11 @@ Pot Configuration
 ### Constructor
 
 ```k
-    syntax PotStep ::= "constructor" Address
+    syntax PotConstructorOp ::= "constructor" [token]
+    syntax PotOp            ::= PotConstructorOp
+    syntax PotAddressArgs   ::= Address
+    syntax PotArgs          ::= PotAddressArgs
+    syntax PotStep          ::= PotConstructorOp PotAddressArgs
  // ----------------------------------------
     rule <k> Pot . constructor POT_VAT => . ... </k>
          <msg-sender> MSGSENDER </msg-sender>
@@ -76,11 +84,13 @@ These parameters are controlled by governance:
 -   `vow`: where debt is accumulated to offset user savings.
 
 ```k
-    syntax PotAuthStep ::= "file" PotFile
- // -------------------------------------
+    syntax PotFileOp    ::= "file"
+    syntax PotOp        ::= PotFileOp
+    syntax PotArgs      ::= PotFileArgs
+    syntax PotFileArgs  ::= "dsr" Ray
+                          | "vow-file" Address
 
-    syntax PotFile ::= "dsr" Ray
-                     | "vow-file" Address
+    syntax PotAuthStep  ::= PotFileOp PotFileArgs
  // -------------------------------------
     rule <k> Pot . file dsr DSR => . ... </k>
          <pot-dsr> _ => DSR </pot-dsr>
@@ -104,7 +114,9 @@ Because data isn't explicitely initialized to 0 in KMCD, we need explicit initia
 -   `initUser`: Add the given user's account to the pies.
 
 ```k
-    syntax PotAuthStep ::= "initUser" Address
+    syntax PotInitUserOp ::= "initUser"
+    syntax PotOp ::= PotInitUserOp
+    syntax PotAuthStep ::= PotInitUserOp PotAddressArgs
  // -----------------------------------------
     rule <k> Pot . initUser ADDR => . ... </k>
          <pot-pies> PIES => PIES [ ADDR <- wad(0) ] </pot-pies>
@@ -115,7 +127,9 @@ Pot Semantics
 -------------
 
 ```k
-    syntax PotStep ::= "drip"
+    syntax PotDripOp ::= "drip"
+    syntax PotOp ::= PotDripOp
+    syntax PotStep ::= PotDripOp
  // -------------------------
     rule <k> Pot . drip => call POT_VAT . suck VOW THIS ( PIE *Rate ( CHI *Ray ( DSR ^Ray (NOW -Int RHO) -Ray ray(1) ) ) ) ... </k>
          <this> THIS </this>
@@ -129,7 +143,11 @@ Pot Semantics
       requires NOW >=Int RHO
        andBool DSR >=Ray ray(1) // to ensure positive interest rate
 
-    syntax PotStep ::= "join" Wad
+    syntax PotJoinOp ::= "join"
+    syntax PotOp ::= PotJoinOp
+    syntax PotWadArgs ::= Wad
+    syntax PotArgs ::= PotWadArgs
+    syntax PotStep ::= PotJoinOp PotWadArgs
  // -----------------------------
     rule <k> Pot . join AMOUNT => call POT_VAT . move MSGSENDER THIS ( AMOUNT *Rate CHI ) ... </k>
          <this> THIS </this>
@@ -143,7 +161,9 @@ Pot Semantics
       requires AMOUNT >=Wad wad(0)
        andBool NOW ==Int RHO
 
-    syntax PotStep ::= "exit" Wad
+    syntax PotExitOp ::= "exit"
+    syntax PotOp ::= PotExitOp
+    syntax PotStep ::= PotExitOp PotWadArgs
  // -----------------------------
     rule <k> Pot . exit AMOUNT => call POT_VAT . move THIS MSGSENDER ( AMOUNT *Rate CHI ) ... </k>
          <this> THIS </this>
@@ -155,7 +175,9 @@ Pot Semantics
       requires AMOUNT >=Wad wad(0)
        andBool MSGSENDER_PIE >=Wad AMOUNT
 
-    syntax PotAuthStep ::= "cage"
+    syntax PotCageOp ::= "cage"
+    syntax PotOp ::= PotCageOp
+    syntax PotAuthStep ::= PotCageOp
  // -----------------------------
     rule <k> Pot . cage => . ... </k>
          <pot-live> _ => false </pot-live>

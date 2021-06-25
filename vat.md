@@ -57,8 +57,8 @@ For convenience, total Dai/Sin are tracked:
 
 ```k
     syntax VatConstructorOp ::= "constructor" [token]
-    syntax VatOp ::= VatConstructorOp
-    syntax VatStep ::= VatConstructorOp
+    syntax VatOp            ::= VatConstructorOp
+    syntax VatStep          ::= VatConstructorOp
  // --------------------------------
     rule <k> Vat . constructor => . ... </k>
          <msg-sender> MSGSENDER </msg-sender>
@@ -149,15 +149,15 @@ The parameters controlled by governance are:
 -   `dust`: Essentially zero amount for a given `Ilk`.
 
 ```k
-    syntax VatFileOp ::= "file"
-    syntax VatOp ::= VatFileOp
-    syntax VatArgs ::= VatFileArgs
-    syntax VatFileArgs ::= "Line" Rad
-                         | "spot" String Ray
-                         | "line" String Rad
-                         | "dust" String Rad
+    syntax VatFileOp    ::= "file"
+    syntax VatOp        ::= VatFileOp
+    syntax VatArgs      ::= VatFileArgs
+    syntax VatFileArgs  ::= "Line" Rad
+                          | "spot" String Ray
+                          | "line" String Rad
+                          | "dust" String Rad
 
-    syntax VatAuthStep ::= VatFileOp VatFileArgs
+    syntax VatAuthStep  ::= VatFileOp VatFileArgs
  // ------------------------------------
     rule <k> Vat . file Line LINE => . ... </k>
          <vat-live> true </vat-live>
@@ -292,7 +292,9 @@ This is quite permissive, and would allow the account to drain all your locked c
       requires rad(0) <=Rad urnBalance(ILK, URN)
        andBool urnDebt(ILK, URN) <=Rad line(ILK)
 
-    syntax VatStep ::= "nondusty" String Address
+    syntax VatNonDustyOp ::= "nondusty"
+    syntax VatOp ::= VatNonDustyOp
+    syntax VatStep ::= VatNonDustyOp VatIlkUserArgs
  // --------------------------------------------
     rule <k> Vat . nondusty ILK_ID ADDR => . ... </k>
          <vat-ilks> ...   ILK_ID          |-> ILK ... </vat-ilks>
