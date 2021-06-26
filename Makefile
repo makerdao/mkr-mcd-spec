@@ -32,10 +32,10 @@ export PYTHONPATH
 
 SOLIDITY_TESTS := tests/solidity-test
 
-.PHONY: all clean clean-test                                                \
-        deps deps-k deps-media                                              \
-        build build-llvm build-haskell                                      \
-        test test-execution test-python-generator test-random test-solidity
+.PHONY: all clean clean-test                                    \
+        deps deps-k deps-media                                  \
+        build build-llvm build-haskell                          \
+        test test-execution test-python-generator test-solidity
 .SECONDARY:
 
 all: build
@@ -146,18 +146,13 @@ $(KMCD_LIB)/$(haskell_kompiled): $(includes)
 
 KMCD_RANDOMSEED := ""
 
-test: test-execution test-python-generator test-random test-solidity
+test: test-execution test-python-generator test-solidity
 
 execution_tests_random := $(wildcard tests/*/*.random.mcd)
 execution_tests := $(wildcard tests/*/*.mcd)
 
 test-execution: $(execution_tests:=.run)
 test-python-generator: $(execution_tests_random:=.python-gen)
-
-init_random_seeds :=
-
-test-random: mcd-pyk.py
-	python3 $< random-test 1 1 $(init_random_seeds) --emit-solidity
 
 test-solidity: $(patsubst %, $(SOLIDITY_TESTS)/src/%.t.sol, 01 02 03 04 05 06 07 08 09 10)
 	#cd $(SOLIDITY_TESTS) \
