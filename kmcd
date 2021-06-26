@@ -27,13 +27,12 @@ pretty_diff() {
 
 run_krun() {
     export K_OPTS=-Xss500m
-    krun --directory "$backend_dir" "$run_file" -cRANDOMSEED=$cRANDOMSEED -pRANDOMSEED='cat' "$@"
+    kevm run --backend "${backend}" --backend-dir "${backend_dir}" "${run_file}" \
+        -cRANDOMSEED=$cRANDOMSEED -pRANDOMSEED='cat' "$@"
 }
 
 run_kast() {
-    local output_mode
-    output_mode="$1" ; shift
-    kast --directory "$backend_dir" "$run_file" --output "$output_mode" "$@"
+    kevm kast --backend "${backend}" --backend-dir "${backend_dir}" "$run_file" "$@"
 }
 
 run_prove() {
@@ -53,7 +52,7 @@ run_search() {
 
 run_command="$1" ; shift
 
-if [[ "$run_command" == 'help' ]]; then
+if [[ "${run_command}" == 'help' ]] || [[ "${run_command}" == '--help' ]]; then
     echo "
         usage: $0 run    [--backend (llvm|haskell)] [--random-seed <random-seed>] <pgm>  <K arg>*
                $0 kast   [--backend (llvm|haskell)]                               <pgm>  <output format> <K arg>*
