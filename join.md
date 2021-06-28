@@ -39,12 +39,18 @@ Join Configuration
     syntax MCDContract ::= GemJoinContract
     syntax GemJoinContract ::= "GemJoin" String
     syntax MCDStep ::= GemJoinContract "." GemJoinStep [klabel(gemJoinStep)]
+
+    syntax CallStep ::= GemJoinStep
+    syntax Op       ::= GemJoinOp
+    syntax Args     ::= GemJoinArgs
  // ------------------------------------------------------------------------
     rule contract(GemJoin GEMID . _) => GemJoin GEMID
 
     syntax MCDContract ::= DaiJoinContract
     syntax DaiJoinContract ::= "DaiJoin"
     syntax MCDStep ::= DaiJoinContract "." DaiJoinStep [klabel(daiJoinStep)]
+
+    syntax CallStep ::= DaiJoinStep
  // ------------------------------------------------------------------------
     rule contract(DaiJoin . _) => DaiJoin
 ```
@@ -52,7 +58,11 @@ Join Configuration
 ### Constructor
 
 ```k
-    syntax GemJoinStep ::= "constructor" Address Address
+    syntax GemJoinConstructorOp ::= "constructor"
+    syntax GemJoinOp            ::= GemJoinConstructorOp
+    syntax GemJoinVatGemArgs    ::= Address Address
+    syntax GemJoinArgs          ::= GemJoinVatGemArgs
+    syntax GemJoinStep          ::= GemJoinConstructorOp GemJoinVatGemArgs
  // ----------------------------------------------------
     rule <k> GemJoin ILK_ID . constructor GEM_JOIN_VAT GEM_JOIN_GEM => . ... </k>
          <msg-sender> MSGSENDER </msg-sender>
@@ -73,7 +83,9 @@ Join Configuration
 ```
 
 ```k
-    syntax GemJoinStep ::= "constructor" Address
+    syntax GemJoinAddressArgs   ::= Address
+    syntax GemJoinArgs          ::= GemJoinAddressArgs
+    syntax GemJoinStep          ::= GemJoinConstructorOp GemJoinAddressArgs
  // --------------------------------------------
     rule <k> GemJoin ILK_ID . constructor _:Address ... </k>
          ( <gem-join> <gem-join-gem> ILK_ID </gem-join-gem> ... </gem-join> => .Bag )
@@ -92,7 +104,7 @@ Join Configuration
 ```
 
 ```k
-    syntax DaiJoinStep ::= "constructor" Address Address
+    syntax DaiJoinStep ::= GemJoinConstructorOp GemJoinVatGemArgs
  // ----------------------------------------------------
     rule <k> DaiJoin . constructor DAI_JOIN_VAT DAI_JOIN_GEM => . ... </k>
          <msg-sender> MSGSENDER </msg-sender>
@@ -154,7 +166,9 @@ Because data isn't explicitely initialized to 0 in KMCD, we need explicit initia
 -   `init`: Creates the joins account in the given gem for users to join their collateral to.
 
 ```k
-    syntax GemJoinAuthStep ::= "init"
+    syntax GemJoinInitOp ::= "init"
+    syntax GemJoinOp ::= GemJoinInitOp
+    syntax GemJoinAuthStep ::= GemJoinInitOp
  // ---------------------------------
     rule <k> GemJoin GEMID . init => Gem GEMID . initUser GemJoin GEMID ... </k>
          <gem-joins> ... ( .Bag => <gem-join> <gem-join-gem> GEMID </gem-join-gem> ... </gem-join> ) ... </gem-joins>
@@ -164,7 +178,11 @@ Join Semantics
 --------------
 
 ```k
-    syntax GemJoinStep ::= "join" Address Wad
+    syntax GemJoinJoinOp        ::= "join"
+    syntax GemJoinOp            ::= GemJoinJoinOp
+    syntax GemJoinUsrAmtArgs    ::= Address Wad
+    syntax GemJoinArgs          ::= GemJoinUsrAmtArgs
+    syntax GemJoinStep          ::= GemJoinJoinOp GemJoinUsrAmtArgs
  // -----------------------------------------
     rule <k> GemJoin GEMID . join USR AMOUNT
           => call GEM_JOIN_VAT . slip GEMID USR AMOUNT
@@ -182,7 +200,9 @@ Join Semantics
          </gem-join>
       requires AMOUNT >=Wad wad(0)
 
-    syntax GemJoinStep ::= "exit" Address Wad
+    syntax GemJoinExitOp        ::= "exit"
+    syntax GemJoinOp            ::= GemJoinExitOp
+    syntax GemJoinStep ::= GemJoinExitOp GemJoinUsrAmtArgs
  // -----------------------------------------
     rule <k> GemJoin GEMID . exit USR AMOUNT
           => call GEM_JOIN_VAT . slip GEMID MSGSENDER (wad(0) -Wad AMOUNT)
@@ -198,7 +218,7 @@ Join Semantics
          </gem-join>
       requires AMOUNT >=Wad wad(0)
 
-    syntax DaiJoinStep ::= "join" Address Wad
+    syntax DaiJoinStep ::= GemJoinJoinOp GemJoinUsrAmtArgs
  // -----------------------------------------
     rule <k> DaiJoin . join USR AMOUNT
           => call DAI_JOIN_VAT . move THIS USR Wad2Rad(AMOUNT)
@@ -212,7 +232,7 @@ Join Semantics
          <dai-join-gem-addr> DAI_JOIN_GEM:DaiContract </dai-join-gem-addr>
       requires AMOUNT >=Wad wad(0)
 
-    syntax DaiJoinStep ::= "exit" Address Wad
+    syntax DaiJoinStep ::= GemJoinExitOp GemJoinUsrAmtArgs
  // -----------------------------------------
     rule <k> DaiJoin . exit USR AMOUNT
           => call DAI_JOIN_VAT . move MSGSENDER THIS Wad2Rad(AMOUNT)
@@ -233,7 +253,9 @@ Join Deactivation
 -   `DaiJoin.cage` disables access to this instance of DaiJoin.
 
 ```k
-    syntax GemJoinAuthStep ::= "cage" [klabel(#GemJoinCage), symbol]
+    syntax GemJoinCageOp ::= "cage"
+    syntax GemJoinOp ::= GemJoinCageOp
+    syntax GemJoinAuthStep ::= GemJoinCageOp [klabel(#GemJoinCage), symbol]
  // ----------------------------------------------------------------
     rule <k> GemJoin GEMID . cage => . ... </k>
          <gem-join>
