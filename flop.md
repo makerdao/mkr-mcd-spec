@@ -13,7 +13,11 @@ module FLOP
     imports VOW
     imports PRE-FLOP
 
-    syntax FlopStep ::= "dent" Int Wad Rad
+    syntax FlopDentOp ::= "dent"
+    syntax FlopOp ::= FlopDentOp
+    syntax FlopDentArgs ::= Int Wad Rad
+    syntax FlopArgs ::= FlopDentArgs
+    syntax FlopStep ::= FlopDentOp FlopDentArgs
  // --------------------------------------
     rule <k> Flop . dent ID LOT BID
           => #if MSGSENDER =/=K GUY #then call FLOP_VAT . move MSGSENDER GUY BID #else . #fi
@@ -72,6 +76,10 @@ Flop Configuration
     syntax MCDContract ::= FlopContract
     syntax FlopContract ::= "Flop"
     syntax MCDStep ::= FlopContract "." FlopStep [klabel(flopStep)]
+
+    syntax CallStep ::= FlopStep
+    syntax Op       ::= FlopOp
+    syntax Args     ::= FlopArgs
  // ---------------------------------------------------------------
     rule contract(Flop . _) => Flop
 ```
@@ -79,7 +87,11 @@ Flop Configuration
 ### Constructor
 
 ```k
-    syntax FlopStep ::= "constructor" Address Address
+    syntax FlopConstructorOp ::= "constructor"
+    syntax FlopOp ::= FlopConstructorOp
+    syntax FlopConstructorArgs ::= Address Address
+    syntax FlopArgs ::= FlopConstructorArgs
+    syntax FlopStep ::= FlopConstructorOp FlopConstructorArgs
  // -------------------------------------------------
     rule <k> Flop . constructor FLOP_VAT FLOP_MKR => . ... </k>
          <msg-sender> MSGSENDER </msg-sender>
@@ -139,14 +151,16 @@ The parameters controlled by governance are:
 -   `pad`: lot increase factor for each `tick`.
 
 ```k
-    syntax FlopAuthStep ::= "file" FlopFile
- // ---------------------------------------
+    syntax FlopFileOp    ::= "file"
+    syntax FlopOp        ::= FlopFileOp
+    syntax FlopArgs      ::= FlopFileArgs
+    syntax FlopFileArgs  ::= "beg" Wad
+                           | "ttl" Int
+                           | "tau" Int
+                           | "pad" Wad
+                           | "vow-file" Address
 
-    syntax FlopFile ::= "beg" Wad
-                      | "ttl" Int
-                      | "tau" Int
-                      | "pad" Wad
-                      | "vow-file" Address
+    syntax FlopAuthStep  ::= FlopFileOp FlopFileArgs
  // --------------------------------------
     rule <k> Flop . file beg BEG => . ... </k>
          <flop-beg> _ => BEG </flop-beg>
@@ -183,7 +197,11 @@ Flop Semantics
 - Starts an auction
 
 ```k
-    syntax FlopAuthStep ::= "kick" Address Wad Rad
+    syntax FlopKickOp ::= "kick"
+    syntax FlopOp ::= FlopKickOp
+    syntax FlopKickArgs ::= Address Wad Rad
+    syntax FlopArgs ::= FlopKickArgs
+    syntax FlopAuthStep ::= FlopKickOp FlopKickArgs
  // ----------------------------------------------
     rule <k> Flop . kick GAL LOT BID
           => KICKS +Int 1
@@ -203,7 +221,11 @@ Flop Semantics
 - Extends the end time of the auction when no one has made a bid
 
 ```k
-    syntax FlopStep ::= "tick" Int
+    syntax FlopTickOp ::= "tick"
+    syntax FlopOp ::= FlopTickOp
+    syntax FlopIdArgs ::= Int
+    syntax FlopArgs ::= FlopIdArgs
+    syntax FlopStep ::= FlopTickOp FlopIdArgs
  // ------------------------------
     rule <k> Flop . tick ID => . ... </k>
          <current-time> NOW </current-time>
@@ -217,7 +239,9 @@ Flop Semantics
 - Settles the auction.
 
 ```k
-    syntax FlopStep ::= "deal" Int [klabel(FlopDeal),symbol]
+    syntax FlopDealOp ::= "deal"
+    syntax FlopOp ::= FlopDealOp
+    syntax FlopStep ::= FlopDealOp FlopIdArgs [klabel(FlopDeal),symbol]
  // --------------------------------------------------------
     rule <k> Flop . deal ID
           => call FLOP_MKR . mint GUY LOT
@@ -235,7 +259,9 @@ Flop Semantics
 - Part of global settlement. Freezes the auctions.
 
 ```k
-    syntax FlopAuthStep ::= "cage" [klabel(FlopCage),symbol]
+    syntax FlopCageOp ::= "cage"
+    syntax FlopOp ::= FlopCageOp
+    syntax FlopAuthStep ::= FlopCageOp [klabel(FlopCage),symbol]
  // --------------------------------------------------------
     rule <k> Flop . cage => . ... </k>
          <flop-live> _ => false </flop-live>
@@ -245,7 +271,9 @@ Flop Semantics
 - Global settlement. Refunds the current bid.
 
 ```k
-    syntax FlopStep ::= "yank" Int [klabel(FlopYank),symbol]
+    syntax FlopYankOp ::= "yank"
+    syntax FlopOp ::= FlopYankOp
+    syntax FlopStep ::= FlopYankOp FlopIdArgs [klabel(FlopYank),symbol]
  // --------------------------------------------------------
     rule <k> Flop . yank ID
           => call FLOP_VAT . suck VOWADDR GUY BID
