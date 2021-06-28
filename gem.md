@@ -23,6 +23,10 @@ Gem Configuration
     syntax MCDContract ::= GemContract
     syntax GemContract ::= "Gem" String
     syntax MCDStep ::= GemContract "." GemStep [klabel(gemStep)]
+
+    syntax CallStep ::= GemStep
+    syntax Op       ::= GemOp
+    syntax Args     ::= GemArgs
  // ------------------------------------------------------------
     rule contract(Gem GEMID . _) => Gem GEMID
 ```
@@ -36,9 +40,15 @@ Because data isn't explicitely initialized to 0 in KMCD, we need explicit initia
 -   `initUser`: Creates a new account for a given user in a given ilk.
 
 ```k
+    syntax GemInitOp ::= "init"
+    syntax GemInitUserOp ::= "initUser"
+    syntax GemOp ::= GemInitOp | GemInitUserOp
+    syntax GemAddressArgs ::= Address
+    syntax GemArgs ::= GemAddressArgs
+
     syntax GemStep ::= GemAuthStep
-    syntax GemAuthStep ::= "init"
-                         | "initUser" Address
+    syntax GemAuthStep ::= GemInitOp
+                         | GemInitUserOp GemAddressArgs
  // -----------------------------------------
     rule <k> Gem GEMID . init => . ... </k>
          <gems> ... ( .Bag => <gem> <gem-id> GEMID </gem-id> ... </gem> ) ... </gems>
@@ -65,7 +75,11 @@ Gem Semantics
 -------------
 
 ```k
-    syntax GemStep ::= "transferFrom" Address Address Wad
+    syntax GemTransferFromOp ::= "transferFrom"
+    syntax GemOp ::= GemTransferFromOp
+    syntax GemFromToAmtArgs ::= Address Address Wad
+    syntax GemArgs ::= GemFromToAmtArgs
+    syntax GemStep ::= GemTransferFromOp GemFromToAmtArgs
  // -----------------------------------------------------
     rule <k> Gem GEMID . transferFrom ACCTSRC ACCTDST VALUE => . ... </k>
          <gem>
@@ -92,30 +106,42 @@ Gem Semantics
       requires VALUE >=Wad wad(0)
        andBool BALANCE_SRC >=Wad VALUE
 
-    syntax GemStep ::= "move" Address Address Wad
+    syntax GemMoveOp ::= "move"
+    syntax GemOp ::= GemMoveOp
+    syntax GemStep ::= GemMoveOp GemFromToAmtArgs
  // ---------------------------------------------
     rule <k> Gem _ . (move ACCTSRC ACCTDST VALUE => transferFrom ACCTSRC ACCTDST VALUE) ... </k>
       requires VALUE >=Wad wad(0)
 
-    syntax GemStep ::= "push" Address Wad
+    syntax GemPushOp ::= "push"
+    syntax GemOp ::= GemPushOp
+    syntax GemUsrAmtArgs ::= Address Wad
+    syntax GemArgs ::= GemUsrAmtArgs
+    syntax GemStep ::= GemPushOp GemUsrAmtArgs
  // -------------------------------------
     rule <k> Gem _ . (push ACCTDST VALUE => transferFrom MSGSENDER ACCTDST VALUE) ... </k>
          <msg-sender> MSGSENDER </msg-sender>
       requires VALUE >=Wad wad(0)
 
-    syntax GemStep ::= "pull" Address Wad
+    syntax GemPullOp ::= "pull"
+    syntax GemOp ::= GemPullOp
+    syntax GemStep ::= GemPullOp GemUsrAmtArgs
  // -------------------------------------
     rule <k> Gem _ . (pull ACCTSRC VALUE => transferFrom ACCTSRC MSGSENDER VALUE) ... </k>
          <msg-sender> MSGSENDER </msg-sender>
       requires VALUE >=Wad wad(0)
 
-    syntax GemStep ::= "transfer" Address Wad
+    syntax GemTransferOp ::= "transfer"
+    syntax GemOp ::= GemTransferOp
+    syntax GemStep ::= GemTransferOp GemUsrAmtArgs
  // -----------------------------------------
     rule <k> Gem _ . (transfer ACCTDST VALUE => transferFrom MSGSENDER ACCTDST VALUE) ... </k>
          <msg-sender> MSGSENDER </msg-sender>
       requires VALUE >=Wad wad(0)
 
-    syntax GemStep ::= "mint" Address Wad
+    syntax GemMintOp ::= "mint"
+    syntax GemOp ::= GemMintOp
+    syntax GemStep ::= GemMintOp GemUsrAmtArgs
  // -------------------------------------
     rule <k> Gem GEMID . mint ACCTDST VALUE => . ... </k>
          <gem>
@@ -125,7 +151,9 @@ Gem Semantics
          </gem>
       requires VALUE >=Wad wad(0)
 
-    syntax GemStep ::= "burn" Address Wad
+    syntax GemBurnOp ::= "burn"
+    syntax GemOp ::= GemBurnOp
+    syntax GemStep ::= GemBurnOp GemUsrAmtArgs
  // -------------------------------------
     rule <k> Gem GEMID . burn ACCTSRC VALUE => . ... </k>
          <gem>
