@@ -33,12 +33,45 @@ MCD_definition_llvm_dir      = '.build/usr/lib/kmcd/llvm'
 MCD_definition_llvm_kompiled = MCD_definition_llvm_dir    + '/' + MCD_main_file_name + '-kompiled/compiled.json'
 MCD_definition_llvm          = pyk.readKastTerm(MCD_definition_llvm_kompiled)
 
-def krun(inputJSON, kastArgs = [], krunArgs = [], keepTemp = False):
-    return pyk.krunJSON(MCD_definition_llvm_dir, inputJSON, kastArgs = kastArgs, krunArgs = krunArgs, keepTemp = keepTemp)
+MCD_definition_llvm_symbols = pyk.buildSymbolTable(MCD_definition_llvm)
 
-def get_init_config(init_term):
-    kast_json = { 'format': 'KAST', 'version': 1, 'term': init_term }
-    (_, init_config, _) = krun(kast_json, krunArgs = [ '-cRANDOMSEED=' + '\dv{SortString{}}(\"\")', '-pRANDOMSEED=cat' ])
+MCD_definition_llvm_symbols [ '_List_'                                   ] = lambda l1, l2: pyk.newLines([l1, l2])
+MCD_definition_llvm_symbols [ '_Set_'                                    ] = lambda s1, s2: pyk.newLines([s1, s2])
+MCD_definition_llvm_symbols [ '_Map_'                                    ] = lambda m1, m2: pyk.newLines([m1, m2])
+MCD_definition_llvm_symbols [ '___KMCD-DRIVER_MCDSteps_MCDStep_MCDSteps' ] = lambda s1, s2: pyk.newLines([s1, s2])
+
+def printMCD(k):
+    return pyk.prettyPrintKast(k, MCD_definition_llvm_symbols)
+
+def _kmcd(command, backend, runfile, debug = False, kmcdArgs = []):
+    kmcdCommand = [ 'kmcd', command, '--backend', backend , runfile ] + kmcdArgs
+    if debug:
+        if not command == 'run':
+            kmcdCommand.append('--debug')
+        _notif(' '.join(kmcdCommand))
+    return pyk._teeProcessStdout(kmcdCommand)
+
+def _kmcdString(command, backend, input, debug = False, kmcdArgs = []):
+    with tempfile.NamedTemporaryFile(mode = 'w', delete = not debug) as tempf:
+        tempf.write(input)
+        tempf.flush()
+        (rC, out, err) = _kmcd(command, backend, tempf.name, debug = debug, kmcdArgs = kmcdArgs)
+        if not rC == 0:
+            sys.stdout.write(out)
+            sys.stdout.flush()
+            sys.stderr.write(input)
+            sys.stderr.write(err)
+            _fatal('Could not run kore!')
+        return out
+
+def kmcdJSON(inputJSON, backend = 'llvm', debug = False, krunArgs = [], kastArgs = []):
+    inputJSONWrapped = { 'format': 'KAST', 'version': 1, 'term': inputJSON }
+    initKore = _kmcdString( 'kast' , backend , json.dumps(inputJSONWrapped) , debug = debug , kmcdArgs = ['kore', '--input', 'json'            ] + kastArgs )
+    finJSON  = _kmcdString( 'run'  , backend , initKore                     , debug = debug , kmcdArgs = ['--parser', 'cat', '--output', 'json'] + krunArgs )
+    return json.loads(finJSON)['term']
+
+def get_init_config(init_term, debug = False):
+    init_config = kmcdJSON(init_term, backend = 'llvm', debug = debug, kastArgs = [ '--sort', 'EthereumSimulation' ])
     return pyk.splitConfigFrom(init_config)
 
 # Misc Utilities
@@ -80,19 +113,6 @@ def flattenMap(m):
 
 def kMapToDict(s, keyConvert = lambda x: x, valueConvert = lambda x: x):
     return { keyConvert(k): valueConvert(v) for (k, v) in flattenMap(s) }
-
-# Symbol Table (for Unparsing)
-# ----------------------------
-
-MCD_definition_llvm_symbols = pyk.buildSymbolTable(MCD_definition_llvm)
-
-MCD_definition_llvm_symbols [ '_List_' ]                                   = lambda l1, l2: pyk.newLines([l1, l2])
-MCD_definition_llvm_symbols [ '_Set_' ]                                    = lambda s1, s2: pyk.newLines([s1, s2])
-MCD_definition_llvm_symbols [ '_Map_' ]                                    = lambda m1, m2: pyk.newLines([m1, m2])
-MCD_definition_llvm_symbols [ '___KMCD-DRIVER_MCDSteps_MCDStep_MCDSteps' ] = lambda s1, s2: pyk.newLines([s1, s2])
-
-def printMCD(k):
-    return pyk.prettyPrintKast(k, MCD_definition_llvm_symbols)
 
 # Building KAST MCD Terms
 # -----------------------
@@ -429,9 +449,10 @@ mcdArgs = argparse.ArgumentParser()
 mcdCommands = mcdArgs.add_subparsers()
 
 mcdRandomTestArgs = mcdCommands.add_parser('random-test', help = 'Run random tester and check for property violations.')
-mcdRandomTestArgs.add_argument( 'depth'                , type = int ,               help = 'Number of bytes to feed as random input into each run' )
-mcdRandomTestArgs.add_argument( 'numRuns'              , type = int ,               help = 'Number of runs per random seed.'                       )
-mcdRandomTestArgs.add_argument( 'initSeeds'            , type = str , nargs = '*' , help = 'Random seeds to use as run prefixes.'                  )
+mcdRandomTestArgs.add_argument( 'depth'                , type = int  ,                   help = 'Number of bytes to feed as random input into each run' )
+mcdRandomTestArgs.add_argument( 'numRuns'              , type = int  ,                   help = 'Number of runs per random seed.'                       )
+mcdRandomTestArgs.add_argument( 'initSeeds'            , type = str  , nargs = '*'     , help = 'Random seeds to use as run prefixes.'                  )
+mcdRandomTestArgs.add_argument( '--debug'              , type = bool , default = False , help = 'Emit debug information and save temporary files.' )
 mcdRandomTestArgs.add_argument( '--emit-solidity'      , action = 'store_true'    , help = 'Emit Solidity code reproducing the trace.'             )
 mcdRandomTestArgs.add_argument( '--emit-solidity-file' , type = argparse.FileType('w') , default = '-' , help = 'File to emit Solidity code to.'   )
 mcdRandomTestArgs.set_defaults(emit_solidity = False)
@@ -443,6 +464,7 @@ if __name__ == '__main__':
     numruns   = args['numRuns']
     randseeds = args['initSeeds']
     emitSol   = args['emit_solidity']
+    debug     = args['debug']
 
     if len(randseeds) == 0:
         randseeds = [""]
@@ -456,8 +478,7 @@ if __name__ == '__main__':
                               ]
                             )
 
-    (symbolic_configuration, init_cells) = get_init_config(config_loader)
-    print()
+    (symbolic_configuration, init_cells) = get_init_config(config_loader, debug = debug)
 
     all_violations = []
     startTime = time.time()
@@ -470,8 +491,7 @@ if __name__ == '__main__':
             init_cells['K_CELL']      = KSequence([snapshot, genSteps, snapshot])
 
             initial_configuration = pyk.substitute(symbolic_configuration, init_cells)
-            (_, output, _) = krun({ 'format': 'KAST' , 'version': 1 , 'term': initial_configuration }, krunArgs = ['--term'], kastArgs = ['--sort', 'GeneratedTopCell'])
-            print()
+            output = kmcdJSON(initial_configuration, krunArgs = ['--term'], kastArgs = ['--sort', 'GeneratedTopCell'])
             violations = detect_violations(output)
             if len(violations) > 0:
                 violation = { 'properties': violations , 'seed': str(currRandSeed), 'output': output }

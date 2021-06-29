@@ -215,11 +215,11 @@ End Semantics
     syntax EndArgs ::= EndIlkIdArgs
     syntax EndStep ::= EndSkipOp EndIlkIdArgs
  // ------------------------------------
-    rule <k> End . skip ILK_ID ID
+    rule <k> End . skip ILK_ID BID_ID
           => call END_VAT . suck Vow Vow  TAB
           ~> call END_VAT . suck Vow THIS BID
           ~> call END_VAT . hope Flip ILK_ID
-          ~> call Flip ILK_ID . yank ID
+          ~> call Flip ILK_ID . yank BID_ID
           ~> call END_VAT . grab ILK_ID USR THIS Vow LOT (TAB /Rate RATE)
          ...
          </k>
@@ -230,7 +230,7 @@ End Semantics
          <vat-ilks> ... ILK_ID |-> Ilk(... rate: RATE)::VatIlk ... </vat-ilks>
          <flip>
            <flip-ilk> ILK_ID </flip-ilk>
-           <flip-bids> ... ID |-> FlipBid(... bid: BID, lot: LOT, usr: USR, tab: TAB) ... </flip-bids>
+           <flip-bids> ... BID_ID |-> FlipBid(... bid: BID, lot: LOT, usr: USR, tab: TAB) ... </flip-bids>
            ...
          </flip>
       requires TAG =/=Ray ray(0)

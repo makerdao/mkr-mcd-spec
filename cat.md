@@ -100,9 +100,9 @@ Cat Events
 
     syntax CatStep ::= "emitBite" String Address Wad Wad Rad
  // --------------------------------------------------------
-    rule <k> emitBite ILK_ID URN INK ART TAB => ID ... </k>
-         <return-value> ID:Int </return-value>
-         <frame-events> ... (.List => ListItem(Bite(ILK_ID, URN, INK, ART, TAB, Flip ILK_ID, ID))) </frame-events>
+    rule <k> emitBite ILK_ID URN INK ART TAB => BID_ID ... </k>
+         <return-value> BID_ID:Int </return-value>
+         <frame-events> ... (.List => ListItem(Bite(ILK_ID, URN, INK, ART, TAB, Flip ILK_ID, BID_ID))) </frame-events>
 ```
 
 File-able Fields

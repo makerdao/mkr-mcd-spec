@@ -19,7 +19,7 @@ module FLOP
     syntax FlopArgs ::= FlopDentArgs
     syntax FlopStep ::= FlopDentOp FlopDentArgs
  // --------------------------------------
-    rule <k> Flop . dent ID LOT BID
+    rule <k> Flop . dent BID_ID LOT BID
           => #if MSGSENDER =/=K GUY #then call FLOP_VAT . move MSGSENDER GUY BID #else . #fi
           ~> #if TIC ==Int 0 #then call GUY . kiss ( minRad(BID, ASH) ) #else . #fi
          ...
@@ -28,7 +28,7 @@ module FLOP
          <current-time> NOW </current-time>
          <flop-vat> FLOP_VAT:VatContract </flop-vat>
          <vow-ash> ASH </vow-ash>
-         <flop-bids> ... ID |-> FlopBid(... bid: BID', lot: LOT' => LOT, guy: GUY => MSGSENDER, tic: TIC => TIC +Int TTL, end: END) ... </flop-bids>
+         <flop-bids> ... BID_ID |-> FlopBid(... bid: BID', lot: LOT' => LOT, guy: GUY => MSGSENDER, tic: TIC => TIC +Int TTL, end: END) ... </flop-bids>
          <flop-live> true </flop-live>
          <flop-beg> BEG </flop-beg>
          <flop-ttl> TTL </flop-ttl>
@@ -227,9 +227,9 @@ Flop Semantics
     syntax FlopArgs ::= FlopIdArgs
     syntax FlopStep ::= FlopTickOp FlopIdArgs
  // ------------------------------
-    rule <k> Flop . tick ID => . ... </k>
+    rule <k> Flop . tick BID_ID => . ... </k>
          <current-time> NOW </current-time>
-         <flop-bids> ... ID |-> FlopBid(... lot: LOT => LOT *Wad PAD, tic: 0, end: END => NOW +Int TAU ) ... </flop-bids>
+         <flop-bids> ... BID_ID |-> FlopBid(... lot: LOT => LOT *Wad PAD, tic: 0, end: END => NOW +Int TAU ) ... </flop-bids>
          <flop-pad> PAD </flop-pad>
          <flop-tau> TAU </flop-tau>
       requires END <Int NOW
@@ -243,13 +243,13 @@ Flop Semantics
     syntax FlopOp ::= FlopDealOp
     syntax FlopStep ::= FlopDealOp FlopIdArgs [klabel(FlopDeal),symbol]
  // --------------------------------------------------------
-    rule <k> Flop . deal ID
+    rule <k> Flop . deal BID_ID
           => call FLOP_MKR . mint GUY LOT
          ...
          </k>
          <current-time> NOW </current-time>
          <flop-mkr> FLOP_MKR:GemContract </flop-mkr>
-         <flop-bids> ... ID |-> FlopBid(... lot: LOT, guy: GUY, tic: TIC, end: END) => .Map ... </flop-bids>
+         <flop-bids> ... BID_ID |-> FlopBid(... lot: LOT, guy: GUY, tic: TIC, end: END) => .Map ... </flop-bids>
          <flop-live> true </flop-live>
       requires TIC =/=Int 0
        andBool (TIC <Int NOW orBool END <Int NOW)
@@ -275,12 +275,12 @@ Flop Semantics
     syntax FlopOp ::= FlopYankOp
     syntax FlopStep ::= FlopYankOp FlopIdArgs [klabel(FlopYank),symbol]
  // --------------------------------------------------------
-    rule <k> Flop . yank ID
+    rule <k> Flop . yank BID_ID
           => call FLOP_VAT . suck VOWADDR GUY BID
          ...
          </k>
          <flop-vat> FLOP_VAT:VatContract </flop-vat>
-         <flop-bids> ... ID |-> FlopBid(... bid: BID, guy: GUY) => .Map ... </flop-bids>
+         <flop-bids> ... BID_ID |-> FlopBid(... bid: BID, guy: GUY) => .Map ... </flop-bids>
          <flop-live> false </flop-live>
          <flop-vow> VOWADDR </flop-vow>
 ```

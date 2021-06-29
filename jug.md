@@ -143,12 +143,12 @@ Jug Semantics
     syntax JugOp     ::= JugDripOp
     syntax JugStep   ::= JugDripOp JugStringArgs
  // --------------------------------
-    rule <k> Jug . drip ILK_ID => call JUG_VAT . fold ILK_ID ADDRESS ( ( (BASE +Ray ILKDUTY) ^Ray (TIME -Int ILKRHO) ) *Ray ILKRATE ) -Ray ILKRATE ... </k>
+    rule <k> Jug . drip ILK_ID => call JUG_VAT . fold ILK_ID JUG_VOW ( ( (BASE +Ray ILKDUTY) ^Ray (TIME -Int ILKRHO) ) *Ray ILKRATE ) -Ray ILKRATE ... </k>
          <current-time> TIME </current-time>
          <jug-vat> JUG_VAT </jug-vat>
          <vat-ilks> ... ILK_ID |-> Ilk ( ... rate: ILKRATE ) ... </vat-ilks>
          <jug-ilks> ... ILK_ID |-> Ilk ( ... duty: ILKDUTY, rho: ILKRHO => TIME ) ... </jug-ilks>
-         <jug-vow> ADDRESS </jug-vow>
+         <jug-vow> JUG_VOW </jug-vow>
          <jug-base> BASE </jug-base>
       requires TIME >=Int ILKRHO
 ```

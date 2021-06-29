@@ -32,10 +32,10 @@ export PYTHONPATH
 
 SOLIDITY_TESTS := tests/solidity-test
 
-.PHONY: all clean clean-test                                                \
-        deps deps-k deps-media                                              \
-        build build-llvm build-haskell                                      \
-        test test-execution test-python-generator test-random test-solidity
+.PHONY: all clean clean-test                                    \
+        deps deps-k deps-media                                  \
+        build build-llvm build-haskell                          \
+        test test-execution test-python-generator test-solidity
 .SECONDARY:
 
 all: build
@@ -51,7 +51,7 @@ clean-test:
 
 deps:
 	$(KEVM_MAKE) -j4 deps
-	$(KEVM_MAKE) -j4 build-llvm build-haskell build-lemmas
+	$(KEVM_MAKE) -j4 build-llvm build-haskell
 	$(KEVM_MAKE) -j4 install DESTDIR=$(CURDIR)/$(BUILD_DIR)
 
 # Building
@@ -79,13 +79,10 @@ SOURCE_FILES := cat          \
 
 includes = $(patsubst %, $(KMCD_INCLUDE)/kframework/%.md, $(SOURCE_FILES))
 
-tangle_concrete := k & (concrete | ! symbolic)
-tangle_symbolic := k & (symbolic | ! concrete)
-
 build: build-llvm build-haskell
 
 KOMPILE_INCLUDES = $(KMCD_INCLUDE)/kframework $(INSTALL_INCLUDE)/kframework
-KOMPILE_OPTS    += --emit-json $(addprefix -I , $(KOMPILE_INCLUDES))
+KOMPILE_OPTS    += $(addprefix -I , $(KOMPILE_INCLUDES))
 
 ifneq (,$(RELEASE))
     KOMPILE_OPTS += -O3
@@ -124,7 +121,6 @@ $(KMCD_LIB)/$(llvm_kompiled): $(includes)
 	    --directory $(KMCD_LIB)/$(llvm_dir)                       \
 	    --main-module $(llvm_main_module)                         \
 	    --syntax-module $(llvm_syntax_module)                     \
-	    --md-selector "$(tangle_concrete)"                        \
 	    $(KOMPILE_OPTS) $(addprefix -ccopt ,$(KOMPILE_LLVM_OPTS))
 
 # Haskell Backend
@@ -143,7 +139,6 @@ $(KMCD_LIB)/$(haskell_kompiled): $(includes)
 	    --directory $(KMCD_LIB)/$(haskell_dir)             \
 	    --main-module $(haskell_main_module)               \
 	    --syntax-module $(haskell_syntax_module)           \
-	    --md-selector "$(tangle_symbolic)"                 \
 	    $(KOMPILE_OPTS) $(KOMPILE_HASKELL_OPTS)
 
 # Test
@@ -151,18 +146,13 @@ $(KMCD_LIB)/$(haskell_kompiled): $(includes)
 
 KMCD_RANDOMSEED := ""
 
-test: test-execution test-python-generator test-random test-solidity
+test: test-execution test-python-generator test-solidity
 
 execution_tests_random := $(wildcard tests/*/*.random.mcd)
 execution_tests := $(wildcard tests/*/*.mcd)
 
 test-execution: $(execution_tests:=.run)
 test-python-generator: $(execution_tests_random:=.python-gen)
-
-init_random_seeds :=
-
-test-random: mcd-pyk.py
-	python3 $< random-test 1 1 $(init_random_seeds) --emit-solidity
 
 test-solidity: $(patsubst %, $(SOLIDITY_TESTS)/src/%.t.sol, 01 02 03 04 05 06 07 08 09 10)
 	#cd $(SOLIDITY_TESTS) \
