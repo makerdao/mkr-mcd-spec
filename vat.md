@@ -334,7 +334,7 @@ This is quite permissive, and would allow the account to drain all your locked c
 ```k
     syntax VatSlipOp ::= "slip"
     syntax VatOp ::= VatSlipOp
-    syntax VatSlipArgs ::= VatIlkUserArgs Wad
+    syntax VatSlipArgs ::= String Address Wad
     syntax VatArgs ::= VatSlipArgs
     syntax VatAuthStep ::= VatSlipOp VatSlipArgs
  // ------------------------------------------------
