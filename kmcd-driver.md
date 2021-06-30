@@ -221,37 +221,12 @@ During the regular execution of a step this implies popping the `mcd-call-stack`
 
 ### Function Signature and Arguments
 
+Each individual contract function call, `CallStep`, is characterized by its function name, `Op`, and its arguments, `Args`.
+
 ```k
-
     syntax Op
- // ----------
-
     syntax Args
- // -----------
-
     syntax CallStep
- // ---------------
-
- // TODO token2String
-    syntax String ::= #OpToString ( Op ) [function, functional]
- // --------------------------------------------------------------------------------------
-    rule #OpToString ( _Op ) => "Op"
-
-    syntax List ::= #args ( Args )         [function]
-                  | #argslist( Args, List) [function]
- // -------------------------------------------------
-    rule #args( Args ) => #argslist( Args , .List )
-
-// TODO fix recursive function
-//rule #argslist( ARG1 REST, LIST) => #argslist(REST, LIST ListItem(#typeArg(ARG1)) )
-//rule #argslist( ARG1 , LIST) => LIST ListItem(ARG1)
-
-    rule #argslist( Args, LIST) => #argslist(Args, LIST ListItem(Args) )
-
-
-// TODO complete #typeArg for all types of arguments
-    syntax Bytes ::= #typeArg ( String ) [function]
-                // | #typeArg ( Wad )
 ```
 
 Log Events
