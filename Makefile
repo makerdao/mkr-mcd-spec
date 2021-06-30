@@ -1,36 +1,41 @@
 # Settings
 # --------
 
-BUILD_DIR:=.build
-DEFN_DIR:=$(BUILD_DIR)/defn
+BUILD_DIR := .build
+DEPS_DIR  := deps
 
-DEPS_DIR    := deps
-K_SUBMODULE := $(DEPS_DIR)/k
+INSTALL_PREFIX  := /usr
+INSTALL_BIN     ?= $(INSTALL_PREFIX)/bin
+INSTALL_LIB     ?= $(INSTALL_PREFIX)/lib/kmcd
+INSTALL_INCLUDE ?= $(INSTALL_LIB)/include
 
-ifneq (,$(wildcard $(K_SUBMODULE)/k-distribution/target/release/k/bin/*))
-    K_RELEASE ?= $(abspath $(K_SUBMODULE)/k-distribution/target/release/k)
-else
-    K_RELEASE ?= $(dir $(shell which kompile))..
-endif
-K_BIN := $(K_RELEASE)/bin
-K_LIB := $(K_RELEASE)/lib/kframework
-export K_RELEASE
+KEVM_SUBMODULE      := $(DEPS_DIR)/evm-semantics
+KEVM_INSTALL_PREFIX := $(INSTALL_LIB)/kevm
+KEVM_BIN            := $(KEVM_INSTALL_PREFIX)/bin
+KEVM_MAKE           := $(MAKE) --directory $(KEVM_SUBMODULE) INSTALL_PREFIX=$(KEVM_INSTALL_PREFIX)
+KEVM                := kevm
+
+KMCD_BIN     := $(BUILD_DIR)$(INSTALL_BIN)
+KMCD_LIB     := $(BUILD_DIR)$(INSTALL_LIB)
+KMCD_INCLUDE := $(KMCD_LIB)/include
+KMCD_K_BIN   := $(KMCD_LIB)/kframework/bin
+KMCD         := kmcd
 
 K_OPTS += -Xmx8G
 export K_OPTS
 
-PATH:=$(K_BIN):$(PATH)
+PATH:=$(CURDIR)/$(KMCD_BIN):$(CURDIR)/$(KMCD_LIB)/kevm/bin:$(CURDIR)/$(KMCD_LIB)/kevm/lib/kevm/kframework/bin:/usr/lib/kevm/kframework/bin:$(PATH)
 export PATH
 
-PYTHONPATH:=$(K_LIB)
+PYTHONPATH:=$(KMCD_LIB)/kevm/lib/kevm/kframework/lib/kframework:/usr/lib/kevm/kframework/lib/kframework:/usr/lib/kframework:$(PYTHONPATH)
 export PYTHONPATH
 
 SOLIDITY_TESTS := tests/solidity-test
 
-.PHONY: all clean clean-test                                                \
-        deps deps-k deps-media                                              \
-        build build-llvm build-haskell                                      \
-        test test-execution test-python-generator test-random test-solidity
+.PHONY: all clean clean-test                                    \
+        deps deps-k deps-media                                  \
+        build build-llvm build-haskell                          \
+        test test-execution test-python-generator test-solidity
 .SECONDARY:
 
 all: build
@@ -44,47 +49,40 @@ clean-test:
 # Dependencies
 # ------------
 
-K_JAR := $(K_SUBMODULE)/k-distribution/target/release/k/lib/java/kernel-1.0-SNAPSHOT.jar
-
-deps: deps-k
-deps-k: $(K_JAR)
-
-$(K_JAR):
-	cd $(K_SUBMODULE) && mvn package -DskipTests
+deps:
+	$(KEVM_MAKE) -j4 deps
+	$(KEVM_MAKE) -j4 build-llvm build-haskell
+	$(KEVM_MAKE) -j4 install DESTDIR=$(CURDIR)/$(BUILD_DIR)
 
 # Building
 # --------
 
-SOURCE_FILES       := cat          \
-                      dai          \
-                      end          \
-                      fixed-int    \
-                      flap         \
-                      flip         \
-                      flop         \
-                      gem          \
-                      join         \
-                      jug          \
-                      kmcd         \
-                      kmcd-data    \
-                      kmcd-driver  \
-                      kmcd-prelude \
-                      kmcd-props   \
-                      pot          \
-                      spot         \
-                      vat          \
-                      vow
+SOURCE_FILES := cat          \
+                dai          \
+                end          \
+                fixed-int    \
+                flap         \
+                flip         \
+                flop         \
+                gem          \
+                join         \
+                jug          \
+                kmcd         \
+                kmcd-data    \
+                kmcd-driver  \
+                kmcd-prelude \
+                kmcd-props   \
+                pot          \
+                spot         \
+                vat          \
+                vow
 
-EXTRA_SOURCE_FILES :=
-
-ALL_FILES          := $(patsubst %, %.md, $(SOURCE_FILES)) $(EXTRA_SOURCE_FILES)
-
-tangle_concrete := k & (concrete | ! symbolic)
-tangle_symbolic := k & (symbolic | ! concrete)
+includes = $(patsubst %, $(KMCD_INCLUDE)/kframework/%.md, $(SOURCE_FILES))
 
 build: build-llvm build-haskell
 
-KOMPILE_OPTS += --emit-json
+KOMPILE_INCLUDES = $(KMCD_INCLUDE)/kframework $(INSTALL_INCLUDE)/kframework
+KOMPILE_OPTS    += $(addprefix -I , $(KOMPILE_INCLUDES))
 
 ifneq (,$(RELEASE))
     KOMPILE_OPTS += -O3
@@ -99,63 +97,62 @@ endif
 
 KOMPILE_HASKELL_OPTS :=
 
-KOMPILE_LLVM    := kompile --backend llvm    --md-selector "$(tangle_concrete)" \
-                   $(KOMPILE_OPTS) $(addprefix -ccopt ,$(KOMPILE_LLVM_OPTS))
+$(KMCD_BIN)/$(KMCD): $(KMCD)
+	@mkdir -p $(dir $@)
+	install $< $@
 
-KOMPILE_HASKELL := kompile --backend haskell --md-selector "$(tangle_symbolic)" \
-                   $(KOMPILE_OPTS) $(KOMPILE_HASKELL_OPTS)
+$(KMCD_INCLUDE)/kframework/%.md: %.md
+	@mkdir -p $(dir $@)
+	install $< $@
 
 # LLVM Backend
 
+llvm_dir           := llvm
 llvm_main_module   := KMCD-GEN
 llvm_syntax_module := $(llvm_main_module)
-llvm_main_file     := kmcd-prelude
-llvm_dir           := $(DEFN_DIR)/llvm
-llvm_files         := $(ALL_FILES)
-llvm_kompiled      := $(llvm_dir)/$(llvm_main_file)-kompiled/interpreter
+llvm_main_file     := kmcd-prelude.md
+llvm_main_filename := $(basename $(notdir $(llvm_main_file)))
+llvm_kompiled      := $(llvm_dir)/$(llvm_main_filename)-kompiled/interpreter
 
-build-llvm: $(llvm_kompiled)
+build-llvm: $(KMCD_LIB)/$(llvm_kompiled) $(KMCD_BIN)/$(KMCD)
 
-$(llvm_kompiled): $(llvm_files)
-	$(KOMPILE_LLVM) $(llvm_main_file).md          \
-	        --main-module $(llvm_main_module)     \
-	        --syntax-module $(llvm_syntax_module) \
-	        --directory $(llvm_dir) -I $(CURDIR)
+$(KMCD_LIB)/$(llvm_kompiled): $(includes)
+	$(KEVM) kompile --backend llvm $(llvm_main_file)              \
+	    --directory $(KMCD_LIB)/$(llvm_dir)                       \
+	    --main-module $(llvm_main_module)                         \
+	    --syntax-module $(llvm_syntax_module)                     \
+	    $(KOMPILE_OPTS) $(addprefix -ccopt ,$(KOMPILE_LLVM_OPTS))
 
 # Haskell Backend
 
+haskell_dir           := haskell
 haskell_main_module   := KMCD-GEN
 haskell_syntax_module := $(haskell_main_module)
-haskell_main_file     := kmcd-prelude
-haskell_dir           := $(DEFN_DIR)/haskell
-haskell_files         := $(ALL_FILES)
-haskell_kompiled      := $(haskell_dir)/$(haskell_main_file)-kompiled/definition.kore
+haskell_main_file     := kmcd-prelude.md
+haskell_main_filename := $(basename $(notdir $(llvm_main_file)))
+haskell_kompiled      := $(haskell_dir)/$(haskell_main_filename)-kompiled/definition.kore
 
-build-haskell: $(haskell_kompiled)
+build-haskell: $(KMCD_LIB)/$(haskell_kompiled) $(KMCD_BIN)/$(KMCD)
 
-$(haskell_kompiled): $(haskell_files)
-	$(KOMPILE_HASKELL) $(haskell_main_file).md       \
-	        --main-module $(haskell_main_module)     \
-	        --syntax-module $(haskell_syntax_module) \
-	        --directory $(haskell_dir) -I $(CURDIR)
+$(KMCD_LIB)/$(haskell_kompiled): $(includes)
+	$(KEVM) kompile --backend haskell $(haskell_main_file) \
+	    --directory $(KMCD_LIB)/$(haskell_dir)             \
+	    --main-module $(haskell_main_module)               \
+	    --syntax-module $(haskell_syntax_module)           \
+	    $(KOMPILE_OPTS) $(KOMPILE_HASKELL_OPTS)
 
 # Test
 # ----
 
 KMCD_RANDOMSEED := ""
 
-test: test-execution test-python-generator test-random test-solidity
+test: test-execution test-python-generator test-solidity
 
 execution_tests_random := $(wildcard tests/*/*.random.mcd)
 execution_tests := $(wildcard tests/*/*.mcd)
 
 test-execution: $(execution_tests:=.run)
 test-python-generator: $(execution_tests_random:=.python-gen)
-
-init_random_seeds :=
-
-test-random: mcd-pyk.py
-	python3 $< random-test 1 1 $(init_random_seeds) --emit-solidity
 
 test-solidity: $(patsubst %, $(SOLIDITY_TESTS)/src/%.t.sol, 01 02 03 04 05 06 07 08 09 10)
 	#cd $(SOLIDITY_TESTS) \
@@ -165,7 +162,6 @@ test-solidity: $(patsubst %, $(SOLIDITY_TESTS)/src/%.t.sol, 01 02 03 04 05 06 07
 ### Testing Parameters
 
 TEST_BACKEND := llvm
-KMCD         := ./kmcd
 CHECK        := git --no-pager diff --no-index --ignore-all-space -R
 
 RANDOM_TEST_RUNS  := 5

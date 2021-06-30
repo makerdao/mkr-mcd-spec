@@ -3,22 +3,12 @@
 set -euo pipefail
 shopt -s extglob
 
-kmcd_dir="${KMCD_DIR:-.}"
-build_dir="$kmcd_dir/.build"
-defn_dir="${KMCD_DEFN_DIR:-$build_dir/defn}"
-lib_dir="$build_dir/local/lib"
-k_release_dir="${K_RELEASE:-$kmcd_dir/deps/k/k-distribution/target/release/k}"
+INSTALL_BIN="$(dirname $0)"
+INSTALL_LIB=${INSTALL_BIN}/../lib/kmcd
+KEVM_BIN=${INSTALL_LIB}/kevm/bin
+K_BIN=${INSTALL_LIB}/kevm/lib/kevm/kframework/bin
 
-export PATH="$k_release_dir/lib/native/linux:$k_release_dir/lib/native/linux64:$k_release_dir/bin/:$PATH"
-export LD_LIBRARY_PATH="$k_release_dir/lib/native/linux64:$lib_dir:${LD_LIBRARY_PATH:-}"
-
-test_logs="$build_dir/logs"
-mkdir -p "$test_logs"
-test_log="$test_logs/tests.log"
-
-KLAB_OUT="${KLAB_OUT:-$build_dir/klab}"
-KLAB_NODE_STACK_SIZE="${KLAB_NODE_STACK_SIZE:-30000}"
-export KLAB_OUT
+export PATH="${KEVM_BIN}:${K_BIN}:${PATH}"
 
 # Utilities
 # ---------
@@ -37,13 +27,12 @@ pretty_diff() {
 
 run_krun() {
     export K_OPTS=-Xss500m
-    krun --directory "$backend_dir" "$run_file" -cRANDOMSEED=$cRANDOMSEED -pRANDOMSEED='cat' "$@"
+    kevm run --backend "${backend}" --backend-dir "${backend_dir}" "${run_file}" \
+        -cRANDOMSEED=$cRANDOMSEED -pRANDOMSEED='cat' "$@"
 }
 
 run_kast() {
-    local output_mode
-    output_mode="$1" ; shift
-    kast --directory "$backend_dir" "$run_file" --output "$output_mode" "$@"
+    kevm kast --backend "${backend}" --backend-dir "${backend_dir}" "$run_file" "$@"
 }
 
 run_prove() {
@@ -63,22 +52,17 @@ run_search() {
 
 run_command="$1" ; shift
 
-if [[ "$run_command" == 'help' ]]; then
+if [[ "${run_command}" == 'help' ]] || [[ "${run_command}" == '--help' ]]; then
     echo "
-        usage: $0 run        [--backend (llvm|haskell)] [--random-seed <random-seed>] <pgm>  <K arg>*
-               $0 kast       [--backend (llvm|haskell)]                               <pgm>  <output format> <K arg>*
-               $0 prove      [--backend (haskell)]                                    <spec> <K arg>* -m <def_module>
-               $0 search     [--backend (haskell)]                                    <pgm>  <pattern> <K arg>*
-               $0 klab-run                                                            <pgm>  <K arg>*
-               $0 klab-prove                                                          <spec> <K arg>* -m <def_module>
-               $0 klab-view                                                           <spec>
+        usage: $0 run    [--backend (llvm|haskell)] [--random-seed <random-seed>] <pgm>  <K arg>*
+               $0 kast   [--backend (llvm|haskell)]                               <pgm>  <output format> <K arg>*
+               $0 prove  [--backend (haskell)]                                    <spec> <K arg>* -m <def_module>
+               $0 search [--backend (haskell)]                                    <pgm>  <pattern> <K arg>*
 
-           $0 run       : Run a single MCD simulation
-           $0 kast      : Parse an MCD simulation and output it in a supported format
-           $0 prove     : Run an MCD K proof
-           $0 search    : Search for a K pattern in an MCD simulation execution
-           $0 klab-(run|prove) : Run program or prove spec and dump StateLogs which KLab can read
-           $0 klab-view : View the statelog associated with a given program or spec
+           $0 run    : Run a single MCD simulation
+           $0 kast   : Parse an MCD simulation and output it in a supported format
+           $0 prove  : Run an MCD K proof
+           $0 search : Search for a K pattern in an MCD simulation execution
 
            Note: <pgm> is a path to a file containing an MCD simulation/test.
                  <spec> is a K specification to be proved.
@@ -87,8 +71,6 @@ if [[ "$run_command" == 'help' ]]; then
                  <pattern> is the configuration pattern to search for.
                  <def_module> is the module to take as axioms when doing verification.
                  <random-seed> is a hex-string to be taken as a random input seed.
-
-           klab-view: Make sure that the 'klab/bin' directory is on your PATH to use this option.
     "
     exit 0
 fi
@@ -102,10 +84,12 @@ while [[ $# -gt 0 ]]; do
     case $arg in
         --random-seed) random_seed="$2" ; shift 2 ;;
         --backend)     backend="$2"     ; shift 2 ;;
+        --debug)       debug=true       ; shift   ;;
         *)             break                      ;;
     esac
 done
-backend_dir="$defn_dir/$backend"
+! $debug || set -x
+backend_dir="${INSTALL_LIB}/$backend"
 
 # get the run file
 run_file="$1" ; shift

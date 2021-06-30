@@ -2,7 +2,7 @@ pipeline {
   agent {
     dockerfile {
       label 'docker'
-      additionalBuildArgs '--build-arg K_COMMIT=$(cd deps/k && git tag --points-at HEAD | cut --characters=2-) --build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g)'
+      additionalBuildArgs '--build-arg KEVM_COMMIT=$(cd deps/evm-semantics && git rev-parse --short=7 HEAD) --build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g)'
     }
   }
   options { ansiColor('xterm') }
@@ -13,19 +13,11 @@ pipeline {
     }
     stage('Build') { steps { sh 'make build -j4 RELEASE=true' } }
     stage('Test') {
-      stages {
-        stage('Unit') {
-          options { timeout(time: 3, unit: 'MINUTES') }
-          parallel {
-            stage('Run Simulation Tests') { steps { sh 'make test-execution -j6'        } }
-            stage('Python Runner')        { steps { sh 'make test-python-generator -j6' } }
-            stage('Random Generation')    { steps { sh 'make test-random'               } }
-          }
-        }
-        stage('Solidity Generation') {
-          options { timeout(time: 12, unit: 'MINUTES') }
-          steps { sh 'make test-solidity -j6' }
-        }
+      options { timeout(time: 10, unit: 'MINUTES') }
+      parallel {
+        stage('Run Simulation Tests') { steps { sh 'make test-execution -j6'        } }
+        stage('Python Runner')        { steps { sh 'make test-python-generator -j6' } }
+        stage('Test Solidity')        { steps { sh 'make test-solidity -j6'         } }
       }
     }
     // stage('Deploy') {

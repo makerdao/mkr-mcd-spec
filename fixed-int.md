@@ -5,6 +5,8 @@ This module implements fixed point integers in K.
 Once it stabalizes, it should be upstreamed into the K Prelude.
 
 ```k
+requires "domains.md"
+
 module FIXED-INT
     imports INT
     imports BOOL

@@ -126,7 +126,7 @@ Art of an ilk = Sum of all urn art across all users for that ilk.
 ```k
     syntax Wad ::= sumOfUrnArt(Map, String, Wad) [function, functional]
  // -------------------------------------------------------------------
-    rule sumOfUrnArt( {ILK_ID , _} |-> Urn (... art: ART) URNS, ILK_ID', SUM)
+    rule sumOfUrnArt( {ILK_ID , _:Address } |-> Urn (... art: ART) URNS, ILK_ID', SUM)
       => #if ILK_ID ==K ILK_ID'
             #then sumOfUrnArt( URNS, ILK_ID', SUM +Wad ART)
             #else sumOfUrnArt( URNS, ILK_ID', SUM)
@@ -417,8 +417,8 @@ The property checks if a successful `Pot . join` is preceded by a `TimeStep` mor
 
     rule derive(flopBlockCheck(... embers: EMBERS, dented: DENTED), FlopKick(_, _, BID, _)) => flopBlockCheck(... embers: EMBERS +Rad BID, dented: DENTED)
 
-    rule derive(flopBlockCheck(... embers: EMBERS, dented: DENTED), LogNote(_ , Flop . dent ID _ BID)) => flopBlockCheck(... embers: EMBERS -Rad BID, dented: DENTED +Int (2 ^Int ID))
-        requires ( ( ( DENTED /Int ( 2 ^Int ID ) ) modInt 2 ) ==Int 0 )
+    rule derive(flopBlockCheck(... embers: EMBERS, dented: DENTED), LogNote(_ , Flop . dent DENT_ID _ BID)) => flopBlockCheck(... embers: EMBERS -Rad BID, dented: DENTED +Int (2 ^Int DENT_ID))
+        requires ( ( ( DENTED /Int ( 2 ^Int DENT_ID ) ) modInt 2 ) ==Int 0 )
     rule derive(flopBlockCheck(... embers: EMBERS, dented: DENTED), LogNote(_ , Flop . dent _ _ _)) => flopBlockCheck(... embers: EMBERS, dented: DENTED) [owise]
 ```
 

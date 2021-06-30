@@ -4,25 +4,27 @@ KMCD Driver
 This module defines common state and control flow between all the other KMCD modules.
 
 ```k
+requires "evm.md"
 requires "kmcd-data.md"
 
 module KMCD-DRIVER
     imports KMCD-DATA
     imports MAP
     imports STRING
+    imports EVM
 
     configuration
         <kmcd-driver>
-          <k> $PGM:MCDSteps </k>
           <return-value> .K </return-value>
           <msg-sender> 0:Address </msg-sender>
           <this> 0:Address </this>
           <current-time> 0:Int </current-time>
-          <call-stack> .List </call-stack>
+          <mcd-call-stack> .List </mcd-call-stack>
           <pre-state> .K </pre-state>
           <events> .List </events>
           <tx-log> .Transaction </tx-log>
           <frame-events> .List </frame-events>
+          <kevm/>
         </kmcd-driver>
 ```
 
@@ -30,9 +32,12 @@ MCD Simulations
 ---------------
 
 ```k
+    syntax EthereumSimulation ::= MCDSteps
+ // --------------------------------------
+
     syntax MCDSteps ::= ".MCDSteps" | MCDStep MCDSteps
  // --------------------------------------------------
-    rule <k> .MCDSteps => . ... </k>
+    rule <k> .MCDSteps => . ... </k> <exit-code> _ => 0 </exit-code>
     rule <k> MCD:MCDStep MCDS:MCDSteps => MCD ~> MCDS ... </k>
 
     syntax MCDContract ::= contract(MCDStep) [function]
@@ -60,8 +65,8 @@ The special account `ANYONE` is not authorized to do anything, so represents any
     syntax MCDStep ::= AdminStep
  // ----------------------------
 
-    syntax Set ::= wards ( MCDContract ) [function]
- // -----------------------------------------------
+    syntax Set ::= wards ( MCDContract ) [function, functional]
+ // -----------------------------------------------------------
     rule wards(_) => .Set [owise]
 
     syntax Address ::= "ADMIN" | "ANYONE"
@@ -70,7 +75,6 @@ The special account `ANYONE` is not authorized to do anything, so represents any
     syntax Bool ::= isAuthorized ( Address , MCDContract ) [function]
  // -----------------------------------------------------------------
     rule isAuthorized( ADDR , MCDCONTRACT ) => ADDR ==K ADMIN orBool ADDR in wards(MCDCONTRACT)
-
 ```
 
 Transactions
@@ -85,7 +89,7 @@ Use `transact ...` for initiating top-level calls from a given user.
     rule <k> transact ADDR:Address MCD:MCDStep => pushState ~> call MCD ~> #end-transact ~> assert ~> dropState ... </k>
          <this> _ => ADDR </this>
          <msg-sender> _ => ADDR </msg-sender>
-         <call-stack> _ => .List </call-stack>
+         <mcd-call-stack> _ => .List </mcd-call-stack>
          <pre-state> _ => .K </pre-state>
          <tx-log> _ => Transaction(... acct: ADDR, call: MCD, events: .List, txException: false) </tx-log>
          <frame-events> _ => .List </frame-events>
@@ -110,7 +114,7 @@ Use `transact ...` for initiating top-level calls from a given user.
 Function Calls
 --------------
 
-Internal function calls utilize the `<call-stack>` to create call-frames and return values to their caller.
+Internal function calls utilize the `<mcd-call-stack>` to create call-frames and return values to their caller.
 On `exception`, the entire current call is discarded to trigger state roll-back (we assume no error handling on internal `exception`).
 
 ```k
@@ -126,13 +130,13 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
     rule <k> makecall MCD:MCDStep ~> CONT => MCD </k>
          <msg-sender> MSGSENDER => THIS </msg-sender>
          <this> THIS => contract(MCD) </this>
-         <call-stack> .List => ListItem(frame(MSGSENDER, EVENTS, CONT)) ... </call-stack>
+         <mcd-call-stack> .List => ListItem(frame(MSGSENDER, EVENTS, CONT)) ... </mcd-call-stack>
          <frame-events> EVENTS => ListItem(LogNote(MSGSENDER, MCD)) </frame-events>
 
     rule <k> . => CONT </k>
          <msg-sender> MSGSENDER => PREVSENDER </msg-sender>
          <this> _THIS => MSGSENDER </this>
-         <call-stack> ListItem(frame(PREVSENDER, PREVEVENTS, CONT)) => .List ... </call-stack>
+         <mcd-call-stack> ListItem(frame(PREVSENDER, PREVEVENTS, CONT)) => .List ... </mcd-call-stack>
          <tx-log> Transaction(... events: L => L EVENTS) </tx-log>
          <frame-events> EVENTS => PREVEVENTS </frame-events>
 ```
@@ -146,8 +150,8 @@ At the moment these are typically used in the codebase to check prerequisite con
 
 ```k
     syntax AuthStep
-    syntax MCDStep ::= AuthStep
- // ---------------------------
+    syntax MCDStep ::= LockStep | AuthStep
+ // --------------------------------------
 
     syntax WardStep ::= "rely" Address
                       | "deny" Address
@@ -160,15 +164,10 @@ At the moment these are typically used in the codebase to check prerequisite con
                           | "unlock"      MCDStep
  // ---------------------------------------------
 
-    syntax MCDStep   ::= LockStep
-
     syntax LockAuthStep
     syntax LockStep ::= LockAuthStep
     syntax AuthStep ::= LockAuthStep
  // --------------------------------
-
-    rule <k> makecall MCD => exception MCD ... </k> [owise]
-
     rule <k> V:Value => . ... </k> <return-value> _ => V </return-value>
 
     rule <k> checkauth MCD:AuthStep => .             ... </k> <this> THIS </this> requires isAuthorized(THIS, contract(MCD))
@@ -188,7 +187,7 @@ At the moment these are typically used in the codebase to check prerequisite con
 ### Exception Handling
 
 Whenever an exception occurs the state must be rolled back.
-During the regular execution of a step this implies popping the `call-stack` and rolling back `frame-events`.
+During the regular execution of a step this implies popping the `mcd-call-stack` and rolling back `frame-events`.
 
 ```k
     syntax Event ::= Exception ( Address , MCDStep ) [klabel(LogException), symbol]
@@ -201,12 +200,12 @@ During the regular execution of a step this implies popping the `call-stack` and
     rule <k> exception E ~> _ => exception E ~> CONT </k>
          <msg-sender> MSGSENDER => PREVSENDER </msg-sender>
          <this> _THIS => MSGSENDER </this>
-         <call-stack> ListItem(frame(PREVSENDER, PREVEVENTS, CONT)) => .List ... </call-stack>
+         <mcd-call-stack> ListItem(frame(PREVSENDER, PREVEVENTS, CONT)) => .List ... </mcd-call-stack>
          <tx-log> Transaction(... events: L => L EVENTS) </tx-log>
          <frame-events> EVENTS => PREVEVENTS </frame-events>
 
     rule <k> exception _MCDSTEP ~> dropState => popState ... </k>
-         <call-stack> .List </call-stack>
+         <mcd-call-stack> .List </mcd-call-stack>
 
     rule <k> exception _ ~> (assert         => .) ... </k> 
     rule <k> exception _ ~> (_:ModifierStep => .) ... </k>

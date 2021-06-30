@@ -2,9 +2,6 @@
   <kmcd-properties>
     <kmcd>
       <kmcd-driver>
-        <k>
-          .
-        </k>
         <return-value>
           2 ~> .
         </return-value>
@@ -17,9 +14,9 @@
         <current-time>
           0
         </current-time>
-        <call-stack>
+        <mcd-call-stack>
           .List
-        </call-stack>
+        </mcd-call-stack>
         <pre-state>
           .
         </pre-state>
@@ -32,6 +29,176 @@
         <frame-events>
           .List
         </frame-events>
+        <kevm>
+          <k>
+            .
+          </k>
+          <exit-code>
+            0
+          </exit-code>
+          <mode>
+            NORMAL
+          </mode>
+          <schedule>
+            ISTANBUL
+          </schedule>
+          <ethereum>
+            <evm>
+              <output>
+                b""
+              </output>
+              <statusCode>
+                .StatusCode
+              </statusCode>
+              <endPC>
+                0
+              </endPC>
+              <callStack>
+                .List
+              </callStack>
+              <interimStates>
+                .List
+              </interimStates>
+              <touchedAccounts>
+                .Set
+              </touchedAccounts>
+              <callState>
+                <program>
+                  b""
+                </program>
+                <jumpDests>
+                  .Set
+                </jumpDests>
+                <id>
+                  .Account
+                </id>
+                <caller>
+                  .Account
+                </caller>
+                <callData>
+                  b""
+                </callData>
+                <callValue>
+                  0
+                </callValue>
+                <wordStack>
+                  .WordStack
+                </wordStack>
+                <localMem>
+                  b""
+                </localMem>
+                <pc>
+                  0
+                </pc>
+                <gas>
+                  0
+                </gas>
+                <memoryUsed>
+                  0
+                </memoryUsed>
+                <callGas>
+                  0
+                </callGas>
+                <static>
+                  false
+                </static>
+                <callDepth>
+                  0
+                </callDepth>
+              </callState>
+              <substate>
+                <selfDestruct>
+                  .Set
+                </selfDestruct>
+                <log>
+                  .List
+                </log>
+                <refund>
+                  0
+                </refund>
+              </substate>
+              <gasPrice>
+                0
+              </gasPrice>
+              <origin>
+                .Account
+              </origin>
+              <blockhashes>
+                .List
+              </blockhashes>
+              <block>
+                <previousHash>
+                  0
+                </previousHash>
+                <ommersHash>
+                  0
+                </ommersHash>
+                <coinbase>
+                  0
+                </coinbase>
+                <stateRoot>
+                  0
+                </stateRoot>
+                <transactionsRoot>
+                  0
+                </transactionsRoot>
+                <receiptsRoot>
+                  0
+                </receiptsRoot>
+                <logsBloom>
+                  b""
+                </logsBloom>
+                <difficulty>
+                  0
+                </difficulty>
+                <number>
+                  0
+                </number>
+                <gasLimit>
+                  0
+                </gasLimit>
+                <gasUsed>
+                  0
+                </gasUsed>
+                <timestamp>
+                  0
+                </timestamp>
+                <extraData>
+                  b""
+                </extraData>
+                <mixHash>
+                  0
+                </mixHash>
+                <blockNonce>
+                  0
+                </blockNonce>
+                <ommerBlockHeaders>
+                  [ .JSONs ]
+                </ommerBlockHeaders>
+              </block>
+            </evm>
+            <network>
+              <chainID>
+                1
+              </chainID>
+              <activeAccounts>
+                .Set
+              </activeAccounts>
+              <accounts>
+                .AccountCellMap
+              </accounts>
+              <txOrder>
+                .List
+              </txOrder>
+              <txPending>
+                .List
+              </txPending>
+              <messages>
+                .MessageCellMap
+              </messages>
+            </network>
+          </ethereum>
+        </kevm>
       </kmcd-driver>
       <kmcd-state>
         <cat>
@@ -248,9 +415,9 @@
               .Set
             </gem-wards>
             <gem-balances>
+              GemJoin "gold" |-> FInt ( 20000000000000000000 , 1000000000000000000 )
               "Bobby" |-> FInt ( 10000000000000000000 , 1000000000000000000 )
               "Alice" |-> FInt ( 10000000000000000000 , 1000000000000000000 )
-              GemJoin "gold" |-> FInt ( 20000000000000000000 , 1000000000000000000 )
             </gem-balances>
           </gem>
         </gems>
@@ -367,13 +534,13 @@
             SetItem ( Spot )
           </vat-wards>
           <vat-can>
-            "Alice" |-> SetItem ( End )
+            "Alice" |-> SetItem ( Flop )
+            SetItem ( End )
             SetItem ( Flip "gold" )
-            SetItem ( Flop )
             SetItem ( Pot )
-            "Bobby" |-> SetItem ( End )
+            "Bobby" |-> SetItem ( Flop )
+            SetItem ( End )
             SetItem ( Flip "gold" )
-            SetItem ( Flop )
             SetItem ( Pot )
             Vow |-> SetItem ( Flap )
           </vat-can>
