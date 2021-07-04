@@ -85,7 +85,7 @@ These parameters are controlled by governance:
 
 -   `tau`:  Seconds after auction start when the price reaches zeroe
 -   `step`: Length of time between price drops
--   `cut`:  Per-step multiplicative facto
+-   `cut`:  Per-step multiplicative factor
 
 
 ```k
