@@ -61,7 +61,7 @@ Abacus Authorization
     rule [[ wards(Abacus ABACUS_ADDRESS) => WARDS ]] <abaci> <abacus-address> ABACUS_ADDRESS </abacus-address> <abacus-wards> WARDS </abacus-wards> ... </abaci>
 
     syntax AbacusAuthStep ::= WardStep
- // --------------------------------
+ // ----------------------------------
     rule <k> Abacus ABACUS_ADDRESS . rely ADDR => . ... </k>
          <abacus>
            <abacus-address>   ABACUS_ADDRESS              </abacus-address>
@@ -76,7 +76,6 @@ Abacus Authorization
            ...
          </abacus>
 ```
-
 
 File-able Fields
 ----------------
@@ -95,7 +94,7 @@ These parameters are controlled by governance:
     syntax AbacusFile ::= "tau"  Int
                         | "step" Int
                         | "cut"  Ray
- // --------------------------------------------
+ // --------------------------------
     rule <k> Abacus ABACUS_ADDRESS . file tau TAU => . ... </k>
          <abacus>
             <abacus-address> ABACUS_ADDRESS </abacus-address>
@@ -118,13 +117,14 @@ These parameters are controlled by governance:
          </abacus>
 ```
 
-
 Abacus Semantics
 ----------------
 
+- `LinearDecrease` abacus:
+
 ```k
    syntax AbacusStep ::= "price" Ray Int
- // -------------------------------------
+ // ------------------------------------
    rule <k> Abacus ABACUS_ADDRESS . price TOP DUR => ( TOP *Ray ray( ( ABACUS_TAU -Int DUR ) /Int ABACUS_TAU ) ) ... </k>
       <abacus>
          <abacus-address> ABACUS_ADDRESS   </abacus-address>
@@ -132,8 +132,21 @@ Abacus Semantics
          <abacus-tau>     ABACUS_TAU       </abacus-tau>
          ...
       </abacus>
-      requires DUR >=Int ABACUS_TAU
+      requires DUR <=Int ABACUS_TAU
 
+    rule <k> Abacus ABACUS_ADDRESS . price TOP DUR => ray(0) ... </k>
+      <abacus>
+         <abacus-address> ABACUS_ADDRESS   </abacus-address>
+         <abacus-type>    "LinearDecrease" </abacus-type>
+         <abacus-tau>     ABACUS_TAU       </abacus-tau>
+         ...
+      </abacus>
+        requires DUR >Int ABACUS_TAU
+```
+
+- `StairstepExponentialDecrease` abacus:
+
+```k
    rule <k> Abacus ABACUS_ADDRESS . price TOP DUR => ( TOP *Ray ( ABACUS_CUT ^Ray ( DUR /Int ABACUS_STEP ) ) ) ... </k>
       <abacus>
          <abacus-address> ABACUS_ADDRESS                 </abacus-address>
@@ -142,7 +155,11 @@ Abacus Semantics
          <abacus-cut>     ABACUS_CUT                     </abacus-cut>
          ...
       </abacus>
+```
 
+- `ExponentialDecrease` abacus:
+
+```k
    rule <k> Abacus ABACUS_ADDRESS . price TOP DUR => TOP *Ray ( ABACUS_CUT ^Ray DUR ) ... </k>
       <abacus>
          <abacus-address> ABACUS_ADDRESS        </abacus-address>
@@ -150,7 +167,6 @@ Abacus Semantics
          <abacus-cut>     ABACUS_CUT            </abacus-cut>
          ...
       </abacus>
-
 ```
 
 ```k
