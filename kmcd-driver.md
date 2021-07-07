@@ -5,6 +5,7 @@ This module defines common state and control flow between all the other KMCD mod
 
 ```k
 requires "evm.md"
+requires "evm-types.md"
 requires "kmcd-data.md"
 ```
 
@@ -44,6 +45,7 @@ module KMCD-DRIVER
     imports MAP
     imports STRING
     imports EVM
+    imports EVM-TYPES
     imports KMCD-ACCOUNTS
 
     configuration
@@ -106,6 +108,40 @@ The special account `ANYONE` is not authorized to do anything, so represents any
  // -----------------------------------------------------------------
     rule isAuthorized( ADDR , MCDCONTRACT ) => ADDR ==K ADMIN orBool ADDR in wards(MCDCONTRACT)
 
+```
+
+KEVM Serialization/Deserialization
+----------------------------------
+
+Passing control to the KEVM, executing the transaction and returning control to the MCD-SPEC is defined here while each single contract implements how it serializes transactions/deserializes state to/from the KEVM.
+
+## State Serialization
+
+```k
+    syntax MCDStorage
+    syntax ContractStorage ::= MCDStorage
+
+    syntax KItem ::= #serializeContract ( MCDContract )
+ // ---------------------------------------------------------------------------
+
+    syntax KItem ::= "#serializeState"
+ // ----------------------------------
+
+    syntax Map ::= #lookupMap (Map, Int)   [function, functional]
+ // -------------------------------------------------------------
+    rule #lookupMap( (KEY |-> MAP:Map ) _M, KEY ) => MAP
+    rule #lookupMap(                     M, KEY ) => .Map   requires notBool KEY in_keys(M)
+    rule #lookupMap( (KEY |-> VAL     ) _M, KEY ) => .Map   requires notBool isMap(VAL)
+```
+
+## State Deserialization
+
+```k
+
+    syntax KItem ::= #deserializeContract ( MCDContract )
+ // ---------------------------------------------------------
+
+    syntax KItem ::= "#deserializeState"
 ```
 
 Transactions
@@ -187,6 +223,10 @@ At the moment these are typically used in the codebase to check prerequisite con
     syntax WardStep ::= "rely" Address
                       | "deny" Address
  // ----------------------------------
+
+    syntax Int ::= #lookupWards ( Set , Address ) [function, functional]
+ // -----------------------------------
+    rule #lookupWards ( SET, ADDR ) => bool2Word(ADDR in SET)
 
     syntax ModifierStep ::= "checkauth"   MCDStep
                           | "checklock"   MCDStep

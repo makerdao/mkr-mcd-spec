@@ -126,9 +126,9 @@ $(KMCD_LIB)/$(llvm_kompiled): $(includes)
 # Haskell Backend
 
 haskell_dir           := haskell
-haskell_main_module   := KMCD-GEN
+haskell_main_module   := VAT
 haskell_syntax_module := $(haskell_main_module)
-haskell_main_file     := kmcd-prelude.md
+haskell_main_file     := vat.md
 haskell_main_filename := $(basename $(notdir $(llvm_main_file)))
 haskell_kompiled      := $(haskell_dir)/$(haskell_main_filename)-kompiled/definition.kore
 
@@ -149,7 +149,7 @@ KMCD_RANDOMSEED := ""
 test: test-execution test-python-generator test-solidity
 
 execution_tests_random := $(wildcard tests/*/*.random.mcd)
-execution_tests := $(wildcard tests/*/*.mcd)
+execution_tests := $(wildcard tests/*/*Test.mcd)
 
 test-execution: $(execution_tests:=.run)
 test-python-generator: $(execution_tests_random:=.python-gen)

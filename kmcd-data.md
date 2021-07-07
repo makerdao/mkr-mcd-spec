@@ -200,7 +200,7 @@ Hardcoded Constants
 -------------------
 
 ```k
-    syntax Int ::= "pow255" // 2 ^Int 255 
+    syntax Int ::= "pow255" // 2 ^Int 255
  // -------------------------------------
     rule pow255 => 57896044618658097711785492504343953926634992332820282019728792003956564819968  [macro]
 ```
@@ -212,7 +212,7 @@ Time Increments
 Some methods rely on a timestamp.
 We simulate that here.
 
-```k
+```
     syntax priorities timeUnit > _+Int_ _-Int_ _*Int_ _/Int_
  // --------------------------------------------------------
 
@@ -238,7 +238,7 @@ We simulate that here.
 Collateral Increments
 ---------------------
 
-```k
+```
     syntax priorities collateralUnit > _+Int_ _-Int_ _*Int_ _/Int_
  // --------------------------------------------------------------
 

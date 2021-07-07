@@ -1,10 +1,13 @@
 ```k
 requires "kmcd-driver.md"
-requires "./deps/evm-semantics/tests/specs/mcd/storage.k"
+requires "./deps/evm-semantics/tests/specs/mcd/bin_runtime.k"
+requires "abi.md"
+requires "edsl.md"
 
 module VAT
     imports KMCD-DRIVER
-    imports DSS-STORAGE
+    imports DSS-BIN-RUNTIME
+    imports EDSL
 ```
 
 Vat Configuration
@@ -12,6 +15,8 @@ Vat Configuration
 
 ```k
     configuration
+    <main-vat>
+      <kmcd-driver/>
       <vat>
         <vat-wards> .Set   </vat-wards>
         <vat-can>   .Map   </vat-can>  // mapping (address (address => uint))       Address |-> Set
@@ -25,6 +30,7 @@ Vat Configuration
         <vat-Line>  rad(0) </vat-Line> // Total Debt Ceiling
         <vat-live>  true   </vat-live> // Access Flag
       </vat>
+    </main-vat>
 ```
 
 The `Vat` implements the core accounting for MCD, allowing manipulation of `<vat-gem>`, `<vat-urns>`, `<vat-dai>`, and `<vat-sin>` in pre-specified ways.
@@ -51,9 +57,71 @@ For convenience, total Dai/Sin are tracked:
     rule contract(Vat . _) => Vat
 ```
 
-### Constructor
+### Vat Serialization/Deserialization
 
 ```k
+    syntax MCDStorage ::= #storageVat(VatCell)
+
+ // -------------------------------------------------------------
+    rule <k> #serializeContract ( Vat ) => . ... </k>
+        <vat> VAT_CONFIG </vat>
+        <account>
+          <acctID> 1000 </acctID>
+          <storage> _ => #storageVat(<vat> VAT_CONFIG </vat>) </storage>
+          ...
+        </account>
+
+    syntax VatIlk ::= #lookupIlks (Map, Int) [function, functional]
+    syntax VatIlk ::= "EmptyIlk"
+// ----------------------------------------------------------------
+
+    rule  #lookupIlks( (KEY |-> ILK:VatIlk ) _M, KEY ) => ILK
+    rule  #lookupIlks(                        M, KEY ) => EmptyIlk
+    requires notBool KEY in_keys(M)
+    rule  #lookupIlks( (KEY |-> VAL        ) _M, KEY ) => EmptyIlk
+    requires notBool isVatIlk(VAL)
+
+    syntax VatUrn ::= #lookupUrns (Map, Int) [function, functional]
+    syntax VatUrn ::= "EmptyUrn"
+// ----------------------------------------------------------------
+
+    rule  #lookupUrns( (KEY |-> URN:VatUrn ) _M, KEY ) => URN
+    rule  #lookupUrns(                        M, KEY ) => EmptyUrn
+    requires notBool KEY in_keys(M)
+    rule  #lookupUrns( (KEY |-> VAL        ) _M, KEY ) => EmptyUrn
+    requires notBool isVatUrn(VAL)
+
+
+    syntax Int ::= #lookupIlk (VatIlk, Int) [function, functional]
+                 | #lookupUrn (VatUrn, Int) [function, functional]
+ // -------------------------------------------------------------
+
+    rule #lookupIlk(Ilk(... Art:  ART ) , 0) => value(ART)
+    rule #lookupIlk(Ilk(... rate: RATE) , 1) => value(RATE)
+    rule #lookupIlk(Ilk(... spot: SPOT) , 2) => value(SPOT)
+    rule #lookupIlk(Ilk(... line: LINE) , 3) => value(LINE)
+    rule #lookupIlk(Ilk(... dust: DUST) , 4) => value(DUST)
+    rule #lookupIlk(EmptyIlk, _) => 0
+
+    rule #lookupUrn(Urn(... ink: INK), 0) => value(INK)
+    rule #lookupUrn(Urn(... art: ART), 1) => value(ART)
+    rule #lookupUrn(EmptyUrn, _) => 0
+
+
+    rule <k> #deserializeContract ( Vat ) => . ... </k>
+        <vat> _ => VAT_CONFIG </vat>
+        <account>
+            <acctID> 1000 </acctID>
+            <storage> #storageVat(<vat> VAT_CONFIG </vat>) </storage>
+            ...
+        </account>
+
+
+```
+
+### Constructor
+
+```
     syntax VatStep ::= "constructor"
  // --------------------------------
     rule <k> Vat . constructor => . ... </k>
@@ -123,7 +191,7 @@ CDP Data
 -   `urnDebt` calculates the `RATE`-scaled `ART` of an `Urn`.
 -   `urnCollateral` calculates the `SPOT`-scaled `INK` of an `Urn`.
 
-```k
+```
     syntax Rad ::= urnBalance    ( VatIlk , VatUrn ) [function, functional]
                  | urnDebt       ( VatIlk , VatUrn ) [function, functional]
                  | urnCollateral ( VatIlk , VatUrn ) [function, functional]
@@ -144,7 +212,7 @@ The parameters controlled by governance are:
 -   `line`: Debt ceiling for a given `Ilk`.
 -   `dust`: Essentially zero amount for a given `Ilk`.
 
-```k
+```
     syntax VatAuthStep ::= "file" VatFile
  // -------------------------------------
 
@@ -184,7 +252,7 @@ Because data isn't explicitely initialized to 0 in KMCD, we need explicit initia
 -   `initGem`: Create a new gem of a given ilk for a given address.
 -   `initCDP`: Create an empty CDP of a given ilk for a given user.
 
-```k
+```
     syntax VatAuthStep ::= "initUser" Address
                          | "initGem" String Address
                          | "initCDP" String Address
@@ -211,7 +279,7 @@ Vat Semantics
 
 -   `Vat.cage` disables access to this instance of MCD.
 
-```k
+```
     syntax VatAuthStep ::= "cage" [klabel(#VatCage), symbol]
  // --------------------------------------------------------
     rule <k> Vat . cage => . ... </k>
@@ -230,7 +298,7 @@ This is quite permissive, and would allow the account to drain all your locked c
 
 **NOTE**: It is assumed that `<vat-can>` has already been initialized with the relevant accounts.
 
-```k
+```
     syntax Bool ::= "wish" Address [function]
  // -----------------------------------------
     rule [[ wish ADDRFROM => true ]]
@@ -268,7 +336,7 @@ This is quite permissive, and would allow the account to drain all your locked c
 -   `Vat.safe` checks that a given `Urn` of a certain `ilk` is not over-leveraged.
 -   `Vat.nondusty` checks that a given `Urn` has the minumum deposit (is effectively non-zero).
 
-```k
+```
     syntax VatStep ::= "safe" String Address
  // ----------------------------------------
     rule <k> Vat . safe ILK_ID ADDR => . ... </k>
@@ -289,7 +357,7 @@ This is quite permissive, and would allow the account to drain all your locked c
 
 -   `Vat.init` creates a new `ilk` collateral type, failing if the given `ilk` already exists.
 
-```k
+```
     syntax VatAuthStep ::= "init" String
  // ------------------------------------
     rule <k> Vat . init ILK_ID => . ... </k>
@@ -310,7 +378,7 @@ This is quite permissive, and would allow the account to drain all your locked c
     **TODO**: Should `Vat.slip` use `Vat.consent` or `Vat.wish`?
     **TODO**: Should `Vat.flux` use `Vat.consent` or `Vat.wish`?
 
-```k
+```
     syntax VatAuthStep ::= "slip" String Address Wad
  // ------------------------------------------------
     rule <k> Vat . slip ILK_ID ADDRTO NEWCOL => . ... </k>
@@ -341,7 +409,7 @@ This is quite permissive, and would allow the account to drain all your locked c
 
     **TODO**: Should `Vat.move` use `Vat.consent` or `Vat.wish`?
 
-```k
+```
     syntax VatStep ::= "move" Address Address Rad
  // ---------------------------------------------
     rule <k> Vat . move ADDRFROM ADDRTO DAI => . ... </k>
@@ -370,7 +438,7 @@ This is quite permissive, and would allow the account to drain all your locked c
     **TODO**: Should have `safe`, non-`dusty`.
     **TODO**: Should `Vat.fork` use `Vat.consent` or `Vat.wish`?
 
-```k
+```
     syntax VatStep ::= "fork" String Address Address Wad Wad
  // --------------------------------------------------------
     rule <k> Vat . fork ILK_ID ADDRFROM ADDRTO DINK DART
@@ -406,7 +474,7 @@ This is quite permissive, and would allow the account to drain all your locked c
 **TODO**: Factor out common step of "uses collateral from user `V` via one of `U`s CDPs"?
 **TODO**: Double-check implemented checks for `Vat.frob`.
 
-```k
+```
     syntax VatAuthStep ::= "grab" String Address Address Address Wad Wad
  // --------------------------------------------------------------------
     rule <k> Vat . grab ILK_ID ADDRU ADDRV ADDRW DINK DART => . ... </k>
@@ -449,7 +517,7 @@ This is quite permissive, and would allow the account to drain all your locked c
 -   `Vat.heal` cancels a users anticoins `<vat-sin>` using their `<vat-dai>`.
 -   `Vat.suck` mints `<vat-dai>` for user `V` via anticoins `<vat-sin>` for user `U`.
 
-```k
+```
     syntax VatStep ::= "heal" Rad
  // -----------------------------
     rule <k> Vat . heal AMOUNT => . ... </k>
@@ -478,7 +546,7 @@ This is quite permissive, and would allow the account to drain all your locked c
 
 -   `Vat.fold` modifies the debt multiplier for a given ilk having user `U` absort the difference in `<vat-dai>`.
 
-```k
+```
     syntax VatAuthStep ::= "fold" String Address Ray
  // ------------------------------------------------
     rule <k> Vat . fold ILK_ID ADDRU RATE => . ... </k>
@@ -489,5 +557,96 @@ This is quite permissive, and would allow the account to drain all your locked c
 ```
 
 ```k
+    syntax KItem ::= "#runProof"
+
+    rule <k> #runProof => #execute ... </k>
+            <vat> VAT_CONFIG </vat>
+            <accounts>
+            ...
+            (.Bag =>
+            <account>
+                <acctID> 1000 </acctID> // Vat id = 1000
+                <balance> 0 </balance>
+                <code> Vat_bin_runtime </code>
+                <storage>     #storageVat(<vat> VAT_CONFIG </vat> )</storage>
+                <origStorage> #storageVat(<vat> VAT_CONFIG </vat> ) </origStorage>
+                <nonce> 0 </nonce>
+            </account>
+            )
+            (.Bag => <account>
+                <acctID> 1 </acctID>
+                ...
+            </account>
+            )
+            ...
+        </accounts>
+        <activeAccounts> ... (.Set => SetItem(1000)) ... </activeAccounts>
+            ( <callState> _ </callState> => <callState>
+                <program> Vat_bin_runtime </program>
+                <jumpDests> #computeValidJumpDests(Vat_bin_runtime) </jumpDests>
+                <id> 1000 </id>
+                <caller> 1 </caller>
+                <callData> #abiCallData("rely", #uint256(1)) </callData>
+                ...
+            </callState> )
+```
+
+```k
+endmodule
+```
+
+```k
+module VAT-LEMMAS
+    imports VAT
+
+    rule #lookup(#storageVat(<vat> ... <vat-wards> VAT_WARDS </vat-wards> ... </vat>),  #hashedLocation("Solidity", 0, A) ) => #lookupWards(VAT_WARDS, A) [simplification]
+
+    rule #write(#storageVat(<vat> ... <vat-wards> VAT_WARDS </vat-wards> ... </vat>),  #hashedLocation("Solidity", 0, A) , 1) => #storageVat(<vat> ... <vat-wards> VAT_WARDS |Set SetItem(A) </vat-wards> ... </vat>) [simplification]
+
+    rule #write(#storageVat(<vat> ... <vat-wards> VAT_WARDS </vat-wards> ... </vat>),  #hashedLocation("Solidity", 0, A) , 0) => #storageVat(<vat> ... <vat-wards> VAT_WARDS -Set SetItem(A) </vat-wards> ... </vat>) [simplification]
+
+    //rule #lookup(#storageVat(<vat> ... <vat-can> VAT_CAN </vat-can> ... </vat>), #Vat.can//[ACCT_ID][ACCT_PERMIT]) => #lookup(#lookupMap(VAT_CAN, ACCT_ID), ACCT_PERMIT)//[simplification]
+//
+    //rule #lookup(#storageVat(<vat> ... <vat-ilks> VAT_ILKS </vat-ilks> ... </vat>), #Vat.ilks//[ILK].Art  ) => #lookupIlk(#lookupIlks(VAT_ILKS, ILK), 0) [simplification]
+    //rule #lookup(#storageVat(<vat> ... <vat-ilks> VAT_ILKS </vat-ilks> ... </vat>), #Vat.ilks//[ILK].rate ) => #lookupIlk(#lookupIlks(VAT_ILKS, ILK), 1) [simplification]
+    //rule #lookup(#storageVat(<vat> ... <vat-ilks> VAT_ILKS </vat-ilks> ... </vat>), #Vat.ilks//[ILK].spot ) => #lookupIlk(#lookupIlks(VAT_ILKS, ILK), 2) [simplification]
+    //rule #lookup(#storageVat(<vat> ... <vat-ilks> VAT_ILKS </vat-ilks> ... </vat>), #Vat.ilks//[ILK].line ) => #lookupIlk(#lookupIlks(VAT_ILKS, ILK), 3) [simplification]
+    //rule #lookup(#storageVat(<vat> ... <vat-ilks> VAT_ILKS </vat-ilks> ... </vat>), #Vat.ilks//[ILK].dust ) => #lookupIlk(#lookupIlks(VAT_ILKS, ILK), 4) [simplification]
+//
+    //rule #lookup(#storageVat(<vat> ... <vat-urns> VAT_URNS </vat-urns> ... </vat>), #Vat.urns//[ILK][USR].ink ) => #lookupUrn(#lookupUrns(#lookupMap(VAT_URNS, ILK), USR), 0) //[simplification]
+    //rule #lookup(#storageVat(<vat> ... <vat-urns> VAT_URNS </vat-urns> ... </vat>), #Vat.urns//[ILK][USR].art ) => #lookupUrn(#lookupUrns(#lookupMap(VAT_URNS, ILK), USR), 1) //[simplification]
+//
+    //rule #lookup(#storageVat(<vat> ... <vat-gem> VAT_GEM </vat-gem> ... </vat>), #Vat.gem[ILK]//[USR]) => #lookup(#lookupMap(VAT_GEM, ILK), USR) [simplification]
+//
+    //rule #lookup(#storageVat(<vat> ... <vat-dai> VAT_DAI </vat-dai> ... </vat>), #Vat.dai//[ACCT_ID]) => #lookup(VAT_DAI, ACCT_ID) [simplification]
+//
+    //rule #lookup(#storageVat(<vat> ... <vat-sin> VAT_SIN </vat-sin> ... </vat>), #Vat.sin//[ACCT_ID]) => #lookup(VAT_SIN, ACCT_ID) [simplification]
+//
+    //rule #lookup(#storageVat(<vat> ... <vat-debt> DEBT </vat-debt> ... </vat>), #Vat.debt) => //value(DEBT) [simplification]
+//
+    //rule #lookup(#storageVat(<vat> ... <vat-vice> VICE </vat-vice> ... </vat>), #Vat.vice) => //value(VICE) [simplification]
+//
+    //rule #lookup(#storageVat(<vat> ... <vat-Line> LINE </vat-Line> ... </vat>), #Vat.Line) => //value(LINE) [simplification]
+//
+    //rule #lookup(#storageVat(<vat> ... <vat-live> LIVE </vat-live> ... </vat>), #Vat.live) => //0
+    //requires LIVE ==Bool false [simplification]
+//
+    //rule #lookup(#storageVat(<vat> ... <vat-live> LIVE </vat-live> ... </vat>), #Vat.live) => //1
+    //requires LIVE ==Bool true [simplification]
+//
+endmodule
+```
+
+```k
+module VAT-SPEC
+    imports VAT-LEMMAS
+
+    claim <k> #runProof => . ... </k>
+        <account>
+            <acctID> 1000 </acctID>
+            <storage> #storageVat(<vat-wards> VAT_WARDS => VAT_WARDS |Set SetItem(1) </vat-wards> ...) </storage>
+            ...
+        </account>
+
 endmodule
 ```
