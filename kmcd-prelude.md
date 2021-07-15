@@ -244,7 +244,7 @@ module KMCD-GEN
          <generator-current> I </generator-current>
          <generator>
            <generator-id> I </generator-id>
-           <generator-steps> GSS => .GenStep </generator-steps>
+           <generator-steps> GSS:GenStep => .GenStep </generator-steps>
          </generator>
 
     rule <k> GenStepReplace => . ... </k>
@@ -475,9 +475,9 @@ module KMCD-GEN
        andBool size(VAT_GEMS) >Int 0
 
     rule <k> GenFlipKick CDPID => GenFlipKick CDPID chooseAddress(head(BS), keys_list(VAT_DAIS)) ... </k>
-         <random> BS => tail(BS) </random>
-         <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
-         <vat-dai> VAT_DAIS </vat-dai>
+         <random> BS:Bytes => tail(BS) </random>
+         <used-random> BS':Bytes => BS' +Bytes headAsBytes(BS) </used-random>
+         <vat-dai> VAT_DAIS:Map </vat-dai>
       requires lengthBytes(BS) >Int 0
        andBool size(VAT_DAIS) >Int 0
 

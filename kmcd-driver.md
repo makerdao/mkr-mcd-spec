@@ -136,9 +136,9 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
     rule <k> . => CONT </k>
          <msg-sender> MSGSENDER => PREVSENDER </msg-sender>
          <this> _THIS => MSGSENDER </this>
-         <mcd-call-stack> ListItem(frame(PREVSENDER, PREVEVENTS, CONT)) => .List ... </mcd-call-stack>
-         <tx-log> Transaction(... events: L => L EVENTS) </tx-log>
-         <frame-events> EVENTS => PREVEVENTS </frame-events>
+         <mcd-call-stack> ListItem(frame(PREVSENDER, PREVEVENTS, CONT:K)) => .List ... </mcd-call-stack>
+         <tx-log> Transaction(... events: L:List => L EVENTS) </tx-log>
+         <frame-events> EVENTS:List => PREVEVENTS </frame-events>
 ```
 
 ### Modifier Calls

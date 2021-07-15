@@ -114,7 +114,7 @@ By default, we assume the MKR balances are negative, but otherwise just grab the
     rule [[ mkrBalances() => MKR_BALANCES ]]
          <gem>
            <gem-id> "MKR" </gem-id>
-           <gem-balances> MKR_BALANCES </gem-balances>
+           <gem-balances> MKR_BALANCES:Map </gem-balances>
            ...
          </gem>
 ```
