@@ -112,23 +112,23 @@ These parameters are controlled by governance:
 
     rule <k> End . file vat-file END_VAT:VatContract => . ... </k>
          <end-live> true </end-live>
-         <end-vat> _ => END_VAT </end-vat>
+         <end-vat> _:VatContract => END_VAT </end-vat>
 
     rule <k> End . file cat-file END_CAT:CatContract => . ... </k>
          <end-live> true </end-live>
-         <end-cat> _ => END_CAT </end-cat>
+         <end-cat> _:CatContract => END_CAT </end-cat>
 
     rule <k> End . file vow-file END_VOW:VowContract => . ... </k>
          <end-live> true </end-live>
-         <end-vow> _ => END_VOW </end-vow>
+         <end-vow> _:VowContract => END_VOW </end-vow>
 
     rule <k> End . file pot-file END_POT:EndContract => . ... </k>
          <end-live> true </end-live>
-         <end-pot> _ => END_POT </end-pot>
+         <end-pot> _:PotContract => END_POT </end-pot>
 
     rule <k> End . file spot-file END_SPOT:SpotContract => . ... </k>
          <end-live> true </end-live>
-         <end-spot> _ => END_SPOT </end-spot>
+         <end-spot> _:SpotContract => END_SPOT </end-spot>
 ```
 
 End Initialization
