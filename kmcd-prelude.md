@@ -248,11 +248,11 @@ module KMCD-GEN
          </generator>
 
     rule <k> GenStepReplace => . ... </k>
-         <generator-remainder> GSS => .GenStep </generator-remainder>
+         <generator-remainder> GSS:GenStep => .GenStep </generator-remainder>
          <generator-current> I </generator-current>
          <generator>
            <generator-id> I </generator-id>
-           <generator-steps> _ => GSS </generator-steps>
+           <generator-steps> _:GenStep => GSS </generator-steps>
          </generator>
 
     syntax MCDSteps ::= "GenSteps"
@@ -280,10 +280,10 @@ module KMCD-GEN
  // ----------------------------------------------
     rule <k> .GenStep => . ... </k>
 
-    rule <k> .GenStep ; GSS => GSS ... </k> [priority(49)]
-    rule <k> GSS ; .GenStep => GSS ... </k> [priority(49)]
-    rule <k> .GenStep | GSS => GSS ... </k> [priority(49)]
-    rule <k> GSS | .GenStep => GSS ... </k> [priority(49)]
+    rule <k> .GenStep ; GSS         => GSS ... </k> [priority(49)]
+    rule <k> GSS ; .GenStep         => GSS ... </k> [priority(49)]
+    rule <k> .GenStep | GSS:GenStep => GSS ... </k> [priority(49)]
+    rule <k> GSS | .GenStep         => GSS ... </k> [priority(49)]
 
     rule <k> .GenStep _:DepthBound => . ... </k> [priority(49)]
 
@@ -292,7 +292,7 @@ module KMCD-GEN
     rule <k> GSS ; GSS' => GSS ... </k>
          <generator-remainder> GSS'' => GSS' ; GSS'' </generator-remainder>
 
-    rule <k> GSS | GSS' => #if head(BS) modInt 2 ==K 0 #then GSS #else GSS' #fi ... </k>
+    rule <k> GSS:GenStep | GSS':GenStep => #if head(BS) modInt 2 ==K 0 #then GSS #else GSS' #fi ... </k>
          <random> BS => tail(BS) </random>
          <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
       requires lengthBytes(BS) >Int 0

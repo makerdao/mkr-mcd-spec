@@ -126,8 +126,8 @@ The parameters controlled by governance are:
          <cat-ilks> ... ILK_ID |-> Ilk ( ... lump: (_ => LUMP) ) ... </cat-ilks>
       requires LUMP >=Wad wad(0)
 
-    rule <k> Cat . file flip ILK_ID CAT_FLIP => . ... </k>
-         <cat-ilks> ... ILK_ID |-> Ilk ( ... flip: (_ => CAT_FLIP) ) ... </cat-ilks>
+    rule <k> Cat . file flip ILK_ID:String CAT_FLIP:Address => . ... </k>
+         <cat-ilks> ... ILK_ID |-> Ilk ( ... flip: (_:Address => CAT_FLIP) ) ... </cat-ilks>
 
     rule <k> Cat . file flip ILK_ID _ ... </k>
          <cat-ilks> CAT_ILKS => CAT_ILKS [ ILK_ID <- Ilk(... flip: 0, chop: ray(0), lump: wad(0)) ] </cat-ilks>

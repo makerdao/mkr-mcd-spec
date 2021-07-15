@@ -89,11 +89,11 @@ Use `transact ...` for initiating top-level calls from a given user.
     rule <k> transact ADDR:Address MCD:MCDStep => pushState ~> call MCD ~> #end-transact ~> assert ~> dropState ... </k>
          <this> _ => ADDR </this>
          <msg-sender> _ => ADDR </msg-sender>
-         <mcd-call-stack> _ => .List </mcd-call-stack>
-         <pre-state> _ => .K </pre-state>
+         <mcd-call-stack> _:List => .List </mcd-call-stack>
+         <pre-state> _:K => .K </pre-state>
          <tx-log> _ => Transaction(... acct: ADDR, call: MCD, events: .List, txException: false) </tx-log>
-         <frame-events> _ => .List </frame-events>
-         <return-value> _ => .K </return-value>
+         <frame-events> _:List => .List </frame-events>
+         <return-value> _:K => .K </return-value>
 
     rule <k> #end-transact => . ... </k>
          <events> ... (.List => ListItem(TXLOG)) </events>
@@ -127,11 +127,11 @@ On `exception`, the entire current call is discarded to trigger state roll-back 
  // ---------------------------------
     rule <k> call MCD:MCDStep => checkauth MCD ~> checklock MCD ~> makecall MCD ~> checkunlock MCD ...  </k>
 
-    rule <k> makecall MCD:MCDStep ~> CONT => MCD </k>
+    rule <k> makecall MCD:MCDStep ~> CONT:K => MCD </k>
          <msg-sender> MSGSENDER => THIS </msg-sender>
          <this> THIS => contract(MCD) </this>
          <mcd-call-stack> .List => ListItem(frame(MSGSENDER, EVENTS, CONT)) ... </mcd-call-stack>
-         <frame-events> EVENTS => ListItem(LogNote(MSGSENDER, MCD)) </frame-events>
+         <frame-events> EVENTS:List => ListItem(LogNote(MSGSENDER, MCD)) </frame-events>
 
     rule <k> . => CONT </k>
          <msg-sender> MSGSENDER => PREVSENDER </msg-sender>
@@ -197,12 +197,12 @@ During the regular execution of a step this implies popping the `mcd-call-stack`
  // ----------------------------------------
     rule <k> MCDSTEP:MCDStep => exception MCDSTEP ... </k> requires notBool isAdminStep(MCDSTEP) [owise]
 
-    rule <k> exception E ~> _ => exception E ~> CONT </k>
+    rule <k> exception E ~> _:K => exception E ~> CONT </k>
          <msg-sender> MSGSENDER => PREVSENDER </msg-sender>
          <this> _THIS => MSGSENDER </this>
-         <mcd-call-stack> ListItem(frame(PREVSENDER, PREVEVENTS, CONT)) => .List ... </mcd-call-stack>
-         <tx-log> Transaction(... events: L => L EVENTS) </tx-log>
-         <frame-events> EVENTS => PREVEVENTS </frame-events>
+         <mcd-call-stack> ListItem(frame(PREVSENDER, PREVEVENTS:List, CONT:K)) => .List ... </mcd-call-stack>
+         <tx-log> Transaction(... events: L:List => L EVENTS) </tx-log>
+         <frame-events> EVENTS:List => PREVEVENTS </frame-events>
 
     rule <k> exception _MCDSTEP ~> dropState => popState ... </k>
          <mcd-call-stack> .List </mcd-call-stack>

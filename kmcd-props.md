@@ -262,8 +262,8 @@ A default `owise` rule is added which leaves the FSM state unchanged.
          </k>
          <processed-events> L => L ListItem(E) </processed-events>
 
-    rule <k> deriveVFSM(.List                 , _) => .                   ... </k>
-    rule <k> deriveVFSM(ListItem(VFSMID) REST , E) => deriveVFSM(REST, E) ... </k>
+    rule <k> deriveVFSM(.List                        , _) => .                   ... </k>
+    rule <k> deriveVFSM(ListItem(VFSMID:String) REST , E) => deriveVFSM(REST, E) ... </k>
          <properties> ... VFSMID |-> (VFSM => derive(VFSM, E)) ... </properties>
 ```
 
@@ -298,12 +298,12 @@ The Debt growth should be bounded in principle by the interest rates available i
  // --------------------------------------------------------------------
     rule derive(totalDebtBounded(... dsr: DSR), Measure(... debt: DEBT)) => totalDebtBoundedRun(... debt: DEBT, dsr: DSR)
 
-    rule derive( totalDebtBoundedRun(... debt: DEBT          ) #as PREV , Measure(... debt: DEBT')            ) => Violated(PREV) requires DEBT' >Rad DEBT
-    rule derive( totalDebtBoundedRun(... debt: DEBT, dsr: DSR)          , TimeStep(TIME, _)                   ) => totalDebtBoundedRun(... debt: DEBT +Rad rmul(vatDaiForUser(Pot), (DSR ^Ray TIME) -Ray ray(1)), dsr: DSR)
-    rule derive( totalDebtBoundedRun(...             dsr: DSR)          , LogNote(_ , Vat . frob _ _ _ _ _ _) ) => totalDebtBounded(... dsr: DSR)
-    rule derive( totalDebtBoundedRun(... debt: DEBT, dsr: DSR)          , LogNote(_ , Vat . suck _ _ AMOUNT)  ) => totalDebtBoundedRun(... debt: DEBT +Rad AMOUNT, dsr: DSR)
-    rule derive( totalDebtBoundedRun(... debt: DEBT          )          , LogNote(_ , Pot . file dsr DSR')    ) => totalDebtBoundedRun(... debt: DEBT, dsr: DSR')
-    rule derive( totalDebtBoundedRun(... debt: DEBT          )          , LogNote(_ , End . cage         )    ) => totalDebtBoundedEnd(... debt: DEBT)
+    rule derive( totalDebtBoundedRun(... debt: DEBT          ) #as PREV , Measure(... debt: DEBT')                    ) => Violated(PREV) requires DEBT' >Rad DEBT
+    rule derive( totalDebtBoundedRun(... debt: DEBT, dsr: DSR)          , TimeStep(TIME, _)                           ) => totalDebtBoundedRun(... debt: DEBT +Rad rmul(vatDaiForUser(Pot), (DSR ^Ray TIME) -Ray ray(1)), dsr: DSR)
+    rule derive( totalDebtBoundedRun(...             dsr: DSR:Ray)      , LogNote(_:Address , Vat . frob _ _ _ _ _ _) ) => totalDebtBounded(... dsr: DSR)
+    rule derive( totalDebtBoundedRun(... debt: DEBT, dsr: DSR)          , LogNote(_ , Vat . suck _ _ AMOUNT)          ) => totalDebtBoundedRun(... debt: DEBT +Rad AMOUNT, dsr: DSR)
+    rule derive( totalDebtBoundedRun(... debt: DEBT          )          , LogNote(_ , Pot . file dsr DSR')            ) => totalDebtBoundedRun(... debt: DEBT, dsr: DSR')
+    rule derive( totalDebtBoundedRun(... debt: DEBT          )          , LogNote(_ , End . cage         )            ) => totalDebtBoundedEnd(... debt: DEBT)
 
     rule derive(totalDebtBoundedEnd(... debt: DEBT) #as PREV, Measure(... debt: DEBT')) => Violated(PREV) requires DEBT' =/=Rad DEBT
 ```
@@ -327,7 +327,7 @@ The property checks if `flip . kick` is ever called by an unauthorized user (alt
 ```k
     syntax ViolationFSM ::= "unAuthFlipKick"
  // ----------------------------------------
-    rule derive(unAuthFlipKick, FlipKick(ADDR, ILK, _, _, _, _, _, _)) => Violated(unAuthFlipKick) requires notBool isAuthorized(ADDR, Flip ILK)
+    rule derive(unAuthFlipKick, FlipKick(ADDR:Address, ILK:String, _, _, _, _, _, _)) => Violated(unAuthFlipKick) requires notBool isAuthorized(ADDR, Flip ILK)
 ```
 
 ### Kicking off a fake `flap` auction (inspired by lucash-flap)
