@@ -450,7 +450,7 @@ module KMCD-GEN
          </gem>
       requires lengthBytes(BS) >Int 0
 
-    rule <k> GenFlapKick ADDR LOT BID => LogGen ( transact ADDR Flap . kick LOT BID ) ... </k>
+    rule <k> GenFlapKick ADDR:Address LOT BID => LogGen ( transact ADDR Flap . kick LOT BID ) ... </k>
 
     rule <k> GenFlapYank => LogGen ( transact ANYONE Flap . yank chooseInt(head(BS), keys_list(FLAP_BIDS)) ) ... </k>
          <random> BS => tail(BS) </random>

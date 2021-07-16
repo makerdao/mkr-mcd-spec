@@ -159,8 +159,8 @@ Sum of all lot values (i.e. total surplus dai up for auction).
  // -------------------------------------------------------------
     rule sumOfAllFlapLots(FLAP_BIDS) => sumOfAllFlapLotsAux(keys_list(FLAP_BIDS), FLAP_BIDS, rad(0))
 
-    rule sumOfAllFlapLotsAux(                          .List ,         _ , SUM ) => SUM
-    rule sumOfAllFlapLotsAux( ListItem(BID_ID) FLAP_BIDS_IDS , FLAP_BIDS , SUM ) => sumOfAllFlapLotsAux(FLAP_BIDS_IDS, FLAP_BIDS, SUM +Rad lot({FLAP_BIDS[BID_ID]}:>FlapBid))
+    rule sumOfAllFlapLotsAux(                              .List ,         _ , SUM ) => SUM
+    rule sumOfAllFlapLotsAux( ListItem(BID_ID:Int) FLAP_BIDS_IDS , FLAP_BIDS , SUM ) => sumOfAllFlapLotsAux(FLAP_BIDS_IDS, FLAP_BIDS, SUM +Rad lot({FLAP_BIDS[BID_ID]}:>FlapBid))
 ```
 
 Sum of all bid values (i.e. total amount of MKR that's been bid on dai currently up for auction).
@@ -296,16 +296,16 @@ The Debt growth should be bounded in principle by the interest rates available i
                           | totalDebtBoundedRun ( debt: Rad , dsr: Ray )
                           | totalDebtBoundedEnd ( debt: Rad            )
  // --------------------------------------------------------------------
-    rule derive(totalDebtBounded(... dsr: DSR), Measure(... debt: DEBT)) => totalDebtBoundedRun(... debt: DEBT, dsr: DSR)
+    rule derive(totalDebtBounded(DSR), Measure(... debt: DEBT)) => totalDebtBoundedRun(DEBT, DSR)
 
-    rule derive( totalDebtBoundedRun(... debt: DEBT          ) #as PREV , Measure(... debt: DEBT')                    ) => Violated(PREV) requires DEBT' >Rad DEBT
-    rule derive( totalDebtBoundedRun(... debt: DEBT, dsr: DSR)          , TimeStep(TIME, _)                           ) => totalDebtBoundedRun(... debt: DEBT +Rad rmul(vatDaiForUser(Pot), (DSR ^Ray TIME) -Ray ray(1)), dsr: DSR)
-    rule derive( totalDebtBoundedRun(...             dsr: DSR:Ray)      , LogNote(_:Address , Vat . frob _ _ _ _ _ _) ) => totalDebtBounded(... dsr: DSR)
-    rule derive( totalDebtBoundedRun(... debt: DEBT, dsr: DSR)          , LogNote(_ , Vat . suck _ _ AMOUNT)          ) => totalDebtBoundedRun(... debt: DEBT +Rad AMOUNT, dsr: DSR)
-    rule derive( totalDebtBoundedRun(... debt: DEBT          )          , LogNote(_ , Pot . file dsr DSR')            ) => totalDebtBoundedRun(... debt: DEBT, dsr: DSR')
-    rule derive( totalDebtBoundedRun(... debt: DEBT          )          , LogNote(_ , End . cage         )            ) => totalDebtBoundedEnd(... debt: DEBT)
+    rule derive( totalDebtBoundedRun(DEBT, _  ) #as PREV , Measure(... debt: DEBT')            ) => Violated(PREV) requires DEBT' >Rad DEBT
+    rule derive( totalDebtBoundedRun(DEBT, DSR)          , TimeStep(TIME, _)                   ) => totalDebtBoundedRun(DEBT +Rad rmul(vatDaiForUser(Pot), (DSR ^Ray TIME) -Ray ray(1)), DSR)
+    rule derive( totalDebtBoundedRun(_   , DSR)          , LogNote(_ , Vat . frob _ _ _ _ _ _) ) => totalDebtBounded(DSR)
+    rule derive( totalDebtBoundedRun(DEBT, DSR)          , LogNote(_ , Vat . suck _ _ AMOUNT)  ) => totalDebtBoundedRun(DEBT +Rad AMOUNT, DSR)
+    rule derive( totalDebtBoundedRun(DEBT, _  )          , LogNote(_ , Pot . file dsr DSR')    ) => totalDebtBoundedRun(DEBT, DSR')
+    rule derive( totalDebtBoundedRun(DEBT, _  )          , LogNote(_ , End . cage         )    ) => totalDebtBoundedEnd(DEBT)
 
-    rule derive(totalDebtBoundedEnd(... debt: DEBT) #as PREV, Measure(... debt: DEBT')) => Violated(PREV) requires DEBT' =/=Rad DEBT
+    rule derive(totalDebtBoundedEnd(DEBT) #as PREV, Measure(... debt: DEBT')) => Violated(PREV) requires DEBT' =/=Rad DEBT
 ```
 
 ### Pot Chi * Pot Pie == Vat Dai(Pot)

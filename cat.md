@@ -115,7 +115,7 @@ The parameters controlled by governance are:
                      | "lump" String Wad
                      | "flip" String Address
  // ----------------------------------------
-    rule <k> Cat . file vow-file ADDR => . ... </k>
+    rule <k> Cat . file vow-file ADDR:VowContract => . ... </k>
          <cat-vow> _ => ADDR </cat-vow>
 
     rule <k> Cat . file chop ILK_ID CHOP => . ... </k>
@@ -126,10 +126,10 @@ The parameters controlled by governance are:
          <cat-ilks> ... ILK_ID |-> Ilk ( ... lump: (_ => LUMP) ) ... </cat-ilks>
       requires LUMP >=Wad wad(0)
 
-    rule <k> Cat . file flip ILK_ID:String CAT_FLIP:Address => . ... </k>
-         <cat-ilks> ... ILK_ID |-> Ilk ( ... flip: (_:Address => CAT_FLIP) ) ... </cat-ilks>
+    rule <k> Cat . file flip ILK_ID:String CAT_FLIP:FlipContract => . ... </k>
+         <cat-ilks> ... ILK_ID |-> Ilk ( ... flip: (_ => CAT_FLIP) ) ... </cat-ilks>
 
-    rule <k> Cat . file flip ILK_ID _ ... </k>
+    rule <k> Cat . file flip ILK_ID _:FlipContract ... </k>
          <cat-ilks> CAT_ILKS => CAT_ILKS [ ILK_ID <- Ilk(... flip: 0, chop: ray(0), lump: wad(0)) ] </cat-ilks>
       requires notBool ILK_ID in_keys(CAT_ILKS)
 ```

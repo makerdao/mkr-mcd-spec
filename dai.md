@@ -118,7 +118,7 @@ The Dai token is a mintable/burnable ERC20 token.
       requires AMOUNT >=Wad wad(0)
        andBool BALANCE_SRC >=Wad AMOUNT
 
-    rule <k> Dai . transferFrom ACCOUNT_SRC ACCOUNT_DST AMOUNT => . ... </k>
+    rule <k> Dai . transferFrom ACCOUNT_SRC:Address ACCOUNT_DST:Address AMOUNT => . ... </k>
          <dai-allowance> ... { ACCOUNT_SRC -> ACCOUNT_DST } |-> (ALLOWANCE_SRC_DST => ALLOWANCE_SRC_DST -Wad AMOUNT) ... </dai-allowance>
          <dai-balance>
            ...
