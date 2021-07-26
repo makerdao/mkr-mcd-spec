@@ -5,6 +5,8 @@ This module defines common state and control flow between all the other KMCD mod
 
 ```k
 requires "evm.md"
+requires "abi.md"
+
 requires "kmcd-data.md"
 
 module KMCD-DRIVER
@@ -13,7 +15,7 @@ module KMCD-DRIVER
     imports STRING
     imports BYTES
     imports LIST
-    imports EVM
+    imports EVM-ABI
 
     configuration
         <kmcd-driver>
@@ -77,6 +79,122 @@ The special account `ANYONE` is not authorized to do anything, so represents any
     syntax Bool ::= isAuthorized ( Address , MCDContract ) [function]
  // -----------------------------------------------------------------
     rule isAuthorized( ADDR , MCDCONTRACT ) => ADDR ==K ADMIN orBool ADDR in wards(MCDCONTRACT)
+```
+
+KEVM Serialization/Deserialization
+----------------------------------
+
+Passing control to the KEVM, executing the transaction and returning control to the MCD-SPEC is defined here while each single contract implements how it serializes transactions/deserializes state to/from the KEVM.
+
+### Function Signature and Arguments
+
+Each individual contract function call, `CallStep`, is characterized by its function name, `Op`, and its arguments, `Args`.
+
+```k
+    syntax Op = String
+    syntax Arg ::= Bln | Wad | Ray | Rad | Int | String | Address
+    syntax Args ::= List{Arg, ""}
+    syntax CallStep
+```
+
+### EVM Datatype Conversions
+
+```k
+    syntax TypedArg ::= #encodeEVM( String, FInt    )
+                      | #encodeEVM( String, String  )
+                      | #encodeEVM( String, Address )
+ // -------------------------------------------------
+    rule #encodeEVM ( "uint160", FINT:FInt) => #uint160 (value(FINT))
+    rule #encodeEVM ( "uint256", FINT:FInt) => #uint256 (value(FINT))
+    rule #encodeEVM ( "uint48" , FINT:FInt) => #uint48  (value(FINT))
+    rule #encodeEVM ( "uint16" , FINT:FInt) => #uint16  (value(FINT))
+    rule #encodeEVM ( "uint8"  , FINT:FInt) => #uint8   (value(FINT))
+    rule #encodeEVM ( "int256" , FINT:FInt) => #int256  (value(FINT))
+    rule #encodeEVM ( "int128" , FINT:FInt) => #int128  (value(FINT))
+
+    //rule #encodeEVM ( "bytes"  , BYTES:Bytes) => #bytes         (BYTES)
+    rule #encodeEVM ( "bytes32", FINT:FInt  ) => #bytes32 (value(FINT))
+
+    rule #encodeEVM ( "bool"   , FINT:FInt  ) => #bool    (value(FINT))
+
+    //rule #encodeEVM ( "address", ADDRESS:Address) => #address(ADDRESS)
+
+    rule #encodeEVM ( "string" , STR:String) => #string (STR)
+
+    //TODO array
+    //rule #encodeEVM ( "array"  , STR)     => #string        (STR)
+```
+
+## Transaction Serialization
+
+```k
+    syntax ByteArray ::= #abiEncode(CallStep, List) [function]
+ // ----------------------------------------------------------
+    rule #abiEncode ( (OP:Op ARGS:Args), TYPES ) => #abiCallData(OP, #MCDtoEVM(ARGS, TYPES))
+
+    syntax TypedArgs ::= #MCDtoEVM    ( Args, List            )
+                       | #MCDtoEVMAux ( Args, List, TypedArgs )
+ // -----------------------------------------------------------
+    rule #MCDtoEVM(ARGS, TYPES) => #MCDtoEVMAux(ARGS, TYPES, .TypedArgs)
+
+    rule #MCDtoEVMAux((ARG REST), ListItem(TYPE) TYPES, TYPED_ARGS) => #MCDtoEVMAux( REST , TYPES, (TYPED_ARGS, #encodeEVM(TYPE, ARG)))
+
+
+    rule #MCDtoEVMAux(LAST_ARG, ListItem(LAST_TYPE), TYPED_ARGS) => (TYPED_ARGS, #encodeEVM(LAST_TYPE, ARG:FInt))
+    rule #MCDtoEVMAux(LAST_ARG, ListItem(LAST_TYPE), TYPED_ARGS) => (TYPED_ARGS, #encodeEVM(LAST_TYPE, ARG:Address))
+    rule #MCDtoEVMAux(LAST_ARG, ListItem(LAST_TYPE), TYPED_ARGS) => (TYPED_ARGS, #encodeEVM(LAST_TYPE, ARG:String))
+
+    syntax KItem ::= #serializeTransaction ( Address, MCDStep )
+ // -----------------------------------------------------------
+ //   rule <k> #serializeTransaction ( ADDR, CONTRACT:MCDContract . CALL:CallStep) => #call  ... </k>
+ //       <account>
+ //           <acctID> CONTRACT_ID </acctID>
+ //           <code> CONTRACT_BIN_RUNTIME </code>
+ //           ...
+ //       </account>
+ //       ( <callState> _ </callState> =>
+ //       <callState>
+ //           <program> CONTRACT_BIN_RUNTIME </program>
+ //           <jumpDests> #computeValidJumpDests(CONTRACT_BIN_RUNTIME) </jumpDests>
+ //           <id> CONTRACT_ID </id>
+ //           <caller> CALLER_ID </caller>
+ //           <callData> #abiEncode(CALL) </callData>
+ //           ...
+ //       </callState> )
+ //       <mcd-account>
+ //               <mcd-id> ADDR </mcd-id>
+ //               <address> CALLER_ID </address>
+ //       </mcd-account>
+ //       <mcd-account>
+ //               <mcd-id> CONTRACT </mcd-id>
+ //               <address> CONTRACT_ID </address>
+ //       </mcd-account>
+```
+
+## Executing EVM
+
+```k
+    syntax KItem ::= #runKEVM ( Address, MCDStep )
+                   | "#executeKEVM"
+ // ----------------------------------------------
+    rule <k> #runKEVM ( ADDR:Address, MCD:MCDStep ) =>
+       #serializeTransaction ( ADDR, MCD )
+    ~> #executeKEVM
+//~> #deserializeState
+    ... </k>
+
+    rule <k> #executeKEVM => #execute ... </k>
+            <evm>
+                <callData> CALL_DATA </callData>
+                ...
+            </evm>
+      requires CALL_DATA =/=K .K
+
+//    rule <k> success ~> CONT => CONT ... </k>            //KEVM didn't revert
+//    priority[24] ??
+//
+//    rule <k> exception ~> CONT => CONT ... </k> [owise] //KEVM reverted
+//    priority[24] ??
 ```
 
 Transactions
@@ -217,16 +335,6 @@ During the regular execution of a step this implies popping the `mcd-call-stack`
     rule <k> exception _ ~> (assert         => .) ... </k>
     rule <k> exception _ ~> (_:ModifierStep => .) ... </k>
     rule <k> exception _ ~> (makecall _     => .) ... </k>
-```
-
-### Function Signature and Arguments
-
-Each individual contract function call, `CallStep`, is characterized by its function name, `Op`, and its arguments, `Args`.
-
-```k
-    syntax Op
-    syntax Args
-    syntax CallStep
 ```
 
 Log Events

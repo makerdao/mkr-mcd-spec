@@ -310,7 +310,7 @@ This is quite permissive, and would allow the account to drain all your locked c
     syntax VatInitIlkOp     ::= "init"
     syntax VatOp            ::= VatInitIlkOp
     syntax VatInitIlkArgs   ::= String
-    syntax VatArgsOp        ::= VatInitIlkArgs
+    syntax VatArgs          ::= VatInitIlkArgs
     syntax VatAuthStep      ::= VatInitIlkOp VatInitIlkArgs
  // ------------------------------------
     rule <k> Vat . init ILK_ID => . ... </k>
@@ -345,7 +345,7 @@ This is quite permissive, and would allow the account to drain all your locked c
     syntax VatFluxOp    ::= "flux"
     syntax VatOp        ::= VatFluxOp
     syntax VatFluxArgs  ::= String Address Address Wad
-    syntax VatArgsOp    ::= VatFluxArgs
+    syntax VatArgs      ::= VatFluxArgs
     syntax VatStep      ::= VatFluxOp VatFluxArgs
  // ----------------------------------------------------
     rule <k> Vat . flux ILK_ID ADDRFROM ADDRTO COL => . ... </k>

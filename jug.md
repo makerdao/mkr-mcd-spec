@@ -126,7 +126,7 @@ Jug Semantics
     syntax JugInitOp     ::= "init"
     syntax JugOp         ::= JugInitOp
     syntax JugStringArgs ::= String
-    syntax JugArgsOp     ::= JugStringArgs
+    syntax JugArgs       ::= JugStringArgs
     syntax JugAuthStep   ::= JugInitOp JugStringArgs
  // ------------------------------------
     rule <k> Jug . init ILK_ID => . ... </k>
