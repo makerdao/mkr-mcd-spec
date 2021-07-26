@@ -1,13 +1,17 @@
 ```k
 requires "kmcd-driver.md"
-requires "./deps/evm-semantics/tests/specs/mcd/bin_runtime.k"
 requires "abi.md"
 requires "edsl.md"
+requires "lemmas/infinite-gas.k"
+requires "lemmas/mcd/bin_runtime.k"
+requires "lemmas/mcd/verification.k"
 
 module VAT
     imports KMCD-DRIVER
     imports DSS-BIN-RUNTIME
     imports EDSL
+    imports INFINITE-GAS
+    imports LEMMAS-MCD
 ```
 
 Vat Configuration
@@ -560,35 +564,7 @@ This is quite permissive, and would allow the account to drain all your locked c
     syntax KItem ::= "#runProof"
 
     rule <k> #runProof => #execute ... </k>
-            <vat> VAT_CONFIG </vat>
-            <accounts>
-            ...
-            (.Bag =>
-            <account>
-                <acctID> 1000 </acctID> // Vat id = 1000
-                <balance> 0 </balance>
-                <code> Vat_bin_runtime </code>
-                <storage>     #storageVat(<vat> VAT_CONFIG </vat> )</storage>
-                <origStorage> #storageVat(<vat> VAT_CONFIG </vat> ) </origStorage>
-                <nonce> 0 </nonce>
-            </account>
-            )
-            (.Bag => <account>
-                <acctID> 1 </acctID>
-                ...
-            </account>
-            )
-            ...
-        </accounts>
-        <activeAccounts> ... (.Set => SetItem(1000)) ... </activeAccounts>
-            ( <callState> _ </callState> => <callState>
-                <program> Vat_bin_runtime </program>
-                <jumpDests> #computeValidJumpDests(Vat_bin_runtime) </jumpDests>
-                <id> 1000 </id>
-                <caller> 1 </caller>
-                <callData> #abiCallData("rely", #uint256(1)) </callData>
-                ...
-            </callState> )
+
 ```
 
 ```k
@@ -641,12 +617,33 @@ endmodule
 module VAT-SPEC
     imports VAT-LEMMAS
 
-    claim <k> #runProof => . ... </k>
+    claim <k> #execute => #halt ... </k>
+    <callState>
+        <program> Vat_bin_runtime </program>
+        <jumpDests> #computeValidJumpDests(Vat_bin_runtime) </jumpDests>
+        <id> 1000 </id>
+        <caller> 1 </caller>
+        <callData> #abiCallData("rely", #uint256(1)) </callData>
+        <gas> #gas(0) => ?_ </gas>
+        <callGas> #gas(0) => ?_ </callGas>
+        ...
+    </callState>
+    <activeAccounts> ... SetItem(1) SetItem(1000) ... </activeAccounts>
+    <accounts>
+        ...
         <account>
             <acctID> 1000 </acctID>
-            <storage> #storageVat(<vat-wards> VAT_WARDS => VAT_WARDS |Set SetItem(1) </vat-wards> ...) </storage>
+            <code> Vat_bin_runtime </code>
+            <storage> #storageVat(<vat> <vat-wards> VAT_WARDS => VAT_WARDS |Set SetItem(1) </vat-wards> ... </vat>) </storage>
             ...
         </account>
+        <account>
+            <acctID> 1 </acctID>
+            ...
+        </account>
+        ...
+    </accounts>
+
 
 endmodule
 ```

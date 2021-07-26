@@ -37,6 +37,7 @@ run_kast() {
 
 run_prove() {
     export K_OPTS=-Xmx8G
+    kevm prove "$file" "$lemmas" --concrete-rules-file deps/evm-semantics/tests/specs/mcd/concrete-rules.txt --backend haskell --backend-dir .build/usr/lib/kmcd/haskell --spec-module "$spec"
     kprove --directory "$backend_dir" "$run_file" "$@"
 }
 

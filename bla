@@ -1,0 +1,8 @@
+set -x
+
+export PATH=/home/raitonvortex/thesis/depth-mkr/mkr-mcd-spec/.build/usr/lib/kmcd/kevm/bin:$PATH
+export PATH=/home/raitonvortex/thesis/kore/.build/kore/bin:$PATH
+
+
+kevm prove vat.md VAT-LEMMAS --concrete-rules-file deps/evm-semantics/tests/specs/mcd/concrete-rules.txt --backend haskell --backend-dir .build/usr/lib/kmcd/haskell --spec-module VAT-SPEC --debug \
+        --profile --profile-timeout 20m
