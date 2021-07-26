@@ -198,14 +198,14 @@ We model everything with arbitrary precision rationals, but use sort information
 
 ```
 
-Hardcoded Constants
--------------------
-
-```k
-    syntax Int ::= "pow255" // 2 ^Int 255 
- // -------------------------------------
-    rule pow255 => 57896044618658097711785492504343953926634992332820282019728792003956564819968  [macro]
-```
+//Hardcoded Constants
+//-------------------
+//
+//```k
+//    syntax Int ::= "pow255" // 2 ^Int 255
+// // -------------------------------------
+//    rule pow255 => //57896044618658097711785492504343953926634992332820282019728792003956564819968  [macro]
+//```
 
 
 Time Increments

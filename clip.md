@@ -8,35 +8,14 @@ requires "vow.md"
 
 module PRE-CLIP
     imports KMCD-DRIVER
+    imports CLIP-EXTERNAL
     imports ABACI
     imports SPOT
-    imports VAT
     imports VOW
 ```
 
 Clip Configuration
 -----------------
-
-```k
-   syntax ClipStop ::= "noBreaker"
-                     | "noNewKick"
-                     | "noNewKickOrRedo"
-                     | "noNewKickOrRedoOrTake"
-
-   syntax Bool ::= ClipStop "<ClipStop" ClipStop [function]
- // -------------------------------------------------------
-   rule noBreaker       <ClipStop noBreaker             => false
-   rule noBreaker       <ClipStop _                     => true   [owise]
-
-   rule noNewKick       <ClipStop noBreaker             => false
-   rule noNewKick       <ClipStop noNewKick             => false
-   rule noNewKick       <ClipStop _                     => true   [owise]
-
-   rule noNewKickOrRedo <ClipStop noNewKickOrRedoOrTake => true
-   rule noNewKickOrRedo <ClipStop _                     => false  [owise]
-
-   rule _               <ClipStop _                     => false  [owise]
-```
 
 ```k
     configuration
@@ -58,8 +37,9 @@ Clip Configuration
         <clip-active>  .List      </clip-active>
         <clip-sales>   .Map       </clip-sales>    // mapping (uint => Sales) Int |-> ClipSale
         <clip-locked>  false      </clip-locked>
-        <clip-stopped> noBreaker  </clip-stopped>
+        <clip-stopped> noBreaker:ClipStop  </clip-stopped>
         <clip-wards>   .Set       </clip-wards>
+        <clip-external/>
       </clip-state>
 ```
 
@@ -88,6 +68,30 @@ Clip Configuration
              ...
            </clip-state>
          )
+```
+
+Clip Breaker
+------------
+
+```k
+   syntax ClipStop ::= "noBreaker"
+                     | "noNewKick"
+                     | "noNewKickOrRedo"
+                     | "noNewKickOrRedoOrTake"
+
+   syntax Bool ::= ClipStop "<ClipStop" ClipStop [function]
+ // -------------------------------------------------------
+   rule noBreaker       <ClipStop noBreaker             => false
+   rule noBreaker       <ClipStop _                     => true   [owise]
+
+   rule noNewKick       <ClipStop noBreaker             => false
+   rule noNewKick       <ClipStop noNewKick             => false
+   rule noNewKick       <ClipStop _                     => true   [owise]
+
+   rule noNewKickOrRedo <ClipStop noNewKickOrRedoOrTake => true
+   rule noNewKickOrRedo <ClipStop _                     => false  [owise]
+
+   rule _               <ClipStop _                     => false  [owise]
 ```
 
 Clip Authorization
@@ -147,27 +151,27 @@ Clip Events
 
     syntax ClipStep ::= "emitKick" Int Ray Rad Wad Address Address Wad
  // ------------------------------------------------------------------
-    rule <k> emitKick ID TOP TAB LOT USR KPR COIN => ID ... </k>
-         <return-value> ID:Int </return-value>
-         <frame-events> ... (.List => ListItem(Kick(ID, TOP, TAB, LOT, USR, KPR, COIN))) </frame-events>
+    rule <k> emitKick KICK_ID TOP TAB LOT USR KPR COIN => KICK_ID ... </k>
+         <return-value> KICK_ID:Int </return-value>
+         <frame-events> ... (.List => ListItem(Kick(KICK_ID, TOP, TAB, LOT, USR, KPR, COIN))) </frame-events>
 
     syntax CustomEvent ::= Redo(id: Int, top: Ray, tab: Rad, lot: Wad, usr: Address, kpr: Address, coin: Wad) [klabel(Redo), symbol]
  //---------------------------------------------------------------------------------------------------------------------------------
 
     syntax ClipStep ::= "emitRedo" Int Ray Rad Wad Address Address Wad
  // ------------------------------------------------------------------
-    rule <k> emitRedo ID TOP TAB LOT USR KPR COIN => ID ... </k>
-         <return-value> ID:Int </return-value>
-         <frame-events> ... (.List => ListItem(Redo(ID, TOP, TAB, LOT, USR, KPR, COIN))) </frame-events>
+    rule <k> emitRedo REDO_ID TOP TAB LOT USR KPR COIN => REDO_ID ... </k>
+         <return-value> REDO_ID:Int </return-value>
+         <frame-events> ... (.List => ListItem(Redo(REDO_ID, TOP, TAB, LOT, USR, KPR, COIN))) </frame-events>
 
     syntax CustomEvent ::= Take(id: Int, max: Ray, price: Ray, owe: Wad, tab: Rad, lot: Wad, usr: Address) [klabel(Take), symbol]
  // -----------------------------------------------------------------------------------------------------------------------------
 
     syntax ClipStep ::= "emitTake" Int Ray Ray Wad Rad Wad Address
  // --------------------------------------------------------------
-    rule <k> emitTake ID MAX PRICE OWE TAB LOT USR => ID ... </k>
-         <return-value> ID:Int </return-value>
-         <frame-events> ... (.List => ListItem(Take(ID, MAX, PRICE, OWE, TAB, LOT, USR))) </frame-events>
+    rule <k> emitTake TAKE_ID MAX PRICE OWE TAB LOT USR => TAKE_ID ... </k>
+         <return-value> TAKE_ID:Int </return-value>
+         <frame-events> ... (.List => ListItem(Take(TAKE_ID, MAX, PRICE, OWE, TAB, LOT, USR))) </frame-events>
 ```
 
 File-able Fields
@@ -240,7 +244,7 @@ These parameters are controlled by governance:
 Clip Semantics
 -------------
 
-```k
+```
    syntax ClipAuthLockStep ::= "kick" Rad Wad Address Address
  // ---------------------------------------------------------
    rule <k> Clip . kick TAB LOT USR KPR
@@ -295,17 +299,17 @@ module CLIP
       <dog-ilks> ... CLIP_ILK |-> Ilk( ... chop: CHOP) ... </dog-ilks>
 ```
 
-```k
+```
    syntax ClipLockStep ::= "redo" Int Address
 // ------------------------------------------
-   rule <k> Clip . redo ID KPR
+   rule <k> Clip . redo REDO_ID KPR
    => #fun(PRICE
    => #fun(DONE
    => #fun(TOP_FINAL
    => #fun(COIN
    => ( #if ( CLIP_TIP >Rad rad(0) orBool CLIP_CHIP >Wad wad(0) ) #then ( #if ( TAB >=Rad CLIP_CHOST andBool ( Wad2Ray(LOT) *Ray ( Wad2Ray(VALUE) /Ray SPOT_PAR ) ) >=Ray CLIP_CHOST ) #then call CLIP_VAT . suck CLIP_VOW KPR COIN #else . #fi ) #else . #fi )
    ~> DONE
-   ~> emitRedo ID TOP_FINAL TAB LOT USR KPR COIN
+   ~> emitRedo REDO_ID TOP_FINAL TAB LOT USR KPR COIN
    ) ( #if ( CLIP_TIP >Rad rad(0) orBool CLIP_CHIP >Wad wad(0) )  #then ( #if ( TAB >=Rad CLIP_CHOST andBool ( Wad2Ray(LOT) *Ray ( Wad2Ray(VALUE) /Ray SPOT_PAR ) ) >=Ray CLIP_CHOST ) #then CLIP_TIP +Rad ( Rad2Wad(TAB) *Wad CLIP_CHIP ) #else wad(0) #fi ) #else wad(0) #fi )
    )( ( Wad2Ray(VALUE) /Ray SPOT_PAR ) *Ray CLIP_BUF )
    )( ( (NOW -Int TIC ) >Int CLIP_TAIL ) orBool ( (PRICE /Ray TOP) <Ray CLIP_CUSP ) )
@@ -319,7 +323,7 @@ module CLIP
    <clip-ilk> CLIP_ILK </clip-ilk>
    <clip-tail> CLIP_TAIL </clip-tail>
    <clip-tip> CLIP_TIP </clip-tip>
-   <clip-sales> ... ID |-> ClipSale( ... tab: TAB, lot: LOT, usr: USR, tic: (TIC => NOW),top: (TOP => ( ( Wad2Ray(VALUE) /Ray SPOT_PAR ) *Ray CLIP_BUF ) ) ) ... </clip-sales>
+   <clip-sales> ... REDO_ID |-> ClipSale( ... tab: TAB, lot: LOT, usr: USR, tic: (TIC => NOW),top: (TOP => ( ( Wad2Ray(VALUE) /Ray SPOT_PAR ) *Ray CLIP_BUF ) ) ) ... </clip-sales>
    <clip-vat> CLIP_VAT </clip-vat>
    <clip-vow> CLIP_VOW </clip-vow>
    <current-time> NOW </current-time>
@@ -330,17 +334,14 @@ module CLIP
    andBool USR =/=K 0:Address
    andBool ( ( Wad2Ray(VALUE) /Ray SPOT_PAR ) *Ray CLIP_BUF ) >Ray ray(0) //top > 0
 
-   rule <k> DONE:Bool ~> emitRedo ID TOP_FINAL TAB LOT USR KPR COIN => emitRedo ID TOP_FINAL TAB LOT USR KPR COIN ... </k>
+   rule <k> DONE:Bool ~> emitRedo REDO_ID TOP_FINAL TAB LOT USR KPR COIN => emitRedo REDO_ID TOP_FINAL TAB LOT USR KPR COIN ... </k>
       requires DONE
 ```
-
-TODO add external call
-    syntax ClipSale ::= ClipSale ( pos: Int, tab: Rad, lot: Wad, usr: Address, tic: Int, top: Ray )
 
 ```k
     syntax ClipLockStep ::= "take" Int Wad Ray Address String
  // ---------------------------------------------------------
-    rule <k> Clip . take ID AMT MAX WHO DATA
+    rule <k> Clip . take TAKE_ID AMT MAX WHO DATA
     => #fun(PRICE
     => #fun(DONE
     => #fun(SLICE_INITIAL
@@ -350,18 +351,18 @@ TODO add external call
     => #fun(TAB_FINAL
     => #fun(LOT_FINAL
     => call CLIP_VAT . flux CLIP_ILK THIS WHO SLICE_FINAL
-    ~> ( #if lengthString(DATA) >Int 0 andBool WHO =/=K CLIP_VAT andBool WHO =/=K CLIP_DOG #then . #else . #fi )
+    //~> ( #if lengthString(DATA) >Int 0 andBool WHO =/=K CLIP_VAT andBool WHO =/=K CLIP_DOG #then call ClipExternalContract . clipperCall MSG_SENDER OWE_FINAL SLICE_FINAL DATA #else . #fi )
     ~> call CLIP_VAT . move MSG_SENDER CLIP_VOW OWE_FINAL
     ~> call CLIP_DOG . digs CLIP_ILK ( #if LOT_FINAL ==Wad wad(0) #then TAB_FINAL +Rad Wad2Rad(OWE_FINAL) #else Wad2Rad(OWE_FINAL) #fi )
-    ~> (#if LOT_FINAL ==Wad wad(0) #then Clip . remove ID #else ( #if TAB_FINAL ==Rad rad(0) #then call CLIP_VAT . flux CLIP_ILK THIS USR LOT_FINAL #else . #fi )  #fi)
-    ~> (#if LOT_FINAL ==Wad wad(0) #then .                #else ( #if TAB_FINAL ==Rad rad(0) #then Clip . remove ID #else .                                 #fi )  #fi)
+    ~> (#if LOT_FINAL ==Wad wad(0) #then Clip . remove TAKE_ID #else ( #if TAB_FINAL ==Rad rad(0) #then call CLIP_VAT . flux CLIP_ILK THIS USR LOT_FINAL #else . #fi )  #fi)
+    ~> (#if LOT_FINAL ==Wad wad(0) #then .                #else ( #if TAB_FINAL ==Rad rad(0) #then Clip . remove TAKE_ID #else .                                 #fi )  #fi)
     ~> (#if LOT_FINAL ==Wad wad(0) #then false            #else ( #if TAB_FINAL ==Rad rad(0) #then false            #else true                              #fi )  #fi)
     ~> TAB
     ~> SLICE_INITIAL
     ~> OWE_FINAL
     ~> PRICE
     ~> DONE
-    ~> emitTake ID MAX PRICE OWE_FINAL TAB_FINAL LOT_FINAL USR
+    ~> emitTake TAKE_ID MAX PRICE OWE_FINAL TAB_FINAL LOT_FINAL USR
     )( LOT -Wad SLICE_FINAL )
     )( TAB -Rad Wad2Rad(OWE_FINAL) )
     )( #if (OWE_INITIAL >Wad Rad2Wad(TAB)) #then OWE_FINAL /Wad PRICE #else ( #if (OWE_INITIAL <Wad Rad2Wad(TAB) andBool SLICE_INITIAL <Wad LOT ) #then (#if ( ( Rad2Wad(TAB) -Wad OWE_INITIAL ) <Wad Ray2Wad(CLIP_CHOST) ) #then ( OWE_FINAL /Wad PRICE ) #else SLICE_INITIAL #fi ) #else SLICE_INITIAL #fi ) #fi )
@@ -371,7 +372,7 @@ TODO add external call
     )( ( (NOW -Int TIC ) >Int CLIP_TAIL ) orBool ( (PRICE /Ray TOP) <Ray CLIP_CUSP ) )
     )( Abacus CLIP_ABACUS . price TOP (NOW -Int TIC) )
     ... </k>
-    <clip-sales> ... ID |-> ClipSale( ... tab: TAB, lot: LOT, usr: USR, tic: TIC, top: TOP ) ... </clip-sales>
+    <clip-sales> ... TAKE_ID |-> ClipSale( ... tab: TAB, lot: LOT, usr: USR, tic: TIC, top: TOP ) ... </clip-sales>
     <clip-chost>    CLIP_CHOST    </clip-chost>
     <clip-ilk>      CLIP_ILK      </clip-ilk>
     <clip-vat>      CLIP_VAT      </clip-vat>
@@ -387,8 +388,8 @@ TODO add external call
     requires CLIP_STOPPED <ClipStop noNewKickOrRedoOrTake
     andBool USR =/=K 0:Address
 
-    rule <k> UPDATE:Bool ~> TAB:Rad ~> SLICE_INITIAL:Wad ~> OWE_INITIAL:Wad ~> PRICE:Ray ~> DONE:Bool ~> emitTake ID MAX PRICE OWE_FINAL TAB_FINAL LOT_FINAL USR => emitTake ID MAX PRICE OWE_FINAL TAB_FINAL LOT_FINAL USR ... </k>
-    <clip-sales> ... ID |-> ClipSale( ... tab: (TAB => #if UPDATE #then TAB_FINAL #else TAB #fi), lot:(LOT => #if UPDATE #then LOT_FINAL #else LOT #fi) ) ... </clip-sales>
+    rule <k> UPDATE:Bool ~> TAB:Rad ~> SLICE_INITIAL:Wad ~> OWE_INITIAL:Wad ~> PRICE:Ray ~> DONE:Bool ~> emitTake TAKE_ID MAX PRICE OWE_FINAL TAB_FINAL LOT_FINAL USR => emitTake TAKE_ID MAX PRICE OWE_FINAL TAB_FINAL LOT_FINAL USR ... </k>
+    <clip-sales> ... TAKE_ID |-> ClipSale( ... tab: (TAB => #if UPDATE #then TAB_FINAL #else TAB #fi), lot:(LOT => #if UPDATE #then LOT_FINAL #else LOT #fi) ) ... </clip-sales>
     <clip-chost> CLIP_CHOST </clip-chost>
     requires notBool DONE
     andBool MAX >=Ray PRICE
@@ -398,12 +399,12 @@ TODO add external call
 ```k
    syntax ClipStep ::= "remove" Int
 // --------------------------------
-   rule <k> Clip . remove ID => . ... </k>
+   rule <k> Clip . remove REMOVE_ID => . ... </k>
 
-      <clip-active> CLIP_ACTIVE => (#if (ID =/=K (size(CLIP_ACTIVE) -Int 1)) #then range(CLIP_ACTIVE[POS <- (size(CLIP_ACTIVE) -Int 1)], 0, 1) #else range(CLIP_ACTIVE,0,1) #fi) </clip-active>
+      <clip-active> CLIP_ACTIVE => (#if (REMOVE_ID =/=K (size(CLIP_ACTIVE) -Int 1)) #then range(CLIP_ACTIVE[POS <- (size(CLIP_ACTIVE) -Int 1)], 0, 1) #else range(CLIP_ACTIVE,0,1) #fi) </clip-active>
       <clip-sales> ...
-      ID |-> ClipSale( ... pos: (POS => 0), tab: (_ => rad(0)), lot: (_ => wad(0)), usr: (_ => 0:Address), tic: (_ => 0), top: (_ => ray(0)) )
-      (size(CLIP_ACTIVE) -Int 1) |-> ClipSale(... pos: (MOVE_POS => #if (ID =/=K (size(CLIP_ACTIVE) -Int 1)) #then POS #else MOVE_POS #fi) )
+      REMOVE_ID |-> ClipSale( ... pos: (POS => 0), tab: (_ => rad(0)), lot: (_ => wad(0)), usr: (_ => 0:Address), tic: (_ => 0), top: (_ => ray(0)) )
+      (size(CLIP_ACTIVE) -Int 1) |-> ClipSale(... pos: (MOVE_POS => #if (REMOVE_ID =/=K (size(CLIP_ACTIVE) -Int 1)) #then POS #else MOVE_POS #fi) )
       ...
       </clip-sales>
 ```
@@ -411,20 +412,59 @@ TODO add external call
 ```k
    syntax ClipAuthLockStep ::= "yank" Int
 // --------------------------------------
-    rule <k> Clip . yank ID =>
+    rule <k> Clip . yank YANK_ID =>
     call CLIP_DOG . digs CLIP_ILK TAB
     ~> call CLIP_VAT . flux CLIP_ILK THIS MSG_SENDER LOT
-    ~> call Clip . remove ID
+    ~> call Clip . remove YANK_ID
     ... </k>
     <this> THIS </this>
     <msg-sender> MSG_SENDER </msg-sender>
-    <clip-sales> ... ID |-> ClipSale( ... tab: TAB, lot: LOT, usr: USR ) ... </clip-sales>
+    <clip-sales> ... YANK_ID |-> ClipSale( ... tab: TAB, lot: LOT, usr: USR ) ... </clip-sales>
     <clip-dog> CLIP_DOG </clip-dog>
     <clip-vat> CLIP_VAT </clip-vat>
     <clip-ilk> CLIP_ILK </clip-ilk>
 
     requires USR =/=K 0:Address
+```
 
+```k
+endmodule
+```
+
+#### Dummy Contract for Mocking an External Call
+
+Clip External Contract Configuration
+------------------------------------
+
+```k
+module CLIP-EXTERNAL
+    imports KMCD-DRIVER
+
+    configuration
+      <clip-external>
+        <mock-variable> 0 </mock-variable>
+      </clip-external>
+```
+
+```k
+    syntax MCDContract          ::= ClipExternalContract
+    syntax ClipExternalContract ::= "ClipExternalContract"
+    syntax MCDStep              ::= ClipExternalContract "." ClipExternalStep [klabel(clipExternalStep)]
+    syntax ClipExternalStep
+ // ----------------------------------------------------------------------------------------------------
+    rule contract(ClipExternalContract . _) => ClipExternalContract
+```
+
+Clip External Contract Mock Functions
+-------------------------------------
+
+This may be changed to study different behaviours and possible effects of an external call to the system.
+
+```k
+   syntax ClipExternalStep ::= "clipperCall" Address Wad Wad String
+// ----------------------------------------------------------------
+    rule <k> ClipExternalContract . clipperCall _MSG_SENDER _OWE _SLICE _DATA => . ... </k>
+        <mock-variable> MOCK_VARIABLE => MOCK_VARIABLE +Int 1 </mock-variable>
 ```
 
 ```k
