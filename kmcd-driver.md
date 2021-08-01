@@ -91,18 +91,18 @@ Passing control to the KEVM, executing the transaction and returning control to 
 Each individual contract function call, `CallStep`, is characterized by its function name, `Op`, and its arguments, `Args`.
 
 ```k
-    syntax Op = String
+    syntax Op ::= String
     syntax Arg ::= Bln | Wad | Ray | Rad | Int | String | Address
     syntax Args ::= List{Arg, ""}
-    syntax CallStep
+    syntax CallStep ::= Op Args
 ```
 
 ### EVM Datatype Conversions
 
 ```k
-    syntax TypedArg ::= #encodeEVM( String, FInt    )
-                      | #encodeEVM( String, String  )
-                      | #encodeEVM( String, Address )
+    syntax TypedArg ::= #encodeEVM( String, FInt    ) [function]
+                      | #encodeEVM( String, String  ) [function]
+                      | #encodeEVM( String, Address ) [function]
  // -------------------------------------------------
     rule #encodeEVM ( "uint160", FINT:FInt) => #uint160 (value(FINT))
     rule #encodeEVM ( "uint256", FINT:FInt) => #uint256 (value(FINT))
@@ -130,19 +130,20 @@ Each individual contract function call, `CallStep`, is characterized by its func
 ```k
     syntax ByteArray ::= #abiEncode(CallStep, List) [function]
  // ----------------------------------------------------------
-    rule #abiEncode ( (OP:Op ARGS:Args), TYPES ) => #abiCallData(OP, #MCDtoEVM(ARGS, TYPES))
+    rule #abiEncode ((OP ARGS):CallStep, TYPES ) => #abiCallData(OP, #MCDtoEVM(ARGS, TYPES))
 
-    syntax TypedArgs ::= #MCDtoEVM    ( Args, List            )
-                       | #MCDtoEVMAux ( Args, List, TypedArgs )
+    syntax TypedArgs ::= #MCDtoEVM    ( Args, List            ) [function]
+                       | #MCDtoEVMAux ( Args, List, TypedArgs ) [function]
  // -----------------------------------------------------------
     rule #MCDtoEVM(ARGS, TYPES) => #MCDtoEVMAux(ARGS, TYPES, .TypedArgs)
 
-    rule #MCDtoEVMAux((ARG REST), ListItem(TYPE) TYPES, TYPED_ARGS) => #MCDtoEVMAux( REST , TYPES, (TYPED_ARGS, #encodeEVM(TYPE, ARG)))
+    rule #MCDtoEVMAux((ARG REST):Args, ListItem(TYPE) TYPES, TYPED_ARGS) => #MCDtoEVMAux( REST , TYPES, (TYPED_ARGS, #encodeEVM(TYPE, ARG:FInt)))
+    rule #MCDtoEVMAux((ARG REST):Args, ListItem(TYPE) TYPES, TYPED_ARGS) => #MCDtoEVMAux( REST , TYPES, (TYPED_ARGS, #encodeEVM(TYPE, ARG:String)))
+    rule #MCDtoEVMAux((ARG REST):Args, ListItem(TYPE) TYPES, TYPED_ARGS) => #MCDtoEVMAux( REST , TYPES, (TYPED_ARGS, #encodeEVM(TYPE, ARG:Address)))
 
-
-    rule #MCDtoEVMAux(LAST_ARG, ListItem(LAST_TYPE), TYPED_ARGS) => (TYPED_ARGS, #encodeEVM(LAST_TYPE, ARG:FInt))
-    rule #MCDtoEVMAux(LAST_ARG, ListItem(LAST_TYPE), TYPED_ARGS) => (TYPED_ARGS, #encodeEVM(LAST_TYPE, ARG:Address))
-    rule #MCDtoEVMAux(LAST_ARG, ListItem(LAST_TYPE), TYPED_ARGS) => (TYPED_ARGS, #encodeEVM(LAST_TYPE, ARG:String))
+    rule #MCDtoEVMAux(LAST_ARG:FInt, ListItem(LAST_TYPE), TYPED_ARGS) => (TYPED_ARGS, #encodeEVM(LAST_TYPE, LAST_ARG))
+    rule #MCDtoEVMAux(LAST_ARG:String, ListItem(LAST_TYPE), TYPED_ARGS) => (TYPED_ARGS, #encodeEVM(LAST_TYPE, LAST_ARG))
+    rule #MCDtoEVMAux(LAST_ARG:Address, ListItem(LAST_TYPE), TYPED_ARGS) => (TYPED_ARGS, #encodeEVM(LAST_TYPE, LAST_ARG))
 
     syntax KItem ::= #serializeTransaction ( Address, MCDStep )
  // -----------------------------------------------------------
