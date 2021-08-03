@@ -82,7 +82,7 @@ includes = $(patsubst %, $(KMCD_INCLUDE)/kframework/%.md, $(SOURCE_FILES))
 build: build-llvm build-haskell
 
 KOMPILE_INCLUDES = $(KMCD_INCLUDE)/kframework $(INSTALL_INCLUDE)/kframework
-KOMPILE_OPTS    += $(addprefix -I , $(KOMPILE_INCLUDES))
+KOMPILE_OPTS    += $(addprefix -I , $(KOMPILE_INCLUDES)) --verbose --profile-rule-parsing
 
 ifneq (,$(RELEASE))
     KOMPILE_OPTS += -O3
