@@ -158,10 +158,10 @@ Cat Semantics
          ...
          </k>
          <this> THIS </this>
-         <cat-vat> CAT_VAT </cat-vat>
-         <cat-vow> CAT_VOW </cat-vow>
+         <cat-vat> CAT_VAT:VatContract </cat-vat>
+         <cat-vow> CAT_VOW:VowContract </cat-vow>
          <cat-live> true </cat-live>
-         <cat-ilks> ... ILK_ID |-> Ilk(... flip: CAT_FLIP, chop: CHOP, lump: LUMP) ... </cat-ilks>
+         <cat-ilks> ... ILK_ID |-> Ilk(... flip: CAT_FLIP:FlipContract, chop: CHOP, lump: LUMP) ... </cat-ilks>
          <vat-ilks> ... ILK_ID |-> Ilk(... rate: RATE, spot: SPOT) ... </vat-ilks>
          <vat-urns> ... { ILK_ID, URN } |-> Urn(... ink: INK, art: URNART ) ... </vat-urns>
       requires (INK *Rate SPOT) <Rad (URNART *Rate RATE)
