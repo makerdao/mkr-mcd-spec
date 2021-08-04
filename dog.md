@@ -141,7 +141,7 @@ These parameters are controlled by governance:
 Dog Semantics
 -------------
 
-```
+```k
    syntax DogStep ::= "bark" String Address Address
  // -----------------------------------------------
     rule <k> Dog . bark ILK URN KPR

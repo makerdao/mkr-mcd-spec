@@ -244,7 +244,7 @@ These parameters are controlled by governance:
 Clip Semantics
 -------------
 
-```
+```k
    syntax ClipAuthLockStep ::= "kick" Rad Wad Address Address
  // ---------------------------------------------------------
    rule <k> Clip . kick TAB LOT USR KPR
@@ -299,7 +299,7 @@ module CLIP
       <dog-ilks> ... CLIP_ILK |-> Ilk( ... chop: CHOP) ... </dog-ilks>
 ```
 
-```
+```k
    syntax ClipLockStep ::= "redo" Int Address
 // ------------------------------------------
    rule <k> Clip . redo REDO_ID KPR
@@ -332,7 +332,7 @@ module CLIP
    <clip-stopped> CLIP_STOPPED </clip-stopped>
    requires CLIP_STOPPED <ClipStop noNewKickOrRedo
    andBool USR =/=K 0:Address
-   andBool ( ( Wad2Ray(VALUE) /Ray SPOT_PAR ) *Ray CLIP_BUF ) >Ray ray(0) //top > 0
+   andBool ( ( Wad2Ray(VALUE) /Ray SPOT_PAR ) *Ray CLIP_BUF ) >Ray ray(0)
 
    rule <k> DONE:Bool ~> emitRedo REDO_ID TOP_FINAL TAB LOT USR KPR COIN => emitRedo REDO_ID TOP_FINAL TAB LOT USR KPR COIN ... </k>
       requires DONE
@@ -351,7 +351,7 @@ module CLIP
     => #fun(TAB_FINAL
     => #fun(LOT_FINAL
     => call CLIP_VAT . flux CLIP_ILK THIS WHO SLICE_FINAL
-    //~> ( #if lengthString(DATA) >Int 0 andBool WHO =/=K CLIP_VAT andBool WHO =/=K CLIP_DOG #then call ClipExternalContract . clipperCall MSG_SENDER OWE_FINAL SLICE_FINAL DATA #else . #fi )
+    ~> ( #if lengthString(DATA) >Int 0 andBool WHO =/=K CLIP_VAT andBool WHO =/=K CLIP_DOG #then call ClipExternalContract . clipperCall MSG_SENDER OWE_FINAL SLICE_FINAL DATA #else . #fi )
     ~> call CLIP_VAT . move MSG_SENDER CLIP_VOW OWE_FINAL
     ~> call CLIP_DOG . digs CLIP_ILK ( #if LOT_FINAL ==Wad wad(0) #then TAB_FINAL +Rad Wad2Rad(OWE_FINAL) #else Wad2Rad(OWE_FINAL) #fi )
     ~> (#if LOT_FINAL ==Wad wad(0) #then Clip . remove TAKE_ID #else ( #if TAB_FINAL ==Rad rad(0) #then call CLIP_VAT . flux CLIP_ILK THIS USR LOT_FINAL #else . #fi )  #fi)
