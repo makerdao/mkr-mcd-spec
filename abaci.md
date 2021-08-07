@@ -123,9 +123,9 @@ Abacus Semantics
 - `LinearDecrease` abacus:
 
 ```k
-   syntax AbacusStep ::= "price" Ray Int
+    syntax AbacusStep ::= "price" Ray Int
  // ------------------------------------
-   rule <k> Abacus ABACUS_ADDRESS . price TOP DUR => ( TOP *Ray ray( ( ABACUS_TAU -Int DUR ) /Int ABACUS_TAU ) ) ... </k>
+    rule <k> Abacus ABACUS_ADDRESS . price TOP DUR => ( TOP  *Ray ray( ( ABACUS_TAU -Int DUR ) /Int ABACUS_TAU ) ) ... </k>
          <abacus>
             <abacus-address> ABACUS_ADDRESS   </abacus-address>
             <abacus-type>    "LinearDecrease" </abacus-type>
@@ -147,7 +147,7 @@ Abacus Semantics
 - `StairstepExponentialDecrease` abacus:
 
 ```k
-   rule <k> Abacus ABACUS_ADDRESS . price TOP DUR => ( TOP *Ray ( ABACUS_CUT ^Ray ( DUR /Int ABACUS_STEP ) ) ) ... </k>
+    rule <k> Abacus ABACUS_ADDRESS . price TOP DUR => ( TOP *Ray ( ABACUS_CUT ^Ray ( DUR /Int ABACUS_STEP ) ) ) ... </k>
          <abacus>
             <abacus-address> ABACUS_ADDRESS                 </abacus-address>
             <abacus-type>    "StairstepExponentialDecrease" </abacus-type>
@@ -160,7 +160,7 @@ Abacus Semantics
 - `ExponentialDecrease` abacus:
 
 ```k
-   rule <k> Abacus ABACUS_ADDRESS . price TOP DUR => TOP *Ray ( ABACUS_CUT ^Ray DUR ) ... </k>
+    rule <k> Abacus ABACUS_ADDRESS . price TOP DUR => TOP *Ray ( ABACUS_CUT ^Ray DUR ) ... </k>
          <abacus>
             <abacus-address> ABACUS_ADDRESS        </abacus-address>
             <abacus-type>    "ExponentialDecrease" </abacus-type>

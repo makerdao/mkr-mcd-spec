@@ -119,10 +119,10 @@ Clip Authorization
    syntax LockAuthStep ::= ClipContract "." ClipAuthLockStep [klabel(clipStep)]
 // ----------------------------------------------------------------------------
    rule <k> lock Clip . _ => . ... </k>
-      <clip-locked> false => true </clip-locked>
+         <clip-locked> false => true </clip-locked>
 
    rule <k> unlock Clip . _ => . ... </k>
-      <clip-locked> true => false </clip-locked>
+         <clip-locked> true => false </clip-locked>
 ```
 
 Clip Data
@@ -247,28 +247,27 @@ Clip Semantics
 ```k
    syntax ClipAuthLockStep ::= "kick" Rad Wad Address Address
  // ---------------------------------------------------------
-   rule <k> Clip . kick TAB LOT USR KPR
-   => #fun(TOP
-   => #fun(COIN
-   => #if ( CLIP_TIP >Rad rad(0) orBool CLIP_CHIP >Wad wad(0) ) #then call CLIP_VAT . suck CLIP_VOW KPR COIN #else . #fi
-   ~> emitKick (KICKS +Int 1) TOP TAB LOT USR KPR COIN
-   ) ( #if ( CLIP_TIP >Rad rad(0) orBool CLIP_CHIP >Wad wad(0) ) #then ( CLIP_TIP +Wad ( Rad2Wad(TAB) *Wad CLIP_CHIP ) ) #else wad(0) #fi )
-   ) ( ( ( Wad2Ray(VALUE) ) /Ray SPOT_PAR )  /Ray CLIP_BUF )
-   ... </k>
-      <clip-kicks> KICKS => KICKS +Int 1 </clip-kicks>
-      <clip-active> CLIP_ACTIVE => CLIP_ACTIVE ListItem(KICKS +Int 1)  </clip-active>
-      <clip-sales> ... KICKS +Int 1 |-> ClipSale( ... pos: (_ =>  size(CLIP_ACTIVE)), tab: (_ => TAB), usr: (_ => USR), tic: (_ => NOW), top: (_=> ( ( ( Wad2Ray(VALUE) ) /Ray SPOT_PAR )  *Ray CLIP_BUF ))  ) </clip-sales>
-      <clip-stopped> CLIP_STOPPED </clip-stopped>
-      <clip-vow> CLIP_VOW </clip-vow>
-      <clip-buf> CLIP_BUF </clip-buf>
-      <clip-vat> CLIP_VAT </clip-vat>
-      <clip-ilk> CLIP_ILK </clip-ilk>
-      <spot-ilks> CLIP_ILK |-> SpotIlk(... pip: VALUE ) </spot-ilks>
-      <spot-par> SPOT_PAR </spot-par>
-      <clip-tip> CLIP_TIP </clip-tip>
-      <clip-chip> CLIP_CHIP </clip-chip>
-      <current-time> NOW </current-time>
-
+    rule <k> Clip . kick TAB LOT USR KPR
+    => #fun(TOP
+    => #fun(COIN
+    => #if ( CLIP_TIP >Rad rad(0) orBool CLIP_CHIP >Wad wad(0) ) #then call CLIP_VAT .   suck CLIP_VOW KPR COIN #else . #fi
+    ~> emitKick (KICKS +Int 1) TOP TAB LOT USR KPR COIN
+    ) ( #if ( CLIP_TIP >Rad rad(0) orBool CLIP_CHIP >Wad wad(0) ) #then ( CLIP_TIP +Wad (    Rad2Wad(TAB) *Wad CLIP_CHIP ) ) #else wad(0) #fi )
+    ) ( ( ( Wad2Ray(VALUE) ) /Ray SPOT_PAR )  /Ray CLIP_BUF )
+    ... </k>
+         <clip-kicks> KICKS => KICKS +Int 1 </clip-kicks>
+         <clip-active> CLIP_ACTIVE => CLIP_ACTIVE ListItem(KICKS +Int 1)  </clip-active>
+         <clip-sales> ... KICKS +Int 1 |-> ClipSale( ... pos: (_ =>  size(CLIP_ACTIVE)),    tab: (_ => TAB), usr: (_ => USR), tic: (_ => NOW), top: (_=> ( ( ( Wad2Ray(VALUE)      ) /Ray SPOT_PAR )  *Ray CLIP_BUF ))  ) </clip-sales>
+         <clip-stopped> CLIP_STOPPED </clip-stopped>
+         <clip-vow> CLIP_VOW </clip-vow>
+         <clip-buf> CLIP_BUF </clip-buf>
+         <clip-vat> CLIP_VAT </clip-vat>
+         <clip-ilk> CLIP_ILK </clip-ilk>
+         <spot-ilks> CLIP_ILK |-> SpotIlk(... pip: VALUE ) </spot-ilks>
+         <spot-par> SPOT_PAR </spot-par>
+         <clip-tip> CLIP_TIP </clip-tip>
+         <clip-chip> CLIP_CHIP </clip-chip>
+         <current-time> NOW </current-time>
       requires CLIP_STOPPED <ClipStop noNewKick
       andBool TAB >Rad rad(0)
       andBool LOT >Wad wad(0)
@@ -292,49 +291,49 @@ module CLIP
 ```k
    syntax ClipStep ::= "upchost"
 // -----------------------------
-   rule <k> Clip . upchost => . ... </k>
-      <clip-chost> _ => DUST *Rad Wad2Rad(CHOP) </clip-chost>
-      <clip-ilk> CLIP_ILK </clip-ilk>
-      <vat-ilks> ... CLIP_ILK |-> Ilk( ... dust: DUST) ... </vat-ilks>
-      <dog-ilks> ... CLIP_ILK |-> Ilk( ... chop: CHOP) ... </dog-ilks>
+    rule <k> Clip . upchost => . ... </k>
+         <clip-chost> _ => DUST *Rad Wad2Rad(CHOP) </clip-chost>
+         <clip-ilk> CLIP_ILK </clip-ilk>
+         <vat-ilks> ... CLIP_ILK |-> Ilk( ... dust: DUST) ... </vat-ilks>
+         <dog-ilks> ... CLIP_ILK |-> Ilk( ... chop: CHOP) ... </dog-ilks>
 ```
 
 ```k
-   syntax ClipLockStep ::= "redo" Int Address
+    syntax ClipLockStep ::= "redo" Int Address
 // ------------------------------------------
-   rule <k> Clip . redo REDO_ID KPR
-   => #fun(PRICE
-   => #fun(DONE
-   => #fun(TOP_FINAL
-   => #fun(COIN
-   => ( #if ( CLIP_TIP >Rad rad(0) orBool CLIP_CHIP >Wad wad(0) ) #then ( #if ( TAB >=Rad CLIP_CHOST andBool ( Wad2Ray(LOT) *Ray ( Wad2Ray(VALUE) /Ray SPOT_PAR ) ) >=Ray CLIP_CHOST ) #then call CLIP_VAT . suck CLIP_VOW KPR COIN #else . #fi ) #else . #fi )
-   ~> DONE
-   ~> emitRedo REDO_ID TOP_FINAL TAB LOT USR KPR COIN
-   ) ( #if ( CLIP_TIP >Rad rad(0) orBool CLIP_CHIP >Wad wad(0) )  #then ( #if ( TAB >=Rad CLIP_CHOST andBool ( Wad2Ray(LOT) *Ray ( Wad2Ray(VALUE) /Ray SPOT_PAR ) ) >=Ray CLIP_CHOST ) #then CLIP_TIP +Rad ( Rad2Wad(TAB) *Wad CLIP_CHIP ) #else wad(0) #fi ) #else wad(0) #fi )
-   )( ( Wad2Ray(VALUE) /Ray SPOT_PAR ) *Ray CLIP_BUF )
-   )( ( (NOW -Int TIC ) >Int CLIP_TAIL ) orBool ( (PRICE /Ray TOP) <Ray CLIP_CUSP ) )
-   )( Abacus CLIP_ABACUS . price TOP (NOW -Int TIC) )
-   ... </k>
-   <clip-abacus> CLIP_ABACUS </clip-abacus>
-   <clip-buf> CLIP_BUF </clip-buf>
-   <clip-chip> CLIP_CHIP </clip-chip>
-   <clip-chost> CLIP_CHOST </clip-chost>
-   <clip-cusp> CLIP_CUSP </clip-cusp>
-   <clip-ilk> CLIP_ILK </clip-ilk>
-   <clip-tail> CLIP_TAIL </clip-tail>
-   <clip-tip> CLIP_TIP </clip-tip>
-   <clip-sales> ... REDO_ID |-> ClipSale( ... tab: TAB, lot: LOT, usr: USR, tic: (TIC => NOW),top: (TOP => ( ( Wad2Ray(VALUE) /Ray SPOT_PAR ) *Ray CLIP_BUF ) ) ) ... </clip-sales>
-   <clip-vat> CLIP_VAT </clip-vat>
-   <clip-vow> CLIP_VOW </clip-vow>
-   <current-time> NOW </current-time>
-   <spot-ilks> CLIP_ILK |-> SpotIlk(... pip: VALUE ) </spot-ilks>
-   <spot-par> SPOT_PAR </spot-par>
-   <clip-stopped> CLIP_STOPPED </clip-stopped>
-   requires CLIP_STOPPED <ClipStop noNewKickOrRedo
-   andBool USR =/=K 0:Address
-   andBool ( ( Wad2Ray(VALUE) /Ray SPOT_PAR ) *Ray CLIP_BUF ) >Ray ray(0)
+    rule <k> Clip . redo REDO_ID KPR
+    => #fun(PRICE
+    => #fun(DONE
+    => #fun(TOP_FINAL
+    => #fun(COIN
+    => ( #if ( CLIP_TIP >Rad rad(0) orBool CLIP_CHIP >Wad wad(0) ) #then ( #if ( TAB >=Rad CLIP_CHOST andBool ( Wad2Ray(LOT) *Ray ( Wad2Ray(VALUE) /Ray SPOT_PAR ) ) >=Ray CLIP_CHOST ) #then call CLIP_VAT . suck CLIP_VOW KPR COIN #else . #fi ) #else . #fi )
+    ~> DONE
+    ~> emitRedo REDO_ID TOP_FINAL TAB LOT USR KPR COIN
+    ) ( #if ( CLIP_TIP >Rad rad(0) orBool CLIP_CHIP >Wad wad(0) )  #then ( #if ( TAB >=Rad CLIP_CHOST andBool ( Wad2Ray(LOT) *Ray ( Wad2Ray(VALUE) /Ray SPOT_PAR ) ) >=Ray CLIP_CHOST ) #then CLIP_TIP +Rad ( Rad2Wad(TAB) *Wad CLIP_CHIP ) #else wad(0) #fi ) #else wad(0) #fi )
+    )( ( Wad2Ray(VALUE) /Ray SPOT_PAR ) *Ray CLIP_BUF )
+    )( ( (NOW -Int TIC ) >Int CLIP_TAIL ) orBool ( (PRICE /Ray TOP) <Ray CLIP_CUSP ) )
+    )( Abacus CLIP_ABACUS . price TOP (NOW -Int TIC) )
+    ... </k>
+         <clip-abacus> CLIP_ABACUS </clip-abacus>
+         <clip-buf> CLIP_BUF </clip-buf>
+         <clip-chip> CLIP_CHIP </clip-chip>
+         <clip-chost> CLIP_CHOST </clip-chost>
+         <clip-cusp> CLIP_CUSP </clip-cusp>
+         <clip-ilk> CLIP_ILK </clip-ilk>
+         <clip-tail> CLIP_TAIL </clip-tail>
+         <clip-tip> CLIP_TIP </clip-tip>
+         <clip-sales> ... REDO_ID |-> ClipSale( ... tab: TAB, lot: LOT, usr: USR, tic: (TIC => NOW),top: (TOP => ( ( Wad2Ray(VALUE) /Ray SPOT_PAR ) *Ray CLIP_BUF ) ) ) ... </clip-sales>
+         <clip-vat> CLIP_VAT </clip-vat>
+         <clip-vow> CLIP_VOW </clip-vow>
+         <current-time> NOW </current-time>
+         <spot-ilks> CLIP_ILK |-> SpotIlk(... pip: VALUE ) </spot-ilks>
+         <spot-par> SPOT_PAR </spot-par>
+         <clip-stopped> CLIP_STOPPED </clip-stopped>
+      requires CLIP_STOPPED <ClipStop noNewKickOrRedo
+      andBool USR =/=K 0:Address
+      andBool ( ( Wad2Ray(VALUE) /Ray SPOT_PAR ) *Ray CLIP_BUF ) >Ray ray(0)
 
-   rule <k> DONE:Bool ~> emitRedo REDO_ID TOP_FINAL TAB LOT USR KPR COIN => emitRedo REDO_ID TOP_FINAL TAB LOT USR KPR COIN ... </k>
+    rule <k> DONE:Bool ~> emitRedo REDO_ID TOP_FINAL TAB LOT USR KPR COIN => emitRedo REDO_ID TOP_FINAL TAB LOT USR KPR COIN ... </k>
       requires DONE
 ```
 
@@ -372,35 +371,34 @@ module CLIP
     )( ( (NOW -Int TIC ) >Int CLIP_TAIL ) orBool ( (PRICE /Ray TOP) <Ray CLIP_CUSP ) )
     )( Abacus CLIP_ABACUS . price TOP (NOW -Int TIC) )
     ... </k>
-    <clip-sales> ... TAKE_ID |-> ClipSale( ... tab: TAB, lot: LOT, usr: USR, tic: TIC, top: TOP ) ... </clip-sales>
-    <clip-chost>    CLIP_CHOST    </clip-chost>
-    <clip-ilk>      CLIP_ILK      </clip-ilk>
-    <clip-vat>      CLIP_VAT      </clip-vat>
-    <clip-dog>      CLIP_DOG      </clip-dog>
-    <clip-vow>      CLIP_VOW      </clip-vow>
-    <clip-tail>     CLIP_TAIL     </clip-tail>
-    <clip-cusp>     CLIP_CUSP     </clip-cusp>
-    <clip-abacus>   CLIP_ABACUS   </clip-abacus>
-    <clip-stopped>  CLIP_STOPPED  </clip-stopped>
-    <current-time> NOW </current-time>
-    <this>       THIS       </this>
-    <msg-sender> MSG_SENDER </msg-sender>
-    requires CLIP_STOPPED <ClipStop noNewKickOrRedoOrTake
-    andBool USR =/=K 0:Address
+         <clip-sales> ... TAKE_ID |-> ClipSale( ... tab: TAB, lot: LOT, usr: USR, tic: TIC, top: TOP ) ... </clip-sales>
+         <clip-chost>    CLIP_CHOST    </clip-chost>
+         <clip-ilk>      CLIP_ILK      </clip-ilk>
+         <clip-vat>      CLIP_VAT      </clip-vat>
+         <clip-dog>      CLIP_DOG      </clip-dog>
+         <clip-vow>      CLIP_VOW      </clip-vow>
+         <clip-tail>     CLIP_TAIL     </clip-tail>
+         <clip-cusp>     CLIP_CUSP     </clip-cusp>
+         <clip-abacus>   CLIP_ABACUS   </clip-abacus>
+         <clip-stopped>  CLIP_STOPPED  </clip-stopped>
+         <current-time> NOW </current-time>
+         <this>       THIS       </this>
+         <msg-sender> MSG_SENDER </msg-sender>
+      requires CLIP_STOPPED <ClipStop noNewKickOrRedoOrTake
+      andBool USR =/=K 0:Address
 
     rule <k> UPDATE:Bool ~> TAB:Rad ~> SLICE_INITIAL:Wad ~> OWE_INITIAL:Wad ~> PRICE:Ray ~> DONE:Bool ~> emitTake TAKE_ID MAX PRICE OWE_FINAL TAB_FINAL LOT_FINAL USR => emitTake TAKE_ID MAX PRICE OWE_FINAL TAB_FINAL LOT_FINAL USR ... </k>
-    <clip-sales> ... TAKE_ID |-> ClipSale( ... tab: (TAB => #if UPDATE #then TAB_FINAL #else TAB #fi), lot:(LOT => #if UPDATE #then LOT_FINAL #else LOT #fi) ) ... </clip-sales>
-    <clip-chost> CLIP_CHOST </clip-chost>
-    requires notBool DONE
-    andBool MAX >=Ray PRICE
-    andBool ( #if (OWE_INITIAL >Wad TAB) #then true #else ( #if (OWE_INITIAL <Wad TAB andBool SLICE_INITIAL <Wad LOT ) #then (#if ( ( TAB -Wad OWE_INITIAL ) <Wad Ray2Wad(CLIP_CHOST) ) #then ( TAB >Wad Ray2Wad(CLIP_CHOST) ) #else true #fi ) #else true #fi ) #fi )
+         <clip-sales> ... TAKE_ID |-> ClipSale( ... tab: (TAB => #if UPDATE #then TAB_FINAL #else TAB #fi), lot:(LOT => #if UPDATE #then LOT_FINAL #else LOT #fi) ) ... </clip-sales>
+         <clip-chost> CLIP_CHOST </clip-chost>
+      requires notBool DONE
+      andBool MAX >=Ray PRICE
+      andBool ( #if (OWE_INITIAL >Wad TAB) #then true #else ( #if (OWE_INITIAL <Wad TAB andBool SLICE_INITIAL <Wad LOT ) #then (#if ( ( TAB -Wad OWE_INITIAL ) <Wad Ray2Wad(CLIP_CHOST) ) #then ( TAB >Wad Ray2Wad(CLIP_CHOST) ) #else true #fi ) #else true #fi ) #fi )
 ```
 
 ```k
    syntax ClipStep ::= "remove" Int
 // --------------------------------
    rule <k> Clip . remove REMOVE_ID => . ... </k>
-
       <clip-active> CLIP_ACTIVE => (#if (REMOVE_ID =/=K (size(CLIP_ACTIVE) -Int 1)) #then range(CLIP_ACTIVE[POS <- (size(CLIP_ACTIVE) -Int 1)], 0, 1) #else range(CLIP_ACTIVE,0,1) #fi) </clip-active>
       <clip-sales> ...
       REMOVE_ID |-> ClipSale( ... pos: (POS => 0), tab: (_ => rad(0)), lot: (_ => wad(0)), usr: (_ => 0:Address), tic: (_ => 0), top: (_ => ray(0)) )
@@ -410,21 +408,20 @@ module CLIP
 ```
 
 ```k
-   syntax ClipAuthLockStep ::= "yank" Int
+    syntax ClipAuthLockStep ::= "yank" Int
 // --------------------------------------
     rule <k> Clip . yank YANK_ID =>
     call CLIP_DOG . digs CLIP_ILK TAB
     ~> call CLIP_VAT . flux CLIP_ILK THIS MSG_SENDER LOT
     ~> call Clip . remove YANK_ID
     ... </k>
-    <this> THIS </this>
-    <msg-sender> MSG_SENDER </msg-sender>
-    <clip-sales> ... YANK_ID |-> ClipSale( ... tab: TAB, lot: LOT, usr: USR ) ... </clip-sales>
-    <clip-dog> CLIP_DOG </clip-dog>
-    <clip-vat> CLIP_VAT </clip-vat>
-    <clip-ilk> CLIP_ILK </clip-ilk>
-
-    requires USR =/=K 0:Address
+         <this> THIS </this>
+         <msg-sender> MSG_SENDER </msg-sender>
+         <clip-sales> ... YANK_ID |-> ClipSale( ... tab: TAB, lot: LOT, usr: USR ) ... </clip-sales>
+         <clip-dog> CLIP_DOG </clip-dog>
+         <clip-vat> CLIP_VAT </clip-vat>
+         <clip-ilk> CLIP_ILK </clip-ilk>
+      requires USR =/=K 0:Address
 ```
 
 ```k
@@ -464,7 +461,7 @@ This may be changed to study different behaviours and possible effects of an ext
    syntax ClipExternalStep ::= "clipperCall" Address Wad Wad String
 // ----------------------------------------------------------------
     rule <k> ClipExternalContract . clipperCall _MSG_SENDER _OWE _SLICE _DATA => . ... </k>
-        <mock-variable> MOCK_VARIABLE => MOCK_VARIABLE +Int 1 </mock-variable>
+         <mock-variable> MOCK_VARIABLE => MOCK_VARIABLE +Int 1 </mock-variable>
 ```
 
 ```k

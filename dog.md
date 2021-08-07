@@ -142,7 +142,7 @@ Dog Semantics
 -------------
 
 ```k
-   syntax DogStep ::= "bark" String Address Address
+    syntax DogStep ::= "bark" String Address Address
  // -----------------------------------------------
     rule <k> Dog . bark ILK URN KPR
     => #fun(ROOM
@@ -190,7 +190,7 @@ Dog Semantics
 
 
 ```k
-   syntax DogAuthStep ::= "digs" String Rad
+    syntax DogAuthStep ::= "digs" String Rad
  // ---------------------------------------
     rule <k> Dog . digs ILK INP_RAD => . ... </k>
          <dog-dirt> DOG_DIRT => DOG_DIRT -Rad INP_RAD  </dog-dirt>
@@ -198,7 +198,7 @@ Dog Semantics
 ```
 
 ```k
-   syntax DogAuthStep ::= "cage"
+    syntax DogAuthStep ::= "cage"
  // ----------------------------
     rule <k> Dog . cage => . ... </k>
          <dog-live> _ => false </dog-live>
