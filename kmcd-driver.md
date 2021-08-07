@@ -6,7 +6,6 @@ This module defines common state and control flow between all the other KMCD mod
 ```k
 requires "evm.md"
 requires "abi.md"
-
 requires "kmcd-data.md"
 
 module KMCD-DRIVER
@@ -94,7 +93,7 @@ Each individual contract function call, `CallStep`, is characterized by its func
     syntax Op ::= String
     syntax Arg ::= Bln | Wad | Ray | Rad | Int | String | Address
     syntax Args ::= List{Arg, ""}
-    syntax CallStep ::= Op Args
+    syntax CallStep ::= Op | Op Args
 ```
 
 ### EVM Datatype Conversions
@@ -112,25 +111,28 @@ Each individual contract function call, `CallStep`, is characterized by its func
     rule #encodeEVM ( "int256" , FINT:FInt) => #int256  (value(FINT))
     rule #encodeEVM ( "int128" , FINT:FInt) => #int128  (value(FINT))
 
-    //rule #encodeEVM ( "bytes"  , BYTES:Bytes) => #bytes         (BYTES)
     rule #encodeEVM ( "bytes32", FINT:FInt  ) => #bytes32 (value(FINT))
 
     rule #encodeEVM ( "bool"   , FINT:FInt  ) => #bool    (value(FINT))
 
-    //rule #encodeEVM ( "address", ADDRESS:Address) => #address(ADDRESS)
 
     rule #encodeEVM ( "string" , STR:String) => #string (STR)
 
     //TODO array
-    //rule #encodeEVM ( "array"  , STR)     => #string        (STR)
+    rule #encodeEVM ( "bytes"  , _BYTES:String) => #bytes (.ByteArray)
+    rule #encodeEVM ( "address", _ADDRESS:Address) => #address(0)
+    rule #encodeEVM ( "array"  , _STR:String)     => #array(#bool( 0 ), 0, .TypedArgs)
 ```
 
 ## Transaction Serialization
 
 ```k
     syntax ByteArray ::= #abiEncode(CallStep, List) [function]
+                       | #abiEncode(CallStep)       [function]
  // ----------------------------------------------------------
     rule #abiEncode ((OP ARGS):CallStep, TYPES ) => #abiCallData(OP, #MCDtoEVM(ARGS, TYPES))
+
+    rule #abiEncode ((OP     ):CallStep) => #abiCallData(OP, .TypedArgs)
 
     syntax TypedArgs ::= #MCDtoEVM    ( Args, List            ) [function]
                        | #MCDtoEVMAux ( Args, List, TypedArgs ) [function]
@@ -147,29 +149,29 @@ Each individual contract function call, `CallStep`, is characterized by its func
 
     syntax KItem ::= #serializeTransaction ( Address, MCDStep )
  // -----------------------------------------------------------
- //   rule <k> #serializeTransaction ( ADDR, CONTRACT:MCDContract . CALL:CallStep) => #call  ... </k>
- //       <account>
- //           <acctID> CONTRACT_ID </acctID>
- //           <code> CONTRACT_BIN_RUNTIME </code>
- //           ...
- //       </account>
- //       ( <callState> _ </callState> =>
- //       <callState>
- //           <program> CONTRACT_BIN_RUNTIME </program>
- //           <jumpDests> #computeValidJumpDests(CONTRACT_BIN_RUNTIME) </jumpDests>
- //           <id> CONTRACT_ID </id>
- //           <caller> CALLER_ID </caller>
- //           <callData> #abiEncode(CALL) </callData>
- //           ...
- //       </callState> )
- //       <mcd-account>
- //               <mcd-id> ADDR </mcd-id>
- //               <address> CALLER_ID </address>
- //       </mcd-account>
- //       <mcd-account>
- //               <mcd-id> CONTRACT </mcd-id>
- //               <address> CONTRACT_ID </address>
- //       </mcd-account>
+    //rule <k> #serializeTransaction ( ADDR, (CONTRACT:MCDContract . CALL:CallStep):MCDStep) => #execute  ... </k>
+    //    <account>
+    //        <acctID> CONTRACT_ID </acctID>
+    //        <code> CONTRACT_BIN_RUNTIME </code>
+    //        ...
+    //    </account>
+    //    ( <callState> _ </callState> =>
+    //    <callState>
+    //        <program> CONTRACT_BIN_RUNTIME </program>
+    //        <jumpDests> #computeValidJumpDests(CONTRACT_BIN_RUNTIME) </jumpDests>
+    //        <id> CONTRACT_ID </id>
+    //        <caller> CALLER_ID </caller>
+    //        <callData> #abiEncode(CALL) </callData>
+    //        ...
+    //    </callState> )
+        //<mcd-account>
+        //        <mcd-id> ADDR </mcd-id>
+        //        <address> CALLER_ID </address>
+        //</mcd-account>
+        //<mcd-account>
+        //        <mcd-id> CONTRACT </mcd-id>
+        //        <address> CONTRACT_ID </address>
+        //</mcd-account>
 ```
 
 ## Executing EVM

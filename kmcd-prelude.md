@@ -131,6 +131,12 @@ module KMCD-PRELUDE
          .MCDSteps
       [macro]
 
+
+      syntax MCDSTeps ::= "TEST-ENCODE"
+
+      rule <k> TEST-ENCODE  => .MCDSteps ... </k>
+        <callData> #abiEncode((rely 1):CallStep) </callData>
+
 endmodule
 ```
 
