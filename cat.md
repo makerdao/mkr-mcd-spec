@@ -42,7 +42,7 @@ Cat Configuration
          <msg-sender> MSGSENDER </msg-sender>
          ( <cat> _ </cat>
         => <cat>
-             <cat-vat> CAT_VAT </cat-vat>
+             <cat-vat> CAT_VAT:VatContract </cat-vat>
              <cat-wards> SetItem(MSGSENDER) </cat-wards>
              <cat-live> true </cat-live>
              ...
@@ -145,9 +145,9 @@ Cat Semantics
     syntax CatStep ::= "bite" String Address
  // ----------------------------------------
     rule <k> Cat . bite ILK_ID URN
-          => #fun(LOT
-          => #fun(ART
-          => #fun(TAB
+          => #fun(LOT:Wad
+          => #fun(ART:Wad
+          => #fun(TAB:Rad
           => call CAT_VAT  . grab ILK_ID URN THIS CAT_VOW (wad(0) -Wad LOT) (wad(0) -Wad ART)
           ~> call CAT_VOW  . fess TAB
           ~> call CAT_FLIP . kick URN CAT_VOW rmul(TAB, CHOP) LOT rad(0)

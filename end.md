@@ -191,7 +191,7 @@ End Semantics
 
     syntax EndStep ::= "skip" String Int
  // ------------------------------------
-    rule <k> End . skip ILK_ID BID_ID
+    rule <k> End . skip ILK_ID:String BID_ID:Int
           => call END_VAT . suck Vow Vow  TAB
           ~> call END_VAT . suck Vow THIS BID
           ~> call END_VAT . hope Flip ILK_ID
