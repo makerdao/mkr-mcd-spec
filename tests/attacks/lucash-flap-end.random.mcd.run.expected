@@ -402,10 +402,10 @@
               .Set
             </gem-wards>
             <gem-balances>
-              Vow |-> FInt ( 0 , 1000000000000000000 )
-              "Bobby" |-> FInt ( 0 , 1000000000000000000 )
-              "Alice" |-> FInt ( 0 , 1000000000000000000 )
               Flap |-> FInt ( 0 , 1000000000000000000 )
+              "Bobby" |-> FInt ( 0 , 1000000000000000000 )
+              Vow |-> FInt ( 0 , 1000000000000000000 )
+              "Alice" |-> FInt ( 0 , 1000000000000000000 )
             </gem-balances>
           </gem> <gem>
             <gem-id>
@@ -534,15 +534,15 @@
             SetItem ( Spot )
           </vat-wards>
           <vat-can>
-            "Alice" |-> SetItem ( Flop )
+            "Alice" |-> SetItem ( Flap )
             SetItem ( End )
-            SetItem ( Flip "gold" )
             SetItem ( Pot )
-            SetItem ( Flap )
-            "Bobby" |-> SetItem ( Flop )
-            SetItem ( End )
             SetItem ( Flip "gold" )
+            SetItem ( Flop )
+            "Bobby" |-> SetItem ( End )
             SetItem ( Pot )
+            SetItem ( Flip "gold" )
+            SetItem ( Flop )
             Vow |-> SetItem ( Flap )
           </vat-can>
           <vat-ilks>
