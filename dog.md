@@ -145,23 +145,16 @@ Dog Semantics
     syntax DogStep ::= "bark" String Address Address
  // -----------------------------------------------
     rule <k> Dog . bark ILK URN KPR
-    => #fun(ROOM
-    => #fun(DART_INITIAL
-    => #fun(DART_FINAL
-    => #fun(DINK
-    => #fun(DUE
-    => #fun(TAB
-    => call DOG_VAT . grab ILK URN CLIP DOG_VOW (wad(0) -Wad DINK) (wad(0) -Wad DART_FINAL)
+    =>  #let ROOM = minRad( ( DOG_HOLE -Rad DOG_DIRT), (HOLE -Rad  DIRT) ) #in (
+        #let DART_INITIAL = minWad( ART, ( ( Rad2Wad(ROOM) /Wad Ray2Wad(RATE)) /Wad CHOP) ) #in (
+        #let DART_FINAL = (#if (ART >Wad DART_INITIAL) andBool ( ((ART -Wad DART_INITIAL) *Wad Ray2Wad(RATE)) <Wad Rad2Wad(DUST) ) #then ART #else   DART_INITIAL #fi) #in (
+        #let DINK = (INK *Wad DART_FINAL) /Wad ART #in (
+        #let DUE = DART_FINAL *Wad Ray2Wad(RATE) #in (
+        #let TAB = DUE *Wad CHOP #in (
+        call DOG_VAT . grab ILK URN CLIP DOG_VOW (wad(0) -Wad DINK) (wad(0) -Wad DART_FINAL)
     ~> call DOG_VOW . fess DUE
     ~> call CLIP . kick TAB DINK URN KPR
-    ~> emitBark ILK URN DINK DART_FINAL DUE CLIP 0
-    )( DUE *Wad CHOP )
-    )( DART_FINAL *Wad Ray2Wad(RATE) )
-    )( (INK *Wad DART_FINAL) /Wad ART )
-    )( #if (ART >Wad DART_INITIAL) andBool ( ((ART -Wad DART_INITIAL) *Wad Ray2Wad(RATE)) <Wad Rad2Wad(DUST) ) #then ART #else   DART_INITIAL #fi)
-    )( minWad( ART, ( ( Rad2Wad(ROOM) /Wad Ray2Wad(RATE)) /Wad CHOP) ) )
-    //)( minWad( ART, ( ( ROOM  Ray2Wad(RATE)) /Wad CHOP) ) )
-    )( minRad( ( DOG_HOLE -Rad DOG_DIRT), (HOLE -Rad  DIRT) ) )
+    ~> emitBark ILK URN DINK DART_FINAL DUE CLIP 0 ) ) ) ) ) )
     ... </k>
          <dog-vow>  DOG_VOW   </dog-vow>
          <dog-live> DOG_LIVE  </dog-live>
