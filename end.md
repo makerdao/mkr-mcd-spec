@@ -215,7 +215,7 @@ End Semantics
 
     syntax EndStep ::= "skim" String Address
  // ----------------------------------------
-    rule <k> End . skim ILK_ID ADDR
+    rule <k> End . skim ILK_ID:String ADDR:Address
           => call END_VAT . grab ILK_ID ADDR THIS Vow (wad(0) -Wad minWad(INK, rmul(rmul(ART, RATE), TAG))) (wad(0) -Wad ART)
          ...
          </k>
@@ -266,20 +266,20 @@ End Semantics
 
     syntax EndStep ::= "pack" Wad
  // -----------------------------
-    rule <k> End . pack AMOUNT
+    rule <k> End . pack AMOUNT:Wad
           => call END_VAT . move MSGSENDER Vow Wad2Rad(AMOUNT)
          ...
          </k>
-         <msg-sender> MSGSENDER </msg-sender>
+         <msg-sender> MSGSENDER:Address </msg-sender>
          <end-vat> END_VAT:VatContract </end-vat>
-         <end-debt> DEBT </end-debt>
+         <end-debt> DEBT:Rad </end-debt>
          <end-bag> ... MSGSENDER |-> (BAG => BAG +Wad AMOUNT) ... </end-bag>
       requires AMOUNT >=Wad wad(0)
        andBool DEBT =/=Rad rad(0)
 
     syntax EndStep ::= "cash" String Wad
  // ------------------------------------
-    rule <k> End . cash ILK_ID AMOUNT
+    rule <k> End . cash ILK_ID:String AMOUNT:Wad
           => call END_VAT . flux ILK_ID THIS MSGSENDER rmul(AMOUNT, FIX)
          ...
          </k>

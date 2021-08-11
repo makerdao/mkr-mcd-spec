@@ -34,8 +34,8 @@ Jug Configuration
 ```k
     syntax JugStep ::= "constructor" Address
  // ----------------------------------------
-    rule <k> Jug . constructor JUG_VAT => . ... </k>
-         <msg-sender> MSGSENDER </msg-sender>
+    rule <k> Jug . constructor JUG_VAT:VatContract => . ... </k>
+         <msg-sender> MSGSENDER:Address </msg-sender>
          ( <jug> _ </jug>
         => <jug>
              <jug-vat> JUG_VAT </jug-vat>

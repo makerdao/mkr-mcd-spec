@@ -310,9 +310,9 @@ This is quite permissive, and would allow the account to drain all your locked c
 
     syntax VatStep ::= "flux" String Address Address Wad
  // ----------------------------------------------------
-    rule <k> Vat . flux ILK_ID ADDRFROM ADDRTO COL => . ... </k>
-         <msg-sender> MSGSENDER </msg-sender>
-         <vat-can> VAT_CANS </vat-can>
+    rule <k> Vat . flux ILK_ID:String ADDRFROM:Address ADDRTO:Address COL:Wad => . ... </k>
+         <msg-sender> MSGSENDER:Address </msg-sender>
+         <vat-can> VAT_CANS:Map </vat-can>
          <vat-gem>
            ...
            { ILK_ID , ADDRFROM } |-> ( COLFROM => COLFROM -Wad COL )
@@ -339,9 +339,9 @@ This is quite permissive, and would allow the account to drain all your locked c
 ```k
     syntax VatStep ::= "move" Address Address Rad
  // ---------------------------------------------
-    rule <k> Vat . move ADDRFROM ADDRTO DAI => . ... </k>
-         <msg-sender> MSGSENDER </msg-sender>
-         <vat-can> VAT_CANS </vat-can>
+    rule <k> Vat . move ADDRFROM:Address ADDRTO:Address DAI:Rad => . ... </k>
+         <msg-sender> MSGSENDER:Address </msg-sender>
+         <vat-can> VAT_CANS:Map </vat-can>
          <vat-dai>
            ...
            ADDRFROM |-> (DAIFROM => DAIFROM -Rad DAI)
@@ -412,8 +412,8 @@ This is quite permissive, and would allow the account to drain all your locked c
 ```k
     syntax VatAuthStep ::= "grab" String Address Address Address Wad Wad
  // --------------------------------------------------------------------
-    rule <k> Vat . grab ILK_ID ADDRU ADDRV ADDRW DINK DART => . ... </k>
-         <vat-vice> VICE => VICE -Rad (DART *Rate RATE) </vat-vice>
+    rule <k> Vat . grab ILK_ID:String ADDRU:Address ADDRV:Address ADDRW:Address DINK:Wad DART:Wad => . ... </k>
+         <vat-vice> VICE:Rad => VICE -Rad (DART *Rate RATE) </vat-vice>
          <vat-urns> ... { ILK_ID , ADDRU } |-> Urn ( INK => INK +Wad DINK , URNART => URNART +Wad DART ) ... </vat-urns>
          <vat-ilks> ... ILK_ID |-> Ilk ( ILKART => ILKART +Wad DART , RATE , _ , _ , _ ) ... </vat-ilks>
          <vat-gem> ... { ILK_ID , ADDRV } |-> ( ILKV => ILKV -Wad DINK ) ... </vat-gem>
@@ -458,9 +458,9 @@ This is quite permissive, and would allow the account to drain all your locked c
     syntax VatStep ::= "heal" Rad
  // -----------------------------
     rule <k> Vat . heal AMOUNT:Rad => . ... </k>
-         <msg-sender> ADDRFROM </msg-sender>
-         <vat-debt> DEBT => DEBT -Rad AMOUNT </vat-debt>
-         <vat-vice> VICE => VICE -Rad AMOUNT </vat-vice>
+         <msg-sender> ADDRFROM:Address </msg-sender>
+         <vat-debt> DEBT:Rad => DEBT -Rad AMOUNT </vat-debt>
+         <vat-vice> VICE:Rad => VICE -Rad AMOUNT </vat-vice>
          <vat-sin> ... ADDRFROM |-> (SIN => SIN -Rad AMOUNT) ... </vat-sin>
          <vat-dai> ... ADDRFROM |-> (DAI => DAI -Rad AMOUNT) ... </vat-dai>
       requires AMOUNT >=Rad rad(0)
@@ -471,7 +471,7 @@ This is quite permissive, and would allow the account to drain all your locked c
 
     syntax VatAuthStep ::= "suck" Address Address Rad
  // -------------------------------------------------
-    rule <k> Vat . suck ADDRU ADDRV AMOUNT => . ... </k>
+    rule <k> Vat . suck ADDRU:Address ADDRV:Address AMOUNT:Rad => . ... </k>
          <vat-debt> DEBT => DEBT +Rad AMOUNT </vat-debt>
          <vat-vice> VICE => VICE +Rad AMOUNT </vat-vice>
          <vat-sin> ... ADDRU |-> (SIN => SIN +Rad AMOUNT) ... </vat-sin>

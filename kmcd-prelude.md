@@ -206,8 +206,8 @@ module KMCD-GEN
 
     syntax AdminStep ::= AddGenerator ( GenStep )
  // ---------------------------------------------
-    rule <k> AddGenerator ( GSS ) => . ... </k>
-         <generator-next> I => I +Int 1 </generator-next>
+    rule <k> AddGenerator ( GSS:GenStep ) => . ... </k>
+         <generator-next> I:Int => I +Int 1 </generator-next>
          <generators>
            ...
            ( .Bag
@@ -289,8 +289,8 @@ module KMCD-GEN
 
     rule <k> GSS DB:DepthBound => #if DB ==K 0 #then . #else (GSS ; (GSS decrement(DB))) | .GenStep #fi ... </k>
 
-    rule <k> GSS ; GSS' => GSS ... </k>
-         <generator-remainder> GSS'' => GSS' ; GSS'' </generator-remainder>
+    rule <k> GSS:GenStep ; GSS':GenStep => GSS ... </k>
+         <generator-remainder> GSS'':GenStep => GSS' ; GSS'' </generator-remainder>
 
     rule <k> GSS:GenStep | GSS':GenStep => #if head(BS) modInt 2 ==K 0 #then GSS #else GSS' #fi ... </k>
          <random> BS => tail(BS) </random>
