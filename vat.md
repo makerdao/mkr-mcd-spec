@@ -424,7 +424,7 @@ This is quite permissive, and would allow the account to drain all your locked c
 
     syntax VatStep ::= "frob" String Address Address Address Wad Wad
  // ----------------------------------------------------------------
-    rule <k> Vat . frob ILK_ID ADDRU ADDRV ADDRW DINK DART => . ... </k>
+    rule <k> Vat . frob ILK_ID:String ADDRU:Address ADDRV:Address ADDRW:Address DINK:Wad DART:Wad => . ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <vat-can> VAT_CANS </vat-can>
          <vat-live> true </vat-live>
@@ -457,7 +457,7 @@ This is quite permissive, and would allow the account to drain all your locked c
 ```k
     syntax VatStep ::= "heal" Rad
  // -----------------------------
-    rule <k> Vat . heal AMOUNT => . ... </k>
+    rule <k> Vat . heal AMOUNT:Rad => . ... </k>
          <msg-sender> ADDRFROM </msg-sender>
          <vat-debt> DEBT => DEBT -Rad AMOUNT </vat-debt>
          <vat-vice> VICE => VICE -Rad AMOUNT </vat-vice>

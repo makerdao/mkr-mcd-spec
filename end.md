@@ -59,11 +59,11 @@ End Configuration
     syntax EndStep ::= "constructor"
  // --------------------------------
     rule <k> End . constructor => . ... </k>
-         <msg-sender> MSGSENDER </msg-sender>
+         <msg-sender> MSGSENDER:Address </msg-sender>
          ( <end> _ </end>
         => <end>
              <end-wards> SetItem(MSGSENDER) </end-wards>
-             <end-live> true </end-live>
+             <end-live> true:Bool </end-live>
              ...
            </end>
          )

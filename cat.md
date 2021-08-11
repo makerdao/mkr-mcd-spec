@@ -39,12 +39,12 @@ Cat Configuration
     syntax CatStep ::= "constructor" Address
  // ----------------------------------------
     rule <k> Cat . constructor CAT_VAT => . ... </k>
-         <msg-sender> MSGSENDER </msg-sender>
+         <msg-sender> MSGSENDER:Address </msg-sender>
          ( <cat> _ </cat>
         => <cat>
              <cat-vat> CAT_VAT:VatContract </cat-vat>
              <cat-wards> SetItem(MSGSENDER) </cat-wards>
-             <cat-live> true </cat-live>
+             <cat-live> true:Bool </cat-live>
              ...
            </cat>
          )
