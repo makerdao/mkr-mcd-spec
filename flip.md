@@ -213,18 +213,18 @@ Flip Semantics
 
     syntax FlipStep ::= "tend" Int Wad Rad
  // --------------------------------------
-    rule <k> Flip ILK_ID . tend BID_ID LOT BID
+    rule <k> Flip ILK_ID:String . tend BID_ID:Int LOT:Wad BID:Rad
           => #if MSGSENDER =/=K GUY #then call FLIP_VAT . move MSGSENDER GUY BID' #else . #fi
           ~> call FLIP_VAT . move MSGSENDER GAL (BID -Rad BID')
          ...
          </k>
-         <msg-sender> MSGSENDER </msg-sender>
+         <msg-sender> MSGSENDER:Address </msg-sender>
          <current-time> NOW </current-time>
          <flip>
            <flip-ilk> ILK_ID </flip-ilk>
-           <flip-vat> FLIP_VAT </flip-vat>
-           <flip-beg> BEG </flip-beg>
-           <flip-ttl> TTL </flip-ttl>
+           <flip-vat> FLIP_VAT:VatContract </flip-vat>
+           <flip-beg> BEG:Wad </flip-beg>
+           <flip-ttl> TTL:Int </flip-ttl>
            <flip-bids> ... BID_ID |-> FlipBid(... bid: BID' => BID, lot: LOT', guy: GUY => MSGSENDER, tic: TIC => NOW +Int TTL, end: END, gal: GAL, tab: TAB) ... </flip-bids>
            ...
          </flip>
@@ -240,19 +240,19 @@ Flip Semantics
 
     syntax FlipStep ::= "dent" Int Wad Rad
  // --------------------------------------
-    rule <k> Flip ILK_ID . dent BID_ID LOT BID
+    rule <k> Flip ILK_ID:String . dent BID_ID:Int LOT:Wad BID:Rad
           => #if MSGSENDER =/=K GUY #then call FLIP_VAT . move MSGSENDER GUY BID #else . #fi
           ~> call Vat.flux ILK_ID THIS USR (LOT' -Wad LOT)
          ...
          </k>
-         <msg-sender> MSGSENDER </msg-sender>
+         <msg-sender> MSGSENDER:Address </msg-sender>
          <this> THIS </this>
          <current-time> NOW </current-time>
          <flip>
            <flip-ilk> ILK_ID </flip-ilk>
-           <flip-vat> FLIP_VAT </flip-vat>
-           <flip-beg> BEG </flip-beg>
-           <flip-ttl> TTL </flip-ttl>
+           <flip-vat> FLIP_VAT:VatContract </flip-vat>
+           <flip-beg> BEG:Wad </flip-beg>
+           <flip-ttl> TTL:Int </flip-ttl>
            <flip-bids> ... BID_ID |-> FlipBid(... bid: BID', lot: LOT' => LOT, guy: GUY => MSGSENDER, tic: TIC => NOW +Int TTL, end: END, usr: USR, tab: TAB) ... </flip-bids>
            ...
          </flip>

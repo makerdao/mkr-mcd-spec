@@ -59,11 +59,11 @@ End Configuration
     syntax EndStep ::= "constructor"
  // --------------------------------
     rule <k> End . constructor => . ... </k>
-         <msg-sender> MSGSENDER </msg-sender>
+         <msg-sender> MSGSENDER:Address </msg-sender>
          ( <end> _ </end>
         => <end>
              <end-wards> SetItem(MSGSENDER) </end-wards>
-             <end-live> true </end-live>
+             <end-live> true:Bool </end-live>
              ...
            </end>
          )
@@ -110,25 +110,25 @@ These parameters are controlled by governance:
          <end-wait> _ => WAIT </end-wait>
       requires WAIT >=Int 0
 
-    rule <k> End . file vat-file END_VAT => . ... </k>
+    rule <k> End . file vat-file END_VAT:VatContract => . ... </k>
          <end-live> true </end-live>
-         <end-vat> _ => END_VAT </end-vat>
+         <end-vat> _:VatContract => END_VAT </end-vat>
 
-    rule <k> End . file cat-file END_CAT => . ... </k>
+    rule <k> End . file cat-file END_CAT:CatContract => . ... </k>
          <end-live> true </end-live>
-         <end-cat> _ => END_CAT </end-cat>
+         <end-cat> _:CatContract => END_CAT </end-cat>
 
-    rule <k> End . file vow-file END_VOW => . ... </k>
+    rule <k> End . file vow-file END_VOW:VowContract => . ... </k>
          <end-live> true </end-live>
-         <end-vow> _ => END_VOW </end-vow>
+         <end-vow> _:VowContract => END_VOW </end-vow>
 
-    rule <k> End . file pot-file END_POT => . ... </k>
+    rule <k> End . file pot-file END_POT:EndContract => . ... </k>
          <end-live> true </end-live>
-         <end-pot> _ => END_POT </end-pot>
+         <end-pot> _:PotContract => END_POT </end-pot>
 
-    rule <k> End . file spot-file END_SPOT => . ... </k>
+    rule <k> End . file spot-file END_SPOT:SpotContract => . ... </k>
          <end-live> true </end-live>
-         <end-spot> _ => END_SPOT </end-spot>
+         <end-spot> _:SpotContract => END_SPOT </end-spot>
 ```
 
 End Initialization
@@ -191,7 +191,7 @@ End Semantics
 
     syntax EndStep ::= "skip" String Int
  // ------------------------------------
-    rule <k> End . skip ILK_ID BID_ID
+    rule <k> End . skip ILK_ID:String BID_ID:Int
           => call END_VAT . suck Vow Vow  TAB
           ~> call END_VAT . suck Vow THIS BID
           ~> call END_VAT . hope Flip ILK_ID
@@ -215,7 +215,7 @@ End Semantics
 
     syntax EndStep ::= "skim" String Address
  // ----------------------------------------
-    rule <k> End . skim ILK_ID ADDR
+    rule <k> End . skim ILK_ID:String ADDR:Address
           => call END_VAT . grab ILK_ID ADDR THIS Vow (wad(0) -Wad minWad(INK, rmul(rmul(ART, RATE), TAG))) (wad(0) -Wad ART)
          ...
          </k>
@@ -266,20 +266,20 @@ End Semantics
 
     syntax EndStep ::= "pack" Wad
  // -----------------------------
-    rule <k> End . pack AMOUNT
+    rule <k> End . pack AMOUNT:Wad
           => call END_VAT . move MSGSENDER Vow Wad2Rad(AMOUNT)
          ...
          </k>
-         <msg-sender> MSGSENDER </msg-sender>
+         <msg-sender> MSGSENDER:Address </msg-sender>
          <end-vat> END_VAT:VatContract </end-vat>
-         <end-debt> DEBT </end-debt>
+         <end-debt> DEBT:Rad </end-debt>
          <end-bag> ... MSGSENDER |-> (BAG => BAG +Wad AMOUNT) ... </end-bag>
       requires AMOUNT >=Wad wad(0)
        andBool DEBT =/=Rad rad(0)
 
     syntax EndStep ::= "cash" String Wad
  // ------------------------------------
-    rule <k> End . cash ILK_ID AMOUNT
+    rule <k> End . cash ILK_ID:String AMOUNT:Wad
           => call END_VAT . flux ILK_ID THIS MSGSENDER rmul(AMOUNT, FIX)
          ...
          </k>

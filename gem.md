@@ -51,7 +51,7 @@ Because data isn't explicitely initialized to 0 in KMCD, we need explicit initia
          </gem>
       requires notBool ADDR in_keys(BALS)
 
-    rule <k> Gem GEMID . initUser ADDR => . ... </k>
+    rule <k> Gem GEMID:String . initUser ADDR:Address => . ... </k>
          <gem>
             <gem-id> GEMID </gem-id>
             <gem-balances> ... ADDR |-> _ ... </gem-balances>
@@ -67,7 +67,7 @@ Gem Semantics
 ```k
     syntax GemStep ::= "transferFrom" Address Address Wad
  // -----------------------------------------------------
-    rule <k> Gem GEMID . transferFrom ACCTSRC ACCTDST VALUE => . ... </k>
+    rule <k> Gem GEMID:String . transferFrom ACCTSRC:Address ACCTDST:Address VALUE:Wad => . ... </k>
          <gem>
            <gem-id> GEMID </gem-id>
            <gem-balances>
@@ -83,7 +83,7 @@ Gem Semantics
        andBool VALUE >=Wad wad(0)
        andBool BALANCE_SRC >=Wad VALUE
 
-    rule <k> Gem GEMID . transferFrom ACCTSRC ACCTSRC VALUE => . ... </k>
+    rule <k> Gem GEMID:String . transferFrom ACCTSRC:Address ACCTSRC:Address VALUE:Wad => . ... </k>
          <gem>
            <gem-id> GEMID </gem-id>
            <gem-balances> ... ACCTSRC |-> BALANCE_SRC ... </gem-balances>

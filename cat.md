@@ -39,12 +39,12 @@ Cat Configuration
     syntax CatStep ::= "constructor" Address
  // ----------------------------------------
     rule <k> Cat . constructor CAT_VAT => . ... </k>
-         <msg-sender> MSGSENDER </msg-sender>
+         <msg-sender> MSGSENDER:Address </msg-sender>
          ( <cat> _ </cat>
         => <cat>
-             <cat-vat> CAT_VAT </cat-vat>
+             <cat-vat> CAT_VAT:VatContract </cat-vat>
              <cat-wards> SetItem(MSGSENDER) </cat-wards>
-             <cat-live> true </cat-live>
+             <cat-live> true:Bool </cat-live>
              ...
            </cat>
          )
@@ -115,7 +115,7 @@ The parameters controlled by governance are:
                      | "lump" String Wad
                      | "flip" String Address
  // ----------------------------------------
-    rule <k> Cat . file vow-file ADDR => . ... </k>
+    rule <k> Cat . file vow-file ADDR:VowContract => . ... </k>
          <cat-vow> _ => ADDR </cat-vow>
 
     rule <k> Cat . file chop ILK_ID CHOP => . ... </k>
@@ -126,10 +126,10 @@ The parameters controlled by governance are:
          <cat-ilks> ... ILK_ID |-> Ilk ( ... lump: (_ => LUMP) ) ... </cat-ilks>
       requires LUMP >=Wad wad(0)
 
-    rule <k> Cat . file flip ILK_ID CAT_FLIP => . ... </k>
+    rule <k> Cat . file flip ILK_ID:String CAT_FLIP:FlipContract => . ... </k>
          <cat-ilks> ... ILK_ID |-> Ilk ( ... flip: (_ => CAT_FLIP) ) ... </cat-ilks>
 
-    rule <k> Cat . file flip ILK_ID _ ... </k>
+    rule <k> Cat . file flip ILK_ID _:FlipContract ... </k>
          <cat-ilks> CAT_ILKS => CAT_ILKS [ ILK_ID <- Ilk(... flip: 0, chop: ray(0), lump: wad(0)) ] </cat-ilks>
       requires notBool ILK_ID in_keys(CAT_ILKS)
 ```
@@ -145,9 +145,9 @@ Cat Semantics
     syntax CatStep ::= "bite" String Address
  // ----------------------------------------
     rule <k> Cat . bite ILK_ID URN
-          => #fun(LOT
-          => #fun(ART
-          => #fun(TAB
+          => #fun(LOT:Wad
+          => #fun(ART:Wad
+          => #fun(TAB:Rad
           => call CAT_VAT  . grab ILK_ID URN THIS CAT_VOW (wad(0) -Wad LOT) (wad(0) -Wad ART)
           ~> call CAT_VOW  . fess TAB
           ~> call CAT_FLIP . kick URN CAT_VOW rmul(TAB, CHOP) LOT rad(0)
@@ -158,10 +158,10 @@ Cat Semantics
          ...
          </k>
          <this> THIS </this>
-         <cat-vat> CAT_VAT </cat-vat>
-         <cat-vow> CAT_VOW </cat-vow>
+         <cat-vat> CAT_VAT:VatContract </cat-vat>
+         <cat-vow> CAT_VOW:VowContract </cat-vow>
          <cat-live> true </cat-live>
-         <cat-ilks> ... ILK_ID |-> Ilk(... flip: CAT_FLIP, chop: CHOP, lump: LUMP) ... </cat-ilks>
+         <cat-ilks> ... ILK_ID |-> Ilk(... flip: CAT_FLIP:FlipContract, chop: CHOP, lump: LUMP) ... </cat-ilks>
          <vat-ilks> ... ILK_ID |-> Ilk(... rate: RATE, spot: SPOT) ... </vat-ilks>
          <vat-urns> ... { ILK_ID, URN } |-> Urn(... ink: INK, art: URNART ) ... </vat-urns>
       requires (INK *Rate SPOT) <Rad (URNART *Rate RATE)

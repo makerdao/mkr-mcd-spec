@@ -206,8 +206,8 @@ module KMCD-GEN
 
     syntax AdminStep ::= AddGenerator ( GenStep )
  // ---------------------------------------------
-    rule <k> AddGenerator ( GSS ) => . ... </k>
-         <generator-next> I => I +Int 1 </generator-next>
+    rule <k> AddGenerator ( GSS:GenStep ) => . ... </k>
+         <generator-next> I:Int => I +Int 1 </generator-next>
          <generators>
            ...
            ( .Bag
@@ -225,11 +225,11 @@ module KMCD-GEN
                      | "GenStepReplace"
  // -----------------------------------
     rule <k> GenStep => GenStepLoad ~> GenStepReplace ... </k>
-         <random> BS => tail(BS) </random>
-         <used-random> _ => headAsBytes(BS) </used-random>
+         <random> BS:Bytes => tail(BS) </random>
+         <used-random> _:Bytes => headAsBytes(BS) </used-random>
          <generator-next> N </generator-next>
          <generator-current> _ => head(BS) modInt N </generator-current>
-         <generator-remainder> _ => .GenStep </generator-remainder>
+         <generator-remainder> _:GenStep => .GenStep </generator-remainder>
       requires lengthBytes(BS) >Int 0
        andBool N >Int 0
 
@@ -244,15 +244,15 @@ module KMCD-GEN
          <generator-current> I </generator-current>
          <generator>
            <generator-id> I </generator-id>
-           <generator-steps> GSS => .GenStep </generator-steps>
+           <generator-steps> GSS:GenStep => .GenStep </generator-steps>
          </generator>
 
     rule <k> GenStepReplace => . ... </k>
-         <generator-remainder> GSS => .GenStep </generator-remainder>
+         <generator-remainder> GSS:GenStep => .GenStep </generator-remainder>
          <generator-current> I </generator-current>
          <generator>
            <generator-id> I </generator-id>
-           <generator-steps> _ => GSS </generator-steps>
+           <generator-steps> _:GenStep => GSS </generator-steps>
          </generator>
 
     syntax MCDSteps ::= "GenSteps"
@@ -280,19 +280,19 @@ module KMCD-GEN
  // ----------------------------------------------
     rule <k> .GenStep => . ... </k>
 
-    rule <k> .GenStep ; GSS => GSS ... </k> [priority(49)]
-    rule <k> GSS ; .GenStep => GSS ... </k> [priority(49)]
-    rule <k> .GenStep | GSS => GSS ... </k> [priority(49)]
-    rule <k> GSS | .GenStep => GSS ... </k> [priority(49)]
+    rule <k> .GenStep ; GSS         => GSS ... </k> [priority(49)]
+    rule <k> GSS ; .GenStep         => GSS ... </k> [priority(49)]
+    rule <k> .GenStep | GSS:GenStep => GSS ... </k> [priority(49)]
+    rule <k> GSS | .GenStep         => GSS ... </k> [priority(49)]
 
     rule <k> .GenStep _:DepthBound => . ... </k> [priority(49)]
 
     rule <k> GSS DB:DepthBound => #if DB ==K 0 #then . #else (GSS ; (GSS decrement(DB))) | .GenStep #fi ... </k>
 
-    rule <k> GSS ; GSS' => GSS ... </k>
-         <generator-remainder> GSS'' => GSS' ; GSS'' </generator-remainder>
+    rule <k> GSS:GenStep ; GSS':GenStep => GSS ... </k>
+         <generator-remainder> GSS'':GenStep => GSS' ; GSS'' </generator-remainder>
 
-    rule <k> GSS | GSS' => #if head(BS) modInt 2 ==K 0 #then GSS #else GSS' #fi ... </k>
+    rule <k> GSS:GenStep | GSS':GenStep => #if head(BS) modInt 2 ==K 0 #then GSS #else GSS' #fi ... </k>
          <random> BS => tail(BS) </random>
          <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
       requires lengthBytes(BS) >Int 0
@@ -329,22 +329,22 @@ module KMCD-GEN
          <vat-gem> ... CDPID |-> VAT_GEM ... </vat-gem>
       requires lengthBytes(BS) >Int 0
 
-    rule <k> GenVatFrob { ILK_ID , ADDR } DINK
-          => #fun( DARTBOUND
+    rule <k> GenVatFrob { ILK_ID:String , ADDR:Address } DINK:Wad
+          => #fun( DARTBOUND:Wad
                 => LogGen ( transact ADDR Vat . frob ILK_ID ADDR ADDR ADDR DINK ((wad(2) *Wad randWadBounded(head(BS), DARTBOUND)) -Wad DARTBOUND) )
                  ) ((((URNINK +Wad DINK) *Rate SPOT) /Rate RATE) -Wad URNART)
          ...
          </k>
-         <random> BS => tail(BS) </random>
-         <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
+         <random> BS:Bytes => tail(BS) </random>
+         <used-random> BS':Bytes => BS' +Bytes headAsBytes(BS) </used-random>
          <vat-ilks>
            ...
-           ILK_ID |-> Ilk ( ... rate: RATE, spot: SPOT )
+           ILK_ID |-> Ilk ( ... rate: RATE:Ray, spot: SPOT:Ray )
            ...
          </vat-ilks>
          <vat-urns>
            ...
-           { ILK_ID , ADDR } |-> Urn ( ... ink: URNINK, art: URNART )
+           { ILK_ID , ADDR } |-> Urn ( ... ink: URNINK:Wad, art: URNART:Wad )
            ...
          </vat-urns>
       requires lengthBytes(BS) >Int 0
@@ -450,7 +450,7 @@ module KMCD-GEN
          </gem>
       requires lengthBytes(BS) >Int 0
 
-    rule <k> GenFlapKick ADDR LOT BID => LogGen ( transact ADDR Flap . kick LOT BID ) ... </k>
+    rule <k> GenFlapKick ADDR:Address LOT BID => LogGen ( transact ADDR Flap . kick LOT BID ) ... </k>
 
     rule <k> GenFlapYank => LogGen ( transact ANYONE Flap . yank chooseInt(head(BS), keys_list(FLAP_BIDS)) ) ... </k>
          <random> BS => tail(BS) </random>
@@ -475,9 +475,9 @@ module KMCD-GEN
        andBool size(VAT_GEMS) >Int 0
 
     rule <k> GenFlipKick CDPID => GenFlipKick CDPID chooseAddress(head(BS), keys_list(VAT_DAIS)) ... </k>
-         <random> BS => tail(BS) </random>
-         <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
-         <vat-dai> VAT_DAIS </vat-dai>
+         <random> BS:Bytes => tail(BS) </random>
+         <used-random> BS':Bytes => BS' +Bytes headAsBytes(BS) </used-random>
+         <vat-dai> VAT_DAIS:Map </vat-dai>
       requires lengthBytes(BS) >Int 0
        andBool size(VAT_DAIS) >Int 0
 
@@ -494,9 +494,9 @@ module KMCD-GEN
          <vat-gem> ... CDPID |-> VAT_GEM ... </vat-gem>
       requires lengthBytes(BS) >Int 0
 
-    rule <k> GenFlipKick CDPID STORAGE BENEFICIARY LOT => GenFlipKick CDPID STORAGE BENEFICIARY LOT randRadBounded(head(BS), rad(1000)) ... </k>
-         <random> BS => tail(BS) </random>
-         <used-random> BS' => BS' +Bytes headAsBytes(BS) </used-random>
+    rule <k> GenFlipKick CDPID:CDPID STORAGE:Address BENEFICIARY:Address LOT:Wad => GenFlipKick CDPID STORAGE BENEFICIARY LOT randRadBounded(head(BS), rad(1000)) ... </k>
+         <random> BS:Bytes => tail(BS) </random>
+         <used-random> BS':Bytes => BS' +Bytes headAsBytes(BS) </used-random>
       requires lengthBytes(BS) >Int 0
 
     rule <k> GenFlipKick { ILK_ID , ADDR } STORAGE BENEFICIARY LOT BID => LogGen ( transact ADDR Flip ILK_ID . kick STORAGE BENEFICIARY rad(1000) LOT BID ) ... </k>

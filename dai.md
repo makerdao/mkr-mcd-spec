@@ -118,7 +118,7 @@ The Dai token is a mintable/burnable ERC20 token.
       requires AMOUNT >=Wad wad(0)
        andBool BALANCE_SRC >=Wad AMOUNT
 
-    rule <k> Dai . transferFrom ACCOUNT_SRC ACCOUNT_DST AMOUNT => . ... </k>
+    rule <k> Dai . transferFrom ACCOUNT_SRC:Address ACCOUNT_DST:Address AMOUNT => . ... </k>
          <dai-allowance> ... { ACCOUNT_SRC -> ACCOUNT_DST } |-> (ALLOWANCE_SRC_DST => ALLOWANCE_SRC_DST -Wad AMOUNT) ... </dai-allowance>
          <dai-balance>
            ...
@@ -163,8 +163,8 @@ The Dai token is a mintable/burnable ERC20 token.
 
     syntax DaiStep ::= "approve" Address Wad
  // ----------------------------------------
-    rule <k> Dai . approve ACCOUNT_DST AMOUNT => . ... </k>
-         <msg-sender> ACCOUNT_SRC </msg-sender>
+    rule <k> Dai . approve ACCOUNT_DST:Address AMOUNT:Wad => . ... </k>
+         <msg-sender> ACCOUNT_SRC:Address </msg-sender>
          <dai-allowance> ... { ACCOUNT_SRC -> ACCOUNT_DST } |-> (_ => AMOUNT) ... </dai-allowance>
          <frame-events> ... (.List => ListItem(Approval(ACCOUNT_SRC, ACCOUNT_DST, AMOUNT))) </frame-events>
       requires AMOUNT >=Wad wad(0)

@@ -94,8 +94,8 @@ Join Configuration
 ```k
     syntax DaiJoinStep ::= "constructor" Address Address
  // ----------------------------------------------------
-    rule <k> DaiJoin . constructor DAI_JOIN_VAT DAI_JOIN_GEM => . ... </k>
-         <msg-sender> MSGSENDER </msg-sender>
+    rule <k> DaiJoin . constructor DAI_JOIN_VAT:VatContract DAI_JOIN_GEM:GemContract => . ... </k>
+         <msg-sender> MSGSENDER:Address </msg-sender>
          ( <dai-join> _ </dai-join>
         => <dai-join>
              <dai-join-vat> DAI_JOIN_VAT </dai-join-vat>
