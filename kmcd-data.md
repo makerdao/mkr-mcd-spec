@@ -195,18 +195,13 @@ We model everything with arbitrary precision rationals, but use sort information
     rule rdiv(FI1, FI2) => FI1 /FInt FI2   requires value(FI2) =/=Int 0
     rule wdiv(FI1, FI2) => 0FInt(one(FI1)) requires value(FI2)  ==Int 0
     rule wdiv(FI1, FI2) => FI1 /FInt FI2   requires value(FI2) =/=Int 0
-
 ```
 
-//Hardcoded Constants
-//-------------------
-//
-//```k
-//    syntax Int ::= "pow255" // 2 ^Int 255
-// // -------------------------------------
-//    rule pow255 => //57896044618658097711785492504343953926634992332820282019728792003956564819968  [macro]
-//```
-
+```k
+    syntax Rad ::= Rad "*RadWad2Rad" Wad [function]
+ // -------------------------------------------
+    rule FInt(R, RAD) *RadWad2Rad FInt(W, WAD) => FInt(R *Int W /Int WAD, RAD)
+```
 
 Time Increments
 ---------------

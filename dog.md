@@ -141,17 +141,21 @@ These parameters are controlled by governance:
 Dog Semantics
 -------------
 
+BLN < WAD < RAY < RAD
+syntax Rad ::= Wad "*Rate" Ray [function]
+syntax Wad ::= Rad "/Rate" Ray [function]
+
 ```k
     syntax DogStep ::= "bark" String Address Address
  // -----------------------------------------------
     rule <k> Dog . bark ILK URN KPR
     =>  #let ROOM = minRad( ( DOG_HOLE -Rad DOG_DIRT), (HOLE -Rad  DIRT) ) #in (
-        #let DART_INITIAL = minWad( ART, ( ( Rad2Wad(ROOM) /Wad Ray2Wad(RATE)) /Wad CHOP) ) #in (
-        #let DART_FINAL = (#if (ART >Wad DART_INITIAL) andBool ( ((ART -Wad DART_INITIAL) *Wad Ray2Wad(RATE)) <Wad Rad2Wad(DUST) ) #then ART #else   DART_INITIAL #fi) #in (
+        #let DART_INITIAL = minWad( ART, ( ( ROOM /Rate RATE) /Wad CHOP) ) #in (
+        #let DART_FINAL = (#if (ART >Wad DART_INITIAL) andBool ( ((ART -Wad DART_INITIAL) *Rate RATE) <Rad DUST ) #then ART #else   DART_INITIAL #fi) #in (
         #let DINK = (INK *Wad DART_FINAL) /Wad ART #in (
-        #let DUE = DART_FINAL *Wad Ray2Wad(RATE) #in (
-        #let TAB = DUE *Wad CHOP #in (
-        call DOG_VAT . grab ILK URN CLIP DOG_VOW (wad(0) -Wad DINK) (wad(0) -Wad DART_FINAL)
+        #let DUE = DART_FINAL *Rate RATE #in (
+        #let TAB = DUE *RadWad2Rad CHOP #in (
+       call DOG_VAT . grab ILK URN CLIP DOG_VOW (wad(0) -Wad DINK) (wad(0) -Wad DART_FINAL)
     ~> call DOG_VOW . fess DUE
     ~> call CLIP . kick TAB DINK URN KPR
     ~> emitBark ILK URN DINK DART_FINAL DUE CLIP 0 ) ) ) ) ) )
@@ -166,7 +170,7 @@ Dog Semantics
          <vat-ilks> ... ILK |-> Ilk( ... rate: RATE, spot: SPOT, dust: DUST ) ...                           </vat-ilks>
       requires DOG_LIVE ==Bool true
       andBool ( ( SPOT >Ray ray(0) )
-      andBool ( (Wad2Ray(INK) *Ray SPOT ) <Ray (Wad2Ray(ART) *Ray RATE) ) )
+      andBool ( (INK *Rate SPOT ) <Rad (ART *Rate RATE) ) )
       andBool ( (DOG_HOLE >Rad DOG_DIRT )
       andBool ( HOLE >Rad DIRT ) )
 
@@ -175,7 +179,7 @@ Dog Semantics
     rule <k> BARK_ID ~> emitBark ILK URN DINK DART DUE CLIP _ => emitBark ILK URN DINK DART DUE CLIP BARK_ID ... </k>
          <vat-urns> ... { ILK, URN } |-> Urn( _, ART) ...                     </vat-urns>
          <vat-ilks> ... ILK |-> Ilk( ... rate: RATE, spot: _, dust: DUST) ... </vat-ilks>
-      requires (#if (ART >Wad DART) #then (#if ( ( ART -Wad DART ) *Wad Ray2Wad(RATE) ) <Wad Rad2Wad(DUST)  #then true #else ( ( DART *Wad Ray2Wad(RATE) ) >=Wad Rad2Wad(DUST) ) #fi ) #else true #fi)
+      requires (#if (ART >Wad DART) #then (#if ( ( ART -Wad DART ) *Rate RATE ) <Rad DUST #then true #else ( ( DART *Rate RATE ) >=Rad DUST ) #fi ) #else true #fi)
       andBool baseFInt(DART) <=Int pow255
       andBool baseFInt(DINK) <=Int pow255
       andBool DINK >Wad wad(0)
