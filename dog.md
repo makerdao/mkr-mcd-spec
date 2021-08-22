@@ -21,7 +21,7 @@ Dog Configuration
          <dog-ilks>  .Map      </dog-ilks>   // mapping (bytes32 => Ilk) String |-> DogIlk
          <dog-vat>   0:Address </dog-vat>
          <dog-vow>   0:Address </dog-vow>
-         <dog-live>  true      </dog-live>
+         <dog-live>  false     </dog-live>
          <dog-hole>  rad(0)    </dog-hole>
          <dog-dirt>  rad(0)    </dog-dirt>
       </dog-state>

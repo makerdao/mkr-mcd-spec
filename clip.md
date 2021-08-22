@@ -27,10 +27,10 @@ Clip Configuration
         <clip-vow>     0:Address  </clip-vow>
         <clip-spot>    0:Address  </clip-spot>
         <clip-calc>    0:Address  </clip-calc>
-        <clip-buf>     ray(1)     </clip-buf>
+        <clip-buf>     ray(0)     </clip-buf>
         <clip-tail>    0          </clip-tail>
-        <clip-cusp>    ray(1)     </clip-cusp>
-        <clip-chip>    wad(1)     </clip-chip>
+        <clip-cusp>    ray(0)     </clip-cusp>
+        <clip-chip>    wad(0)     </clip-chip>
         <clip-tip>     rad(0)     </clip-tip>
         <clip-chost>   rad(0)     </clip-chost>
         <clip-kicks>   0          </clip-kicks>
@@ -337,9 +337,9 @@ module CLIP
     rule <k> Clip . take TAKE_ID AMT MAX WHO DATA
     =>  #let PRICE = Abacus CLIP_ABACUS . price TOP (NOW -Int TIC) #in (
         #let DONE = ( (NOW -Int TIC ) >Int CLIP_TAIL ) orBool ( (PRICE /Ray TOP) <Ray CLIP_CUSP ) #in (
-        #let SLICE_INITIAL = minWad(LOT, AMT) #in ( 
+        #let SLICE_INITIAL = minWad(LOT, AMT) #in (
         #let OWE_INITIAL = SLICE_INITIAL *Wad Ray2Wad(PRICE) #in (
-        #let OWE_FINAL = ( #if (OWE_INITIAL >Wad Rad2Wad(TAB)) #then Rad2Wad(TAB) #else ( #if (OWE_INITIAL <Wad Rad2Wad(TAB) andBool SLICE_INITIAL <Wad LOT ) #then (#if ( ( Rad2Wad(TAB) -Wad OWE_INITIAL ) <Wad Ray2Wad(CLIP_CHOST) ) #then (Rad2Wad(TAB) -Wad Ray2Wad(CLIP_CHOST) ) #else OWE_INITIAL #fi ) #else OWE_INITIAL #fi ) #fi ) #in (  
+        #let OWE_FINAL = ( #if (OWE_INITIAL >Wad Rad2Wad(TAB)) #then Rad2Wad(TAB) #else ( #if (OWE_INITIAL <Wad Rad2Wad(TAB) andBool SLICE_INITIAL <Wad LOT ) #then (#if ( ( Rad2Wad(TAB) -Wad OWE_INITIAL ) <Wad Ray2Wad(CLIP_CHOST) ) #then (Rad2Wad(TAB) -Wad Ray2Wad(CLIP_CHOST) ) #else OWE_INITIAL #fi ) #else OWE_INITIAL #fi ) #fi ) #in (
         #let SLICE_FINAL =  ( #if (OWE_INITIAL >Wad Rad2Wad(TAB)) #then OWE_FINAL /Wad PRICE #else ( #if (OWE_INITIAL <Wad Rad2Wad(TAB) andBool SLICE_INITIAL <Wad LOT ) #then (#if ( ( Rad2Wad(TAB) -Wad OWE_INITIAL ) <Wad Ray2Wad(CLIP_CHOST) ) #then ( OWE_FINAL /Wad PRICE ) #else SLICE_INITIAL #fi ) #else SLICE_INITIAL #fi ) #fi ) #in (
         #let TAB_FINAL = TAB -Rad Wad2Rad(OWE_FINAL) #in (
         #let LOT_FINAL = LOT -Wad SLICE_FINAL #in (
