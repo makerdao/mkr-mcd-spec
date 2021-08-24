@@ -65,14 +65,14 @@ We model everything with arbitrary precision rationals, but use sort information
 
 ```k
     syntax Wad ::= Rad2Wad ( Rad ) [function]
-                 | Ray2Wad ( Ray ) [function]
  // -----------------------------------------
     rule Rad2Wad(FInt(R, RAD)) => FInt(R /Int RAY, WAD)
-    rule Ray2Wad(FInt(R, RAY)) => FInt(R /Int BLN, WAD)
 
-    syntax Ray ::= Wad2Ray ( Wad ) [function]
+    syntax Ray ::= Wad2Ray ( Wad )      [function]
+                 | Wad2Ray ( MaybeWad ) [function]
  // -----------------------------------------
     rule Wad2Ray(FInt(W, WAD)) => FInt(W *Int BLN, RAY)
+    rule Wad2Ray( .Wad )       => wad(0)
 
     syntax Rad ::= Wad2Rad ( Wad ) [function]
                  | Ray2Rad ( Ray ) [function]
@@ -199,8 +199,15 @@ We model everything with arbitrary precision rationals, but use sort information
 
 ```k
     syntax Rad ::= Rad "*RadWad2Rad" Wad [function]
- // -------------------------------------------
+                 | Wad "*WadRay2Rad" Ray [function]
+ // -----------------------------------------------
     rule FInt(R, RAD) *RadWad2Rad FInt(W, WAD) => FInt(R *Int W /Int WAD, RAD)
+    rule FInt(W, WAD) *WadRay2Rad FInt(R, RAY) => FInt(W *Int R, RAD)
+
+    syntax Wad ::= Rad "/RadRay2Wad" Ray [function]
+ // -----------------------------------------------
+    rule FInt(R1, RAD) /RadRay2Wad FInt(R2, RAY) => FInt(R1 /Int R2, WAD)
+
 ```
 
 Time Increments

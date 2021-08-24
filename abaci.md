@@ -125,7 +125,7 @@ Abacus Semantics
 ```k
     syntax AbacusStep ::= "price" Ray Int
  // ------------------------------------
-    rule <k> Abacus ABACUS_ADDRESS . price TOP DUR => ( TOP  *Ray ray( ( ABACUS_TAU -Int DUR ) /Int ABACUS_TAU ) ) ... </k>
+    rule <k> Abacus ABACUS_ADDRESS . price TOP DUR => ( TOP *Ray ray( ( ABACUS_TAU -Int DUR ) /Int ABACUS_TAU ) ) ... </k>
          <abacus>
             <abacus-address> ABACUS_ADDRESS   </abacus-address>
             <abacus-type>    "LinearDecrease" </abacus-type>
