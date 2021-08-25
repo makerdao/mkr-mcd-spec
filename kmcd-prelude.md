@@ -330,9 +330,8 @@ module KMCD-GEN
       requires lengthBytes(BS) >Int 0
 
     rule <k> GenVatFrob { ILK_ID , ADDR } DINK
-          => #fun( DARTBOUND
-                => LogGen ( transact ADDR Vat . frob ILK_ID ADDR ADDR ADDR DINK ((wad(2) *Wad randWadBounded(head(BS), DARTBOUND)) -Wad DARTBOUND) )
-                 ) ((((URNINK +Wad DINK) *Rate SPOT) /Rate RATE) -Wad URNART)
+          => #let DARTBOUND = (((URNINK +Wad DINK) *Rate SPOT) /Rate RATE) -Wad URNART #in (
+              LogGen ( transact ADDR Vat . frob ILK_ID ADDR ADDR ADDR DINK ((wad(2) *Wad randWadBounded(head(BS), DARTBOUND)) -Wad DARTBOUND) ) )
          ...
          </k>
          <random> BS => tail(BS) </random>
