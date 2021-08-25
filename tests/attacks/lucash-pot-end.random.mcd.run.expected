@@ -533,14 +533,14 @@
             SetItem ( Spot )
           </vat-wards>
           <vat-can>
-            "Alice" |-> SetItem ( End )
+            "Alice" |-> SetItem ( Flip "gold" )
             SetItem ( Pot )
-            SetItem ( Flip "gold" )
             SetItem ( Flop )
-            "Bobby" |-> SetItem ( End )
+            SetItem ( End )
+            "Bobby" |-> SetItem ( Flip "gold" )
             SetItem ( Pot )
-            SetItem ( Flip "gold" )
             SetItem ( Flop )
+            SetItem ( End )
             Vow |-> SetItem ( Flap )
           </vat-can>
           <vat-ilks>

@@ -10,6 +10,7 @@ module KMCD-DATA
     imports BOOL
     imports FIXED-INT
     imports MAP
+    imports LIST
 ```
 
 Precision Quantities
