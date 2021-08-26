@@ -94,7 +94,7 @@ Dog Events
 
     syntax DogStep ::= "emitBark" String Address Wad Wad FInt Address Int
  // --------------------------------------------------------
-    rule <k> emitBark ILK URN INK ART DUE CLIP BARK_ID => BARK_ID ... </k>
+    rule <k> BARK_ID:Int ~> emitBark ILK URN INK ART DUE CLIP _ => BARK_ID ... </k>
          <return-value> BARK_ID:Int </return-value>
          <frame-events> ... (.List => ListItem(Bark(ILK, URN, INK, ART, DUE, CLIP, BARK_ID))) </frame-events>
 ```
@@ -141,10 +141,6 @@ These parameters are controlled by governance:
 Dog Semantics
 -------------
 
-BLN < WAD < RAY < RAD
-syntax Rad ::= Wad "*Rate" Ray [function]
-syntax Wad ::= Rad "/Rate" Ray [function]
-
 ```k
     syntax DogStep ::= "bark" String Address Address
  // -----------------------------------------------
@@ -152,17 +148,16 @@ syntax Wad ::= Rad "/Rate" Ray [function]
     =>  #let ROOM = minRad( ( DOG_HOLE -Rad DOG_DIRT), (HOLE -Rad  DIRT) ) #in (
         #let DART_INITIAL = minWad( ART, ( ( ROOM /Rate RATE) /Wad CHOP) ) #in (
         #let DART_FINAL = (#if (ART >Wad DART_INITIAL) andBool ( ((ART -Wad DART_INITIAL) *Rate RATE) <Rad DUST ) #then ART #else   DART_INITIAL #fi) #in (
+        #let NON_DUSTY = (#if (ART >Wad DART_INITIAL) andBool ( ((ART -Wad DART_INITIAL) *Rate RATE) <Rad DUST ) #then true #else (DART_INITIAL *Rate RATE) >=Rad DUST  #fi) #in (
         #let DINK = (INK *Wad DART_FINAL) /Wad ART #in (
         #let DUE = DART_FINAL *Rate RATE #in (
         #let TAB = DUE *RadWad2Rad CHOP #in (
-       call DOG_VAT . grab ILK URN CLIP DOG_VOW (wad(0) -Wad DINK) (wad(0) -Wad DART_FINAL)
-    ~> call DOG_VOW . fess DUE
-    ~> call CLIP . kick TAB DINK URN KPR
-    ~> emitBark ILK URN DINK DART_FINAL DUE CLIP 0 ) ) ) ) ) )
+    NON_DUSTY
+    ~> KPR
+    ~> TAB
+    ~> emitBark ILK URN DINK DART_FINAL DUE CLIP 0 ) ) ) ) ) ) )
     ... </k>
-         <dog-vow>  DOG_VOW   </dog-vow>
          <dog-live> DOG_LIVE  </dog-live>
-         <dog-vat>  DOG_VAT   </dog-vat>
          <dog-dirt> DOG_DIRT  </dog-dirt>
          <dog-hole> DOG_HOLE  </dog-hole>
          <vat-urns> ... { ILK, URN } |-> Urn( INK, ART ) ...                                                </vat-urns>
@@ -174,13 +169,20 @@ syntax Wad ::= Rad "/Rate" Ray [function]
       andBool ( (DOG_HOLE >Rad DOG_DIRT )
       andBool ( HOLE >Rad DIRT ) )
 
-
-
-    rule <k> BARK_ID ~> emitBark ILK URN DINK DART DUE CLIP _ => emitBark ILK URN DINK DART DUE CLIP BARK_ID ... </k>
+    rule <k> NON_DUSTY:Bool ~> KPR:Address ~> TAB:Rad ~> emitBark ILK URN DINK DART_FINAL DUE CLIP _
+    => call DOG_VAT . grab ILK URN CLIP DOG_VOW (wad(0) -Wad DINK) (wad(0) -Wad DART_FINAL)
+    ~> call DOG_VOW . fess DUE
+    ~> call CLIP . kick TAB DINK URN KPR
+    ~> emitBark ILK URN DINK DART_FINAL DUE CLIP 0
+    ... </k>
+         <dog-vow>  DOG_VOW   </dog-vow>
+         <dog-vat>  DOG_VAT   </dog-vat>
+         <dog-ilks> ... ILK |-> Ilk( ... clip: CLIP:ClipContract ) ... </dog-ilks>
          <vat-urns> ... { ILK, URN } |-> Urn( _, ART) ...                     </vat-urns>
          <vat-ilks> ... ILK |-> Ilk( ... rate: RATE, spot: _, dust: DUST) ... </vat-ilks>
-      requires (#if (ART >Wad DART) #then (#if ( ( ART -Wad DART ) *Rate RATE ) <Rad DUST #then true #else ( ( DART *Rate RATE ) >=Rad DUST ) #fi ) #else true #fi)
-      andBool baseFInt(DART) <=Int pow255
+      requires (#if (ART >Wad DART_FINAL) #then (#if ( ( ART -Wad DART_FINAL ) *Rate RATE ) <Rad DUST #then true #else ( ( DART_FINAL *Rate RATE ) >=Rad DUST ) #fi ) #else true #fi)
+      andBool NON_DUSTY
+      andBool baseFInt(DART_FINAL) <=Int pow255
       andBool baseFInt(DINK) <=Int pow255
       andBool DINK >Wad wad(0)
 ```
