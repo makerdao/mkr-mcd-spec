@@ -145,16 +145,13 @@ Cat Semantics
     syntax CatStep ::= "bite" String Address
  // ----------------------------------------
     rule <k> Cat . bite ILK_ID URN
-          => #fun(LOT
-          => #fun(ART
-          => #fun(TAB
-          => call CAT_VAT  . grab ILK_ID URN THIS CAT_VOW (wad(0) -Wad LOT) (wad(0) -Wad ART)
+          => #let LOT = minWad(INK, LUMP)                          #in (
+             #let ART = minWad(URNART, (LOT *Wad URNART) /Wad INK) #in (
+             #let TAB = ART *Rate RATE                             #in (
+             call CAT_VAT  . grab ILK_ID URN THIS CAT_VOW (wad(0) -Wad LOT) (wad(0) -Wad ART)
           ~> call CAT_VOW  . fess TAB
           ~> call CAT_FLIP . kick URN CAT_VOW rmul(TAB, CHOP) LOT rad(0)
-          ~> emitBite ILK_ID URN LOT ART TAB
-          )(ART *Rate RATE)
-          )(minWad(URNART, (LOT *Wad URNART) /Wad INK))
-          )(minWad(INK, LUMP))
+          ~> emitBite ILK_ID URN LOT ART TAB ) ) )
          ...
          </k>
          <this> THIS </this>
