@@ -49,6 +49,10 @@ End Configuration
     syntax MCDContract ::= EndContract
     syntax EndContract ::= "End"
     syntax MCDStep ::= EndContract "." EndStep [klabel(endStep)]
+
+    syntax CallStep ::= EndStep
+    syntax Op       ::= EndOp
+    syntax Args     ::= EndArgs
  // ------------------------------------------------------------
     rule contract(End . _) => End
 ```
@@ -56,7 +60,9 @@ End Configuration
 ### Constructor
 
 ```k
-    syntax EndStep ::= "constructor"
+    syntax EndConstructorOp ::= "constructor"
+    syntax EndOp            ::= EndConstructorOp
+    syntax EndStep          ::= EndConstructorOp
  // --------------------------------
     rule <k> End . constructor => . ... </k>
          <msg-sender> MSGSENDER </msg-sender>
@@ -95,15 +101,17 @@ These parameters are controlled by governance:
 -   `wait`: time buffer on `thaw` step.
 
 ```k
-    syntax EndAuthStep ::= "file" EndFile
- // -------------------------------------
+    syntax EndFileOp    ::= "file"
+    syntax EndOp        ::= EndFileOp
+    syntax EndArgs      ::= EndFileArgs
+    syntax EndFileArgs  ::= "wait" Int
+                          | "vat-file"  Address
+                          | "cat-file"  Address
+                          | "vow-file"  Address
+                          | "pot-file"  Address
+                          | "spot-file" Address
 
-    syntax EndFile ::= "wait" Int
-                     | "vat-file"  Address
-                     | "cat-file"  Address
-                     | "vow-file"  Address
-                     | "pot-file"  Address
-                     | "spot-file" Address
+    syntax EndAuthStep  ::= EndFileOp EndFileArgs
  // --------------------------------------
     rule <k> End . file wait WAIT => . ... </k>
          <end-live> true </end-live>
@@ -140,9 +148,19 @@ Because data isn't explicitely initialized to 0 in KMCD, we need explicit initia
     **TODO**: Should `End . initGap ILK_ID` happen directly when `End . cage ILK_ID` happens?
 
 ```k
-    syntax EndAuthStep ::= "initGap" String
-                         | "initBag" Address
-                         | "initOut" String Address
+    syntax EndInitGapOp ::= "initGap"
+    syntax EndInitBagOp ::= "initBag"
+    syntax EndInitOutOp ::= "initOut"
+    syntax EndOp ::= EndInitGapOp | EndInitBagOp | EndInitOutOp
+
+    syntax EndAddressArgs ::= Address
+    syntax EndIlkArgs     ::= String
+    syntax EndIlkUserArgs ::= String Address
+    syntax EndArgs ::= EndAddressArgs | EndIlkArgs | EndIlkUserArgs
+
+    syntax EndAuthStep ::= EndInitGapOp EndIlkArgs
+                         | EndInitBagOp EndAddressArgs
+                         | EndInitOutOp EndIlkUserArgs
  // -----------------------------------------------
     rule <k> End . initGap ILK_ID => . ... </k>
          <end-gap> GAPS => GAPS [ ILK_ID <- wad(0) ] </end-gap>
@@ -161,7 +179,9 @@ End Semantics
 -------------
 
 ```k
-    syntax EndAuthStep ::= "cage"
+    syntax EndCageOp ::= "cage"
+    syntax EndOp ::= EndCageOp
+    syntax EndAuthStep ::= EndCageOp
  // -----------------------------
     rule <k> End . cage
           => call END_VAT . cage
@@ -178,7 +198,7 @@ End Semantics
          <end-vow> END_VOW:VowContract </end-vow>
          <end-pot> END_POT:PotContract </end-pot>
 
-    syntax EndStep ::= "cage" String
+    syntax EndStep ::= EndCageOp EndIlkArgs
  // --------------------------------
     rule <k> End . cage ILK_ID:String => . ... </k>
          <end-live> false </end-live>
@@ -189,7 +209,11 @@ End Semantics
          <vat-ilks> ... ILK_ID |-> Ilk(... Art: ART)::VatIlk ... </vat-ilks>
        requires notBool ILK_ID in_keys(TAGS)
 
-    syntax EndStep ::= "skip" String Int
+    syntax EndSkipOp ::= "skip"
+    syntax EndOp ::= EndSkipOp
+    syntax EndIlkIdArgs ::= String Int
+    syntax EndArgs ::= EndIlkIdArgs
+    syntax EndStep ::= EndSkipOp EndIlkIdArgs
  // ------------------------------------
     rule <k> End . skip ILK_ID BID_ID
           => call END_VAT . suck Vow Vow  TAB
@@ -213,7 +237,9 @@ End Semantics
        andBool LOT >=Wad wad(0)
        andBool TAB /Rate RATE >=Wad wad(0)
 
-    syntax EndStep ::= "skim" String Address
+    syntax EndSkimOp ::= "skim"
+    syntax EndOp ::= EndSkimOp
+    syntax EndStep ::= EndSkimOp EndIlkUserArgs
  // ----------------------------------------
     rule <k> End . skim ILK_ID ADDR
           => call END_VAT . grab ILK_ID ADDR THIS Vow (wad(0) -Wad minWad(INK, rmul(rmul(ART, RATE), TAG))) (wad(0) -Wad ART)
@@ -227,7 +253,9 @@ End Semantics
          <vat-urns> ... {ILK_ID, ADDR} |-> Urn(... ink: INK, art: ART) ... </vat-urns>
       requires TAG =/=Ray ray(0)
 
-    syntax EndStep ::= "free" String
+    syntax EndFreeOp ::= "free"
+    syntax EndOp ::= EndFreeOp
+    syntax EndStep ::= EndFreeOp EndIlkArgs
  // --------------------------------
     rule <k> End . free ILK_ID
           => call END_VAT . grab ILK_ID MSGSENDER MSGSENDER Vow (wad(0) -Wad INK) wad(0)
@@ -239,7 +267,9 @@ End Semantics
          <vat-urns> ... {ILK_ID, MSGSENDER} |-> Urn(... ink: INK, art: ART) ... </vat-urns>
       requires ART ==Wad wad(0)
 
-    syntax EndStep ::= "thaw"
+    syntax EndThawOp ::= "thaw"
+    syntax EndOp ::= EndThawOp
+    syntax EndStep ::= EndThawOp
  // -------------------------
     rule <k> End . thaw => . ... </k>
          <current-time> NOW </current-time>
@@ -251,7 +281,9 @@ End Semantics
          <vat-debt> DEBT </vat-debt>
       requires NOW >=Int WHEN +Int WAIT
 
-    syntax EndStep ::= "flow" String
+    syntax EndFlowOp ::= "flow"
+    syntax EndOp ::= EndFlowOp
+    syntax EndStep ::= EndFlowOp EndIlkArgs
  // --------------------------------
     rule <k> End . flow ILK_ID => . ... </k>
          <end-debt> DEBT </end-debt>
@@ -264,7 +296,11 @@ End Semantics
        andBool rmul(rmul(ART, RATE), TAG) >=Wad GAP
        andBool notBool ILK_ID in_keys(FIX)
 
-    syntax EndStep ::= "pack" Wad
+    syntax EndPackOp ::= "pack"
+    syntax EndOp ::= EndPackOp
+    syntax EndAmtArgs ::= Wad
+    syntax EndArgs ::= EndAmtArgs
+    syntax EndStep ::= EndPackOp EndAmtArgs
  // -----------------------------
     rule <k> End . pack AMOUNT
           => call END_VAT . move MSGSENDER Vow Wad2Rad(AMOUNT)
@@ -277,7 +313,11 @@ End Semantics
       requires AMOUNT >=Wad wad(0)
        andBool DEBT =/=Rad rad(0)
 
-    syntax EndStep ::= "cash" String Wad
+    syntax EndCashOp ::= "cash"
+    syntax EndOp ::= EndCashOp
+    syntax EndIlkAmtArgs ::= String Wad
+    syntax EndArgs ::= EndIlkAmtArgs
+    syntax EndStep ::= EndCashOp EndIlkAmtArgs
  // ------------------------------------
     rule <k> End . cash ILK_ID AMOUNT
           => call END_VAT . flux ILK_ID THIS MSGSENDER rmul(AMOUNT, FIX)

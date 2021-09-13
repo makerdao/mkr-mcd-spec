@@ -34,6 +34,10 @@ Flap Semantics
     syntax MCDContract ::= FlapContract
     syntax FlapContract ::= "Flap"
     syntax MCDStep ::= FlapContract "." FlapStep [klabel(flapStep)]
+
+    syntax CallStep ::= FlapStep
+    syntax Op       ::= FlapOp
+    syntax Args     ::= FlapArgs
  // ---------------------------------------------------------------
     rule contract(Flap . _) => Flap
 ```
@@ -41,7 +45,11 @@ Flap Semantics
 ### Constructor
 
 ```k
-    syntax FlapStep ::= "constructor" Address Address
+    syntax FlapConstructorOp ::= "constructor"
+    syntax FlapOp ::= FlapConstructorOp
+    syntax FlapConstructorArgs ::= Address Address
+    syntax FlapArgs ::= FlapConstructorArgs
+    syntax FlapStep ::= FlapConstructorOp FlapConstructorArgs
  // -------------------------------------------------
     rule <k> Flap . constructor FLAP_VAT FLAP_MKR => . ... </k>
          <msg-sender> MSGSENDER </msg-sender>
@@ -100,12 +108,14 @@ The parameters controlled by governance are:
 -   `tau`: total auction duration length.
 
 ```k
-    syntax FlapAuthStep ::= "file" FlapFile
- // ---------------------------------------
+    syntax FlapFileOp    ::= "file"
+    syntax FlapOp        ::= FlapFileOp
+    syntax FlapArgs      ::= FlapFileArgs
+    syntax FlapFileArgs  ::= "beg" Wad
+                           | "ttl" Int
+                           | "tau" Int
 
-    syntax FlapFile ::= "beg" Wad
-                      | "ttl" Int
-                      | "tau" Int
+    syntax FlapAuthStep  ::= FlapFileOp FlapFileArgs
  // -----------------------------
     rule <k> Flap . file beg BEG => . ... </k>
          <flap-beg> _ => BEG </flap-beg>
@@ -135,7 +145,11 @@ Flap Semantics
 - Starts a new surplus auction for a lot amount
 
 ```k
-    syntax FlapAuthStep ::= "kick" Rad Wad
+    syntax FlapKickOp ::= "kick"
+    syntax FlapOp ::= FlapKickOp
+    syntax FlapLotBidArgs ::= Rad Wad
+    syntax FlapArgs ::= FlapLotBidArgs
+    syntax FlapAuthStep ::= FlapKickOp FlapLotBidArgs
  // --------------------------------------
     rule <k> Flap . kick LOT BID
           => call FLAP_VAT . move MSGSENDER THIS LOT
@@ -159,7 +173,11 @@ Flap Semantics
 - Extends the end time of the auction if no one has bid yet
 
 ```k
-    syntax FlapStep ::= "tick" Int [klabel(FlapTick),symbol]
+    syntax FlapTickOp ::= "tick"
+    syntax FlapOp ::= FlapTickOp
+    syntax FlapBidArgs ::= Int
+    syntax FlapArgs ::= FlapBidArgs
+    syntax FlapStep ::= FlapTickOp FlapBidArgs [klabel(FlapTick),symbol]
  // --------------------------------------------------------
     rule <k> Flap . tick BID_ID => . ... </k>
          <current-time> NOW </current-time>
@@ -172,7 +190,11 @@ Flap Semantics
 - Places a bid made by the user. Refunds the previous bidder's bid.
 
 ```k
-    syntax FlapStep ::= "tend" Int Rad Wad
+    syntax FlapTendOp ::= "tend"
+    syntax FlapOp ::= FlapTendOp
+    syntax FlapBidLotBidArgs ::= Int Rad Wad
+    syntax FlapArgs ::= FlapBidLotBidArgs
+    syntax FlapStep ::= FlapTendOp FlapBidLotBidArgs
  // --------------------------------------
     rule <k> Flap . tend BID_ID LOT BID
           => #if MSGSENDER =/=K GUY #then call FLAP_MKR . move MSGSENDER GUY BID' #else . #fi
@@ -200,7 +222,9 @@ Flap Semantics
 - Settles an auction, rewarding the lot to the highest bidder and burning their bid
 
 ```k
-    syntax FlapStep ::= "deal" Int [klabel(FlapDeal),symbol]
+    syntax FlapDealOp ::= "deal"
+    syntax FlapOp ::= FlapDealOp
+    syntax FlapStep ::= FlapDealOp FlapBidArgs [klabel(FlapDeal),symbol]
  // --------------------------------------------------------
     rule <k> Flap . deal BID_ID
           => call FLAP_VAT . move THIS GUY LOT
@@ -221,7 +245,11 @@ Flap Semantics
 - Part of Global Settlement. Freezes the auction house.
 
 ```k
-    syntax FlapAuthStep ::= "cage" Rad
+    syntax FlapCageOp ::= "cage"
+    syntax FlapOp ::= FlapCageOp
+    syntax FlapAmtArgs ::= Rad
+    syntax FlapArgs ::= FlapAmtArgs
+    syntax FlapAuthStep ::= FlapCageOp FlapAmtArgs
  // ----------------------------------
     rule <k> Flap . cage AMOUNT => call FLAP_VAT . move THIS MSGSENDER AMOUNT ... </k>
          <msg-sender> MSGSENDER </msg-sender>
@@ -235,7 +263,9 @@ Flap Semantics
 - Part of Global Settlement. Refunds the highest bidder's bid.
 
 ```k
-    syntax FlapStep ::= "yank" Int [klabel(FlapYank), symbol]
+    syntax FlapYankOp ::= "yank"
+    syntax FlapOp ::= FlapYankOp
+    syntax FlapStep ::= FlapYankOp FlapBidArgs [klabel(FlapYank), symbol]
  // ---------------------------------------------------------
     rule <k> Flap . yank BID_ID => call FLAP_MKR . move THIS GUY BID ... </k>
          <this> THIS </this>

@@ -37,6 +37,10 @@ Vow Configuration
     syntax MCDContract ::= VowContract
     syntax VowContract ::= "Vow"
     syntax MCDStep ::= VowContract "." VowStep [klabel(vowStep)]
+
+    syntax CallStep ::= VowStep
+    syntax Op ::= VowOp
+    syntax Args ::= VowArgs
  // ------------------------------------------------------------
     rule contract(Vow . _) => Vow
 ```
@@ -44,7 +48,11 @@ Vow Configuration
 ### Constructor
 
 ```k
-    syntax VowStep ::= "constructor" Address Address Address
+    syntax VowConstructorOp ::= "constructor"
+    syntax VowOp ::= VowConstructorOp
+    syntax VowConstructorArgs ::= Address Address Address
+    syntax VowArgs ::= VowConstructorArgs
+    syntax VowStep ::= VowConstructorOp VowConstructorArgs
  // --------------------------------------------------------
     rule <k> Vow . constructor VOW_VAT VOW_FLAPPER VOW_FLOPPER
           => call VOW_VAT . hope VOW_FLAPPER
@@ -94,14 +102,16 @@ These praameters are set by governance:
 -   `dump`: Flop auction lot size.
 
 ```k
-    syntax VowAuthStep ::= "file" VowFile
- // -------------------------------------
+    syntax VowFileOp ::= "file"
+    syntax VowOp ::=   VowFileOp
+    syntax VowArgs ::= VowFileArgs
+    syntax VowFileArgs ::= "wait" Int
+                         | "bump" Rad
+                         | "hump" Rad
+                         | "sump" Rad
+                         | "dump" Wad
 
-    syntax VowFile ::= "wait" Int
-                     | "bump" Rad
-                     | "hump" Rad
-                     | "sump" Rad
-                     | "dump" Wad
+    syntax VowAuthStep ::= VowFileOp VowFileArgs
  // -----------------------------
     rule <k> Vow . file wait WAIT => . ... </k>
          <vow-wait> _ => WAIT </vow-wait>
@@ -128,7 +138,11 @@ Vow Semantics
 -------------
 
 ```k
-    syntax VowAuthStep ::= "fess" Rad
+    syntax VowFessOp ::= "fess"
+    syntax VowOp ::= VowFessOp
+    syntax VowRadArgs ::= Rad
+    syntax VowArgs ::= VowRadArgs
+    syntax VowAuthStep ::= VowFessOp VowRadArgs
  // ---------------------------------
     rule <k> Vow . fess TAB => . ... </k>
          <current-time> NOW </current-time>
@@ -136,7 +150,11 @@ Vow Semantics
          <vow-sin> SIN => SIN +Rad TAB </vow-sin>
       requires TAB >=Rad rad(0)
 
-    syntax VowStep ::= "flog" Int
+    syntax VowFlogOp ::= "flog"
+    syntax VowOp ::= VowFlogOp
+    syntax VowIntArgs ::= Int
+    syntax VowArgs ::= VowIntArgs
+    syntax VowStep ::= VowFlogOp VowIntArgs
  // -----------------------------
     rule <k> Vow . flog ERA => . ... </k>
          <current-time> NOW </current-time>
@@ -146,7 +164,9 @@ Vow Semantics
       requires ERA >=Int 0
        andBool ERA +Int WAIT <=Int NOW
 
-    syntax VowStep ::= "heal" Rad
+    syntax VowHealOp ::= "heal"
+    syntax VowOp ::= VowHealOp
+    syntax VowStep ::= VowHealOp VowRadArgs
  // -----------------------------
     rule <k> Vow . heal AMOUNT => call VOW_VAT . heal AMOUNT ... </k>
          <this> THIS </this>
@@ -159,7 +179,9 @@ Vow Semantics
        andBool AMOUNT <=Rad VATDAI
        andBool AMOUNT <=Rad (VATSIN -Rad SIN) -Rad ASH
 
-    syntax VowStep ::= "kiss" Rad
+    syntax VowKissOp ::= "kiss"
+    syntax VowOp ::= VowKissOp
+    syntax VowStep ::= "kiss" VowRadArgs
  // -----------------------------
     rule <k> Vow . kiss AMOUNT => call VOW_VAT . heal AMOUNT ... </k>
          <this> THIS </this>
@@ -170,7 +192,9 @@ Vow Semantics
         andBool AMOUNT <=Rad ASH
         andBool AMOUNT <=Rad VATDAI
 
-    syntax VowStep ::= "flop"
+    syntax VowFlopOp ::= "flop"
+    syntax VowOp ::= VowFlopOp
+    syntax VowStep ::= VowFlopOp
  // -------------------------
     rule <k> Vow . flop => call VOW_FLOPPER . kick THIS DUMP SUMP ... </k>
          <this> THIS </this>
@@ -184,7 +208,9 @@ Vow Semantics
       requires SUMP <=Rad (VATSIN -Rad SIN) -Rad ASH
        andBool VATDAI ==Rad rad(0)
 
-    syntax VowStep ::= "flap"
+    syntax VowFlapOp ::= "flap"
+    syntax VowOp ::= VowFlapOp
+    syntax VowStep ::= VowFlapOp
  // -------------------------
     rule <k> Vow . flap => call VOW_FLAPPER . kick BUMP wad(0) ... </k>
          <this> THIS </this>
@@ -198,7 +224,9 @@ Vow Semantics
       requires VATDAI >=Rad (VATSIN +Rad BUMP) +Rad HUMP
        andBool (VATSIN -Rad SIN) -Rad ASH ==Rad rad(0)
 
-    syntax VowAuthStep ::= "cage"
+    syntax VowCageOp ::= "cage"
+    syntax VowOp ::= VowCageOp
+    syntax VowAuthStep ::= VowCageOp
  // -----------------------------
     rule <k> Vow . cage
           => call VOW_FLAPPER . cage FLAPDAI

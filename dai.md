@@ -26,6 +26,10 @@ module DAI
     syntax MCDContract ::= DaiContract
     syntax DaiContract ::= "Dai"
     syntax MCDStep ::= DaiContract "." DaiStep [klabel(daiStep)]
+
+    syntax CallStep ::= DaiStep
+    syntax Op       ::= DaiOp
+    syntax Args     ::= DaiArgs
  // ------------------------------------------------------------
     rule contract(Dai . _) => Dai
 ```
@@ -33,7 +37,9 @@ module DAI
 ### Constructor
 
 ```k
-    syntax DaiStep ::= "constructor"
+    syntax DaiConstructorOp ::= "constructor"
+    syntax DaiOp            ::= DaiConstructorOp
+    syntax DaiStep          ::= DaiConstructorOp
  // --------------------------------
     rule <k> Dai . constructor => . ... </k>
          <msg-sender> MSGSENDER </msg-sender>
@@ -88,7 +94,11 @@ Dai Semantics
 The Dai token is a mintable/burnable ERC20 token.
 
 ```k
-    syntax DaiStep ::= "transfer" Address Wad
+    syntax DaiTransferOp ::= "transfer"
+    syntax DaiOp ::= DaiTransferOp
+    syntax DaiUsrAmtArgs ::= Address Wad
+    syntax DaiArgs ::= DaiUsrAmtArgs
+    syntax DaiStep ::= DaiTransferOp DaiUsrAmtArgs
  // -----------------------------------------
     rule <k> Dai . transfer ACCOUNT_SRC AMOUNT => . ... </k>
          <msg-sender> ACCOUNT_SRC </msg-sender>
@@ -110,7 +120,11 @@ The Dai token is a mintable/burnable ERC20 token.
        andBool ACCOUNT_SRC =/=K ACCOUNT_DST
        andBool BALANCE_SRC >=Wad AMOUNT
 
-    syntax DaiStep ::= "transferFrom" Address Address Wad
+    syntax DaiTransferFromOp ::= "transferFrom"
+    syntax DaiOp ::= DaiTransferFromOp
+    syntax DaiFromToAmtArgs ::= Address Address Wad
+    syntax DaiArgs ::= DaiFromToAmtArgs
+    syntax DaiStep ::= DaiTransferFromOp DaiFromToAmtArgs
  // -----------------------------------------------------
     rule <k> Dai . transferFrom ACCOUNT_SRC ACCOUNT_SRC AMOUNT => . ... </k>
          <dai-balance> ... ACCOUNT_SRC |-> BALANCE_SRC ... </dai-balance>
@@ -145,7 +159,9 @@ The Dai token is a mintable/burnable ERC20 token.
        andBool ACCOUNT_SRC =/=K ACCOUNT_DST
        andBool BALANCE_SRC >=Wad AMOUNT
 
-    syntax DaiAuthStep ::= "mint" Address Wad
+    syntax DaiMintOp ::= "mint"
+    syntax DaiOp ::= DaiMintOp
+    syntax DaiAuthStep ::= DaiMintOp DaiUsrAmtArgs
  // -----------------------------------------
     rule <k> Dai . mint ACCOUNT_DST AMOUNT => . ... </k>
          <dai-totalSupply> DAI_SUPPLY => DAI_SUPPLY +Wad AMOUNT </dai-totalSupply>
@@ -153,7 +169,9 @@ The Dai token is a mintable/burnable ERC20 token.
          <frame-events> ... (.List => ListItem(Transfer(0, ACCOUNT_DST, AMOUNT))) </frame-events>
       requires AMOUNT >=Wad wad(0)
 
-    syntax DaiStep ::= "burn" Address Wad
+    syntax DaiBurnOp ::= "burn"
+    syntax DaiOp ::= DaiBurnOp
+    syntax DaiStep ::= DaiBurnOp DaiUsrAmtArgs
  // -------------------------------------
     rule <k> Dai . burn ACCOUNT_SRC AMOUNT => . ... </k>
          <dai-totalSupply> DAI_SUPPLY => DAI_SUPPLY -Wad AMOUNT </dai-totalSupply>
@@ -161,7 +179,9 @@ The Dai token is a mintable/burnable ERC20 token.
          <frame-events> ... (.List => ListItem(Transfer(ACCOUNT_SRC, 0, AMOUNT))) </frame-events>
       requires AMOUNT >=Wad wad(0)
 
-    syntax DaiStep ::= "approve" Address Wad
+    syntax DaiApproveOp ::= "approve"
+    syntax DaiOp ::= DaiApproveOp
+    syntax DaiStep ::= DaiApproveOp DaiUsrAmtArgs
  // ----------------------------------------
     rule <k> Dai . approve ACCOUNT_DST AMOUNT => . ... </k>
          <msg-sender> ACCOUNT_SRC </msg-sender>
@@ -169,19 +189,25 @@ The Dai token is a mintable/burnable ERC20 token.
          <frame-events> ... (.List => ListItem(Approval(ACCOUNT_SRC, ACCOUNT_DST, AMOUNT))) </frame-events>
       requires AMOUNT >=Wad wad(0)
 
-    syntax DaiStep ::= "push" Address Wad
+    syntax DaiPushOp ::= "push"
+    syntax DaiOp ::= DaiPushOp
+    syntax DaiStep ::= DaiPushOp DaiUsrAmtArgs
  // -------------------------------------
     rule <k> Dai . push ACCOUNT_DST AMOUNT => Dai . transferFrom ACCOUNT_SRC ACCOUNT_DST AMOUNT ... </k>
          <msg-sender> ACCOUNT_SRC </msg-sender>
       requires AMOUNT >=Wad wad(0)
 
-    syntax DaiStep ::= "pull" Address Wad
+    syntax DaiPullOp ::= "pull"
+    syntax DaiOp ::= DaiPullOp
+    syntax DaiStep ::= DaiPullOp DaiUsrAmtArgs
  // -------------------------------------
     rule <k> Dai . pull ACCOUNT_SRC AMOUNT => Dai . transferFrom ACCOUNT_SRC ACCOUNT_DST AMOUNT ... </k>
          <msg-sender> ACCOUNT_DST </msg-sender>
       requires AMOUNT >=Wad wad(0)
 
-    syntax DaiStep ::= "move" Address Address Wad
+    syntax DaiMoveOp ::= "move"
+    syntax DaiOp ::= DaiMoveOp
+    syntax DaiStep ::= DaiMoveOp DaiFromToAmtArgs
  // ---------------------------------------------
     rule <k> Dai . move ACCOUNT_SRC ACCOUNT_DST AMOUNT => Dai . transferFrom ACCOUNT_SRC ACCOUNT_DST AMOUNT ... </k>
       requires AMOUNT >=Wad wad(0)
@@ -190,7 +216,11 @@ The Dai token is a mintable/burnable ERC20 token.
 **TODO**: `permit` logic, seems to be a time-locked allowance.
 
 ```
-    syntax DaiStep ::= "permit" Address Address Int Int Bool Int Bytes Bytes
+    syntax DaiPermitOp ::= "permit"
+    syntax DaiOp ::= DaiPermitOp
+    syntax DaiPermitArgs ::= Address Address Int Int Bool Int Bytes Bytes
+    syntax DaiArgs ::= DaiPermitArgs
+    syntax DaiStep ::= DaiPermitOp DaiPermitArgs
  // ------------------------------------------------------------------------
 ```
 

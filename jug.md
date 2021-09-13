@@ -25,6 +25,10 @@ Jug Configuration
     syntax MCDContract ::= JugContract
     syntax JugContract ::= "Jug"
     syntax MCDStep ::= JugContract "." JugStep [klabel(jugStep)]
+
+    syntax CallStep ::= JugStep
+    syntax Op       ::= JugOp
+    syntax Args     ::= JugArgs
  // ------------------------------------------------------------
     rule contract(Jug . _) => Jug
 ```
@@ -32,8 +36,12 @@ Jug Configuration
 ### Constructor
 
 ```k
-    syntax JugStep ::= "constructor" Address
- // ----------------------------------------
+    syntax JugConstructorOp ::= "constructor" [token]
+    syntax JugOp            ::= JugConstructorOp
+    syntax JugAddressArgs   ::= Address
+    syntax JugArgs          ::= JugAddressArgs
+    syntax JugStep          ::= JugConstructorOp JugAddressArgs
+ // ---------------------------------------------
     rule <k> Jug . constructor JUG_VAT => . ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          ( <jug> _ </jug>
@@ -86,12 +94,14 @@ These parameters are controlled by governance:
 -   `vow`: address which accumulates stability fees.
 
 ```k
-    syntax JugAuthStep ::= "file" JugFile
- // -------------------------------------
+    syntax JugFileOp    ::= "file"
+    syntax JugOp        ::= JugFileOp
+    syntax JugArgs      ::= JugFileArgs
+    syntax JugFileArgs  ::= "duty" String Ray
+                          | "base" Ray
+                          | "vow-file" Address
 
-    syntax JugFile ::= "duty" String Ray
-                     | "base" Ray
-                     | "vow-file" Address
+    syntax JugAuthStep  ::= JugFileOp JugFileArgs
  // -------------------------------------
     rule <k> Jug . file duty ILK_ID DUTY => . ... </k>
          <jug-ilks> ... ILK_ID |-> Ilk ( ... duty: (_ => DUTY) , rho: RHO ) ... </jug-ilks>
@@ -113,7 +123,11 @@ Jug Semantics
 -------------
 
 ```k
-    syntax JugAuthStep ::= "init" String
+    syntax JugInitOp     ::= "init"
+    syntax JugOp         ::= JugInitOp
+    syntax JugStringArgs ::= String
+    syntax JugArgsOp     ::= JugStringArgs
+    syntax JugAuthStep   ::= JugInitOp JugStringArgs
  // ------------------------------------
     rule <k> Jug . init ILK_ID => . ... </k>
          <current-time> NOW </current-time>
@@ -125,7 +139,9 @@ Jug Semantics
 ```
 
 ```k
-    syntax JugStep ::= "drip" String
+    syntax JugDripOp ::= "drip"
+    syntax JugOp     ::= JugDripOp
+    syntax JugStep   ::= JugDripOp JugStringArgs
  // --------------------------------
     rule <k> Jug . drip ILK_ID => call JUG_VAT . fold ILK_ID JUG_VOW ( ( (BASE +Ray ILKDUTY) ^Ray (TIME -Int ILKRHO) ) *Ray ILKRATE ) -Ray ILKRATE ... </k>
          <current-time> TIME </current-time>

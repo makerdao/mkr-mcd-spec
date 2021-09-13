@@ -25,6 +25,10 @@ Spot Configuration
     syntax MCDContract ::= SpotContract
     syntax SpotContract ::= "Spot"
     syntax MCDStep ::= SpotContract "." SpotStep [klabel(spotStep)]
+
+    syntax CallStep ::= SpotStep
+    syntax Op ::= SpotOp
+    syntax Args ::= SpotArgs
  // ---------------------------------------------------------------
     rule contract(Spot . _) => Spot
 ```
@@ -32,7 +36,11 @@ Spot Configuration
 ### Constructor
 
 ```k
-    syntax SpotStep ::= "constructor" Address
+    syntax SpotConstructorOp ::= "constructor" [token]
+    syntax SpotOp ::= VatConstructorOp
+    syntax SpotAddressArgs ::= Address
+    syntax SpotArgs ::= SpotAddressArgs
+    syntax SpotStep ::= SpotConstructorOp SpotAddressArgs
  // -----------------------------------------
     rule <k> Spot . constructor SPOT_VAT => . ... </k>
          <msg-sender> MSGSENDER </msg-sender>
@@ -90,12 +98,14 @@ These parameters are controlled by governance/oracles:
 -   `par`: reference number for 1 Dai, used to scale target value of a single Dai (newer version of Target Rate Feedback Mechanism).
 
 ```k
-    syntax SpotAuthStep ::= "file" SpotFile
- // ---------------------------------------
+    syntax SpotFileOp ::= "file"
+    syntax SpotOp ::=   SpotFileOp
+    syntax SpotArgs ::= SpotFileArgs
+    syntax SpotFileArgs ::= "pip" String MaybeWad
+                         | "mat" String Ray
+                         | "par" Ray
 
-    syntax SpotFile ::= "pip" String MaybeWad
-                      | "mat" String Ray
-                      | "par" Ray
+    syntax SpotAuthStep ::= SpotFileOp SpotFileArgs
  // -----------------------------
     rule <k> Spot . file pip ILK_ID .Wad => . ... </k>
          <spot-live> true </spot-live>
@@ -137,8 +147,14 @@ Because data isn't explicitely initialized to 0 in KMCD, we need explicit initia
 -   `setPrice`: Manually inject a value for the price feed of a given ilk.
 
 ```k
-    syntax SpotAuthStep ::= "init"     String
-                          | "setPrice" String Wad
+    syntax SpotInitOp ::= "init"
+    syntax SpotSetIlkPriceOp ::= "setPrice"
+    syntax SpotOp ::= SpotInitOp | SpotSetIlkPriceOp
+    syntax SpotIlkArgs ::= String
+    syntax SpotSetIlkPriceArgs ::= String Wad
+    syntax SpotArgs ::= SpotIlkArgs | SpotSetIlkPriceArgs
+    syntax SpotAuthStep ::= SpotInitOp SpotIlkArgs
+                          | SpotSetIlkPriceOp SpotSetIlkPriceArgs
  // ---------------------------------------------
     rule <k> Spot . init ILK_ID => . ... </k>
          <spot-ilks> ILKS => ILKS [ ILK_ID <- SpotIlk( ... pip: .Wad, mat: ray(0) ) ] </spot-ilks>
@@ -152,7 +168,9 @@ Spot Semantics
 --------------
 
 ```k
-    syntax SpotStep ::= "poke" String
+    syntax SpotPokeOp ::= "poke"
+    syntax SpotOp ::= SpotPokeOp
+    syntax SpotStep ::= SpotPokeOp SpotIlkArgs
  // ---------------------------------
     rule <k> Spot . poke ILK_ID => call SPOT_VAT . file spot ILK_ID ((Wad2Ray(VALUE) /Ray PAR) /Ray MAT) ... </k>
          <spot-vat> SPOT_VAT </spot-vat>
@@ -171,7 +189,9 @@ Spot Deactivation
 -   `Spot.cage` disables access to this instance of Spot.
 
 ```k
-    syntax SpotAuthStep ::= "cage" [klabel(#SpotCage), symbol]
+    syntax SpotCageOp ::= "cage"
+    syntax SpotOp ::= SpotCageOp
+    syntax SpotAuthStep ::= SpotCageOp [klabel(#SpotCage), symbol]
  // --------------------------------------------------------
     rule <k> Spot . cage => . ... </k>
          <spot-live> _ => false </spot-live>

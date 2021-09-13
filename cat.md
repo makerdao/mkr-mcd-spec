@@ -29,6 +29,10 @@ Cat Configuration
     syntax MCDContract ::= CatContract
     syntax CatContract ::= "Cat"
     syntax MCDStep ::= CatContract "." CatStep [klabel(catStep)]
+
+    syntax CallStep ::= CatStep
+    syntax Op       ::= CatOp
+    syntax Args     ::= CatArgs
  // ------------------------------------------------------------
     rule contract(Cat . _) => Cat
 ```
@@ -36,7 +40,11 @@ Cat Configuration
 ### Constructor
 
 ```k
-    syntax CatStep ::= "constructor" Address
+    syntax CatConstructorOp ::= "constructor"
+    syntax CatOp            ::= CatConstructorOp
+    syntax CatAddressArgs   ::= Address
+    syntax CatArgs          ::= CatAddressArgs
+    syntax CatStep          ::= CatConstructorOp CatAddressArgs
  // ----------------------------------------
     rule <k> Cat . constructor CAT_VAT => . ... </k>
          <msg-sender> MSGSENDER </msg-sender>
@@ -107,13 +115,16 @@ The parameters controlled by governance are:
 -   `lump`: liquidation lot quantity.
 
 ```k
-    syntax CatAuthStep ::= "file" CatFile
- // -------------------------------------
 
-    syntax CatFile ::= "vow-file" Address
-                     | "chop" String Ray
-                     | "lump" String Wad
-                     | "flip" String Address
+    syntax CatFileOp    ::= "file"
+    syntax CatOp        ::= CatFileOp
+    syntax CatArgs      ::= CatFileArgs
+    syntax CatFileArgs  ::= "vow-file" Address
+                          | "chop" String Ray
+                          | "lump" String Wad
+                          | "flip" String Address
+
+    syntax CatAuthStep ::= CatFileOp CatFileArgs
  // ----------------------------------------
     rule <k> Cat . file vow-file ADDR => . ... </k>
          <cat-vow> _ => ADDR </cat-vow>
@@ -142,7 +153,11 @@ Cat Semantics
 -------------
 
 ```k
-    syntax CatStep ::= "bite" String Address
+    syntax CatBiteOp ::= "bite"
+    syntax CatOp ::= CatBiteOp
+    syntax CatIlkUrnArgs ::= String Address
+    syntax CatArgs ::= CatIlkUrnArgs
+    syntax CatStep ::= CatBiteOp CatIlkUrnArgs
  // ----------------------------------------
     rule <k> Cat . bite ILK_ID URN
           => #let LOT = minWad(INK, LUMP)                          #in (

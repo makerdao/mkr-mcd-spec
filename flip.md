@@ -30,6 +30,10 @@ Flip Configuration
     syntax MCDContract ::= FlipContract
     syntax FlipContract ::= "Flip" String
     syntax MCDStep ::= FlipContract "." FlipStep [klabel(flipStep)]
+
+    syntax CallStep ::= FlipStep
+    syntax Op       ::= FlipOp
+    syntax Args     ::= FlipArgs
  // ---------------------------------------------------------------
     rule contract(Flip ILK_ID . _) => Flip ILK_ID
 ```
@@ -37,7 +41,11 @@ Flip Configuration
 ### Constructor
 
 ```k
-    syntax FlipStep ::= "constructor" Address
+    syntax FlipConstructorOp ::= "constructor" [token]
+    syntax FlipOp            ::= FlipConstructorOp
+    syntax FlipAddressArgs   ::= Address
+    syntax FlipArgs          ::= FlipAddressArgs
+    syntax FlipStep          ::= FlipConstructorOp FlipAddressArgs
  // -----------------------------------------
     rule <k> Flip ILK_ID . constructor _ ... </k>
          ( <flip> <flip-ilk> ILK_ID </flip-ilk> ... </flip> => .Bag )
@@ -58,8 +66,6 @@ Flip Configuration
 ### Constructor
 
 ```k
-    syntax FlipStep ::= "constructor" Address
- // -----------------------------------------
     rule <k> Flip ILK_ID . constructor FLIP_VAT => . ... </k>
          <msg-sender> MSGSENDER </msg-sender>
          <flips>
@@ -131,12 +137,14 @@ The parameters controlled by governance are:
 -   `tau`: total auction duration length.
 
 ```k
-    syntax FlipAuthStep ::= "file" FlipFile
- // ---------------------------------------
+    syntax FlipFileOp    ::= "file"
+    syntax FlipOp        ::= FlipFileOp
+    syntax FlipArgs      ::= FlipFileArgs
+    syntax FlipFileArgs  ::= "beg" Wad
+                          | "ttl" Int
+                          | "tau" Int
 
-    syntax FlipFile ::= "beg" Wad
-                      | "ttl" Int
-                      | "tau" Int
+    syntax FlipAuthStep  ::= FlipFileOp FlipFileArgs
  // -----------------------------
     rule <k> Flip ILK_ID . file beg BEG => . ... </k>
          <flip>
@@ -175,7 +183,11 @@ Flip Semantics
 --------------
 
 ```k
-    syntax FlipAuthStep ::= "kick" Address Address Rad Wad Rad
+    syntax FlipKickOp    ::= "kick"
+    syntax FlipOp        ::= FlipKickOp
+    syntax FlipKickArgs  ::= Address Address Rad Wad Rad
+    syntax FlipArgs      ::= FlipKickArgs
+    syntax FlipAuthStep  ::= FlipKickOp FlipKickArgs
  // ----------------------------------------------------------
     rule <k> Flip ILK_ID . kick USR GAL TAB LOT BID
           => call FLIP_VAT . flux ILK_ID MSGSENDER THIS LOT
@@ -198,7 +210,11 @@ Flip Semantics
        andBool LOT >=Wad wad(0)
        andBool BID >=Rad rad(0)
 
-    syntax FlipStep ::= "tick" Int
+    syntax FlipTickOp ::= "tick"
+    syntax FlipOp ::= FlipTickOp
+    syntax FlipIdArgs ::= Int
+    syntax FlipArgs ::= FlipIdArgs
+    syntax FlipStep ::= FlipTickOp FlipIdArgs
  // ------------------------------
     rule <k> Flip ILK_ID . tick BID_ID => . ... </k>
          <current-time> NOW </current-time>
@@ -211,7 +227,11 @@ Flip Semantics
       requires END  <Int NOW
        andBool TIC ==Int 0
 
-    syntax FlipStep ::= "tend" Int Wad Rad
+    syntax FlipTendOp ::= "tend"
+    syntax FlipOp ::= FlipTendOp
+    syntax FlipIdLotBidArgs ::= Int Wad Rad
+    syntax FlipArgs ::= FlipIdLotBidArgs
+    syntax FlipStep ::= FlipTendOp FlipIdLotBidArgs
  // --------------------------------------
     rule <k> Flip ILK_ID . tend BID_ID LOT BID
           => #if MSGSENDER =/=K GUY #then call FLIP_VAT . move MSGSENDER GUY BID' #else . #fi
@@ -238,7 +258,9 @@ Flip Semantics
        andBool BID >Rad BID'
        andBool (BID >=Rad Wad2Rad(BEG) *Rad BID' orBool BID ==Rad TAB)
 
-    syntax FlipStep ::= "dent" Int Wad Rad
+    syntax FlipDentOp ::= "dent"
+    syntax FlipOp ::= FlipDentOp
+    syntax FlipStep ::= FlipDentOp FlipIdLotBidArgs
  // --------------------------------------
     rule <k> Flip ILK_ID . dent BID_ID LOT BID
           => #if MSGSENDER =/=K GUY #then call FLIP_VAT . move MSGSENDER GUY BID #else . #fi
@@ -266,7 +288,9 @@ Flip Semantics
        andBool LOT <Wad LOT'
        andBool BEG *Wad LOT <Wad LOT'
 
-    syntax FlipStep ::= "deal" Int
+    syntax FlipDealOp ::= "deal"
+    syntax FlipOp ::= FlipDealOp
+    syntax FlipStep ::= FlipDealOp FlipIdArgs
  // ------------------------------
     rule <k> Flip ILK_ID . deal BID_ID => call FLIP_VAT . flux ILK_ID THIS GUY LOT ... </k>
          <this> THIS </this>
@@ -280,7 +304,9 @@ Flip Semantics
       requires TIC =/=Int 0
        andBool (TIC <Int NOW orBool END <Int NOW)
 
-    syntax FlipAuthStep ::= "yank" Int
+    syntax FlipYankOp ::= "yank"
+    syntax FlipOp ::= FlipYankOp
+    syntax FlipAuthStep ::= FlipYankOp FlipIdArgs
  // ----------------------------------
     rule <k> Flip ILK_ID . yank BID_ID
           => call FLIP_VAT . flux ILK_ID THIS MSGSENDER LOT

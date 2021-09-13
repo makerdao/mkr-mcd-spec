@@ -45,6 +45,10 @@ For convenience, total Dai/Sin are tracked:
     syntax MCDContract ::= VatContract
     syntax VatContract ::= "Vat"
     syntax MCDStep ::= VatContract "." VatStep [klabel(vatStep)]
+
+    syntax CallStep ::= VatStep
+    syntax Op       ::= VatOp
+    syntax Args     ::= VatArgs
  // ------------------------------------------------------------
     rule contract(Vat . _) => Vat
 ```
@@ -52,7 +56,9 @@ For convenience, total Dai/Sin are tracked:
 ### Constructor
 
 ```k
-    syntax VatStep ::= "constructor"
+    syntax VatConstructorOp ::= "constructor" [token]
+    syntax VatOp            ::= VatConstructorOp
+    syntax VatStep          ::= VatConstructorOp
  // --------------------------------
     rule <k> Vat . constructor => . ... </k>
          <msg-sender> MSGSENDER </msg-sender>
@@ -143,13 +149,15 @@ The parameters controlled by governance are:
 -   `dust`: Essentially zero amount for a given `Ilk`.
 
 ```k
-    syntax VatAuthStep ::= "file" VatFile
- // -------------------------------------
+    syntax VatFileOp    ::= "file"
+    syntax VatOp        ::= VatFileOp
+    syntax VatArgs      ::= VatFileArgs
+    syntax VatFileArgs  ::= "Line" Rad
+                          | "spot" String Ray
+                          | "line" String Rad
+                          | "dust" String Rad
 
-    syntax VatFile ::= "Line" Rad
-                     | "spot" String Ray
-                     | "line" String Rad
-                     | "dust" String Rad
+    syntax VatAuthStep  ::= VatFileOp VatFileArgs
  // ------------------------------------
     rule <k> Vat . file Line LINE => . ... </k>
          <vat-live> true </vat-live>
@@ -183,9 +191,18 @@ Because data isn't explicitely initialized to 0 in KMCD, we need explicit initia
 -   `initCDP`: Create an empty CDP of a given ilk for a given user.
 
 ```k
-    syntax VatAuthStep ::= "initUser" Address
-                         | "initGem" String Address
-                         | "initCDP" String Address
+    syntax VatInitUserOp ::= "initUser"
+    syntax VatInitGemOp ::= "initGem"
+    syntax VatInitCDPOp ::= "initCDP"
+    syntax VatOp ::= VatInitUserOp | VatInitGemOp | VatInitCDPOp
+
+    syntax VatAddressArgs ::= Address
+    syntax VatIlkUserArgs ::= String Address
+    syntax VatArgs ::= VatAddressArgs | VatIlkUserArgs
+
+    syntax VatAuthStep ::= VatInitUserOp VatAddressArgs
+                         | VatInitGemOp VatIlkUserArgs
+                         | VatInitCDPOp VatIlkUserArgs
  // -----------------------------------------------
     rule <k> Vat . initUser ADDR => . ... </k>
          <vat-dai> DAI => DAI [ ADDR <- rad(0) ] </vat-dai>
@@ -210,7 +227,10 @@ Vat Semantics
 -   `Vat.cage` disables access to this instance of MCD.
 
 ```k
-    syntax VatAuthStep ::= "cage" [klabel(#VatCage), symbol]
+    syntax VatCageOp ::= "cage"
+    syntax VatOp ::= VatCageOp
+
+    syntax VatAuthStep ::= VatCageOp [klabel(#VatCage), symbol]
  // --------------------------------------------------------
     rule <k> Vat . cage => . ... </k>
          <vat-live> _ => false </vat-live>
@@ -235,7 +255,9 @@ This is quite permissive, and would allow the account to drain all your locked c
     rule [wish.check] : wish(ADDRFROM, MSGSENDER, CANADDRS) => MSGSENDER in {CANADDRS[ADDRFROM]}:>Set requires ADDRFROM =/=K MSGSENDER andBool ADDRFROM in_keys(CANADDRS)
     rule [wish.nope]  : wish(       _,         _,        _) => false                                  [owise]
 
-    syntax VatStep ::= "hope" Address | "nope" Address
+    syntax VatPermitOp ::= "nope" | "hope"
+    syntax VatOp ::= VatPermitOp
+    syntax VatStep ::= VatPermitOp VatAddressArgs
  // --------------------------------------------------
     rule <k> Vat . hope ADDRTO => . ... </k>
          <msg-sender> MSGSENDER </msg-sender>
@@ -260,7 +282,9 @@ This is quite permissive, and would allow the account to drain all your locked c
 -   `Vat.nondusty` checks that a given `Urn` has the minumum deposit (is effectively non-zero).
 
 ```k
-    syntax VatStep ::= "safe" String Address
+    syntax VatSafeOp ::= "safe"
+    syntax VatOp ::= VatSafeOp
+    syntax VatStep ::= VatSafeOp VatIlkUserArgs
  // ----------------------------------------
     rule <k> Vat . safe ILK_ID ADDR => . ... </k>
          <vat-ilks> ...   ILK_ID          |-> ILK ... </vat-ilks>
@@ -268,7 +292,9 @@ This is quite permissive, and would allow the account to drain all your locked c
       requires rad(0) <=Rad urnBalance(ILK, URN)
        andBool urnDebt(ILK, URN) <=Rad line(ILK)
 
-    syntax VatStep ::= "nondusty" String Address
+    syntax VatNonDustyOp ::= "nondusty"
+    syntax VatOp ::= VatNonDustyOp
+    syntax VatStep ::= VatNonDustyOp VatIlkUserArgs
  // --------------------------------------------
     rule <k> Vat . nondusty ILK_ID ADDR => . ... </k>
          <vat-ilks> ...   ILK_ID          |-> ILK ... </vat-ilks>
@@ -281,7 +307,11 @@ This is quite permissive, and would allow the account to drain all your locked c
 -   `Vat.init` creates a new `ilk` collateral type, failing if the given `ilk` already exists.
 
 ```k
-    syntax VatAuthStep ::= "init" String
+    syntax VatInitIlkOp     ::= "init"
+    syntax VatOp            ::= VatInitIlkOp
+    syntax VatInitIlkArgs   ::= String
+    syntax VatArgsOp        ::= VatInitIlkArgs
+    syntax VatAuthStep      ::= VatInitIlkOp VatInitIlkArgs
  // ------------------------------------
     rule <k> Vat . init ILK_ID => . ... </k>
          <vat-ilks> ... ILK_ID |-> Ilk(... rate: ray(0) => ray(1)) ... </vat-ilks>
@@ -302,13 +332,21 @@ This is quite permissive, and would allow the account to drain all your locked c
     **TODO**: Should `Vat.flux` use `Vat.consent` or `Vat.wish`?
 
 ```k
-    syntax VatAuthStep ::= "slip" String Address Wad
+    syntax VatSlipOp ::= "slip"
+    syntax VatOp ::= VatSlipOp
+    syntax VatSlipArgs ::= String Address Wad
+    syntax VatArgs ::= VatSlipArgs
+    syntax VatAuthStep ::= VatSlipOp VatSlipArgs
  // ------------------------------------------------
     rule <k> Vat . slip ILK_ID ADDRTO NEWCOL => . ... </k>
          <vat-gem> ... { ILK_ID , ADDRTO } |-> ( COL => COL +Wad NEWCOL ) ... </vat-gem>
       requires NEWCOL >=Wad wad(0)
 
-    syntax VatStep ::= "flux" String Address Address Wad
+    syntax VatFluxOp    ::= "flux"
+    syntax VatOp        ::= VatFluxOp
+    syntax VatFluxArgs  ::= String Address Address Wad
+    syntax VatArgsOp    ::= VatFluxArgs
+    syntax VatStep      ::= VatFluxOp VatFluxArgs
  // ----------------------------------------------------
     rule <k> Vat . flux ILK_ID ADDRFROM ADDRTO COL => . ... </k>
          <msg-sender> MSGSENDER </msg-sender>
@@ -337,7 +375,11 @@ This is quite permissive, and would allow the account to drain all your locked c
     **TODO**: Should `Vat.move` use `Vat.consent` or `Vat.wish`?
 
 ```k
-    syntax VatStep ::= "move" Address Address Rad
+    syntax VatMoveOp              ::= "move"
+    syntax VatOp                  ::= VatMoveOp
+    syntax VatDaiManipulationArgs ::= Address Address Rad
+    syntax VatArgs                ::=  VatDaiManipulationArgs
+    syntax VatStep                ::= VatMoveOp VatDaiManipulationArgs
  // ---------------------------------------------
     rule <k> Vat . move ADDRFROM ADDRTO DAI => . ... </k>
          <msg-sender> MSGSENDER </msg-sender>
@@ -370,7 +412,11 @@ This is quite permissive, and would allow the account to drain all your locked c
     **TODO**: Should `Vat.fork` use `Vat.consent` or `Vat.wish`?
 
 ```k
-    syntax VatStep ::= "fork" String Address Address Wad Wad
+    syntax VatForkOp    ::= "fork"
+    syntax VatOp        ::= VatForkOp
+    syntax VatForkArgs  ::= String Address Address Wad Wad
+    syntax VatArgs      ::= VatForkArgs
+    syntax VatStep      ::= VatForkOp VatForkArgs
  // --------------------------------------------------------
     rule <k> Vat . fork ILK_ID ADDRFROM ADDRTO DINK DART
           => Vat . safe     ILK_ID ADDRFROM ~> Vat . safe     ILK_ID ADDRTO
@@ -410,7 +456,11 @@ This is quite permissive, and would allow the account to drain all your locked c
 **TODO**: Double-check implemented checks for `Vat.frob`.
 
 ```k
-    syntax VatAuthStep ::= "grab" String Address Address Address Wad Wad
+    syntax VatGrabOp                     ::= "grab"
+    syntax VatOp                         ::= VatGrabOp
+    syntax VatCollateralManipulationArgs ::= String Address Address Address Wad Wad
+    syntax VatArgs                       ::= VatCollateralManipulationArgs
+    syntax VatAuthStep                   ::= VatGrabOp VatCollateralManipulationArgs
  // --------------------------------------------------------------------
     rule <k> Vat . grab ILK_ID ADDRU ADDRV ADDRW DINK DART => . ... </k>
          <vat-vice> VICE => VICE -Rad (DART *Rate RATE) </vat-vice>
@@ -422,7 +472,9 @@ This is quite permissive, and would allow the account to drain all your locked c
        andBool SINW >=Rad (DART *Rate RATE)
        andBool VICE >=Rad (DART *Rate RATE)
 
-    syntax VatStep ::= "frob" String Address Address Address Wad Wad
+    syntax VatFrobOp ::= "frob"
+    syntax VatOp ::= VatFrobOp
+    syntax VatStep ::= VatFrobOp VatCollateralManipulationArgs
  // ----------------------------------------------------------------
     rule <k> Vat . frob ILK_ID ADDRU ADDRV ADDRW DINK DART => . ... </k>
          <msg-sender> MSGSENDER </msg-sender>
@@ -455,7 +507,11 @@ This is quite permissive, and would allow the account to drain all your locked c
 -   `Vat.suck` mints `<vat-dai>` for user `V` via anticoins `<vat-sin>` for user `U`.
 
 ```k
-    syntax VatStep ::= "heal" Rad
+    syntax VatHealOp    ::= "heal"
+    syntax VatOp        ::= VatHealOp
+    syntax VatAmtArgs   ::= Rad
+    syntax VatArgs      ::= VatAmtArgs
+    syntax VatStep      ::= VatHealOp VatAmtArgs
  // -----------------------------
     rule <k> Vat . heal AMOUNT => . ... </k>
          <msg-sender> ADDRFROM </msg-sender>
@@ -469,7 +525,9 @@ This is quite permissive, and would allow the account to drain all your locked c
        andBool SIN  >=Rad AMOUNT
        andBool DAI  >=Rad AMOUNT
 
-    syntax VatAuthStep ::= "suck" Address Address Rad
+    syntax VatSuckOp ::= "suck"
+    syntax VatOp ::= VatSuckOp
+    syntax VatAuthStep ::= VatSuckOp VatDaiManipulationArgs
  // -------------------------------------------------
     rule <k> Vat . suck ADDRU ADDRV AMOUNT => . ... </k>
          <vat-debt> DEBT => DEBT +Rad AMOUNT </vat-debt>
@@ -484,7 +542,11 @@ This is quite permissive, and would allow the account to drain all your locked c
 -   `Vat.fold` modifies the debt multiplier for a given ilk having user `U` absort the difference in `<vat-dai>`.
 
 ```k
-    syntax VatAuthStep ::= "fold" String Address Ray
+    syntax VatFoldOp    ::= "fold"
+    syntax VatOp        ::= VatFoldOp
+    syntax VatFoldArgs  ::= String Address Ray
+    syntax VatArgs      ::= VatFoldArgs
+    syntax VatAuthStep  ::= VatFoldOp VatFoldArgs
  // ------------------------------------------------
     rule <k> Vat . fold ILK_ID ADDRU RATE => . ... </k>
          <vat-live> true </vat-live>

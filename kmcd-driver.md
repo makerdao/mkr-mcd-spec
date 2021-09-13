@@ -11,6 +11,8 @@ module KMCD-DRIVER
     imports KMCD-DATA
     imports MAP
     imports STRING
+    imports BYTES
+    imports LIST
     imports EVM
 
     configuration
@@ -153,8 +155,13 @@ At the moment these are typically used in the codebase to check prerequisite con
     syntax MCDStep ::= LockStep | AuthStep
  // --------------------------------------
 
-    syntax WardStep ::= "rely" Address
-                      | "deny" Address
+    syntax WardOp ::= "rely" | "deny"
+    syntax WardArgs ::= Address
+    syntax WardStep ::= WardOp WardArgs
+
+    syntax Op ::= WardOp
+    syntax Args ::= WardArgs
+    syntax CallStep ::= WardStep
  // ----------------------------------
 
     syntax ModifierStep ::= "checkauth"   MCDStep
@@ -207,9 +214,19 @@ During the regular execution of a step this implies popping the `mcd-call-stack`
     rule <k> exception _MCDSTEP ~> dropState => popState ... </k>
          <mcd-call-stack> .List </mcd-call-stack>
 
-    rule <k> exception _ ~> (assert         => .) ... </k> 
+    rule <k> exception _ ~> (assert         => .) ... </k>
     rule <k> exception _ ~> (_:ModifierStep => .) ... </k>
     rule <k> exception _ ~> (makecall _     => .) ... </k>
+```
+
+### Function Signature and Arguments
+
+Each individual contract function call, `CallStep`, is characterized by its function name, `Op`, and its arguments, `Args`.
+
+```k
+    syntax Op
+    syntax Args
+    syntax CallStep
 ```
 
 Log Events
