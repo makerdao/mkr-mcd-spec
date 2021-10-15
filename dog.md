@@ -31,7 +31,7 @@ Dog Configuration
     syntax MCDContract ::= DogContract
     syntax DogContract ::= "Dog"
     syntax MCDStep     ::= DogContract "." DogStep [klabel(dogStep)]
- // ------------------------------------------------------------
+ // ----------------------------------------------------------------
     rule contract(Dog . _) => Dog
 ```
 
@@ -82,7 +82,7 @@ Dog Data
 
 ```k
     syntax DogIlk ::= Ilk ( clip: Address, chop: Wad, hole: Rad, dirt: Rad ) [klabel(#DogIlk), symbol]
- // ---------------------------------------------------------------------------------------
+ // --------------------------------------------------------------------------------------------------
 ```
 
 Dog Events
@@ -90,7 +90,7 @@ Dog Events
 
 ```k
     syntax CustomEvent ::= Bark(ilk: String, urn: Address, ink: Wad, art: Wad, due: FInt, clip: Address, Id: Int) [klabel(Bark), symbol]
- //-----------------------------------------------------------------------------------------------------------------------------------
+ //-------------------------------------------------------------------------------------------------------------------------------------
 
     syntax DogStep ::= "emitBark" String Address Wad Wad FInt Address Int
  // --------------------------------------------------------
@@ -143,7 +143,7 @@ Dog Semantics
 
 ```k
     syntax DogStep ::= "bark" String Address Address
- // -----------------------------------------------
+ // ------------------------------------------------
     rule <k> Dog . bark ILK URN KPR
     =>  #let ROOM = minRad( ( DOG_HOLE -Rad DOG_DIRT), (HOLE -Rad  DIRT) ) #in (
         #let DART_INITIAL = minWad( ART, ( ( ROOM /Rate RATE) /Wad CHOP) ) #in (
@@ -190,7 +190,7 @@ Dog Semantics
 
 ```k
     syntax DogAuthStep ::= "digs" String Rad
- // ---------------------------------------
+ // ----------------------------------------
     rule <k> Dog . digs ILK INP_RAD => . ... </k>
          <dog-dirt> DOG_DIRT => DOG_DIRT -Rad INP_RAD  </dog-dirt>
          <dog-ilks> ... ILK |-> Ilk( ... dirt: ILK_DIRT => ILK_DIRT -Rad INP_RAD) ... </dog-ilks>
@@ -198,7 +198,7 @@ Dog Semantics
 
 ```k
     syntax DogAuthStep ::= "cage"
- // ----------------------------
+ // -----------------------------
     rule <k> Dog . cage => . ... </k>
          <dog-live> _ => false </dog-live>
 ```
