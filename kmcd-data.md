@@ -70,7 +70,6 @@ We model everything with arbitrary precision rationals, but use sort information
     rule Rad2Wad(FInt(R, RAD)) => FInt(R /Int RAY, WAD)
 
     syntax Ray ::= Wad2Ray ( Wad )      [function]
-                 | Wad2Ray ( MaybeWad ) [function]
  // -----------------------------------------
     rule Wad2Ray(FInt(W, WAD)) => FInt(W *Int BLN, RAY)
     rule Wad2Ray( .Wad )       => wad(0)
