@@ -118,7 +118,7 @@ These parameters are controlled by governance:
                      | "hole" String Rad
                      | "chop" String Wad
                      | "clip" String Address
- // -----------------------------------------
+ // ----------------------------------------
     rule <k> Dog . file vow DOG_VOW => . ... </k>
          <dog-vow> _ => DOG_VOW </dog-vow>
 
