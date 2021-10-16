@@ -180,8 +180,7 @@ Dog Semantics
          <dog-ilks> ... ILK |-> Ilk( ... clip: CLIP:ClipContract ) ... </dog-ilks>
          <vat-urns> ... { ILK, URN } |-> Urn( _, ART) ...                     </vat-urns>
          <vat-ilks> ... ILK |-> Ilk( ... rate: RATE, spot: _, dust: DUST) ... </vat-ilks>
-      requires (#if (ART >Wad DART_FINAL) #then (#if ( ( ART -Wad DART_FINAL ) *Rate RATE ) <Rad DUST #then true #else ( ( DART_FINAL *Rate RATE ) >=Rad DUST ) #fi ) #else true #fi)
-      andBool NON_DUSTY
+      requires NON_DUSTY
       andBool baseFInt(DART_FINAL) <=Int pow255
       andBool baseFInt(DINK) <=Int pow255
       andBool DINK >Wad wad(0)
