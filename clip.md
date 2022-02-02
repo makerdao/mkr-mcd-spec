@@ -303,7 +303,7 @@ module CLIP
     => #let PRICE = Abacus CLIP_ABACUS . price TOP (NOW -Int TIC) #in  (
        #let DONE = ( (NOW -Int TIC ) >Int CLIP_TAIL ) orBool ( (PRICE /Ray TOP) <Ray CLIP_CUSP ) #in (
        #let TOP_FINAL = ( Wad2Ray(VALUE) /Ray SPOT_PAR ) *Ray CLIP_BUF #in (
-       #let COIN = ( #if ( CLIP_TIP >Rad rad(0) orBool CLIP_CHIP >Wad wad(0) )  #then ( #if ( TAB >=Rad CLIP_CHOST andBool ( Wad2Ray(LOT) *Ray ( Wad2Ray(VALUE) /Ray SPOT_PAR ) ) >=Ray CLIP_CHOST ) #then CLIP_TIP +Rad ( TAB *RadWad2Rad CLIP_CHIP ) #else rad(0) #fi ) #else rad(0) #fi ) #in (
+       #let COIN = ( #if ( CLIP_TIP >Rad rad(0) orBool CLIP_CHIP >Wad wad(0) )  #then ( #if ( TAB >=Rad CLIP_CHOST andBool ( Ray2Rad( Wad2Ray(LOT) *Ray ( Wad2Ray(VALUE) /Ray SPOT_PAR ) ) ) >=Rad CLIP_CHOST ) #then CLIP_TIP +Rad ( TAB *RadWad2Rad CLIP_CHIP ) #else rad(0) #fi ) #else rad(0) #fi ) #in (
     DONE
     ~> emitRedo REDO_ID TOP_FINAL TAB LOT USR KPR COIN ) ) ) )
     ... </k>
@@ -325,7 +325,7 @@ module CLIP
       andBool ( ( Wad2Ray(VALUE) /Ray SPOT_PAR ) *Ray CLIP_BUF ) >Ray ray(0)
 
     rule <k> DONE:Bool ~> emitRedo REDO_ID TOP_FINAL TAB LOT USR KPR COIN
-    => #if ( CLIP_TIP >Rad rad(0) orBool CLIP_CHIP >Wad wad(0) ) #then ( #if ( TAB >=Rad CLIP_CHOST andBool ( Wad2Ray(LOT) *Ray ( Wad2Ray(VALUE) /Ray SPOT_PAR ) ) >=Ray CLIP_CHOST ) #then call CLIP_VAT . suck CLIP_VOW KPR COIN #else . #fi ) #else . #fi
+    => #if ( CLIP_TIP >Rad rad(0) orBool CLIP_CHIP >Wad wad(0) ) #then ( #if ( TAB >=Rad CLIP_CHOST andBool ( Ray2Rad ( Wad2Ray(LOT) *Ray ( Wad2Ray(VALUE) /Ray SPOT_PAR ) ) ) >=Rad CLIP_CHOST ) #then call CLIP_VAT . suck CLIP_VOW KPR COIN #else . #fi ) #else . #fi
     ~> emitRedo REDO_ID TOP_FINAL TAB LOT USR KPR COIN ... </k>
          <clip-sales> ... REDO_ID |-> ClipSale( ... tab: TAB, lot: LOT, usr: USR, tic: (_ => NOW), top: (_ => ( ( Wad2Ray(VALUE) /Ray SPOT_PAR ) *Ray CLIP_BUF ) ) ) ... </clip-sales>
          <spot-ilks> CLIP_ILK |-> SpotIlk(... pip: VALUE ) </spot-ilks>
@@ -349,8 +349,8 @@ module CLIP
         #let DONE = ( (NOW -Int TIC ) >Int CLIP_TAIL ) orBool ( (PRICE /Ray TOP) <Ray CLIP_CUSP ) #in (
         #let SLICE_INITIAL = minWad(LOT, AMT) #in (
         #let OWE_INITIAL = SLICE_INITIAL *WadRay2Rad PRICE #in (
-        #let OWE_FINAL = ( #if (OWE_INITIAL >Rad TAB) #then TAB #else ( #if (OWE_INITIAL <Rad TAB andBool SLICE_INITIAL <Wad LOT ) #then (#if ( TAB -Rad OWE_INITIAL <Rad Ray2Rad(CLIP_CHOST) ) #then (TAB -Rad Ray2Rad(CLIP_CHOST) ) #else OWE_INITIAL #fi ) #else OWE_INITIAL #fi ) #fi ) #in (
-        #let SLICE_FINAL =  ( #if (OWE_INITIAL >Rad TAB) #then OWE_FINAL /RadRay2Wad PRICE #else ( #if (OWE_INITIAL <Rad TAB andBool SLICE_INITIAL <Wad LOT ) #then (#if ( TAB -Rad OWE_INITIAL <Rad Ray2Rad(CLIP_CHOST) ) #then ( OWE_FINAL /RadRay2Wad PRICE ) #else SLICE_INITIAL #fi ) #else SLICE_INITIAL #fi ) #fi ) #in (
+        #let OWE_FINAL = ( #if (OWE_INITIAL >Rad TAB) #then TAB #else ( #if (OWE_INITIAL <Rad TAB andBool SLICE_INITIAL <Wad LOT ) #then (#if ( TAB -Rad OWE_INITIAL <Rad Ray2Rad(CLIP_CHOST) ) #then (TAB -Rad CLIP_CHOST ) #else OWE_INITIAL #fi ) #else OWE_INITIAL #fi ) #fi ) #in (
+        #let SLICE_FINAL =  ( #if (OWE_INITIAL >Rad TAB) #then OWE_FINAL /RadRay2Wad PRICE #else ( #if (OWE_INITIAL <Rad TAB andBool SLICE_INITIAL <Wad LOT ) #then (#if ( TAB -Rad OWE_INITIAL <Rad CLIP_CHOST ) #then ( OWE_FINAL /RadRay2Wad PRICE ) #else SLICE_INITIAL #fi ) #else SLICE_INITIAL #fi ) #fi ) #in (
         #let TAB_FINAL = TAB -Rad OWE_FINAL #in (
         #let LOT_FINAL = LOT -Wad SLICE_FINAL #in (
     (#if LOT_FINAL ==Wad wad(0) #then false            #else ( #if TAB_FINAL ==Rad rad(0) #then false            #else true                              #fi )  #fi)

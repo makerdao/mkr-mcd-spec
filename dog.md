@@ -91,7 +91,7 @@ Dog Events
 The dog.bark event syntactic definition does not match the solidity event as it does not receive BARK_ID as an argument although semantically the event is emmited in the correspondent typical K manner. The syntactic definition differs in order to enable using the BARK_ID received by the external clip.kick call on line 177.
 
 ```k
-    syntax CustomEvent ::= Bark(ilk: String, urn: Address, ink: Wad, art: Wad, due: FInt, clip: Address) [klabel(Bark), symbol]
+    syntax CustomEvent ::= Bark(ilk: String, urn: Address, ink: Wad, art: Wad, due: FInt, clip: Address, id: Int) [klabel(Bark), symbol]
  //-------------------------------------------------------------------------------------------------------------------------------------
 
     syntax DogStep ::= "emitBark" String Address Wad Wad FInt Address
@@ -171,7 +171,7 @@ Dog Semantics
       andBool ( (DOG_HOLE >Rad DOG_DIRT )
       andBool ( HOLE >Rad DIRT ) )
 
-    rule <k> NON_DUSTY:Bool ~> KPR:Address ~> TAB:Rad ~> emitBark ILK URN DINK DART_FINAL DUE CLIP _
+    rule <k> NON_DUSTY:Bool ~> KPR:Address ~> TAB:Rad ~> emitBark ILK URN DINK DART_FINAL DUE CLIP
     => call DOG_VAT . grab ILK URN CLIP DOG_VOW (wad(0) -Wad DINK) (wad(0) -Wad DART_FINAL)
     ~> call DOG_VOW . fess DUE
     ~> call CLIP . kick TAB DINK URN KPR
@@ -180,8 +180,6 @@ Dog Semantics
          <dog-vow>  DOG_VOW   </dog-vow>
          <dog-vat>  DOG_VAT   </dog-vat>
          <dog-ilks> ... ILK |-> Ilk( ... clip: CLIP:ClipContract ) ... </dog-ilks>
-         <vat-urns> ... { ILK, URN } |-> Urn( _, ART) ...                     </vat-urns>
-         <vat-ilks> ... ILK |-> Ilk( ... rate: RATE, spot: _, dust: DUST) ... </vat-ilks>
       requires NON_DUSTY
       andBool baseFInt(DART_FINAL) <=Int pow255
       andBool baseFInt(DINK) <=Int pow255
