@@ -88,6 +88,8 @@ Dog Data
 Dog Events
 ----------
 
+The dog.bark event syntactic definition does not match the solidity event as it does not receive BARK_ID as an argument although semantically the event is emmited in the correspondent typical K manner. The syntactic definition differs in order to enable using the BARK_ID received by the external clip.kick call on line 177.
+
 ```k
     syntax CustomEvent ::= Bark(ilk: String, urn: Address, ink: Wad, art: Wad, due: FInt, clip: Address) [klabel(Bark), symbol]
  //-------------------------------------------------------------------------------------------------------------------------------------
