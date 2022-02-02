@@ -89,12 +89,12 @@ Dog Events
 ----------
 
 ```k
-    syntax CustomEvent ::= Bark(ilk: String, urn: Address, ink: Wad, art: Wad, due: FInt, clip: Address, Id: Int) [klabel(Bark), symbol]
+    syntax CustomEvent ::= Bark(ilk: String, urn: Address, ink: Wad, art: Wad, due: FInt, clip: Address) [klabel(Bark), symbol]
  //-------------------------------------------------------------------------------------------------------------------------------------
 
-    syntax DogStep ::= "emitBark" String Address Wad Wad FInt Address Int
+    syntax DogStep ::= "emitBark" String Address Wad Wad FInt Address
  // --------------------------------------------------------
-    rule <k> BARK_ID:Int ~> emitBark ILK URN INK ART DUE CLIP _ => BARK_ID ... </k>
+    rule <k> BARK_ID:Int ~> emitBark ILK URN INK ART DUE CLIP => BARK_ID ... </k>
          <return-value> BARK_ID:Int </return-value>
          <frame-events> ... (.List => ListItem(Bark(ILK, URN, INK, ART, DUE, CLIP, BARK_ID))) </frame-events>
 ```
@@ -155,7 +155,7 @@ Dog Semantics
     NON_DUSTY
     ~> KPR
     ~> TAB
-    ~> emitBark ILK URN DINK DART_FINAL DUE CLIP 0 ) ) ) ) ) ) )
+    ~> emitBark ILK URN DINK DART_FINAL DUE CLIP ) ) ) ) ) ) )
     ... </k>
          <dog-live> DOG_LIVE  </dog-live>
          <dog-dirt> DOG_DIRT  </dog-dirt>
@@ -173,7 +173,7 @@ Dog Semantics
     => call DOG_VAT . grab ILK URN CLIP DOG_VOW (wad(0) -Wad DINK) (wad(0) -Wad DART_FINAL)
     ~> call DOG_VOW . fess DUE
     ~> call CLIP . kick TAB DINK URN KPR
-    ~> emitBark ILK URN DINK DART_FINAL DUE CLIP 0
+    ~> emitBark ILK URN DINK DART_FINAL DUE CLIP
     ... </k>
          <dog-vow>  DOG_VOW   </dog-vow>
          <dog-vat>  DOG_VAT   </dog-vat>
