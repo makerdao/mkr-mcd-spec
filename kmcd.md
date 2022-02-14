@@ -5,8 +5,11 @@ This module combines all sub-modules to model the entire MCD system.
 
 ```k
 requires "kmcd-driver.md"
+requires "abaci.md"
 requires "cat.md"
+requires "clip.md"
 requires "dai.md"
+requires "dog.md"
 requires "end.md"
 requires "flap.md"
 requires "flip.md"
@@ -21,8 +24,11 @@ requires "vow.md"
 
 module KMCD
     imports KMCD-DRIVER
+    imports ABACI
     imports CAT
+    imports CLIP
     imports DAI
+    imports DOG
     imports END
     imports FLAP
     imports FLIP
@@ -39,8 +45,11 @@ module KMCD
       <kmcd>
         <kmcd-driver/>
         <kmcd-state>
+          <abaci/>
           <cat/>
+          <clip-state/>
           <dai/>
+          <dog-state/>
           <end-state/>
           <flap-state/>
           <flips/>

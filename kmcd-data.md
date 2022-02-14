@@ -69,9 +69,10 @@ We model everything with arbitrary precision rationals, but use sort information
  // -----------------------------------------
     rule Rad2Wad(FInt(R, RAD)) => FInt(R /Int RAY, WAD)
 
-    syntax Ray ::= Wad2Ray ( Wad ) [function]
+    syntax Ray ::= Wad2Ray ( MaybeWad ) [function]
  // -----------------------------------------
     rule Wad2Ray(FInt(W, WAD)) => FInt(W *Int BLN, RAY)
+    rule Wad2Ray( .Wad )       => wad(0)
 
     syntax Rad ::= Wad2Rad ( Wad ) [function]
                  | Ray2Rad ( Ray ) [function]
@@ -194,18 +195,20 @@ We model everything with arbitrary precision rationals, but use sort information
     rule rdiv(FI1, FI2) => FI1 /FInt FI2   requires value(FI2) =/=Int 0
     rule wdiv(FI1, FI2) => 0FInt(one(FI1)) requires value(FI2)  ==Int 0
     rule wdiv(FI1, FI2) => FI1 /FInt FI2   requires value(FI2) =/=Int 0
-
 ```
-
-Hardcoded Constants
--------------------
 
 ```k
-    syntax Int ::= "pow255" // 2 ^Int 255 
- // -------------------------------------
-    rule pow255 => 57896044618658097711785492504343953926634992332820282019728792003956564819968  [macro]
-```
+    syntax Rad ::= Rad "*RadWad2Rad" Wad [function]
+                 | Wad "*WadRay2Rad" Ray [function]
+ // -----------------------------------------------
+    rule FInt(R, RAD) *RadWad2Rad FInt(W, WAD) => FInt(R *Int W /Int WAD, RAD)
+    rule FInt(W, WAD) *WadRay2Rad FInt(R, RAY) => FInt(W *Int R, RAD)
 
+    syntax Wad ::= Rad "/RadRay2Wad" Ray [function]
+ // -----------------------------------------------
+    rule FInt(R1, RAD) /RadRay2Wad FInt(R2, RAY) => FInt(R1 /Int R2, WAD)
+
+```
 
 Time Increments
 ---------------

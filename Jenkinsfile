@@ -11,7 +11,7 @@ pipeline {
       when { changeRequest() }
       steps { script { currentBuild.displayName = "PR ${env.CHANGE_ID}: ${env.CHANGE_TITLE}" } }
     }
-    stage('Build') { steps { sh 'make build -j4 RELEASE=true' } }
+    stage('Build') { steps { sh 'make build RELEASE=true' } }
     stage('Test') {
       options { timeout(time: 10, unit: 'MINUTES') }
       parallel {
